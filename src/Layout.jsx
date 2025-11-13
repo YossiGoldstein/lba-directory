@@ -35,23 +35,23 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link to={createPageUrl("Home")} className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-teal-600 to-teal-700 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-cyan-600 to-blue-700 rounded-lg flex items-center justify-center">
                 <Building2 className="w-6 h-6 text-white" />
               </div>
               <span className="text-xl font-bold text-gray-900">LBA Directory</span>
             </Link>
 
             <nav className="hidden md:flex items-center gap-8">
-              <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-teal-600 transition-colors font-medium">
+              <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                 Home
               </Link>
-              <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-teal-600 transition-colors font-medium">
+              <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                 About
               </Link>
-              <Link to={createPageUrl("AddBusiness")} className="text-gray-700 hover:text-teal-600 transition-colors font-medium">
+              <Link to={createPageUrl("AddBusiness")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                 Add Business
               </Link>
-              <Link to={createPageUrl("Contact")} className="text-gray-700 hover:text-teal-600 transition-colors font-medium">
+              <Link to={createPageUrl("Contact")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                 Contact
               </Link>
             </nav>
@@ -76,7 +76,7 @@ export default function Layout({ children, currentPageName }) {
                   <Button variant="ghost" asChild>
                     <Link to={createPageUrl("Login")}>Login</Link>
                   </Button>
-                  <Button className="bg-teal-600 hover:bg-teal-700" asChild>
+                  <Button className="bg-cyan-600 hover:bg-cyan-700" asChild>
                     <Link to={createPageUrl("Register")}>Register</Link>
                   </Button>
                 </>
@@ -94,16 +94,16 @@ export default function Layout({ children, currentPageName }) {
           {mobileMenuOpen && (
             <div className="md:hidden py-4 border-t border-gray-200">
               <nav className="flex flex-col gap-4">
-                <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-teal-600 font-medium">
+                <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-cyan-600 font-medium">
                   Home
                 </Link>
-                <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-teal-600 font-medium">
+                <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-cyan-600 font-medium">
                   About
                 </Link>
-                <Link to={createPageUrl("AddBusiness")} className="text-gray-700 hover:text-teal-600 font-medium">
+                <Link to={createPageUrl("AddBusiness")} className="text-gray-700 hover:text-cyan-600 font-medium">
                   Add Business
                 </Link>
-                <Link to={createPageUrl("Contact")} className="text-gray-700 hover:text-teal-600 font-medium">
+                <Link to={createPageUrl("Contact")} className="text-gray-700 hover:text-cyan-600 font-medium">
                   Contact
                 </Link>
                 {user ? (
@@ -120,7 +120,7 @@ export default function Layout({ children, currentPageName }) {
                     <Button variant="outline" asChild className="w-full">
                       <Link to={createPageUrl("Login")}>Login</Link>
                     </Button>
-                    <Button className="bg-teal-600 hover:bg-teal-700 w-full" asChild>
+                    <Button className="bg-cyan-600 hover:bg-cyan-700 w-full" asChild>
                       <Link to={createPageUrl("Register")}>Register</Link>
                     </Button>
                   </div>
@@ -141,7 +141,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <Link to={createPageUrl("Home")} className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-teal-600 to-teal-700 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-cyan-600 to-blue-700 rounded-lg flex items-center justify-center">
                   <Building2 className="w-6 h-6 text-white" />
                 </div>
                 <span className="text-xl font-bold text-white">LBA Directory</span>
@@ -155,22 +155,22 @@ export default function Layout({ children, currentPageName }) {
               <h3 className="text-white font-semibold mb-4">Quick Links</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link to={createPageUrl("Home")} className="text-sm hover:text-teal-400 transition-colors">
+                  <Link to={createPageUrl("Home")} className="text-sm hover:text-cyan-400 transition-colors">
                     Home
                   </Link>
                 </li>
                 <li>
-                  <Link to={createPageUrl("AboutUs")} className="text-sm hover:text-teal-400 transition-colors">
+                  <Link to={createPageUrl("AboutUs")} className="text-sm hover:text-cyan-400 transition-colors">
                     About Us
                   </Link>
                 </li>
                 <li>
-                  <Link to={createPageUrl("AddBusiness")} className="text-sm hover:text-teal-400 transition-colors">
+                  <Link to={createPageUrl("AddBusiness")} className="text-sm hover:text-cyan-400 transition-colors">
                     Add Business
                   </Link>
                 </li>
                 <li>
-                  <Link to={createPageUrl("Contact")} className="text-sm hover:text-teal-400 transition-colors">
+                  <Link to={createPageUrl("Contact")} className="text-sm hover:text-cyan-400 transition-colors">
                     Contact
                   </Link>
                 </li>
@@ -181,12 +181,12 @@ export default function Layout({ children, currentPageName }) {
               <h3 className="text-white font-semibold mb-4">Legal</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link to={createPageUrl("PrivacyPolicy")} className="text-sm hover:text-teal-400 transition-colors">
+                  <Link to={createPageUrl("PrivacyPolicy")} className="text-sm hover:text-cyan-400 transition-colors">
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link to={createPageUrl("TermsOfUse")} className="text-sm hover:text-teal-400 transition-colors">
+                  <Link to={createPageUrl("TermsOfUse")} className="text-sm hover:text-cyan-400 transition-colors">
                     Terms of Use
                   </Link>
                 </li>

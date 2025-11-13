@@ -19,119 +19,73 @@ export default function Home() {
   };
 
   const categories = [
-    { id: 1, name: "Food & Dining", slug: "food", icon: UtensilsCrossed },
+    { id: 1, name: "Food", slug: "food", icon: UtensilsCrossed },
     { id: 2, name: "Apparel", slug: "apparel", icon: Shirt },
     { id: 3, name: "Services", slug: "services", icon: Briefcase },
-    { id: 4, name: "Home & Garden", slug: "home", icon: HomeIcon },
-    { id: 5, name: "Automotive", slug: "auto", icon: Car },
+    { id: 4, name: "Home", slug: "home", icon: HomeIcon },
+    { id: 5, name: "Auto", slug: "auto", icon: Car },
     { id: 6, name: "Judaica", slug: "judaica", icon: Book },
-    { id: 7, name: "Beauty & Spa", slug: "beauty", icon: Sparkles },
-    { id: 8, name: "Entertainment", slug: "fun", icon: PartyPopper },
+    { id: 7, name: "Beauty", slug: "beauty", icon: Sparkles },
+    { id: 8, name: "Fun", slug: "fun", icon: PartyPopper },
     { id: 9, name: "Education", slug: "education", icon: GraduationCap },
-    { id: 10, name: "Organizations", slug: "org-gmach", icon: HandHeart },
+    { id: 10, name: "Org./Gmach", slug: "org-gmach", icon: HandHeart },
   ];
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative py-24 overflow-hidden">
-        {/* Background Image with Overlay */}
+      {/* Hero Section - Large */}
+      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+        {/* Background Image with Blur */}
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&h=900&fit=crop" 
-            alt="Local shops" 
-            className="w-full h-full object-cover"
+            src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=1920&h=1080&fit=crop" 
+            alt="Local businesses" 
+            className="w-full h-full object-cover filter blur-sm scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-teal-900/95 via-teal-800/90 to-blue-900/95"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 via-cyan-800/60 to-blue-900/70"></div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white drop-shadow-lg">
-            Discover Local Businesses in Lakewood
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
+          <h1 className="text-5xl md:text-7xl font-bold mb-4 text-white drop-shadow-2xl">
+            Comprehensive business directory
           </h1>
-          <p className="text-xl md:text-2xl text-teal-50 mb-12 max-w-3xl mx-auto">
-            Your comprehensive directory for the best shops, services, and deals in our community
+          <p className="text-2xl md:text-3xl text-white mb-12 font-light">
+            Your search starts (and ends) here
           </p>
 
-          <form onSubmit={handleSearch} className="max-w-4xl mx-auto mb-12">
-            <div className="bg-white rounded-2xl shadow-2xl p-2 flex flex-col md:flex-row gap-2">
-              <div className="flex-1 flex items-center px-4 py-3 bg-gray-50 rounded-xl">
-                <Search className="w-5 h-5 text-gray-400 mr-3" />
-                <input
-                  type="text"
-                  placeholder="Search businesses, services, or products..."
-                  className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <div className="flex items-center px-4 py-3 bg-gray-50 rounded-xl md:w-48">
-                <MapPin className="w-5 h-5 text-gray-400 mr-3" />
-                <select
-                  className="flex-1 bg-transparent border-none outline-none text-gray-900"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                >
-                  <option value="all">All Lakewood</option>
-                  <option value="downtown">Downtown</option>
-                  <option value="west">West Side</option>
-                  <option value="east">East Side</option>
-                </select>
-              </div>
+          <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-16">
+            <div className="bg-white/95 backdrop-blur-sm rounded-full shadow-2xl p-3 flex items-center gap-3">
+              <input
+                type="text"
+                placeholder="Enter keyword or business name"
+                className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 text-lg px-6"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
               <Button 
                 type="submit"
                 size="lg" 
-                className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-6 rounded-xl font-semibold"
+                className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-10 py-6 rounded-full font-semibold shadow-lg"
               >
                 Search
               </Button>
             </div>
           </form>
 
-          <div className="flex flex-wrap justify-center gap-8 text-teal-50">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-6 h-6" />
-              <span className="text-lg"><strong className="text-white">500+</strong> Local Businesses</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="w-6 h-6" />
-              <span className="text-lg"><strong className="text-white">50+</strong> Categories</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Star className="w-6 h-6" />
-              <span className="text-lg"><strong className="text-white">98%</strong> Satisfaction</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Browse by Category
-            </h2>
-            <p className="text-lg text-gray-600">
-              Find local businesses organized by what you need
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          {/* Category Icons - Circular Outline Style */}
+          <div className="flex flex-wrap justify-center gap-6 mb-8">
             {categories.map((category) => {
               const IconComponent = category.icon;
               return (
                 <Link
                   key={category.id}
                   to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
-                  className="bg-white rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 group"
+                  className="flex flex-col items-center gap-2 group"
                 >
-                  <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-teal-600 transition-colors duration-300">
-                    <IconComponent className="w-8 h-8 text-teal-600 group-hover:text-white transition-colors duration-300" />
+                  <div className="w-20 h-20 rounded-full border-3 border-white/80 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
+                    <IconComponent className="w-9 h-9 text-white" strokeWidth={1.5} />
                   </div>
-                  <h3 className="font-semibold text-gray-900 group-hover:text-teal-600">
-                    {category.name}
-                  </h3>
+                  <span className="text-white text-sm font-medium">{category.name}</span>
                 </Link>
               );
             })}
@@ -139,49 +93,58 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Blue Banner */}
+      <section className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-400 py-8">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h2 className="text-2xl md:text-3xl font-semibold text-white">
+            Bringing all Lakewood's Business Information to one place
+          </h2>
+        </div>
+      </section>
+
       {/* Shopper Benefits */}
-      <section className="py-20 bg-gradient-to-br from-teal-600 to-teal-700 text-white">
+      <section className="py-20 bg-gradient-to-br from-cyan-600 to-blue-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              <h2 className="text-3xl md:text-5xl font-bold mb-6">
                 For Shoppers
               </h2>
-              <p className="text-xl text-teal-50 mb-8">
+              <p className="text-xl text-cyan-50 mb-8">
                 Discover the best local businesses, save your favorites, and never miss a deal
               </p>
               <div className="space-y-4 mb-8">
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <Heart className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg mb-1">Save Your Favorites</h3>
-                    <p className="text-teal-50">Keep track of businesses you love</p>
+                    <p className="text-cyan-50">Keep track of businesses you love</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <Star className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg mb-1">Post Reviews</h3>
-                    <p className="text-teal-50">Share your experiences with the community</p>
+                    <p className="text-cyan-50">Share your experiences with the community</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <TrendingUp className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg mb-1">Get Exclusive Deals</h3>
-                    <p className="text-teal-50">Access special promotions and discounts</p>
+                    <p className="text-cyan-50">Access special promotions and discounts</p>
                   </div>
                 </div>
               </div>
               <Button 
                 size="lg"
-                className="bg-white text-teal-700 hover:bg-teal-50 px-8 py-6 text-lg font-semibold"
+                className="bg-white text-cyan-700 hover:bg-cyan-50 px-8 py-6 text-lg font-semibold"
                 asChild
               >
                 <Link to={createPageUrl("Register")}>
@@ -190,7 +153,7 @@ export default function Home() {
               </Button>
             </div>
             <div className="hidden lg:block">
-              <div className="bg-teal-500 bg-opacity-30 rounded-2xl p-8 backdrop-blur-sm">
+              <div className="bg-cyan-500 bg-opacity-30 rounded-2xl p-8 backdrop-blur-sm">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white bg-opacity-20 rounded-xl p-6 text-center">
                     <Search className="w-12 h-12 mx-auto mb-3" />
@@ -216,11 +179,11 @@ export default function Home() {
       </section>
 
       {/* Business Benefits */}
-      <section className="py-20 bg-gradient-to-br from-blue-600 to-blue-700 text-white">
+      <section className="py-20 bg-gradient-to-br from-blue-700 to-blue-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="hidden lg:block">
-              <div className="bg-blue-500 bg-opacity-30 rounded-2xl p-8 backdrop-blur-sm">
+              <div className="bg-blue-600 bg-opacity-30 rounded-2xl p-8 backdrop-blur-sm">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white bg-opacity-20 rounded-xl p-6 text-center">
                     <TrendingUp className="w-12 h-12 mx-auto mb-3" />
@@ -242,7 +205,7 @@ export default function Home() {
               </div>
             </div>
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              <h2 className="text-3xl md:text-5xl font-bold mb-6">
                 For Business Owners
               </h2>
               <p className="text-xl text-blue-50 mb-8">
@@ -306,7 +269,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center shadow-lg">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center shadow-lg">
                 <Search className="w-12 h-12" />
               </div>
               <div className="inline-block px-3 py-1 bg-gray-900 text-white text-sm font-bold rounded-full mb-4">
@@ -369,19 +332,19 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-br from-teal-900 via-teal-800 to-blue-900 text-white">
+      <section className="py-20 bg-gradient-to-br from-cyan-600 via-blue-700 to-blue-800 text-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
             Ready to Get Started?
           </h2>
-          <p className="text-xl md:text-2xl text-teal-50 mb-12 max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-cyan-50 mb-12 max-w-3xl mx-auto">
             Join the Lakewood Business Alliance Directory today
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg"
-              className="bg-white text-teal-900 hover:bg-teal-50 px-8 py-6 text-lg font-semibold shadow-xl"
+              className="bg-white text-blue-900 hover:bg-cyan-50 px-8 py-6 text-lg font-semibold shadow-xl"
               asChild
             >
               <Link to={createPageUrl("AddBusiness")}>
@@ -392,7 +355,7 @@ export default function Home() {
             <Button 
               size="lg"
               variant="outline"
-              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-teal-900 px-8 py-6 text-lg font-semibold"
+              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-6 text-lg font-semibold"
               asChild
             >
               <Link to={createPageUrl("Register")}>
@@ -401,9 +364,9 @@ export default function Home() {
             </Button>
           </div>
 
-          <div className="mt-16 pt-8 border-t border-teal-700">
-            <p className="text-teal-100 mb-4">Trusted by the Lakewood community</p>
-            <div className="flex flex-wrap justify-center gap-8 text-sm text-teal-200">
+          <div className="mt-16 pt-8 border-t border-cyan-500">
+            <p className="text-cyan-100 mb-4">Trusted by the Lakewood community</p>
+            <div className="flex flex-wrap justify-center gap-8 text-sm text-cyan-200">
               <div>✓ Free Basic Listings</div>
               <div>✓ Verified Reviews</div>
               <div>✓ Local Community</div>
