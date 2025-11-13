@@ -2,9 +2,22 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, TrendingUp, Users, Star } from "lucide-react";
+import { Search, MapPin, TrendingUp, Users, Star, UtensilsCrossed, Shirt, Briefcase, Home as HomeIcon, Car, Book, Sparkles, PartyPopper, GraduationCap, HandHeart, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+
+const iconMap = {
+  'UtensilsCrossed': UtensilsCrossed,
+  'Shirt': Shirt,
+  'Briefcase': Briefcase,
+  'Home': HomeIcon,
+  'Car': Car,
+  'Book': Book,
+  'Sparkles': Sparkles,
+  'PartyPopper': PartyPopper,
+  'GraduationCap': GraduationCap,
+  'HandHeart': HandHeart,
+};
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -136,22 +149,23 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
-                className="bg-white rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 group"
-              >
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-600 transition-colors duration-300">
-                  <span className="text-3xl group-hover:scale-110 transition-transform duration-300">
-                    {category.icon_name || '📁'}
-                  </span>
-                </div>
-                <h3 className="font-semibold text-gray-900 group-hover:text-blue-600">
-                  {category.name}
-                </h3>
-              </Link>
-            ))}
+            {categories.map((category) => {
+              const IconComponent = iconMap[category.icon_name] || Briefcase;
+              return (
+                <Link
+                  key={category.id}
+                  to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
+                  className="bg-white rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 group"
+                >
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-600 transition-colors duration-300">
+                    <IconComponent className="w-8 h-8 text-blue-600 group-hover:text-white transition-colors duration-300" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 group-hover:text-blue-600">
+                    {category.name}
+                  </h3>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -225,10 +239,11 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg"
-              className="bg-white text-blue-900 hover:bg-blue-50 px-8 py-6 text-lg font-semibold"
+              className="bg-white text-blue-900 hover:bg-blue-50 px-8 py-6 text-lg font-semibold shadow-xl"
               asChild
             >
               <Link to={createPageUrl("AddBusiness")}>
+                <ArrowRight className="w-5 h-5 mr-2" />
                 Add Your Business
               </Link>
             </Button>
@@ -242,6 +257,16 @@ export default function Home() {
                 Create Account
               </Link>
             </Button>
+          </div>
+
+          <div className="mt-16 pt-8 border-t border-blue-700">
+            <p className="text-blue-200 mb-4">Trusted by the Lakewood community</p>
+            <div className="flex flex-wrap justify-center gap-8 text-sm text-blue-300">
+              <div>✓ Free Basic Listings</div>
+              <div>✓ Verified Reviews</div>
+              <div>✓ Local Community</div>
+              <div>✓ Easy to Use</div>
+            </div>
           </div>
         </div>
       </section>
