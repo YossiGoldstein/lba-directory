@@ -2,7 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, TrendingUp, Users, Star, UtensilsCrossed, Shirt, Briefcase, Home as HomeIcon, Car, Book, Sparkles, PartyPopper, GraduationCap, HandHeart, ArrowRight } from "lucide-react";
+import { 
+  Search, MapPin, TrendingUp, Users, Star, 
+  UtensilsCrossed, Shirt, Briefcase, Home as HomeIcon, 
+  Car, Book, Sparkles, PartyPopper, GraduationCap, 
+  HandHeart, ArrowRight, Heart
+} from "lucide-react";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = React.useState("");

@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
@@ -8,7 +6,6 @@ import Footer from "./components/footer/Footer";
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const [categories, setCategories] = useState([]);
-  const location = useLocation();
 
   useEffect(() => {
     const loadUser = async () => {
@@ -23,13 +20,14 @@ export default function Layout({ children, currentPageName }) {
     const loadCategories = async () => {
       try {
         const cats = await base44.entities.Category.filter(
-          { is_featured: true },
-          "display_order",
+          { is_active: true },
+          "sort_order",
           20
         );
         setCategories(cats);
       } catch (error) {
         console.error("Error loading categories:", error);
+        setCategories([]);
       }
     };
 
