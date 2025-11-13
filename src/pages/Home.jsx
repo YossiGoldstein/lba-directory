@@ -1,14 +1,103 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
+
+import HeroSection from "../components/home/HeroSection";
+import CategoryGrid from "../components/home/CategoryGrid";
+import ShopperSection from "../components/home/ShopperSection";
+import BusinessSection from "../components/home/BusinessSection";
+import FeaturedBusinesses from "../components/home/FeaturedBusinesses";
+import LatestDeals from "../components/home/LatestDeals";
+import HowItWorks from "../components/home/HowItWorks";
+import CTASection from "../components/home/CTASection";
 
 export default function Home() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const userData = await base44.auth.me();
+        setUser(userData);
+      } catch (error) {
+        setUser(null);
+      }
+    };
+    loadUser();
+  }, []);
+
+  // Load categories
+  const { data: categories = [] } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => base44.entities.Category.filter({ is_active: true }, "sort_order", 100),
+  });
+
+  // Load featured businesses
+  const { data: featuredBusinesses = [] } = useQuery({
+    queryKey: ['featured-businesses'],
+    queryFn: () => base44.entities.Business.filter(
+      { status: "approved", is_featured: true }, 
+      "-created_date", 
+      6
+    ),
+  });
+
+  // Load all businesses for deals reference
+  const { data: allBusinesses = [] } = useQuery({
+    queryKey: ['all-businesses'],
+    queryFn: () => base44.entities.Business.filter({ status: "approved" }, "-created_date", 100),
+  });
+
+  // Load latest deals
+  const { data: latestDeals = [] } = useQuery({
+    queryKey: ['latest-deals'],
+    queryFn: async () => {
+      const deals = await base44.entities.Deal.filter({ is_active: true }, "-start_date", 6);
+      // Filter deals that are currently active (between start and end date)
+      const now = new Date();
+      return deals.filter(deal => {
+        const startDate = new Date(deal.start_date);
+        const endDate = new Date(deal.end_date);
+        return startDate <= now && endDate >= now;
+      });
+    },
+  });
+
   return (
     <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to BusinessHub</h1>
-        <p className="text-lg text-gray-600">
-          Home page content will be designed in the next phase.
-        </p>
-      </div>
+      {/* Hero Section with Search */}
+      <HeroSection />
+
+      {/* Category Grid */}
+      <CategoryGrid categories={categories} />
+
+      {/* Shopper Section */}
+      <ShopperSection user={user} />
+
+      {/* Business Section */}
+      <BusinessSection user={user} />
+
+      {/* Featured Businesses */}
+      {featuredBusinesses.length > 0 && (
+        <FeaturedBusinesses 
+          businesses={featuredBusinesses} 
+          categories={categories}
+        />
+      )}
+
+      {/* Latest Deals */}
+      {latestDeals.length > 0 && (
+        <LatestDeals 
+          deals={latestDeals} 
+          businesses={allBusinesses}
+        />
+      )}
+
+      {/* How It Works */}
+      <HowItWorks />
+
+      {/* CTA Section */}
+      <CTASection />
     </div>
   );
 }
