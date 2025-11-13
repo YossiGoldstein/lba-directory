@@ -34,18 +34,22 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white py-20 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }}></div>
+      <section className="relative py-24 overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&h=900&fit=crop" 
+            alt="Local shops" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-teal-900/95 via-teal-800/90 to-blue-900/95"></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white drop-shadow-lg">
             Discover Local Businesses in Lakewood
           </h1>
-          <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-teal-50 mb-12 max-w-3xl mx-auto">
             Your comprehensive directory for the best shops, services, and deals in our community
           </p>
 
@@ -77,14 +81,14 @@ export default function Home() {
               <Button 
                 type="submit"
                 size="lg" 
-                className="bg-green-500 hover:bg-green-600 text-white px-8 py-6 rounded-xl font-semibold"
+                className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-6 rounded-xl font-semibold"
               >
                 Search
               </Button>
             </div>
           </form>
 
-          <div className="flex flex-wrap justify-center gap-8 text-blue-100">
+          <div className="flex flex-wrap justify-center gap-8 text-teal-50">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-6 h-6" />
               <span className="text-lg"><strong className="text-white">500+</strong> Local Businesses</span>
@@ -122,10 +126,10 @@ export default function Home() {
                   to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
                   className="bg-white rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 group"
                 >
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-600 transition-colors duration-300">
-                    <IconComponent className="w-8 h-8 text-blue-600 group-hover:text-white transition-colors duration-300" />
+                  <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-teal-600 transition-colors duration-300">
+                    <IconComponent className="w-8 h-8 text-teal-600 group-hover:text-white transition-colors duration-300" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 group-hover:text-blue-600">
+                  <h3 className="font-semibold text-gray-900 group-hover:text-teal-600">
                     {category.name}
                   </h3>
                 </Link>
@@ -136,48 +140,48 @@ export default function Home() {
       </section>
 
       {/* Shopper Benefits */}
-      <section className="py-20 bg-gradient-to-br from-purple-600 to-purple-700 text-white">
+      <section className="py-20 bg-gradient-to-br from-teal-600 to-teal-700 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold mb-6">
                 For Shoppers
               </h2>
-              <p className="text-xl text-purple-100 mb-8">
+              <p className="text-xl text-teal-50 mb-8">
                 Discover the best local businesses, save your favorites, and never miss a deal
               </p>
               <div className="space-y-4 mb-8">
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <Heart className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg mb-1">Save Your Favorites</h3>
-                    <p className="text-purple-100">Keep track of businesses you love</p>
+                    <p className="text-teal-50">Keep track of businesses you love</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <Star className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg mb-1">Post Reviews</h3>
-                    <p className="text-purple-100">Share your experiences with the community</p>
+                    <p className="text-teal-50">Share your experiences with the community</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <TrendingUp className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg mb-1">Get Exclusive Deals</h3>
-                    <p className="text-purple-100">Access special promotions and discounts</p>
+                    <p className="text-teal-50">Access special promotions and discounts</p>
                   </div>
                 </div>
               </div>
               <Button 
                 size="lg"
-                className="bg-white text-purple-700 hover:bg-purple-50 px-8 py-6 text-lg font-semibold"
+                className="bg-white text-teal-700 hover:bg-teal-50 px-8 py-6 text-lg font-semibold"
                 asChild
               >
                 <Link to={createPageUrl("Register")}>
@@ -186,7 +190,7 @@ export default function Home() {
               </Button>
             </div>
             <div className="hidden lg:block">
-              <div className="bg-purple-500 bg-opacity-30 rounded-2xl p-8 backdrop-blur-sm">
+              <div className="bg-teal-500 bg-opacity-30 rounded-2xl p-8 backdrop-blur-sm">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white bg-opacity-20 rounded-xl p-6 text-center">
                     <Search className="w-12 h-12 mx-auto mb-3" />
@@ -241,7 +245,7 @@ export default function Home() {
               <h2 className="text-3xl md:text-4xl font-bold mb-6">
                 For Business Owners
               </h2>
-              <p className="text-xl text-blue-100 mb-8">
+              <p className="text-xl text-blue-50 mb-8">
                 Grow your business and reach more customers in the Lakewood community
               </p>
               <div className="space-y-4 mb-8">
@@ -251,7 +255,7 @@ export default function Home() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg mb-1">Increase Visibility</h3>
-                    <p className="text-blue-100">Get discovered by thousands of local shoppers</p>
+                    <p className="text-blue-50">Get discovered by thousands of local shoppers</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -260,7 +264,7 @@ export default function Home() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg mb-1">Connect with Customers</h3>
-                    <p className="text-blue-100">Build relationships and grow your customer base</p>
+                    <p className="text-blue-50">Build relationships and grow your customer base</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -269,7 +273,7 @@ export default function Home() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg mb-1">Promote Your Deals</h3>
-                    <p className="text-blue-100">Feature special offers and promotions</p>
+                    <p className="text-blue-50">Feature special offers and promotions</p>
                   </div>
                 </div>
               </div>
@@ -302,7 +306,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shadow-lg">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center shadow-lg">
                 <Search className="w-12 h-12" />
               </div>
               <div className="inline-block px-3 py-1 bg-gray-900 text-white text-sm font-bold rounded-full mb-4">
@@ -365,19 +369,19 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white">
+      <section className="py-20 bg-gradient-to-br from-teal-900 via-teal-800 to-blue-900 text-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
             Ready to Get Started?
           </h2>
-          <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-teal-50 mb-12 max-w-3xl mx-auto">
             Join the Lakewood Business Alliance Directory today
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg"
-              className="bg-white text-blue-900 hover:bg-blue-50 px-8 py-6 text-lg font-semibold shadow-xl"
+              className="bg-white text-teal-900 hover:bg-teal-50 px-8 py-6 text-lg font-semibold shadow-xl"
               asChild
             >
               <Link to={createPageUrl("AddBusiness")}>
@@ -388,7 +392,7 @@ export default function Home() {
             <Button 
               size="lg"
               variant="outline"
-              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-6 text-lg font-semibold"
+              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-teal-900 px-8 py-6 text-lg font-semibold"
               asChild
             >
               <Link to={createPageUrl("Register")}>
@@ -397,9 +401,9 @@ export default function Home() {
             </Button>
           </div>
 
-          <div className="mt-16 pt-8 border-t border-blue-700">
-            <p className="text-blue-200 mb-4">Trusted by the Lakewood community</p>
-            <div className="flex flex-wrap justify-center gap-8 text-sm text-blue-300">
+          <div className="mt-16 pt-8 border-t border-teal-700">
+            <p className="text-teal-100 mb-4">Trusted by the Lakewood community</p>
+            <div className="flex flex-wrap justify-center gap-8 text-sm text-teal-200">
               <div>✓ Free Basic Listings</div>
               <div>✓ Verified Reviews</div>
               <div>✓ Local Community</div>
