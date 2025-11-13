@@ -27,39 +27,54 @@ export default function Home() {
   }, []);
 
   // Load categories
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ['categories'],
     queryFn: () => base44.entities.Category.filter({ is_active: true }, "sort_order", 100),
   });
 
   // Load featured businesses
-  const { data: featuredBusinesses = [] } = useQuery({
+  const { data: featuredBusinesses = [], isLoading: businessesLoading } = useQuery({
     queryKey: ['featured-businesses'],
-    queryFn: () => base44.entities.Business.filter(
-      { status: "approved", is_featured: true }, 
-      "-created_date", 
-      6
-    ),
+    queryFn: async () => {
+      try {
+        return await base44.entities.Business.filter(
+          { status: "approved", is_featured: true }, 
+          "-created_date", 
+          6
+        );
+      } catch (error) {
+        return [];
+      }
+    },
   });
 
   // Load all businesses for deals reference
   const { data: allBusinesses = [] } = useQuery({
     queryKey: ['all-businesses'],
-    queryFn: () => base44.entities.Business.filter({ status: "approved" }, "-created_date", 100),
+    queryFn: async () => {
+      try {
+        return await base44.entities.Business.filter({ status: "approved" }, "-created_date", 100);
+      } catch (error) {
+        return [];
+      }
+    },
   });
 
   // Load latest deals
   const { data: latestDeals = [] } = useQuery({
     queryKey: ['latest-deals'],
     queryFn: async () => {
-      const deals = await base44.entities.Deal.filter({ is_active: true }, "-start_date", 6);
-      // Filter deals that are currently active (between start and end date)
-      const now = new Date();
-      return deals.filter(deal => {
-        const startDate = new Date(deal.start_date);
-        const endDate = new Date(deal.end_date);
-        return startDate <= now && endDate >= now;
-      });
+      try {
+        const deals = await base44.entities.Deal.filter({ is_active: true }, "-start_date", 6);
+        const now = new Date();
+        return deals.filter(deal => {
+          const startDate = new Date(deal.start_date);
+          const endDate = new Date(deal.end_date);
+          return startDate <= now && endDate >= now;
+        });
+      } catch (error) {
+        return [];
+      }
     },
   });
 
@@ -69,7 +84,7 @@ export default function Home() {
       <HeroSection />
 
       {/* Category Grid */}
-      <CategoryGrid categories={categories} />
+      {!categoriesLoading && <CategoryGrid categories={categories} />}
 
       {/* Shopper Section */}
       <ShopperSection user={user} />
