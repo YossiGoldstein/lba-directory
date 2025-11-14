@@ -5,29 +5,20 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, List, Map as MapIcon, ChevronRight, X } from "lucide-react";
-import FiltersPanel from "../components/category/FiltersPanel";
+import { Search, ChevronRight, Sparkles, TrendingUp } from "lucide-react";
 import BusinessCard from "../components/category/BusinessCard";
-import MapView from "../components/category/MapView";
+import ReactMarkdown from "react-markdown";
 
 export default function CategoryListing() {
   const urlParams = new URLSearchParams(window.location.search);
   const slug = urlParams.get("slug") || "all";
-  const initialQuery = urlParams.get("query") || "";
 
-  const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [activeView, setActiveView] = useState("list");
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  
-  const [filters, setFilters] = useState({
-    category: slug === "all" ? "all" : slug,
-    location: "all",
-    hasDeals: false,
-    sortBy: "relevance",
-  });
-
-  const [appliedFilters, setAppliedFilters] = useState(filters);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState(null);
+  const [agentResponse, setAgentResponse] = useState("");
+  const [matchedBusinesses, setMatchedBusinesses] = useState([]);
+  const [conversation, setConversation] = useState(null);
 
   // Fetch categories
   const { data: categories = [] } = useQuery({
@@ -38,8 +29,8 @@ export default function CategoryListing() {
     },
   });
 
-  // Fetch businesses
-  const { data: businesses = [], isLoading: businessesLoading } = useQuery({
+  // Fetch all businesses
+  const { data: allBusinesses = [], isLoading: businessesLoading } = useQuery({
     queryKey: ["businesses"],
     queryFn: async () => {
       const biz = await base44.entities.Business.list();
@@ -58,13 +49,43 @@ export default function CategoryListing() {
   // Get current category info
   const currentCategory = categories.find((c) => c.slug === slug);
 
-  // Helper function to get category name
+  // Filter businesses by current category (for default view)
+  const categoryBusinesses = React.useMemo(() => {
+    if (slug === "all") return allBusinesses;
+    
+    return allBusinesses.filter((b) => {
+      const cat = categories.find((c) => c.id === b.category_id);
+      if (!cat) return false;
+      
+      if (cat.slug === slug) return true;
+      if (b.subcategory_ids && b.subcategory_ids.length > 0) {
+        return b.subcategory_ids.some((subId) => {
+          const subCat = categories.find((c) => c.id === subId);
+          return subCat && subCat.slug === slug;
+        });
+      }
+      return false;
+    });
+  }, [allBusinesses, categories, slug]);
+
+  // Get popular businesses (top rated or most reviewed)
+  const popularBusinesses = React.useMemo(() => {
+    return [...categoryBusinesses]
+      .sort((a, b) => {
+        if (a.is_featured && !b.is_featured) return -1;
+        if (!a.is_featured && b.is_featured) return 1;
+        if (a.is_lba_sponsor && !b.is_lba_sponsor) return -1;
+        if (!a.is_lba_sponsor && b.is_lba_sponsor) return 1;
+        return (b.average_rating || 0) - (a.average_rating || 0);
+      })
+      .slice(0, 6);
+  }, [categoryBusinesses]);
+
   const getCategoryName = (categoryId) => {
     const cat = categories.find((c) => c.id === categoryId);
     return cat ? cat.name : "Uncategorized";
   };
 
-  // Check if business has active deals
   const hasActiveDeals = (businessId) => {
     const now = new Date();
     return deals.some((deal) => {
@@ -75,110 +96,90 @@ export default function CategoryListing() {
     });
   };
 
-  // Filter and sort businesses
-  const filteredBusinesses = React.useMemo(() => {
-    let results = [...businesses];
+  const extractBusinessesFromResponse = (responseText) => {
+    const businesses = [];
+    const responseLines = responseText.toLowerCase();
 
-    // Category filter
-    if (appliedFilters.category !== "all") {
-      results = results.filter((b) => {
-        const cat = categories.find((c) => c.id === b.category_id);
-        if (!cat) return false;
-        
-        // Check main category or subcategories
-        if (cat.slug === appliedFilters.category) return true;
-        if (b.subcategory_ids && b.subcategory_ids.length > 0) {
-          return b.subcategory_ids.some((subId) => {
-            const subCat = categories.find((c) => c.id === subId);
-            return subCat && subCat.slug === appliedFilters.category;
-          });
-        }
-        return false;
-      });
-    }
+    categoryBusinesses.forEach(business => {
+      const businessName = (business.business_name || "").toLowerCase();
+      if (businessName && responseLines.includes(businessName)) {
+        businesses.push(business);
+      }
+    });
 
-    // Search query filter
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      results = results.filter((b) => {
-        const searchableText = [
-          b.business_name || "",
-          b.short_description || "",
-          b.long_description || "",
-          ...(b.tags || []),
-        ]
-          .join(" ")
-          .toLowerCase();
-        return searchableText.includes(query);
-      });
-    }
+    return businesses.slice(0, 12);
+  };
 
-    // Location filter
-    if (appliedFilters.location !== "all") {
-      results = results.filter((b) => {
-        const city = (b.city || "").toLowerCase();
-        return city.includes(appliedFilters.location.toLowerCase());
-      });
-    }
-
-    // Deals filter
-    if (appliedFilters.hasDeals) {
-      results = results.filter((b) => hasActiveDeals(b.id));
-    }
-
-    // Sort
-    switch (appliedFilters.sortBy) {
-      case "name_asc":
-        results.sort((a, b) =>
-          (a.business_name || "").localeCompare(b.business_name || "")
-        );
-        break;
-      case "rating_desc":
-        results.sort((a, b) => (b.average_rating || 0) - (a.average_rating || 0));
-        break;
-      case "reviews_desc":
-        results.sort((a, b) => (b.reviews_count || 0) - (a.reviews_count || 0));
-        break;
-      default:
-        // Relevance - prioritize featured and sponsors
-        results.sort((a, b) => {
-          if (a.is_featured && !b.is_featured) return -1;
-          if (!a.is_featured && b.is_featured) return 1;
-          if (a.is_lba_sponsor && !b.is_lba_sponsor) return -1;
-          if (!a.is_lba_sponsor && b.is_lba_sponsor) return 1;
-          return 0;
-        });
-    }
-
-    return results;
-  }, [businesses, categories, deals, searchQuery, appliedFilters]);
-
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    // Update URL with query param
-    const newUrl = `${createPageUrl("CategoryListing")}?slug=${slug}${
-      searchQuery ? `&query=${encodeURIComponent(searchQuery)}` : ""
-    }`;
-    window.history.pushState({}, "", newUrl);
-    setAppliedFilters({ ...filters });
+    if (!searchQuery.trim()) {
+      setSearchResults(null);
+      return;
+    }
+
+    setIsSearching(true);
+    setSearchResults(null);
+    setAgentResponse("");
+    setMatchedBusinesses([]);
+
+    try {
+      const conv = await base44.agents.createConversation({
+        agent_name: "DirectoryAssistant",
+        metadata: {
+          name: `Category Search: ${currentCategory?.name || 'All'}`,
+          description: "Search within category",
+          context: "category_page_search",
+          category_slug: slug,
+          category_name: currentCategory?.name
+        }
+      });
+
+      setConversation(conv);
+
+      const categoryContext = currentCategory 
+        ? `User is viewing the "${currentCategory.name}" category page.`
+        : "User is viewing all businesses.";
+
+      await base44.agents.addMessage(conv, {
+        role: "user",
+        content: `${categoryContext}\n\nUser search: ${searchQuery}`
+      });
+
+      const unsubscribe = base44.agents.subscribeToConversation(
+        conv.id,
+        (data) => {
+          const messages = data.messages || [];
+          const lastMessage = messages[messages.length - 1];
+          
+          if (lastMessage && lastMessage.role === "assistant") {
+            setAgentResponse(lastMessage.content);
+            const extractedBusinesses = extractBusinessesFromResponse(lastMessage.content);
+            setMatchedBusinesses(extractedBusinesses);
+            setSearchResults({
+              response: lastMessage.content,
+              businesses: extractedBusinesses
+            });
+            setIsSearching(false);
+          }
+        }
+      );
+
+      setTimeout(() => {
+        unsubscribe();
+      }, 30000);
+
+    } catch (error) {
+      console.error("Search failed:", error);
+      setIsSearching(false);
+      setAgentResponse("Sorry, I encountered an error while searching. Please try again.");
+    }
   };
 
-  const handleApplyFilters = () => {
-    setAppliedFilters({ ...filters });
-    setMobileFiltersOpen(false);
-  };
-
-  const handleResetFilters = () => {
-    const resetFilters = {
-      category: slug === "all" ? "all" : slug,
-      location: "all",
-      hasDeals: false,
-      sortBy: "relevance",
-    };
-    setFilters(resetFilters);
-    setAppliedFilters(resetFilters);
-    setSearchQuery("");
-    setMobileFiltersOpen(false);
+  const handleContinueInChat = () => {
+    const chatButton = document.querySelector('[aria-label="Open chat assistant"]');
+    if (chatButton) {
+      chatButton.click();
+    }
   };
 
   return (
@@ -210,94 +211,132 @@ export default function CategoryListing() {
           </p>
         </div>
 
-        {/* Search Bar */}
-        <form onSubmit={handleSearch} className="mb-8">
-          <div className="flex gap-2">
+        {/* AI Search Bar */}
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6 mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Sparkles className="w-5 h-5 text-cyan-600" />
+            <h2 className="text-lg font-semibold text-gray-900">
+              AI-Powered Search
+            </h2>
+          </div>
+          <form onSubmit={handleSearch} className="flex gap-3">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <Input
                 type="text"
-                placeholder="Search within this category..."
-                className="pl-10 pr-10"
+                placeholder={`Ask anything about ${currentCategory?.name || 'businesses'}, e.g. "open now", "with parking", "best rated"...`}
+                className="pl-10 h-12"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              )}
             </div>
-            <Button type="submit" className="bg-cyan-600 hover:bg-cyan-700">
-              Search
-            </Button>
-          </div>
-        </form>
-
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Filters Panel - Desktop */}
-          <aside className="hidden lg:block lg:w-72 flex-shrink-0">
-            <FiltersPanel
-              categories={categories}
-              filters={filters}
-              onFiltersChange={setFilters}
-              onApply={handleApplyFilters}
-              onReset={handleResetFilters}
-            />
-          </aside>
-
-          {/* Mobile Filters Button */}
-          <div className="lg:hidden">
-            <Button
-              onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-              variant="outline"
-              className="w-full mb-4"
+            <Button 
+              type="submit" 
+              className="bg-cyan-600 hover:bg-cyan-700 h-12 px-8"
+              disabled={isSearching}
             >
-              Filters {mobileFiltersOpen ? "▲" : "▼"}
+              {isSearching ? "Searching..." : "Search"}
             </Button>
-            {mobileFiltersOpen && (
-              <div className="mb-6">
-                <FiltersPanel
-                  categories={categories}
-                  filters={filters}
-                  onFiltersChange={setFilters}
-                  onApply={handleApplyFilters}
-                  onReset={handleResetFilters}
-                />
+          </form>
+          <p className="text-xs text-gray-500 mt-3">
+            💡 Try: "dairy restaurant", "open on Sunday", "with good reviews", "near Ridge Avenue"
+          </p>
+        </div>
+
+        {/* Loading State */}
+        {isSearching && (
+          <div className="bg-white rounded-xl shadow-md border border-gray-200 p-12 text-center">
+            <div className="inline-block w-12 h-12 border-4 border-cyan-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-lg text-gray-600">Searching for the best matches...</p>
+            <p className="text-sm text-gray-500 mt-2">Our AI assistant is analyzing your request</p>
+          </div>
+        )}
+
+        {/* Search Results */}
+        {searchResults && !isSearching && (
+          <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden mb-8">
+            {/* Agent Response */}
+            <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-cyan-50 to-blue-50">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900 mb-2">AI Assistant Response:</h3>
+                  <ReactMarkdown
+                    className="prose prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-cyan-600"
+                    components={{
+                      a: ({ children, ...props }) => (
+                        <a {...props} target="_blank" rel="noopener noreferrer" className="underline">
+                          {children}
+                        </a>
+                      ),
+                      p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                    }}
+                  >
+                    {agentResponse}
+                  </ReactMarkdown>
+                </div>
+              </div>
+            </div>
+
+            {/* Business Results */}
+            {matchedBusinesses.length > 0 && (
+              <div className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  {matchedBusinesses.length} Result{matchedBusinesses.length !== 1 ? 's' : ''} Found
+                </h3>
+                <div className="space-y-4">
+                  {matchedBusinesses.map((business) => (
+                    <BusinessCard
+                      key={business.id}
+                      business={business}
+                      categoryName={getCategoryName(business.category_id)}
+                      hasActiveDeals={hasActiveDeals(business.id)}
+                    />
+                  ))}
+                </div>
               </div>
             )}
+
+            {matchedBusinesses.length === 0 && (
+              <div className="p-8 text-center">
+                <Search className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-gray-600">No specific matches found</p>
+                <p className="text-sm text-gray-500 mt-1">Try refining your search or browse the full list below</p>
+              </div>
+            )}
+
+            {/* Continue in Chat */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200 text-center">
+              <Button
+                onClick={handleContinueInChat}
+                variant="outline"
+                className="gap-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                Continue this search in chat
+              </Button>
+            </div>
           </div>
+        )}
 
-          {/* Results Area */}
-          <div className="flex-1">
-            {/* Results Count & View Toggle */}
+        {/* Default View - Popular/Featured Businesses */}
+        {!searchResults && !isSearching && (
+          <div>
             <div className="flex items-center justify-between mb-6">
-              <p className="text-gray-600">
-                <span className="font-semibold text-gray-900">
-                  {filteredBusinesses.length}
-                </span>{" "}
-                business{filteredBusinesses.length !== 1 ? "es" : ""} found
-              </p>
-
-              <Tabs value={activeView} onValueChange={setActiveView}>
-                <TabsList>
-                  <TabsTrigger value="list" className="gap-2">
-                    <List className="w-4 h-4" />
-                    <span className="hidden sm:inline">List View</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="map" className="gap-2">
-                    <MapIcon className="w-4 h-4" />
-                    <span className="hidden sm:inline">Map View</span>
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {categoryBusinesses.length > 0 
+                    ? `Featured ${currentCategory?.name || 'Businesses'}` 
+                    : 'No businesses found'}
+                </h2>
+                <p className="text-gray-600 mt-1">
+                  {categoryBusinesses.length} business{categoryBusinesses.length !== 1 ? 'es' : ''} in this category
+                </p>
+              </div>
             </div>
 
-            {/* Loading State */}
             {businessesLoading && (
               <div className="text-center py-12">
                 <div className="inline-block w-8 h-8 border-4 border-cyan-600 border-t-transparent rounded-full animate-spin"></div>
@@ -305,28 +344,26 @@ export default function CategoryListing() {
               </div>
             )}
 
-            {/* Empty State */}
-            {!businessesLoading && filteredBusinesses.length === 0 && (
+            {!businessesLoading && categoryBusinesses.length === 0 && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Search className="w-8 h-8 text-gray-400" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  No listings match your search
+                  No businesses in this category yet
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Try changing filters or searching a different keyword.
+                  Check back soon or browse other categories
                 </p>
-                <Button onClick={handleResetFilters} variant="outline">
-                  Reset Filters
+                <Button asChild variant="outline">
+                  <Link to={createPageUrl("Home")}>Back to Home</Link>
                 </Button>
               </div>
             )}
 
-            {/* List View */}
-            {!businessesLoading && activeView === "list" && filteredBusinesses.length > 0 && (
+            {!businessesLoading && popularBusinesses.length > 0 && (
               <div className="space-y-4">
-                {filteredBusinesses.map((business) => (
+                {popularBusinesses.map((business) => (
                   <BusinessCard
                     key={business.id}
                     business={business}
@@ -334,18 +371,22 @@ export default function CategoryListing() {
                     hasActiveDeals={hasActiveDeals(business.id)}
                   />
                 ))}
+
+                {categoryBusinesses.length > popularBusinesses.length && (
+                  <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg p-6 text-center border border-cyan-200">
+                    <TrendingUp className="w-8 h-8 text-cyan-600 mx-auto mb-3" />
+                    <p className="text-gray-700 mb-2">
+                      <strong>{categoryBusinesses.length - popularBusinesses.length}</strong> more businesses available in this category
+                    </p>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Use the AI search above to find exactly what you're looking for!
+                    </p>
+                  </div>
+                )}
               </div>
             )}
-
-            {/* Map View */}
-            {!businessesLoading && activeView === "map" && filteredBusinesses.length > 0 && (
-              <MapView
-                businesses={filteredBusinesses}
-                getCategoryName={getCategoryName}
-              />
-            )}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
