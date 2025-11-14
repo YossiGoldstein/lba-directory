@@ -146,7 +146,7 @@ export default function Home() {
           </p>
 
           <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-8 sm:mb-16 px-2">
-            <div className="bg-white/95 backdrop-blur-sm rounded-full shadow-2xl overflow-hidden sm:p-3 flex flex-col sm:flex-row items-stretch sm:items-center sm:gap-3">
+            <div className="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-2xl overflow-hidden flex flex-col sm:flex-row items-stretch sm:items-center sm:gap-3 sm:p-3">
               <div className="flex items-center flex-1 px-4 py-4 sm:px-0 sm:py-0">
                 <Search className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 ml-0 sm:ml-4 flex-shrink-0" />
                 <input
@@ -157,14 +157,13 @@ export default function Home() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <Button 
+              <button
                 type="submit"
-                size="lg" 
-                className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-6 sm:px-10 py-4 sm:py-6 rounded-none sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto"
                 disabled={isSearching}
+                className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-6 sm:px-10 py-4 sm:py-6 sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSearching ? "Searching..." : "Search"}
-              </Button>
+              </button>
             </div>
             <p className="text-white/80 text-xs sm:text-sm mt-3 sm:mt-4 px-4">
               🤖 Powered by AI - Ask in English or Hebrew!
@@ -172,7 +171,7 @@ export default function Home() {
           </form>
 
           {/* Category Icons */}
-          <div className="flex flex-wrap justify-center gap-3 sm:gap-6 mb-8 px-2">
+          <div className="grid grid-cols-5 gap-3 sm:flex sm:flex-wrap sm:justify-center sm:gap-6 mb-8 px-2 max-w-2xl mx-auto">
             {categories.map((category) => {
               const IconComponent = category.icon;
               return (
