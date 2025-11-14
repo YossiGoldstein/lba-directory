@@ -25,14 +25,32 @@ export default function Layout({ children, currentPageName }) {
   const noHeaderFooterPages = ["Login", "Register", "ForgotPassword"];
   const showHeaderFooter = !noHeaderFooterPages.includes(currentPageName);
 
+  // Prepare page context for chat
+  const getPageContext = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    return {
+      page: currentPageName,
+      categorySlug: urlParams.get("slug"),
+      categoryName: urlParams.get("categoryName"),
+      businessId: urlParams.get("id"),
+      businessName: urlParams.get("businessName"),
+    };
+  };
+
   if (!showHeaderFooter) {
-    return <div className="min-h-screen bg-gray-50">{children}</div>;
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {children}
+        <ChatButton pageContext={getPageContext()} />
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 shadow-sm">
+      <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link to={createPageUrl("Home")} className="flex items-center gap-2">
@@ -203,8 +221,8 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </footer>
 
-      {/* Chat Assistant */}
-      <ChatButton />
+      {/* Chat Assistant with Page Context */}
+      <ChatButton pageContext={getPageContext()} />
     </div>
   );
 }
