@@ -15,6 +15,7 @@ import NotFound from './pages/NotFound';
 import Success from './pages/Success';
 import Error from './pages/Error';
 import FAQ from './pages/FAQ';
+import AdminDashboard from './pages/AdminDashboard';
 import Layout from './Layout.jsx';
 
 
@@ -36,6 +37,7 @@ export const PAGES = {
     "Success": Success,
     "Error": Error,
     "FAQ": FAQ,
+    "AdminDashboard": AdminDashboard,
 }
 
 export const pagesConfig = {
