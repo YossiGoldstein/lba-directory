@@ -171,7 +171,7 @@ export default function Home() {
               <Button 
                 type="submit"
                 size="lg" 
-                className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-6 sm:px-10 py-4 sm:py-6 rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto"
+                className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-6 sm:px-10 py-3 sm:py-6 rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto"
                 disabled={isSearching}
               >
                 {isSearching ? "Searching..." : "Search"}
