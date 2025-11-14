@@ -18,6 +18,8 @@ import ReviewCard from "../components/business/ReviewCard";
 import ReviewForm from "../components/business/ReviewForm";
 import DealsSection from "../components/business/DealsSection";
 import RelatedBusinesses from "../components/business/RelatedBusinesses";
+import AskAboutBusiness from "../components/business/AskAboutBusiness";
+import RelatedCategoriesSection from "../components/business/RelatedCategoriesSection";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { toast } from "sonner";
@@ -59,14 +61,22 @@ export default function BusinessListing() {
     enabled: !!businessId,
   });
 
+  // Fetch all categories
+  const { data: allCategories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const cats = await base44.entities.Category.list();
+      return cats.filter((c) => c.is_active);
+    },
+  });
+
   // Fetch category
   const { data: category } = useQuery({
     queryKey: ["category", business?.category_id],
     queryFn: async () => {
-      const categories = await base44.entities.Category.list();
-      return categories.find((c) => c.id === business.category_id);
+      return allCategories.find((c) => c.id === business.category_id);
     },
-    enabled: !!business?.category_id,
+    enabled: !!business?.category_id && allCategories.length > 0,
   });
 
   // Fetch deals
@@ -278,6 +288,15 @@ export default function BusinessListing() {
           </div>
         </div>
 
+        {/* AI Interaction Panel - Ask About This Business */}
+        <div className="mb-6">
+          <AskAboutBusiness 
+            business={business} 
+            category={category}
+            activeDeals={deals}
+          />
+        </div>
+
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column */}
@@ -365,6 +384,15 @@ export default function BusinessListing() {
           <div className="lg:col-span-1">
             <ContactCard business={business} />
           </div>
+        </div>
+
+        {/* Related Categories Section */}
+        <div className="mt-6">
+          <RelatedCategoriesSection
+            business={business}
+            category={category}
+            allCategories={allCategories}
+          />
         </div>
 
         {/* Reviews Section */}
