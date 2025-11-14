@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import ChatButton from "./components/chat/ChatButton";
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const loadUser = async () => {
@@ -21,6 +22,11 @@ export default function Layout({ children, currentPageName }) {
     };
     loadUser();
   }, []);
+
+  // Scroll to top on page navigation
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname, location.search]);
 
   const noHeaderFooterPages = ["Login", "Register", "ForgotPassword"];
   const showHeaderFooter = !noHeaderFooterPages.includes(currentPageName);
