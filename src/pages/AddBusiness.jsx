@@ -41,6 +41,7 @@ export default function AddBusiness() {
     opening_hours_text: "",
     opening_hours_json: null,
     use_structured_hours: true,
+    logo_url: "",
     gallery_images: [],
     deals: [],
   });
@@ -86,30 +87,37 @@ export default function AddBusiness() {
     // Validation
     if (currentStep === 0) {
       if (!formData.business_name.trim()) {
-        toast.error("Please enter a business name");
+        toast.error("נא להזין שם עסק");
         return;
       }
     }
 
     if (currentStep === 1) {
       if (!formData.category_id) {
-        toast.error("Please select a category");
+        toast.error("נא לבחור קטגוריה");
         return;
       }
     }
 
     if (currentStep === 2) {
       if (!formData.city.trim()) {
-        toast.error("City is required");
+        toast.error("עיר היא שדה חובה");
         return;
       }
       if (!formData.phone.trim()) {
-        toast.error("Phone number is required");
+        toast.error("מספר טלפון הוא שדה חובה");
         return;
       }
       // Validate phone format
       if (!/^[\d\s\-\(\)]+$/.test(formData.phone)) {
-        toast.error("Please enter a valid US phone number");
+        toast.error("נא להזין מספר טלפון תקין");
+        return;
+      }
+    }
+
+    if (currentStep === 4) {
+      if (!formData.logo_url) {
+        toast.error("נא להעלות לוגו של העסק לפני המעבר לשלב הבא");
         return;
       }
     }
@@ -127,6 +135,9 @@ export default function AddBusiness() {
     setIsSubmitting(true);
 
     try {
+      // Get current user for email
+      const user = await base44.auth.me();
+
       // Process tags
       const tagsArray = formData.tags
         .split(",")
@@ -153,6 +164,7 @@ export default function AddBusiness() {
           ? generateTextFromStructured(formData.opening_hours_json)
           : formData.opening_hours_text,
         opening_hours_json: formData.use_structured_hours ? formData.opening_hours_json : null,
+        logo_url: formData.logo_url,
         gallery_images: formData.gallery_images,
         status: "pending",
       };
@@ -176,20 +188,63 @@ export default function AddBusiness() {
         await Promise.all(dealPromises);
       }
 
+      // Send confirmation email
+      try {
+        await base44.integrations.Core.SendEmail({
+          to: user.email,
+          subject: "העסק שלך נשלח לאישור - LBA Directory",
+          body: `
+            <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #0891b2;">שלום ${user.full_name},</h2>
+              
+              <p>תודה שהצטרפת ל-LBA Directory!</p>
+              
+              <p>קיבלנו את פרטי העסק שלך:</p>
+              
+              <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h3 style="margin-top: 0; color: #0891b2;">📋 פרטי העסק שהוגש:</h3>
+                <p><strong>שם העסק:</strong> ${formData.business_name}</p>
+                <p><strong>קטגוריה:</strong> ${formData.category_name}</p>
+                <p><strong>טלפון:</strong> ${formData.phone}</p>
+                <p><strong>כתובת:</strong> ${formData.address_line1}, ${formData.city}</p>
+              </div>
+              
+              <p><strong>הצעד הבא:</strong></p>
+              <p>הצוות שלנו יבדוק את פרטי העסק תוך 1-2 ימי עסקים. לאחר האישור, העסק שלך יהיה זמין באתר והלקוחות יוכלו למצוא אותו.</p>
+              
+              <p>נעדכן אותך במייל ברגע שהעסק יאושר.</p>
+              
+              <p>אם יש לך שאלות, אל תהסס ליצור איתנו קשר.</p>
+              
+              <p style="margin-top: 30px;">בברכה,<br>צוות LBA Directory</p>
+              
+              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+              
+              <p style="font-size: 12px; color: #6b7280; text-align: center;">
+                LBA Directory - המדריך העסקי של Lakewood
+              </p>
+            </div>
+          `
+        });
+      } catch (emailError) {
+        console.error("Failed to send confirmation email:", emailError);
+        // Don't fail the whole process if email fails
+      }
+
       // Clear saved data
       localStorage.removeItem("addBusinessFormData");
 
       // Show success message
-      toast.success("Business submitted for approval!");
+      toast.success("העסק נשלח לאישור בהצלחה!");
 
-      // Redirect to business dashboard
+      // Redirect to success page with business details
       setTimeout(() => {
-        navigate(createPageUrl("BusinessDashboard"));
+        navigate(createPageUrl("BusinessDashboard") + "?submitted=true");
       }, 1500);
 
     } catch (error) {
       console.error("Failed to submit business:", error);
-      toast.error("Failed to submit business. Please try again.");
+      toast.error("השליחה נכשלה. נא לנסות שוב.");
       setIsSubmitting(false);
     }
   };
@@ -254,7 +309,7 @@ export default function AddBusiness() {
             className="gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back
+            חזרה
           </Button>
 
           {currentStep < TOTAL_STEPS - 1 ? (
@@ -262,7 +317,7 @@ export default function AddBusiness() {
               onClick={handleNext}
               className="bg-cyan-600 hover:bg-cyan-700 gap-2"
             >
-              Next
+              הבא
               <ArrowRight className="w-4 h-4" />
             </Button>
           ) : (
@@ -272,11 +327,11 @@ export default function AddBusiness() {
               disabled={isSubmitting}
             >
               {isSubmitting ? (
-                "Submitting..."
+                "שולח..."
               ) : (
                 <>
                   <CheckCircle className="w-4 h-4" />
-                  Submit for Approval
+                  שלח לאישור
                 </>
               )}
             </Button>
@@ -285,7 +340,7 @@ export default function AddBusiness() {
 
         {/* Helper Text */}
         <p className="text-center text-sm text-gray-500 mt-4">
-          Your progress is automatically saved
+          ההתקדמות נשמרת אוטומטית
         </p>
       </div>
     </div>
