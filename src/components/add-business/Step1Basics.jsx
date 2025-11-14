@@ -38,47 +38,59 @@ export default function Step1Basics({ data, onChange }) {
     setIsGenerating(true);
 
     try {
-      const prompt = `Please generate a professional business description.
+      const prompt = `Please generate a UNIQUE, professional business description.
 
 Business Name: ${data.business_name}
 Business Type: ${aiQuestions.businessType}
 Services Offered: ${aiQuestions.services}
 Unique Points: ${aiQuestions.uniquePoints || "Not specified"}
 Target Audience: ${aiQuestions.targetAudience.replace("_", " ")}
+City / Area: ${data.city || "Lakewood"}
 
 Guidelines:
-- Write in a professional, modest tone appropriate for the Lakewood Haredi community.
-- No non-kosher suggestions.
-- Avoid hype or slang.
-- Keep the description clear, attractive, and helpful.
-- Produce 2 versions: a short version (1–2 sentences) and a long version (4–6 sentences).
+- The description MUST be clearly tailored to THIS specific business. Do NOT reuse the same generic sentences across businesses.
+- Use the specific details about services, uniqueness, location, and audience.
+- Avoid generic marketing clichés like 'we pride ourselves', 'we are your #1 choice', 'top quality service' unless truly necessary.
+- Write in a modest, professional tone, appropriate for the Lakewood Haredi community.
+- No non-kosher suggestions, no inappropriate content.
+- Produce 2–3 different versions:
+  1) Short version: 1–2 sentences.
+  2) Medium version: 3–4 sentences.
+  3) Long version: 5–7 sentences.
+
+Each version must be phrased differently, not just slightly edited.
 
 Return the response as JSON with these keys:
-- short_description: the short version (1-2 sentences)
-- long_description: the long version (4-6 sentences)`;
+- short_version: the short version (1-2 sentences)
+- medium_version: the medium version (3-4 sentences)
+- long_version: the long version (5-7 sentences)`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt,
         response_json_schema: {
           type: "object",
           properties: {
-            short_description: { type: "string" },
-            long_description: { type: "string" }
+            short_version: { type: "string" },
+            medium_version: { type: "string" },
+            long_version: { type: "string" }
           }
         }
       });
 
+      // Map short version to short_description
+      // Map long version to long_description (you can change to medium if preferred)
       onChange({
         ...data,
-        short_description: response.short_description || data.short_description,
-        long_description: response.long_description || data.long_description,
+        short_description: response.short_version || data.short_description,
+        long_description: response.long_version || data.long_description,
         ai_business_type: aiQuestions.businessType,
         ai_services: aiQuestions.services,
         ai_unique_points: aiQuestions.uniquePoints,
-        ai_target_audience: aiQuestions.targetAudience
+        ai_target_audience: aiQuestions.targetAudience,
+        ai_medium_version: response.medium_version // Store medium version for reference
       });
 
-      toast.success("AI generated descriptions successfully!");
+      toast.success("AI generated unique descriptions successfully!");
     } catch (error) {
       console.error("AI generation failed:", error);
       toast.error("Failed to generate description. Please try again.");
@@ -190,7 +202,7 @@ Return the response as JSON with these keys:
               {isGenerating ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Generating descriptions...
+                  Generating unique descriptions...
                 </>
               ) : (
                 <>
@@ -213,7 +225,7 @@ Return the response as JSON with these keys:
             rows={2}
           />
           <p className="text-xs text-gray-500">
-            This will appear in search results and category listings
+            This will appear in search results and category listings. You can edit the AI-generated text.
           </p>
         </div>
 
@@ -224,13 +236,32 @@ Return the response as JSON with these keys:
             id="long_description"
             value={data.long_description || ""}
             onChange={(e) => onChange({ ...data, long_description: e.target.value })}
-            placeholder="Detailed business description for your public page (4-6 sentences)"
+            placeholder="Detailed business description for your public page (5-7 sentences)"
             rows={8}
           />
           <p className="text-xs text-gray-500">
-            Tell customers what makes your business special. You can edit the AI-generated description.
+            Tell customers what makes your business special. You can manually edit the AI-generated description.
           </p>
         </div>
+
+        {/* Show medium version if available */}
+        {data.ai_medium_version && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-sm font-medium text-blue-900 mb-2">
+              💡 Medium Version (Alternative)
+            </p>
+            <p className="text-sm text-blue-800 mb-3">
+              {data.ai_medium_version}
+            </p>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => onChange({ ...data, long_description: data.ai_medium_version })}
+            >
+              Use This Version Instead
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
