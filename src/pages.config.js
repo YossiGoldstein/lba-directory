@@ -14,6 +14,7 @@ import BusinessDashboard from './pages/BusinessDashboard';
 import NotFound from './pages/NotFound';
 import Success from './pages/Success';
 import Error from './pages/Error';
+import FAQ from './pages/FAQ';
 import Layout from './Layout.jsx';
 
 
@@ -34,6 +35,7 @@ export const PAGES = {
     "NotFound": NotFound,
     "Success": Success,
     "Error": Error,
+    "FAQ": FAQ,
 }
 
 export const pagesConfig = {
