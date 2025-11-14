@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ChevronRight, Sparkles, TrendingUp } from "lucide-react";
 import BusinessCard from "../components/category/BusinessCard";
+import RelatedCategories from "../components/category/RelatedCategories";
 import ReactMarkdown from "react-markdown";
 
 export default function CategoryListing() {
@@ -100,7 +101,7 @@ export default function CategoryListing() {
     const businesses = [];
     const responseLines = responseText.toLowerCase();
 
-    categoryBusinesses.forEach(business => {
+    allBusinesses.forEach(business => {
       const businessName = (business.business_name || "").toLowerCase();
       if (businessName && responseLines.includes(businessName)) {
         businesses.push(business);
@@ -175,6 +176,61 @@ export default function CategoryListing() {
     }
   };
 
+  const handleRelatedCategoryClick = async (category) => {
+    setIsSearching(true);
+    setSearchResults(null);
+    setAgentResponse("");
+    setMatchedBusinesses([]);
+
+    try {
+      const conv = await base44.agents.createConversation({
+        agent_name: "DirectoryAssistant",
+        metadata: {
+          name: `Related Category: ${category.name}`,
+          description: "Browse related category",
+          context: "related_category_click",
+          original_category: currentCategory?.name,
+          clicked_category: category.name
+        }
+      });
+
+      setConversation(conv);
+
+      await base44.agents.addMessage(conv, {
+        role: "user",
+        content: `User is on the "${currentCategory?.name || 'All'}" category page and clicked a related category: ${category.name}\n\nShow businesses from this related category.`
+      });
+
+      const unsubscribe = base44.agents.subscribeToConversation(
+        conv.id,
+        (data) => {
+          const messages = data.messages || [];
+          const lastMessage = messages[messages.length - 1];
+          
+          if (lastMessage && lastMessage.role === "assistant") {
+            setAgentResponse(lastMessage.content);
+            const extractedBusinesses = extractBusinessesFromResponse(lastMessage.content);
+            setMatchedBusinesses(extractedBusinesses);
+            setSearchResults({
+              response: lastMessage.content,
+              businesses: extractedBusinesses
+            });
+            setIsSearching(false);
+          }
+        }
+      );
+
+      setTimeout(() => {
+        unsubscribe();
+      }, 30000);
+
+    } catch (error) {
+      console.error("Related category search failed:", error);
+      setIsSearching(false);
+      setAgentResponse("Sorry, I encountered an error. Please try again.");
+    }
+  };
+
   const handleContinueInChat = () => {
     const chatButton = document.querySelector('[aria-label="Open chat assistant"]');
     if (chatButton) {
@@ -210,6 +266,16 @@ export default function CategoryListing() {
               : "Browse all listings in the directory"}
           </p>
         </div>
+
+        {/* Related Categories */}
+        {!searchResults && !isSearching && currentCategory && (
+          <RelatedCategories
+            currentCategory={currentCategory}
+            categories={categories}
+            businesses={allBusinesses}
+            onCategoryClick={handleRelatedCategoryClick}
+          />
+        )}
 
         {/* AI Search Bar */}
         <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6 mb-8">
