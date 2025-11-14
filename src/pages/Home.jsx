@@ -21,7 +21,6 @@ export default function Home() {
   const [allBusinesses, setAllBusinesses] = useState([]);
 
   useEffect(() => {
-    // Load businesses for matching
     const loadBusinesses = async () => {
       try {
         const bizList = await base44.entities.Business.list();
@@ -43,7 +42,6 @@ export default function Home() {
     setMatchedBusinesses([]);
 
     try {
-      // Create a temporary conversation with the agent
       const conv = await base44.agents.createConversation({
         agent_name: "DirectoryAssistant",
         metadata: {
@@ -55,13 +53,11 @@ export default function Home() {
 
       setConversation(conv);
 
-      // Send the search query to the agent
       await base44.agents.addMessage(conv, {
         role: "user",
         content: `Context: This is a search from the Home Page.\n\nUser search: ${searchQuery}`
       });
 
-      // Subscribe to conversation updates
       const unsubscribe = base44.agents.subscribeToConversation(
         conv.id,
         (data) => {
@@ -69,10 +65,7 @@ export default function Home() {
           const lastMessage = messages[messages.length - 1];
           
           if (lastMessage && lastMessage.role === "assistant") {
-            // Extract the response
             setAgentResponse(lastMessage.content);
-            
-            // Try to extract business references from the response
             const extractedBusinesses = extractBusinessesFromResponse(lastMessage.content);
             setMatchedBusinesses(extractedBusinesses);
             
@@ -86,7 +79,6 @@ export default function Home() {
         }
       );
 
-      // Cleanup subscription after 30 seconds
       setTimeout(() => {
         unsubscribe();
       }, 30000);
@@ -99,7 +91,6 @@ export default function Home() {
   };
 
   const extractBusinessesFromResponse = (responseText) => {
-    // Try to extract business names or IDs from the agent's response
     const businesses = [];
     const responseLines = responseText.toLowerCase();
 
@@ -110,12 +101,10 @@ export default function Home() {
       }
     });
 
-    // Limit to top 6 results
     return businesses.slice(0, 6);
   };
 
   const handleContinueInChat = () => {
-    // Trigger the chat button to open with current conversation
     const chatButton = document.querySelector('[aria-label="Open chat assistant"]');
     if (chatButton) {
       chatButton.click();
@@ -157,13 +146,13 @@ export default function Home() {
           </p>
 
           <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-8 sm:mb-16 px-2">
-            <div className="bg-white/95 backdrop-blur-sm rounded-full shadow-2xl p-2 sm:p-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-              <div className="flex items-center flex-1 px-3 sm:px-0">
+            <div className="bg-white/95 backdrop-blur-sm rounded-full shadow-2xl overflow-hidden sm:p-3 flex flex-col sm:flex-row items-stretch sm:items-center sm:gap-3">
+              <div className="flex items-center flex-1 px-4 py-4 sm:px-0 sm:py-0">
                 <Search className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 ml-0 sm:ml-4 flex-shrink-0" />
                 <input
                   type="text"
                   placeholder="Search: 'kosher restaurant', 'plumber'..."
-                  className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 text-sm sm:text-lg px-2 py-2 sm:py-0"
+                  className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 text-sm sm:text-lg px-2 py-0"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -171,7 +160,7 @@ export default function Home() {
               <Button 
                 type="submit"
                 size="lg" 
-                className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-6 sm:px-10 py-3 sm:py-6 rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto"
+                className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-6 sm:px-10 py-4 sm:py-6 rounded-none sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto"
                 disabled={isSearching}
               >
                 {isSearching ? "Searching..." : "Search"}
