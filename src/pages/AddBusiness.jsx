@@ -188,6 +188,9 @@ export default function AddBusiness() {
         await Promise.all(dealPromises);
       }
 
+      // Get the full dashboard URL
+      const dashboardUrl = `${window.location.origin}${createPageUrl("BusinessDashboard")}`;
+
       // Send confirmation email
       try {
         await base44.integrations.Core.SendEmail({
@@ -214,6 +217,32 @@ export default function AddBusiness() {
               
               <p>נעדכן אותך במייל ברגע שהעסק יאושר.</p>
               
+              <div style="background: #ecfccb; border: 2px solid #84cc16; padding: 20px; border-radius: 8px; margin: 25px 0;">
+                <h3 style="margin-top: 0; color: #365314;">✏️ ניהול העסק שלך</h3>
+                <p style="margin-bottom: 15px;">אתה יכול בכל זמן לעדכן, לערוך ולשנות את פרטי העסק שלך דרך הדשבורד העסקי.</p>
+                
+                <p style="margin-bottom: 10px;"><strong>מה אפשר לעשות בדשבורד?</strong></p>
+                <ul style="margin: 10px 0; padding-right: 20px;">
+                  <li>✅ עדכון פרטי העסק (כתובת, טלפון, שעות פתיחה)</li>
+                  <li>✅ הוספה ועריכת תמונות וגלריה</li>
+                  <li>✅ יצירת ועדכון מבצעים והנחות</li>
+                  <li>✅ צפייה בביקורות ומענה ללקוחות</li>
+                  <li>✅ שימוש בעוזר AI לשיפור התיאור</li>
+                </ul>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                  <a href="${dashboardUrl}" 
+                     style="display: inline-block; background: #0891b2; color: white; padding: 12px 30px; 
+                            text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                    עבור לדשבורד העסקי שלי
+                  </a>
+                </div>
+              </div>
+              
+              <p style="font-size: 14px; color: #6b7280; margin-top: 20px;">
+                💡 <strong>טיפ:</strong> תוכל להיכנס לדשבורד גם דרך האתר בכל זמן, פשוט התחבר עם המייל שלך.
+              </p>
+              
               <p>אם יש לך שאלות, אל תהסס ליצור איתנו קשר.</p>
               
               <p style="margin-top: 30px;">בברכה,<br>צוות LBA Directory</p>
@@ -228,7 +257,6 @@ export default function AddBusiness() {
         });
       } catch (emailError) {
         console.error("Failed to send confirmation email:", emailError);
-        // Don't fail the whole process if email fails
       }
 
       // Clear saved data
@@ -290,17 +318,13 @@ export default function AddBusiness() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Progress Bar */}
       <WizardProgress currentStep={currentStep} totalSteps={TOTAL_STEPS} />
 
-      {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Step Content */}
         <div className="mb-8">
           {renderStep()}
         </div>
 
-        {/* Navigation Buttons */}
         <div className="flex items-center justify-between">
           <Button
             onClick={handleBack}
@@ -338,7 +362,6 @@ export default function AddBusiness() {
           )}
         </div>
 
-        {/* Helper Text */}
         <p className="text-center text-sm text-gray-500 mt-4">
           ההתקדמות נשמרת אוטומטית
         </p>
