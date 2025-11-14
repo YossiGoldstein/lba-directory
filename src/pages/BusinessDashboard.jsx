@@ -53,6 +53,16 @@ export default function BusinessDashboard() {
     enabled: !!business?.category_id,
   });
 
+  // Fetch deals for this business
+  const { data: deals = [] } = useQuery({
+    queryKey: ["businessDeals", business?.id],
+    queryFn: async () => {
+      const allDeals = await base44.entities.Deal.list();
+      return allDeals.filter(d => d.business_id === business.id);
+    },
+    enabled: !!business?.id,
+  });
+
   const tabs = [
     { id: "overview", label: "Overview", icon: BarChart3 },
     { id: "edit", label: "Edit Business Info", icon: Edit },
@@ -62,6 +72,30 @@ export default function BusinessDashboard() {
     { id: "reviews", label: "Reviews", icon: MessageSquare },
     { id: "ai-assistant", label: "AI Assistant", icon: Sparkles },
   ];
+
+  const handleApplyToDescription = async (text, field) => {
+    try {
+      const updateData = field === 'short' 
+        ? { short_description: text }
+        : { long_description: text };
+      
+      await base44.entities.Business.update(business.id, updateData);
+      await refetchBusiness();
+      setActiveTab("edit");
+    } catch (error) {
+      console.error("Failed to apply description:", error);
+    }
+  };
+
+  const handleApplyToTags = async (tags) => {
+    try {
+      await base44.entities.Business.update(business.id, { tags });
+      await refetchBusiness();
+      setActiveTab("edit");
+    } catch (error) {
+      console.error("Failed to apply tags:", error);
+    }
+  };
 
   if (isLoading || businessLoading) {
     return (
@@ -167,14 +201,9 @@ export default function BusinessDashboard() {
             <AiAssistantTab
               business={business}
               category={category}
-              onApplyToDescription={(text) => {
-                setActiveTab("edit");
-                // Could auto-fill description here if needed
-              }}
-              onApplyToDeals={(text) => {
-                setActiveTab("deals");
-                // Could auto-create deal here if needed
-              }}
+              deals={deals}
+              onApplyToDescription={handleApplyToDescription}
+              onApplyToTags={handleApplyToTags}
             />
           )}
         </div>
