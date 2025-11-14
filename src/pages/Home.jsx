@@ -138,7 +138,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[70vh] sm:min-h-[85vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=1920&h=1080&fit=crop" 
@@ -148,52 +148,54 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 via-cyan-800/60 to-blue-900/70"></div>
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
-          <h1 className="text-5xl md:text-7xl font-bold mb-4 text-white drop-shadow-2xl">
+        <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-12 sm:py-20">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-3 sm:mb-4 text-white drop-shadow-2xl leading-tight">
             Comprehensive business directory
           </h1>
-          <p className="text-2xl md:text-3xl text-white mb-12 font-light">
+          <p className="text-lg sm:text-2xl md:text-3xl text-white mb-8 sm:mb-12 font-light px-4">
             Your search starts (and ends) here
           </p>
 
-          <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-16">
-            <div className="bg-white/95 backdrop-blur-sm rounded-full shadow-2xl p-3 flex items-center gap-3">
-              <Search className="w-6 h-6 text-gray-400 ml-4" />
-              <input
-                type="text"
-                placeholder="Ask anything: 'kosher restaurant in Lakewood', 'plumber near me', etc."
-                className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 text-lg px-2"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+          <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-8 sm:mb-16 px-2">
+            <div className="bg-white/95 backdrop-blur-sm rounded-full shadow-2xl p-2 sm:p-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+              <div className="flex items-center flex-1 px-3 sm:px-0">
+                <Search className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 ml-0 sm:ml-4 flex-shrink-0" />
+                <input
+                  type="text"
+                  placeholder="Search: 'kosher restaurant', 'plumber'..."
+                  className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 text-sm sm:text-lg px-2 py-2 sm:py-0"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
               <Button 
                 type="submit"
                 size="lg" 
-                className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-10 py-6 rounded-full font-semibold shadow-lg"
+                className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-6 sm:px-10 py-4 sm:py-6 rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto"
                 disabled={isSearching}
               >
                 {isSearching ? "Searching..." : "Search"}
               </Button>
             </div>
-            <p className="text-white/80 text-sm mt-4">
-              🤖 Powered by AI - Ask in English or Hebrew, and get smart results!
+            <p className="text-white/80 text-xs sm:text-sm mt-3 sm:mt-4 px-4">
+              🤖 Powered by AI - Ask in English or Hebrew!
             </p>
           </form>
 
           {/* Category Icons */}
-          <div className="flex flex-wrap justify-center gap-6 mb-8">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-6 mb-8 px-2">
             {categories.map((category) => {
               const IconComponent = category.icon;
               return (
                 <Link
                   key={category.id}
                   to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
-                  className="flex flex-col items-center gap-2 group"
+                  className="flex flex-col items-center gap-1 sm:gap-2 group"
                 >
-                  <div className="w-20 h-20 rounded-full border-3 border-white/80 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
-                    <IconComponent className="w-9 h-9 text-white" strokeWidth={1.5} />
+                  <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full border-2 sm:border-3 border-white/80 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
+                    <IconComponent className="w-6 h-6 sm:w-9 sm:h-9 text-white" strokeWidth={1.5} />
                   </div>
-                  <span className="text-white text-sm font-medium">{category.name}</span>
+                  <span className="text-white text-xs sm:text-sm font-medium">{category.name}</span>
                 </Link>
               );
             })}
@@ -212,29 +214,29 @@ export default function Home() {
       )}
 
       {/* About LBA Directory Teaser */}
-      <section className="py-16 bg-gradient-to-br from-gray-50 to-white">
+      <section className="py-12 sm:py-16 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 sm:mb-6">
             About LBA Directory
           </h2>
-          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed mb-8">
-            <p className="mb-4">
+          <div className="prose prose-sm sm:prose-lg max-w-none text-gray-700 leading-relaxed mb-6 sm:mb-8 space-y-3 sm:space-y-4">
+            <p>
               Lakewood is growing fast — and with thousands of businesses, finding what you need can be overwhelming. LBA Directory is your AI-powered shopping assistant, built for the Lakewood community.
             </p>
-            <p className="mb-4">
+            <p>
               Just ask in your own words — <span className="italic text-cyan-700">"dairy restaurant open now,"</span> <span className="italic text-cyan-700">"phone repair,"</span> <span className="italic text-cyan-700">"sheitel stylist,"</span> <span className="italic text-cyan-700">"deals today"</span> — and our assistant instantly finds the best match.
             </p>
-            <p className="mb-4">
+            <p>
               Create a free account to bookmark favorites, leave reviews, get exclusive deals, and enjoy member giveaways.
             </p>
-            <p className="text-xl font-semibold text-gray-900">
+            <p className="text-lg sm:text-xl font-semibold text-gray-900">
               LBA Directory — local shopping made simple.
             </p>
           </div>
           <Button
             asChild
             size="lg"
-            className="bg-cyan-600 hover:bg-cyan-700 px-8 py-6 text-lg"
+            className="bg-cyan-600 hover:bg-cyan-700 px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg"
           >
             <Link to={createPageUrl("AboutUs")}>
               Learn More About Us
@@ -244,57 +246,57 @@ export default function Home() {
       </section>
 
       {/* Blue Banner */}
-      <section className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-400 py-8">
+      <section className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-400 py-6 sm:py-8">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-2xl md:text-3xl font-semibold text-white">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white leading-tight">
             Bringing all Lakewood's Business Information to one place
           </h2>
         </div>
       </section>
 
       {/* Shopper Benefits */}
-      <section className="py-20 bg-gradient-to-br from-cyan-600 to-blue-600 text-white">
+      <section className="py-12 sm:py-20 bg-gradient-to-br from-cyan-600 to-blue-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-5xl font-bold mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 sm:mb-6">
                 For Shoppers
               </h2>
-              <p className="text-xl text-cyan-50 mb-8">
+              <p className="text-base sm:text-xl text-cyan-50 mb-6 sm:mb-8">
                 Discover the best local businesses, save your favorites, and never miss a deal
               </p>
-              <div className="space-y-4 mb-8">
+              <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Heart className="w-5 h-5" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg mb-1">Save Your Favorites</h3>
-                    <p className="text-cyan-50">Keep track of businesses you love</p>
+                    <h3 className="font-semibold text-base sm:text-lg mb-1">Save Your Favorites</h3>
+                    <p className="text-cyan-50 text-sm sm:text-base">Keep track of businesses you love</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Star className="w-5 h-5" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Star className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg mb-1">Post Reviews</h3>
-                    <p className="text-cyan-50">Share your experiences with the community</p>
+                    <h3 className="font-semibold text-base sm:text-lg mb-1">Post Reviews</h3>
+                    <p className="text-cyan-50 text-sm sm:text-base">Share your experiences with the community</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="w-5 h-5" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg mb-1">Get Exclusive Deals</h3>
-                    <p className="text-cyan-50">Access special promotions and discounts</p>
+                    <h3 className="font-semibold text-base sm:text-lg mb-1">Get Exclusive Deals</h3>
+                    <p className="text-cyan-50 text-sm sm:text-base">Access special promotions and discounts</p>
                   </div>
                 </div>
               </div>
               <Button 
                 size="lg"
-                className="bg-white text-cyan-700 hover:bg-cyan-50 px-8 py-6 text-lg font-semibold"
+                className="bg-white text-cyan-700 hover:bg-cyan-50 px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-semibold w-full sm:w-auto"
                 asChild
               >
                 <Link to={createPageUrl("Register")}>
@@ -329,9 +331,9 @@ export default function Home() {
       </section>
 
       {/* Business Benefits */}
-      <section className="py-20 bg-gradient-to-br from-blue-700 to-blue-800 text-white">
+      <section className="py-12 sm:py-20 bg-gradient-to-br from-blue-700 to-blue-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div className="hidden lg:block">
               <div className="bg-blue-600 bg-opacity-30 rounded-2xl p-8 backdrop-blur-sm">
                 <div className="grid grid-cols-2 gap-4">
@@ -355,48 +357,48 @@ export default function Home() {
               </div>
             </div>
             <div>
-              <h2 className="text-3xl md:text-5xl font-bold mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 sm:mb-6">
                 For Business Owners
               </h2>
-              <p className="text-xl text-blue-50 mb-8">
+              <p className="text-base sm:text-xl text-blue-50 mb-6 sm:mb-8">
                 Grow your business and reach more customers in the Lakewood community
               </p>
-              <div className="space-y-4 mb-8">
+              <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="w-5 h-5" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg mb-1">Increase Visibility</h3>
-                    <p className="text-blue-50">Get discovered by thousands of local shoppers</p>
+                    <h3 className="font-semibold text-base sm:text-lg mb-1">Increase Visibility</h3>
+                    <p className="text-blue-50 text-sm sm:text-base">Get discovered by thousands of local shoppers</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Users className="w-5 h-5" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Users className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg mb-1">Connect with Customers</h3>
-                    <p className="text-blue-50">Build relationships and grow your customer base</p>
+                    <h3 className="font-semibold text-base sm:text-lg mb-1">Connect with Customers</h3>
+                    <p className="text-blue-50 text-sm sm:text-base">Build relationships and grow your customer base</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Sparkles className="w-5 h-5" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg mb-1">Promote Your Deals</h3>
-                    <p className="text-blue-50">Feature special offers and promotions</p>
+                    <h3 className="font-semibold text-base sm:text-lg mb-1">Promote Your Deals</h3>
+                    <p className="text-blue-50 text-sm sm:text-base">Feature special offers and promotions</p>
                   </div>
                 </div>
               </div>
               <Button 
                 size="lg"
-                className="bg-white text-blue-700 hover:bg-blue-50 px-8 py-6 text-lg font-semibold"
+                className="bg-white text-blue-700 hover:bg-blue-50 px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-semibold w-full sm:w-auto"
                 asChild
               >
                 <Link to={createPageUrl("AddBusiness")}>
-                  <ArrowRight className="w-5 h-5 mr-2" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Add Your Business
                 </Link>
               </Button>
@@ -406,74 +408,74 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section className="py-20 bg-white">
+      <section className="py-12 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
               How It Works
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               Getting started with LBA Directory is simple and straightforward
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             <div className="text-center">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center shadow-lg">
-                <Search className="w-12 h-12" />
+              <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 sm:mb-6 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center shadow-lg">
+                <Search className="w-10 h-10 sm:w-12 sm:h-12" />
               </div>
-              <div className="inline-block px-3 py-1 bg-gray-900 text-white text-sm font-bold rounded-full mb-4">
+              <div className="inline-block px-3 py-1 bg-gray-900 text-white text-xs sm:text-sm font-bold rounded-full mb-3 sm:mb-4">
                 Step 1
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
                 Search the Directory
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 Find local businesses by category, keyword, or location.
               </p>
             </div>
 
             <div className="text-center">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center shadow-lg">
-                <Sparkles className="w-12 h-12" />
+              <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 sm:mb-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center shadow-lg">
+                <Sparkles className="w-10 h-10 sm:w-12 sm:h-12" />
               </div>
-              <div className="inline-block px-3 py-1 bg-gray-900 text-white text-sm font-bold rounded-full mb-4">
+              <div className="inline-block px-3 py-1 bg-gray-900 text-white text-xs sm:text-sm font-bold rounded-full mb-3 sm:mb-4">
                 Step 2
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
                 Discover Deals
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 See the latest sales and promotions from local shops.
               </p>
             </div>
 
             <div className="text-center">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shadow-lg">
-                <Heart className="w-12 h-12" />
+              <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 sm:mb-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shadow-lg">
+                <Heart className="w-10 h-10 sm:w-12 sm:h-12" />
               </div>
-              <div className="inline-block px-3 py-1 bg-gray-900 text-white text-sm font-bold rounded-full mb-4">
+              <div className="inline-block px-3 py-1 bg-gray-900 text-white text-xs sm:text-sm font-bold rounded-full mb-3 sm:mb-4">
                 Step 3
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
                 Save & Review
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 Create an account to save favorites and leave reviews.
               </p>
             </div>
 
             <div className="text-center">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shadow-lg">
-                <TrendingUp className="w-12 h-12" />
+              <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 sm:mb-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shadow-lg">
+                <TrendingUp className="w-10 h-10 sm:w-12 sm:h-12" />
               </div>
-              <div className="inline-block px-3 py-1 bg-gray-900 text-white text-sm font-bold rounded-full mb-4">
+              <div className="inline-block px-3 py-1 bg-gray-900 text-white text-xs sm:text-sm font-bold rounded-full mb-3 sm:mb-4">
                 Step 4
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
                 Grow Your Business
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 Business owners can list and promote their services.
               </p>
             </div>
@@ -482,30 +484,30 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-br from-cyan-600 via-blue-700 to-blue-800 text-white">
+      <section className="py-12 sm:py-20 bg-gradient-to-br from-cyan-600 via-blue-700 to-blue-800 text-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 sm:mb-6">
             Ready to Get Started?
           </h2>
-          <p className="text-xl md:text-2xl text-cyan-50 mb-12 max-w-3xl mx-auto">
+          <p className="text-base sm:text-xl md:text-2xl text-cyan-50 mb-8 sm:mb-12 max-w-3xl mx-auto">
             Join the Lakewood Business Alliance Directory today
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <Button 
               size="lg"
-              className="bg-white text-blue-900 hover:bg-cyan-50 px-8 py-6 text-lg font-semibold shadow-xl"
+              className="bg-white text-blue-900 hover:bg-cyan-50 px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-semibold shadow-xl w-full sm:w-auto"
               asChild
             >
               <Link to={createPageUrl("AddBusiness")}>
-                <ArrowRight className="w-5 h-5 mr-2" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Add Your Business
               </Link>
             </Button>
             <Button 
               size="lg"
               variant="outline"
-              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-6 text-lg font-semibold"
+              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-900 px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-semibold w-full sm:w-auto"
               asChild
             >
               <Link to={createPageUrl("Register")}>
@@ -514,9 +516,9 @@ export default function Home() {
             </Button>
           </div>
 
-          <div className="mt-16 pt-8 border-t border-cyan-500">
-            <p className="text-cyan-100 mb-4">Trusted by the Lakewood community</p>
-            <div className="flex flex-wrap justify-center gap-8 text-sm text-cyan-200">
+          <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-cyan-500">
+            <p className="text-cyan-100 mb-3 sm:mb-4 text-sm sm:text-base">Trusted by the Lakewood community</p>
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-cyan-200">
               <div>✓ Free Basic Listings</div>
               <div>✓ Verified Reviews</div>
               <div>✓ Local Community</div>
