@@ -67,6 +67,9 @@ export default function Layout({ children, currentPageName }) {
               <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                 About
               </Link>
+              <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
+                FAQ
+              </Link>
               <Link to={createPageUrl("AddBusiness")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                 Add Business
               </Link>
@@ -118,6 +121,9 @@ export default function Layout({ children, currentPageName }) {
                 </Link>
                 <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-cyan-600 font-medium">
                   About
+                </Link>
+                <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-cyan-600 font-medium">
+                  FAQ
                 </Link>
                 <Link to={createPageUrl("AddBusiness")} className="text-gray-700 hover:text-cyan-600 font-medium">
                   Add Business
@@ -181,6 +187,11 @@ export default function Layout({ children, currentPageName }) {
                 <li>
                   <Link to={createPageUrl("AboutUs")} className="text-sm hover:text-cyan-400 transition-colors">
                     About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link to={createPageUrl("FAQ")} className="text-sm hover:text-cyan-400 transition-colors">
+                    FAQ
                   </Link>
                 </li>
                 <li>
