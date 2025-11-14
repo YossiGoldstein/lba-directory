@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { 
   Search, MapPin, TrendingUp, Users, Star, 
@@ -8,14 +9,117 @@ import {
   Car, Book, Sparkles, PartyPopper, GraduationCap, 
   HandHeart, ArrowRight, Heart
 } from "lucide-react";
+import SearchResultsPanel from "../components/home/SearchResultsPanel";
 
 export default function Home() {
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [location, setLocation] = React.useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState(null);
+  const [agentResponse, setAgentResponse] = useState("");
+  const [matchedBusinesses, setMatchedBusinesses] = useState([]);
+  const [conversation, setConversation] = useState(null);
+  const [allBusinesses, setAllBusinesses] = useState([]);
 
-  const handleSearch = (e) => {
+  useEffect(() => {
+    // Load businesses for matching
+    const loadBusinesses = async () => {
+      try {
+        const bizList = await base44.entities.Business.list();
+        setAllBusinesses(bizList.filter(b => b.status === "approved"));
+      } catch (error) {
+        console.error("Failed to load businesses:", error);
+      }
+    };
+    loadBusinesses();
+  }, []);
+
+  const handleSearch = async (e) => {
     e.preventDefault();
-    window.location.href = createPageUrl(`CategoryListing?q=${searchQuery}&location=${location}`);
+    if (!searchQuery.trim()) return;
+
+    setIsSearching(true);
+    setSearchResults(null);
+    setAgentResponse("");
+    setMatchedBusinesses([]);
+
+    try {
+      // Create a temporary conversation with the agent
+      const conv = await base44.agents.createConversation({
+        agent_name: "DirectoryAssistant",
+        metadata: {
+          name: "Home Page Search",
+          description: "Search from home page",
+          context: "home_page_search"
+        }
+      });
+
+      setConversation(conv);
+
+      // Send the search query to the agent
+      await base44.agents.addMessage(conv, {
+        role: "user",
+        content: `Context: This is a search from the Home Page.\n\nUser search: ${searchQuery}`
+      });
+
+      // Subscribe to conversation updates
+      const unsubscribe = base44.agents.subscribeToConversation(
+        conv.id,
+        (data) => {
+          const messages = data.messages || [];
+          const lastMessage = messages[messages.length - 1];
+          
+          if (lastMessage && lastMessage.role === "assistant") {
+            // Extract the response
+            setAgentResponse(lastMessage.content);
+            
+            // Try to extract business references from the response
+            const extractedBusinesses = extractBusinessesFromResponse(lastMessage.content);
+            setMatchedBusinesses(extractedBusinesses);
+            
+            setSearchResults({
+              response: lastMessage.content,
+              businesses: extractedBusinesses
+            });
+            
+            setIsSearching(false);
+          }
+        }
+      );
+
+      // Cleanup subscription after 30 seconds
+      setTimeout(() => {
+        unsubscribe();
+      }, 30000);
+
+    } catch (error) {
+      console.error("Search failed:", error);
+      setIsSearching(false);
+      setAgentResponse("Sorry, I encountered an error while searching. Please try again.");
+    }
+  };
+
+  const extractBusinessesFromResponse = (responseText) => {
+    // Try to extract business names or IDs from the agent's response
+    const businesses = [];
+    const responseLines = responseText.toLowerCase();
+
+    allBusinesses.forEach(business => {
+      const businessName = (business.business_name || "").toLowerCase();
+      if (businessName && responseLines.includes(businessName)) {
+        businesses.push(business);
+      }
+    });
+
+    // Limit to top 6 results
+    return businesses.slice(0, 6);
+  };
+
+  const handleContinueInChat = () => {
+    // Trigger the chat button to open with current conversation
+    const chatButton = document.querySelector('[aria-label="Open chat assistant"]');
+    if (chatButton) {
+      chatButton.click();
+    }
   };
 
   const categories = [
@@ -33,9 +137,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section - Large */}
+      {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
-        {/* Background Image with Blur */}
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=1920&h=1080&fit=crop" 
@@ -55,10 +158,11 @@ export default function Home() {
 
           <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-16">
             <div className="bg-white/95 backdrop-blur-sm rounded-full shadow-2xl p-3 flex items-center gap-3">
+              <Search className="w-6 h-6 text-gray-400 ml-4" />
               <input
                 type="text"
-                placeholder="Enter keyword or business name"
-                className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 text-lg px-6"
+                placeholder="Ask anything: 'kosher restaurant in Lakewood', 'plumber near me', etc."
+                className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 text-lg px-2"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -66,13 +170,17 @@ export default function Home() {
                 type="submit"
                 size="lg" 
                 className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-10 py-6 rounded-full font-semibold shadow-lg"
+                disabled={isSearching}
               >
-                Search
+                {isSearching ? "Searching..." : "Search"}
               </Button>
             </div>
+            <p className="text-white/80 text-sm mt-4">
+              🤖 Powered by AI - Ask in English or Hebrew, and get smart results!
+            </p>
           </form>
 
-          {/* Category Icons - Circular Outline Style */}
+          {/* Category Icons */}
           <div className="flex flex-wrap justify-center gap-6 mb-8">
             {categories.map((category) => {
               const IconComponent = category.icon;
@@ -92,6 +200,16 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Search Results */}
+      {(isSearching || searchResults) && (
+        <SearchResultsPanel
+          agentResponse={agentResponse}
+          businesses={matchedBusinesses}
+          onContinueInChat={handleContinueInChat}
+          isLoading={isSearching}
+        />
+      )}
 
       {/* Blue Banner */}
       <section className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-400 py-8">
