@@ -5,30 +5,57 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Sparkles, Loader2, Info } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Step1Basics({ data, onChange }) {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [aiQuestions, setAiQuestions] = useState({
+    businessType: data.ai_business_type || "",
+    services: data.ai_services || "",
+    uniquePoints: data.ai_unique_points || "",
+    targetAudience: data.ai_target_audience || "general_community"
+  });
 
   const handleAIHelp = async () => {
+    // Validation
+    if (!data.business_name?.trim()) {
+      toast.error("Please enter a business name first");
+      return;
+    }
+
+    if (!aiQuestions.businessType.trim()) {
+      toast.error("Please specify your business type");
+      return;
+    }
+
+    if (!aiQuestions.services.trim()) {
+      toast.error("Please describe your services/products");
+      return;
+    }
+
     setIsGenerating(true);
 
     try {
-      const prompt = `AI, please help write or improve the business description for:
-${data.business_name || "[New Business]"}
+      const prompt = `Please generate a professional business description.
 
-Target audience: Lakewood Haredi community.
-Tone: modest, professional, and appropriate.
-Keep it kosher and culturally sensitive.
+Business Name: ${data.business_name}
+Business Type: ${aiQuestions.businessType}
+Services Offered: ${aiQuestions.services}
+Unique Points: ${aiQuestions.uniquePoints || "Not specified"}
+Target Audience: ${aiQuestions.targetAudience.replace("_", " ")}
 
-Please provide:
-1. A short description (1-2 sentences) suitable for search results
-2. A longer, detailed description (2-3 paragraphs) for the business page
+Guidelines:
+- Write in a professional, modest tone appropriate for the Lakewood Haredi community.
+- No non-kosher suggestions.
+- Avoid hype or slang.
+- Keep the description clear, attractive, and helpful.
+- Produce 2 versions: a short version (1–2 sentences) and a long version (4–6 sentences).
 
-Format as:
-SHORT: [short description]
-LONG: [long description]`;
+Return the response as JSON with these keys:
+- short_description: the short version (1-2 sentences)
+- long_description: the long version (4-6 sentences)`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt,
@@ -45,9 +72,13 @@ LONG: [long description]`;
         ...data,
         short_description: response.short_description || data.short_description,
         long_description: response.long_description || data.long_description,
+        ai_business_type: aiQuestions.businessType,
+        ai_services: aiQuestions.services,
+        ai_unique_points: aiQuestions.uniquePoints,
+        ai_target_audience: aiQuestions.targetAudience
       });
 
-      toast.success("AI generated descriptions!");
+      toast.success("AI generated descriptions successfully!");
     } catch (error) {
       console.error("AI generation failed:", error);
       toast.error("Failed to generate description. Please try again.");
@@ -74,26 +105,101 @@ LONG: [long description]`;
           />
         </div>
 
-        {/* AI Help Button */}
-        <div className="flex justify-end">
-          <Button
-            onClick={handleAIHelp}
-            variant="outline"
-            className="gap-2"
-            disabled={isGenerating}
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-4 h-4" />
-                Let AI help write my description
-              </>
-            )}
-          </Button>
+        {/* AI Questionnaire Section */}
+        <div className="border-t pt-6 space-y-4">
+          <div className="flex items-start gap-2 bg-cyan-50 border border-cyan-200 rounded-lg p-4">
+            <Info className="w-5 h-5 text-cyan-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-cyan-900 mb-1">
+                Help AI Write Your Description
+              </p>
+              <p className="text-xs text-cyan-700">
+                Answer these quick questions to get a professional, tailored business description
+              </p>
+            </div>
+          </div>
+
+          {/* Business Type */}
+          <div className="space-y-2">
+            <Label htmlFor="businessType">
+              What type of business is this? *
+            </Label>
+            <Input
+              id="businessType"
+              value={aiQuestions.businessType}
+              onChange={(e) => setAiQuestions({ ...aiQuestions, businessType: e.target.value })}
+              placeholder="e.g., Restaurant, Phone Repair, Judaica Store, Sheitel Stylist, Cleaning Services..."
+            />
+          </div>
+
+          {/* Services/Products */}
+          <div className="space-y-2">
+            <Label htmlFor="services">
+              What services/products do you offer? *
+            </Label>
+            <Textarea
+              id="services"
+              value={aiQuestions.services}
+              onChange={(e) => setAiQuestions({ ...aiQuestions, services: e.target.value })}
+              placeholder="e.g., iPhone & Samsung repairs, cases, accessories"
+              rows={3}
+            />
+          </div>
+
+          {/* Unique Points */}
+          <div className="space-y-2">
+            <Label htmlFor="uniquePoints">
+              What makes your business unique? (Optional)
+            </Label>
+            <Textarea
+              id="uniquePoints"
+              value={aiQuestions.uniquePoints}
+              onChange={(e) => setAiQuestions({ ...aiQuestions, uniquePoints: e.target.value })}
+              placeholder="e.g., Family-owned, Same-day service, Kosher chalav yisroel only, Serving Lakewood & Jackson..."
+              rows={2}
+            />
+          </div>
+
+          {/* Target Audience */}
+          <div className="space-y-2">
+            <Label htmlFor="targetAudience">Target Audience</Label>
+            <Select
+              value={aiQuestions.targetAudience}
+              onValueChange={(value) => setAiQuestions({ ...aiQuestions, targetAudience: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select target audience" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="women">Women</SelectItem>
+                <SelectItem value="men">Men</SelectItem>
+                <SelectItem value="families">Families</SelectItem>
+                <SelectItem value="children">Children</SelectItem>
+                <SelectItem value="general_community">General Community</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* AI Generate Button */}
+          <div className="flex justify-end pt-2">
+            <Button
+              onClick={handleAIHelp}
+              className="bg-cyan-600 hover:bg-cyan-700 gap-2"
+              disabled={isGenerating}
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Generating descriptions...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  Generate Description with AI
+                </>
+              )}
+            </Button>
+          </div>
         </div>
 
         {/* Short Description */}
@@ -118,11 +224,11 @@ LONG: [long description]`;
             id="long_description"
             value={data.long_description || ""}
             onChange={(e) => onChange({ ...data, long_description: e.target.value })}
-            placeholder="Detailed business description for your public page (2-3 paragraphs)"
+            placeholder="Detailed business description for your public page (4-6 sentences)"
             rows={8}
           />
           <p className="text-xs text-gray-500">
-            Tell customers what makes your business special
+            Tell customers what makes your business special. You can edit the AI-generated description.
           </p>
         </div>
       </CardContent>
