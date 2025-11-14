@@ -72,13 +72,13 @@ export default function BusinessDashboard() {
   });
 
   const tabs = [
-    { id: "overview", label: "סקירה כללית", icon: Home },
-    { id: "edit", label: "עריכת פרטים", icon: Edit3 },
-    { id: "gallery", label: "גלריה", icon: ImageIcon },
-    { id: "hours", label: "שעות פתיחה", icon: Clock },
-    { id: "deals", label: "מבצעים", icon: Tag },
-    { id: "reviews", label: "ביקורות", icon: Star },
-    { id: "ai", label: "עוזר AI", icon: Sparkles },
+    { id: "overview", label: "Overview", icon: Home },
+    { id: "edit", label: "Edit Details", icon: Edit3 },
+    { id: "gallery", label: "Gallery", icon: ImageIcon },
+    { id: "hours", label: "Hours", icon: Clock },
+    { id: "deals", label: "Deals", icon: Tag },
+    { id: "reviews", label: "Reviews", icon: Star },
+    { id: "ai", label: "AI Assistant", icon: Sparkles },
   ];
 
   const handleApplyToDescription = async (newDescription) => {
@@ -87,7 +87,7 @@ export default function BusinessDashboard() {
     });
     refetchBusinesses();
     setActiveTab("edit");
-    toast.success("התיאור עודכן בהצלחה!");
+    toast.success("Description updated successfully!");
   };
 
   const handleApplyToTags = async (newTags) => {
@@ -96,7 +96,7 @@ export default function BusinessDashboard() {
     });
     refetchBusinesses();
     setActiveTab("edit");
-    toast.success("התגיות עודכנו בהצלחה!");
+    toast.success("Tags updated successfully!");
   };
 
   if (userLoading || businessesLoading) {
@@ -104,7 +104,7 @@ export default function BusinessDashboard() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block w-12 h-12 border-4 border-cyan-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-gray-600">טוען...</p>
+          <p className="text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -126,31 +126,31 @@ export default function BusinessDashboard() {
               </div>
               
               <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                העסק שלך נשלח בהצלחה! 🎉
+                Your Business Has Been Submitted Successfully! 🎉
               </h1>
               
-              <div className="bg-cyan-50 rounded-lg p-6 mb-6 text-right">
-                <h2 className="text-xl font-semibold text-cyan-900 mb-3">מה קורה עכשיו?</h2>
+              <div className="bg-cyan-50 rounded-lg p-6 mb-6 text-left">
+                <h2 className="text-xl font-semibold text-cyan-900 mb-3">What happens next?</h2>
                 <ul className="space-y-3 text-gray-700">
                   <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-cyan-600 text-white rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">1</div>
+                    <div className="w-6 h-6 bg-cyan-600 text-white rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-sm font-bold">1</div>
                     <div>
-                      <p className="font-medium">הצוות שלנו בודק את הפרטים</p>
-                      <p className="text-sm text-gray-600">תהליך האישור לוקח 1-2 ימי עסקים</p>
+                      <p className="font-medium">Our team reviews your details</p>
+                      <p className="text-sm text-gray-600">The approval process takes 1-2 business days</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-cyan-600 text-white rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">2</div>
+                    <div className="w-6 h-6 bg-cyan-600 text-white rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-sm font-bold">2</div>
                     <div>
-                      <p className="font-medium">נשלח לך מייל אישור</p>
-                      <p className="text-sm text-gray-600">תקבל הודעה כשהעסק יאושר</p>
+                      <p className="font-medium">You'll receive an approval email</p>
+                      <p className="text-sm text-gray-600">We'll notify you when your business is approved</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-cyan-600 text-white rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">3</div>
+                    <div className="w-6 h-6 bg-cyan-600 text-white rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-sm font-bold">3</div>
                     <div>
-                      <p className="font-medium">העסק שלך יהיה חי באתר!</p>
-                      <p className="text-sm text-gray-600">לקוחות יוכלו למצוא אותך בחיפוש ובקטגוריות</p>
+                      <p className="font-medium">Your business will be live!</p>
+                      <p className="text-sm text-gray-600">Customers will be able to find you in search and categories</p>
                     </div>
                   </li>
                 </ul>
@@ -158,7 +158,7 @@ export default function BusinessDashboard() {
 
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                 <p className="text-sm text-yellow-800">
-                  <strong>💡 טיפ:</strong> בינתיים, תוכל לראות את סטטוס העסק שלך כאן בדשבורד.
+                  <strong>💡 Tip:</strong> In the meantime, you can check your business status here in the dashboard.
                 </p>
               </div>
 
@@ -170,14 +170,14 @@ export default function BusinessDashboard() {
                   }}
                   className="bg-cyan-600 hover:bg-cyan-700"
                 >
-                  עבור לדשבורד
+                  Go to Dashboard
                 </Button>
                 <Button
                   variant="outline"
                   asChild
                 >
                   <Link to={createPageUrl("Home")}>
-                    חזור לדף הבית
+                    Back to Home
                   </Link>
                 </Button>
               </div>
@@ -197,15 +197,15 @@ export default function BusinessDashboard() {
               <Building2 className="w-8 h-8 text-cyan-600" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              עדיין לא רשמת עסק
+              You Haven't Added a Business Yet
             </h2>
             <p className="text-gray-600 mb-6">
-              הוסף את העסק שלך למדריך העסקי של Lakewood והגדל את החשיפה שלך
+              Add your business to Lakewood's directory and increase your visibility
             </p>
             <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
               <Link to={createPageUrl("AddBusiness")}>
                 <Plus className="w-4 h-4 mr-2" />
-                הוסף עסק
+                Add Business
               </Link>
             </Button>
           </CardContent>

@@ -87,37 +87,37 @@ export default function AddBusiness() {
     // Validation
     if (currentStep === 0) {
       if (!formData.business_name.trim()) {
-        toast.error("נא להזין שם עסק");
+        toast.error("Please enter a business name");
         return;
       }
     }
 
     if (currentStep === 1) {
       if (!formData.category_id) {
-        toast.error("נא לבחור קטגוריה");
+        toast.error("Please select a category");
         return;
       }
     }
 
     if (currentStep === 2) {
       if (!formData.city.trim()) {
-        toast.error("עיר היא שדה חובה");
+        toast.error("City is required");
         return;
       }
       if (!formData.phone.trim()) {
-        toast.error("מספר טלפון הוא שדה חובה");
+        toast.error("Phone number is required");
         return;
       }
       // Validate phone format
       if (!/^[\d\s\-\(\)]+$/.test(formData.phone)) {
-        toast.error("נא להזין מספר טלפון תקין");
+        toast.error("Please enter a valid phone number");
         return;
       }
     }
 
     if (currentStep === 4) {
       if (!formData.logo_url) {
-        toast.error("נא להעלות לוגו של העסק לפני המעבר לשלב הבא");
+        toast.error("Please upload a business logo before proceeding");
         return;
       }
     }
@@ -195,62 +195,62 @@ export default function AddBusiness() {
       try {
         await base44.integrations.Core.SendEmail({
           to: user.email,
-          subject: "העסק שלך נשלח לאישור - LBA Directory",
+          subject: "Your Business Has Been Submitted for Approval - LBA Directory",
           body: `
-            <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2 style="color: #0891b2;">שלום ${user.full_name},</h2>
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #0891b2;">Hello ${user.full_name},</h2>
               
-              <p>תודה שהצטרפת ל-LBA Directory!</p>
+              <p>Thank you for joining LBA Directory!</p>
               
-              <p>קיבלנו את פרטי העסק שלך:</p>
+              <p>We have received your business details:</p>
               
               <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="margin-top: 0; color: #0891b2;">📋 פרטי העסק שהוגש:</h3>
-                <p><strong>שם העסק:</strong> ${formData.business_name}</p>
-                <p><strong>קטגוריה:</strong> ${formData.category_name}</p>
-                <p><strong>טלפון:</strong> ${formData.phone}</p>
-                <p><strong>כתובת:</strong> ${formData.address_line1}, ${formData.city}</p>
+                <h3 style="margin-top: 0; color: #0891b2;">📋 Submitted Business Details:</h3>
+                <p><strong>Business Name:</strong> ${formData.business_name}</p>
+                <p><strong>Category:</strong> ${formData.category_name}</p>
+                <p><strong>Phone:</strong> ${formData.phone}</p>
+                <p><strong>Address:</strong> ${formData.address_line1}, ${formData.city}</p>
               </div>
               
-              <p><strong>הצעד הבא:</strong></p>
-              <p>הצוות שלנו יבדוק את פרטי העסק תוך 1-2 ימי עסקים. לאחר האישור, העסק שלך יהיה זמין באתר והלקוחות יוכלו למצוא אותו.</p>
+              <p><strong>What's Next:</strong></p>
+              <p>Our team will review your business details within 1-2 business days. Once approved, your business will be live on the site and customers will be able to find you.</p>
               
-              <p>נעדכן אותך במייל ברגע שהעסק יאושר.</p>
+              <p>We'll send you an email notification as soon as your business is approved.</p>
               
               <div style="background: #ecfccb; border: 2px solid #84cc16; padding: 20px; border-radius: 8px; margin: 25px 0;">
-                <h3 style="margin-top: 0; color: #365314;">✏️ ניהול העסק שלך</h3>
-                <p style="margin-bottom: 15px;">אתה יכול בכל זמן לעדכן, לערוך ולשנות את פרטי העסק שלך דרך הדשבורד העסקי.</p>
+                <h3 style="margin-top: 0; color: #365314;">✏️ Manage Your Business</h3>
+                <p style="margin-bottom: 15px;">You can update, edit, and modify your business details anytime through the Business Dashboard.</p>
                 
-                <p style="margin-bottom: 10px;"><strong>מה אפשר לעשות בדשבורד?</strong></p>
-                <ul style="margin: 10px 0; padding-right: 20px;">
-                  <li>✅ עדכון פרטי העסק (כתובת, טלפון, שעות פתיחה)</li>
-                  <li>✅ הוספה ועריכת תמונות וגלריה</li>
-                  <li>✅ יצירת ועדכון מבצעים והנחות</li>
-                  <li>✅ צפייה בביקורות ומענה ללקוחות</li>
-                  <li>✅ שימוש בעוזר AI לשיפור התיאור</li>
+                <p style="margin-bottom: 10px;"><strong>What can you do in the dashboard?</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                  <li>✅ Update business details (address, phone, hours)</li>
+                  <li>✅ Add and edit photos and gallery</li>
+                  <li>✅ Create and update deals and promotions</li>
+                  <li>✅ View reviews and respond to customers</li>
+                  <li>✅ Use AI assistant to improve your description</li>
                 </ul>
                 
                 <div style="text-align: center; margin-top: 20px;">
                   <a href="${dashboardUrl}" 
                      style="display: inline-block; background: #0891b2; color: white; padding: 12px 30px; 
                             text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                    עבור לדשבורד העסקי שלי
+                    Go to My Business Dashboard
                   </a>
                 </div>
               </div>
               
               <p style="font-size: 14px; color: #6b7280; margin-top: 20px;">
-                💡 <strong>טיפ:</strong> תוכל להיכנס לדשבורד גם דרך האתר בכל זמן, פשוט התחבר עם המייל שלך.
+                💡 <strong>Tip:</strong> You can access the dashboard anytime from the website by logging in with your email.
               </p>
               
-              <p>אם יש לך שאלות, אל תהסס ליצור איתנו קשר.</p>
+              <p>If you have any questions, feel free to contact us.</p>
               
-              <p style="margin-top: 30px;">בברכה,<br>צוות LBA Directory</p>
+              <p style="margin-top: 30px;">Best regards,<br>LBA Directory Team</p>
               
               <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
               
               <p style="font-size: 12px; color: #6b7280; text-align: center;">
-                LBA Directory - המדריך העסקי של Lakewood
+                LBA Directory - Lakewood's Business Directory
               </p>
             </div>
           `
@@ -263,7 +263,7 @@ export default function AddBusiness() {
       localStorage.removeItem("addBusinessFormData");
 
       // Show success message
-      toast.success("העסק נשלח לאישור בהצלחה!");
+      toast.success("Business submitted for approval successfully!");
 
       // Redirect to success page with business details
       setTimeout(() => {
@@ -272,7 +272,7 @@ export default function AddBusiness() {
 
     } catch (error) {
       console.error("Failed to submit business:", error);
-      toast.error("השליחה נכשלה. נא לנסות שוב.");
+      toast.error("Submission failed. Please try again.");
       setIsSubmitting(false);
     }
   };
@@ -333,7 +333,7 @@ export default function AddBusiness() {
             className="gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            חזרה
+            Back
           </Button>
 
           {currentStep < TOTAL_STEPS - 1 ? (
@@ -341,7 +341,7 @@ export default function AddBusiness() {
               onClick={handleNext}
               className="bg-cyan-600 hover:bg-cyan-700 gap-2"
             >
-              הבא
+              Next
               <ArrowRight className="w-4 h-4" />
             </Button>
           ) : (
@@ -351,11 +351,11 @@ export default function AddBusiness() {
               disabled={isSubmitting}
             >
               {isSubmitting ? (
-                "שולח..."
+                "Submitting..."
               ) : (
                 <>
                   <CheckCircle className="w-4 h-4" />
-                  שלח לאישור
+                  Submit for Approval
                 </>
               )}
             </Button>
@@ -363,7 +363,7 @@ export default function AddBusiness() {
         </div>
 
         <p className="text-center text-sm text-gray-500 mt-4">
-          ההתקדמות נשמרת אוטומטית
+          Progress is saved automatically
         </p>
       </div>
     </div>
