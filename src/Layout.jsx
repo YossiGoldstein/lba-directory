@@ -28,6 +28,11 @@ export default function Layout({ children, currentPageName }) {
     window.scrollTo(0, 0);
   }, [location.pathname, location.search]);
 
+  // Close mobile menu on navigation
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname, location.search]);
+
   const noHeaderFooterPages = ["Login", "Register", "ForgotPassword"];
   const showHeaderFooter = !noHeaderFooterPages.includes(currentPageName);
 
