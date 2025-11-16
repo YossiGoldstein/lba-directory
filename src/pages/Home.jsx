@@ -142,9 +142,12 @@ export default function Home() {
         </div>
 
         <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-12 sm:py-20">
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-3 sm:mb-4 text-white drop-shadow-2xl leading-tight">
-            Comprehensive business directory
+          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-2 text-white drop-shadow-2xl leading-tight">
+            Lakewood Business Alliance
           </h1>
+          <p className="text-xl sm:text-3xl md:text-4xl text-white mb-2 sm:mb-3 font-medium px-4">
+            Comprehensive business directory
+          </p>
           <p className="text-lg sm:text-2xl md:text-3xl text-white mb-8 sm:mb-12 font-light px-4">
             Your search starts (and ends) here
           </p>
