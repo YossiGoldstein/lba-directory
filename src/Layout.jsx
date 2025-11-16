@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { Building2, Menu, X, User, LogOut, LayoutDashboard, Mail, Phone } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, Mail, Phone } from "lucide-react";
 import ChatButton from "./components/chat/ChatButton";
 
 export default function Layout({ children, currentPageName }) {
@@ -73,10 +73,11 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link to={createPageUrl("Home")} className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-cyan-600 to-blue-700 rounded-lg flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">LBA Directory</span>
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/5f159ca8e_LBA.png"
+                alt="LBA Directory"
+                className="h-12 w-auto"
+              />
             </Link>
 
             <nav className="hidden md:flex items-center gap-8">
@@ -186,10 +187,11 @@ export default function Layout({ children, currentPageName }) {
             {/* Column 1 - Branding */}
             <div>
               <Link to={createPageUrl("Home")} className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-cyan-600 to-blue-700 rounded-lg flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-xl font-bold text-white">LBA Directory</span>
+                <img 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/5f159ca8e_LBA.png"
+                  alt="LBA Directory"
+                  className="h-10 w-auto brightness-0 invert"
+                />
               </Link>
               <p className="text-sm text-gray-400 mb-2">
                 Powered by LBA Leagues & TIG Solutions
