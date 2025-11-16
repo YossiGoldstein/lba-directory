@@ -54,7 +54,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const handleLogout = () => {
-    base44.auth.logout(createPageUrl("Home"));
+    base44.auth.logout();
   };
 
   if (!showHeaderFooter) {
