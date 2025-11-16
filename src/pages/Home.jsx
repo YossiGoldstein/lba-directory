@@ -141,6 +141,15 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 via-cyan-800/60 to-blue-900/70"></div>
         </div>
 
+        {/* Logo Overlay */}
+        <div className="absolute top-8 left-8 z-10">
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
+            alt="LBA Directory"
+            className="h-20 sm:h-24 md:h-28 w-auto drop-shadow-2xl"
+          />
+        </div>
+
         <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-12 sm:py-20">
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-2 text-white drop-shadow-2xl leading-tight">
             Lakewood Business Alliance
