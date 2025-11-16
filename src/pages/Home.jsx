@@ -111,6 +111,10 @@ export default function Home() {
     }
   };
 
+  const handleRegister = () => {
+    base44.auth.redirectToLogin(window.location.pathname);
+  };
+
   const categories = [
     { id: 1, name: "Food", slug: "food", icon: UtensilsCrossed },
     { id: 2, name: "Apparel", slug: "apparel", icon: Shirt },
@@ -285,11 +289,9 @@ export default function Home() {
               <Button 
                 size="lg"
                 className="bg-white text-cyan-700 hover:bg-cyan-50 px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-semibold w-full sm:w-auto"
-                asChild
+                onClick={handleRegister}
               >
-                <Link to={createPageUrl("Register")}>
-                  Create Shopper Account
-                </Link>
+                Create Shopper Account
               </Button>
             </div>
             <div className="hidden lg:block">
@@ -496,11 +498,9 @@ export default function Home() {
               size="lg"
               variant="outline"
               className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-900 px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-semibold w-full sm:w-auto"
-              asChild
+              onClick={handleRegister}
             >
-              <Link to={createPageUrl("Register")}>
-                Create Account
-              </Link>
+              Create Account
             </Button>
           </div>
 
