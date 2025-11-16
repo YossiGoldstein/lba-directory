@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Home, Edit3, ImageIcon, Clock, Tag, Star, Plus, CheckCircle, Sparkles, Building2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Edit, Eye, Building2, CheckCircle, Clock, XCircle, Home, Edit3, ImageIcon, Tag, Star, Sparkles, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import BusinessHeader from "../components/business-dashboard/BusinessHeader";
 import OverviewTab from "../components/business-dashboard/OverviewTab";
@@ -20,9 +21,11 @@ export default function BusinessDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [user, setUser] = useState(null);
   const [userLoading, setUserLoading] = useState(true);
+  const navigate = useNavigate();
 
   const urlParams = new URLSearchParams(window.location.search);
   const justSubmitted = urlParams.get("submitted") === "true";
+  const editBusinessId = urlParams.get("edit");
 
   useEffect(() => {
     const loadUser = async () => {
@@ -39,7 +42,7 @@ export default function BusinessDashboard() {
   }, []);
 
   const { data: businesses = [], isLoading: businessesLoading, refetch: refetchBusinesses } = useQuery({
-    queryKey: ["my-business", user?.email],
+    queryKey: ["my-businesses", user?.email],
     queryFn: async () => {
       if (!user?.email) return [];
       return await base44.entities.Business.filter({ created_by: user.email });
@@ -47,25 +50,33 @@ export default function BusinessDashboard() {
     enabled: !!user?.email,
   });
 
-  const business = businesses[0];
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      return await base44.entities.Category.list();
+    },
+  });
+
+  const selectedBusiness = editBusinessId 
+    ? businesses.find(b => b.id === editBusinessId) 
+    : null;
 
   const { data: category } = useQuery({
-    queryKey: ["category", business?.category_id],
+    queryKey: ["category", selectedBusiness?.category_id],
     queryFn: async () => {
-      if (!business?.category_id) return null;
-      const cats = await base44.entities.Category.list();
-      return cats.find(c => c.id === business.category_id);
+      if (!selectedBusiness?.category_id) return null;
+      return categories.find(c => c.id === selectedBusiness.category_id);
     },
-    enabled: !!business?.category_id,
+    enabled: !!selectedBusiness?.category_id,
   });
 
   const { data: deals = [] } = useQuery({
-    queryKey: ["business-deals", business?.id],
+    queryKey: ["business-deals", selectedBusiness?.id],
     queryFn: async () => {
-      if (!business?.id) return [];
-      return await base44.entities.Deal.filter({ business_id: business.id });
+      if (!selectedBusiness?.id) return [];
+      return await base44.entities.Deal.filter({ business_id: selectedBusiness.id });
     },
-    enabled: !!business?.id,
+    enabled: !!selectedBusiness?.id,
   });
 
   const tabs = [
@@ -79,7 +90,7 @@ export default function BusinessDashboard() {
   ];
 
   const handleApplyToDescription = async (newDescription) => {
-    await base44.entities.Business.update(business.id, {
+    await base44.entities.Business.update(selectedBusiness.id, {
       long_description: newDescription,
     });
     refetchBusinesses();
@@ -88,12 +99,45 @@ export default function BusinessDashboard() {
   };
 
   const handleApplyToTags = async (newTags) => {
-    await base44.entities.Business.update(business.id, {
+    await base44.entities.Business.update(selectedBusiness.id, {
       tags: newTags,
     });
     refetchBusinesses();
     setActiveTab("edit");
     toast.success("Tags updated successfully!");
+  };
+
+  const getCategoryName = (categoryId) => {
+    const category = categories.find(c => c.id === categoryId);
+    return category ? category.name : "Unknown";
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "approved":
+        return (
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            Approved
+          </Badge>
+        );
+      case "pending":
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+            <Clock className="w-3 h-3 mr-1" />
+            Pending
+          </Badge>
+        );
+      case "rejected":
+        return (
+          <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
+            <XCircle className="w-3 h-3 mr-1" />
+            Rejected
+          </Badge>
+        );
+      default:
+        return null;
+    }
   };
 
   if (userLoading || businessesLoading) {
@@ -111,7 +155,7 @@ export default function BusinessDashboard() {
     return null;
   }
 
-  if (justSubmitted && (!business || business.status === "pending")) {
+  if (justSubmitted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-cyan-50 flex items-center justify-center p-4">
         <div className="max-w-2xl w-full">
@@ -154,29 +198,19 @@ export default function BusinessDashboard() {
 
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                 <p className="text-sm text-yellow-800">
-                  <strong>💡 Tip:</strong> In the meantime, you can check your business status here in the dashboard.
+                  <strong>💡 Tip:</strong> You can check your business status in the dashboard.
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button
-                  onClick={() => {
-                    window.history.replaceState({}, '', createPageUrl("BusinessDashboard"));
-                    window.location.reload();
-                  }}
-                  className="bg-cyan-600 hover:bg-cyan-700"
-                >
-                  Go to Dashboard
-                </Button>
-                <Button
-                  variant="outline"
-                  asChild
-                >
-                  <Link to={createPageUrl("Home")}>
-                    Back to Home
-                  </Link>
-                </Button>
-              </div>
+              <Button
+                onClick={() => {
+                  window.history.replaceState({}, '', createPageUrl("BusinessDashboard"));
+                  window.location.reload();
+                }}
+                className="bg-cyan-600 hover:bg-cyan-700"
+              >
+                Go to My Businesses
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -184,7 +218,66 @@ export default function BusinessDashboard() {
     );
   }
 
-  if (!business) {
+  // Edit mode - show single business management
+  if (editBusinessId && selectedBusiness) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Button
+            onClick={() => navigate(createPageUrl("BusinessDashboard"))}
+            variant="ghost"
+            className="mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to My Businesses
+          </Button>
+
+          <BusinessHeader business={selectedBusiness} category={category} />
+
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+            <div className="flex overflow-x-auto">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                      activeTab === tab.id
+                        ? "border-cyan-600 text-cyan-600"
+                        : "border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div>
+            {activeTab === "overview" && <OverviewTab business={selectedBusiness} deals={deals} />}
+            {activeTab === "edit" && <EditBusinessTab business={selectedBusiness} onUpdate={refetchBusinesses} />}
+            {activeTab === "gallery" && <GalleryTab business={selectedBusiness} onUpdate={refetchBusinesses} />}
+            {activeTab === "hours" && <OpeningHoursTab business={selectedBusiness} onUpdate={refetchBusinesses} />}
+            {activeTab === "deals" && <DealsTab business={selectedBusiness} deals={deals} />}
+            {activeTab === "reviews" && <ReviewsTab business={selectedBusiness} />}
+            {activeTab === "ai" && (
+              <AiAssistantTab
+                business={selectedBusiness}
+                onApplyToDescription={handleApplyToDescription}
+                onApplyToTags={handleApplyToTags}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // List mode - show all businesses
+  if (businesses.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
@@ -213,44 +306,73 @@ export default function BusinessDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <BusinessHeader business={business} category={category} />
-
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-          <div className="flex overflow-x-auto">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                    activeTab === tab.id
-                      ? "border-cyan-600 text-cyan-600"
-                      : "border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Businesses</h1>
+          <p className="text-gray-600">Manage all of your business listings from one place</p>
         </div>
 
-        <div>
-          {activeTab === "overview" && <OverviewTab business={business} deals={deals} />}
-          {activeTab === "edit" && <EditBusinessTab business={business} onUpdate={refetchBusinesses} />}
-          {activeTab === "gallery" && <GalleryTab business={business} onUpdate={refetchBusinesses} />}
-          {activeTab === "hours" && <OpeningHoursTab business={business} onUpdate={refetchBusinesses} />}
-          {activeTab === "deals" && <DealsTab business={business} deals={deals} />}
-          {activeTab === "reviews" && <ReviewsTab business={business} />}
-          {activeTab === "ai" && (
-            <AiAssistantTab
-              business={business}
-              onApplyToDescription={handleApplyToDescription}
-              onApplyToTags={handleApplyToTags}
-            />
-          )}
+        <div className="mb-6">
+          <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
+            <Link to={createPageUrl("AddBusiness")}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add New Business
+            </Link>
+          </Button>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {businesses.map((business) => (
+            <Card key={business.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-start justify-between mb-2">
+                  {business.logo_url ? (
+                    <img 
+                      src={business.logo_url} 
+                      alt={business.business_name}
+                      className="w-16 h-16 rounded-lg object-cover"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                      <Building2 className="w-8 h-8 text-gray-400" />
+                    </div>
+                  )}
+                  {getStatusBadge(business.status)}
+                </div>
+                <CardTitle className="text-xl">{business.business_name}</CardTitle>
+                <div className="text-sm text-gray-600">
+                  <p>{getCategoryName(business.category_id)}</p>
+                  <p>{business.city}</p>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col gap-2">
+                  <Button
+                    onClick={() => navigate(createPageUrl("BusinessDashboard") + `?edit=${business.id}`)}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit Business
+                  </Button>
+                  {business.status === "approved" && (
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <Link to={createPageUrl("BusinessListing") + `?id=${business.id}`}>
+                        <Eye className="w-4 h-4 mr-2" />
+                        View Public Page
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+                <div className="mt-4 text-xs text-gray-500">
+                  Created: {new Date(business.created_date).toLocaleDateString()}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     </div>
