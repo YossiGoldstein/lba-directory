@@ -17,6 +17,7 @@ import Error from './pages/Error';
 import FAQ from './pages/FAQ';
 import AdminDashboard from './pages/AdminDashboard';
 import BusinessJoin from './pages/BusinessJoin';
+import AdminEmailSettings from './pages/AdminEmailSettings';
 import Layout from './Layout.jsx';
 
 
@@ -40,6 +41,7 @@ export const PAGES = {
     "FAQ": FAQ,
     "AdminDashboard": AdminDashboard,
     "BusinessJoin": BusinessJoin,
+    "AdminEmailSettings": AdminEmailSettings,
 }
 
 export const pagesConfig = {
