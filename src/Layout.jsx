@@ -49,6 +49,10 @@ export default function Layout({ children, currentPageName }) {
     };
   };
 
+  const handleLogin = () => {
+    base44.auth.redirectToLogin(window.location.pathname);
+  };
+
   if (!showHeaderFooter) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -106,11 +110,11 @@ export default function Layout({ children, currentPageName }) {
                 </div>
               ) : (
                 <>
-                  <Button variant="ghost" asChild>
-                    <Link to={createPageUrl("Login")}>Login</Link>
+                  <Button variant="ghost" onClick={handleLogin}>
+                    Login
                   </Button>
-                  <Button className="bg-cyan-600 hover:bg-cyan-700" asChild>
-                    <Link to={createPageUrl("Register")}>Register</Link>
+                  <Button className="bg-cyan-600 hover:bg-cyan-700" onClick={handleLogin}>
+                    Register
                   </Button>
                 </>
               )}
@@ -153,11 +157,11 @@ export default function Layout({ children, currentPageName }) {
                   </div>
                 ) : (
                   <div className="flex flex-col gap-3 border-t border-gray-200 pt-4 mt-2">
-                    <Button variant="outline" asChild className="w-full">
-                      <Link to={createPageUrl("Login")}>Login</Link>
+                    <Button variant="outline" onClick={handleLogin} className="w-full">
+                      Login
                     </Button>
-                    <Button className="bg-cyan-600 hover:bg-cyan-700 w-full" asChild>
-                      <Link to={createPageUrl("Register")}>Register</Link>
+                    <Button className="bg-cyan-600 hover:bg-cyan-700 w-full" onClick={handleLogin}>
+                      Register
                     </Button>
                   </div>
                 )}
