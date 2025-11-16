@@ -24,7 +24,6 @@ export default function DealsTab({ business }) {
 
   const queryClient = useQueryClient();
 
-  // Fetch deals for this business
   const { data: deals = [], isLoading } = useQuery({
     queryKey: ["businessDeals", business.id],
     queryFn: async () => {
@@ -35,7 +34,6 @@ export default function DealsTab({ business }) {
     },
   });
 
-  // Create deal mutation
   const createDealMutation = useMutation({
     mutationFn: async (dealData) => {
       return await base44.entities.Deal.create({
@@ -43,17 +41,37 @@ export default function DealsTab({ business }) {
         business_id: business.id,
       });
     },
-    onSuccess: () => {
+    onSuccess: async (newDeal) => {
       queryClient.invalidateQueries({ queryKey: ["businessDeals"] });
       resetForm();
       toast.success("Deal created successfully!");
+      
+      // Send email if deal starts today
+      const startDate = new Date(newDeal.start_date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 0, 0, 0);
+      
+      if (startDate.getTime() === today.getTime() && newDeal.is_active) {
+        try {
+          await base44.functions.invoke('sendBusinessEmail', {
+            type: 'deal_started',
+            businessId: business.id,
+            data: {
+              dealTitle: newDeal.title,
+              startDate: format(new Date(newDeal.start_date), 'MMM d, yyyy')
+            }
+          });
+        } catch (error) {
+          console.error("Failed to send deal started email:", error);
+        }
+      }
     },
     onError: () => {
       toast.error("Failed to create deal");
     },
   });
 
-  // Update deal mutation
   const updateDealMutation = useMutation({
     mutationFn: async ({ id, data }) => {
       return await base44.entities.Deal.update(id, data);
@@ -68,7 +86,6 @@ export default function DealsTab({ business }) {
     },
   });
 
-  // Delete deal mutation
   const deleteDealMutation = useMutation({
     mutationFn: async (dealId) => {
       return await base44.entities.Deal.delete(dealId);

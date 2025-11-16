@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Building2, MapPin, Phone, Globe, Tag as TagIcon } from "lucide-react";
 import { toast } from "sonner";
 
-export default function EditBusinessTab({ business, onBusinessUpdate }) {
+export default function EditBusinessTab({ business, onUpdate }) {
   const [formData, setFormData] = useState({
     business_name: business.business_name || "",
     category_id: business.category_id || "",
@@ -32,7 +32,6 @@ export default function EditBusinessTab({ business, onBusinessUpdate }) {
   });
   const [isSaving, setIsSaving] = useState(false);
 
-  // Fetch categories
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -46,7 +45,6 @@ export default function EditBusinessTab({ business, onBusinessUpdate }) {
     setIsSaving(true);
 
     try {
-      // Validation
       if (!formData.business_name.trim()) {
         toast.error("Business name is required");
         setIsSaving(false);
@@ -65,14 +63,12 @@ export default function EditBusinessTab({ business, onBusinessUpdate }) {
         return;
       }
 
-      // Phone validation (US format)
       if (formData.phone && !/^[\d\s\-\(\)]+$/.test(formData.phone)) {
         toast.error("Please enter a valid US phone number");
         setIsSaving(false);
         return;
       }
 
-      // Process tags
       const tagsArray = formData.tags
         .split(",")
         .map(t => t.trim())
@@ -86,8 +82,20 @@ export default function EditBusinessTab({ business, onBusinessUpdate }) {
       await base44.entities.Business.update(business.id, updateData);
       
       toast.success("Business information updated successfully!");
-      if (onBusinessUpdate) {
-        onBusinessUpdate();
+      
+      // Send email notification (optional, check if enabled in settings)
+      try {
+        await base44.functions.invoke('sendBusinessEmail', {
+          type: 'business_info_updated',
+          businessId: business.id,
+          data: {}
+        });
+      } catch (emailError) {
+        console.error("Failed to send update notification:", emailError);
+      }
+      
+      if (onUpdate) {
+        onUpdate();
       }
     } catch (error) {
       console.error("Failed to update business:", error);

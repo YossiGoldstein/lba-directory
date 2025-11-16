@@ -35,10 +35,22 @@ export default function PendingApprovalsTab({ onUpdate }) {
     mutationFn: async (businessId) => {
       return await base44.entities.Business.update(businessId, { status: "approved" });
     },
-    onSuccess: () => {
+    onSuccess: async (_, businessId) => {
       queryClient.invalidateQueries({ queryKey: ["pending-businesses"] });
       queryClient.invalidateQueries({ queryKey: ["admin-businesses"] });
       toast.success("Business approved successfully!");
+      
+      // Send approval email
+      try {
+        await base44.functions.invoke('sendBusinessEmail', {
+          type: 'business_approved',
+          businessId: businessId,
+          data: {}
+        });
+      } catch (error) {
+        console.error("Failed to send approval email:", error);
+      }
+      
       if (onUpdate) onUpdate();
     },
     onError: () => {
@@ -53,10 +65,24 @@ export default function PendingApprovalsTab({ onUpdate }) {
         admin_notes: reason || "Rejected by admin"
       });
     },
-    onSuccess: () => {
+    onSuccess: async (_, { businessId, reason }) => {
       queryClient.invalidateQueries({ queryKey: ["pending-businesses"] });
       queryClient.invalidateQueries({ queryKey: ["admin-businesses"] });
       toast.success("Business rejected");
+      
+      // Send rejection email
+      try {
+        await base44.functions.invoke('sendBusinessEmail', {
+          type: 'business_rejected',
+          businessId: businessId,
+          data: {
+            rejectionReason: reason || "Your business submission did not meet our guidelines. Please review and update your listing."
+          }
+        });
+      } catch (error) {
+        console.error("Failed to send rejection email:", error);
+      }
+      
       if (onUpdate) onUpdate();
     },
     onError: () => {

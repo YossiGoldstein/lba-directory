@@ -42,6 +42,20 @@ export default function ReviewForm({ businessId, onReviewSubmitted }) {
 
       toast.success("Review submitted successfully! It will appear after moderation.");
       
+      // Send email notification to business owner
+      try {
+        await base44.functions.invoke('sendBusinessEmail', {
+          type: 'new_review',
+          businessId: businessId,
+          data: {
+            stars: '⭐'.repeat(rating),
+            reviewText: body.trim()
+          }
+        });
+      } catch (emailError) {
+        console.error("Failed to send review notification email:", emailError);
+      }
+      
       // Reset form
       setRating(0);
       setTitle("");
