@@ -21,7 +21,6 @@ export default function BusinessDashboard() {
   const [user, setUser] = useState(null);
   const [userLoading, setUserLoading] = useState(true);
 
-  // Check if just submitted a business
   const urlParams = new URLSearchParams(window.location.search);
   const justSubmitted = urlParams.get("submitted") === "true";
 
@@ -39,10 +38,10 @@ export default function BusinessDashboard() {
     loadUser();
   }, []);
 
-  // Fetch user's business
   const { data: businesses = [], isLoading: businessesLoading, refetch: refetchBusinesses } = useQuery({
     queryKey: ["my-business", user?.email],
     queryFn: async () => {
+      if (!user?.email) return [];
       return await base44.entities.Business.filter({ created_by: user.email });
     },
     enabled: !!user?.email,
@@ -50,7 +49,6 @@ export default function BusinessDashboard() {
 
   const business = businesses[0];
 
-  // Fetch category
   const { data: category } = useQuery({
     queryKey: ["category", business?.category_id],
     queryFn: async () => {
@@ -61,7 +59,6 @@ export default function BusinessDashboard() {
     enabled: !!business?.category_id,
   });
 
-  // Fetch deals
   const { data: deals = [] } = useQuery({
     queryKey: ["business-deals", business?.id],
     queryFn: async () => {
@@ -114,7 +111,6 @@ export default function BusinessDashboard() {
     return null;
   }
 
-  // Show submission success message
   if (justSubmitted && (!business || business.status === "pending")) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-cyan-50 flex items-center justify-center p-4">

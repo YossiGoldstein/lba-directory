@@ -157,13 +157,13 @@ export default function Home() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <button
+              <Button
                 type="submit"
                 disabled={isSearching}
-                className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-6 sm:px-10 py-4 sm:py-6 sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-6 sm:px-10 py-4 sm:py-6 sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto rounded-none sm:rounded-full"
               >
                 {isSearching ? "Searching..." : "Search"}
-              </button>
+              </Button>
             </div>
             <p className="text-white/80 text-xs sm:text-sm mt-3 sm:mt-4 px-4">
               🤖 Powered by AI - Ask in English or Hebrew!
