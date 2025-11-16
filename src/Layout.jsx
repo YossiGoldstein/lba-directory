@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { Building2, Menu, X, User, LogOut, LayoutDashboard } from "lucide-react";
+import { Building2, Menu, X, User, LogOut, LayoutDashboard, Mail, Phone } from "lucide-react";
 import ChatButton from "./components/chat/ChatButton";
 
 export default function Layout({ children, currentPageName }) {
@@ -172,9 +172,10 @@ export default function Layout({ children, currentPageName }) {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300">
+      <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-gray-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {/* Column 1 - Branding */}
             <div>
               <Link to={createPageUrl("Home")} className="flex items-center gap-2 mb-4">
                 <div className="w-10 h-10 bg-gradient-to-br from-cyan-600 to-blue-700 rounded-lg flex items-center justify-center">
@@ -182,11 +183,15 @@ export default function Layout({ children, currentPageName }) {
                 </div>
                 <span className="text-xl font-bold text-white">LBA Directory</span>
               </Link>
+              <p className="text-sm text-gray-400 mb-2">
+                Powered by LBA Leagues & TIG Solutions
+              </p>
               <p className="text-sm text-gray-400">
-                Your trusted business directory connecting customers with local businesses in Lakewood.
+                Serving Lakewood, Toms River, Jackson, Brick, Howell, and surrounding areas.
               </p>
             </div>
 
+            {/* Column 2 - Quick Links */}
             <div>
               <h3 className="text-white font-semibold mb-4">Quick Links</h3>
               <ul className="space-y-2">
@@ -201,29 +206,18 @@ export default function Layout({ children, currentPageName }) {
                   </Link>
                 </li>
                 <li>
-                  <Link to={createPageUrl("FAQ")} className="text-sm hover:text-cyan-400 transition-colors">
-                    FAQ
+                  <Link to={createPageUrl("Contact")} className="text-sm hover:text-cyan-400 transition-colors">
+                    Contact Us
                   </Link>
                 </li>
                 <li>
                   <Link to={createPageUrl("AddBusiness")} className="text-sm hover:text-cyan-400 transition-colors">
-                    Add Business
+                    Add Business – Free
                   </Link>
                 </li>
                 <li>
-                  <Link to={createPageUrl("Contact")} className="text-sm hover:text-cyan-400 transition-colors">
-                    Contact
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-white font-semibold mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link to={createPageUrl("PrivacyPolicy")} className="text-sm hover:text-cyan-400 transition-colors">
-                    Privacy Policy
+                  <Link to={createPageUrl("BusinessJoin")} className="text-sm hover:text-cyan-400 transition-colors">
+                    For Business Owners
                   </Link>
                 </li>
                 <li>
@@ -231,13 +225,47 @@ export default function Layout({ children, currentPageName }) {
                     Terms of Use
                   </Link>
                 </li>
+                <li>
+                  <Link to={createPageUrl("PrivacyPolicy")} className="text-sm hover:text-cyan-400 transition-colors">
+                    Privacy Policy
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3 - Contact */}
+            <div>
+              <h3 className="text-white font-semibold mb-4">Contact</h3>
+              <ul className="space-y-3">
+                <li>
+                  <a 
+                    href="mailto:office@lbadirectory.com" 
+                    className="text-sm hover:text-cyan-400 transition-colors flex items-center gap-2"
+                  >
+                    <Mail className="w-4 h-4" />
+                    office@lbadirectory.com
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href="tel:732-600-1260" 
+                    className="text-sm hover:text-cyan-400 transition-colors flex items-center gap-2"
+                  >
+                    <Phone className="w-4 h-4" />
+                    732-600-1260
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-            <p className="text-sm text-gray-400">
+          {/* Bottom Bar */}
+          <div className="border-t border-gray-700 pt-8 text-center">
+            <p className="text-sm text-gray-400 mb-2">
               © {new Date().getFullYear()} LBA Directory. All rights reserved.
+            </p>
+            <p className="text-sm text-gray-500">
+              Designed for the Lakewood Haredi community.
             </p>
           </div>
         </div>
