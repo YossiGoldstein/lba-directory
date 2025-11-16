@@ -53,6 +53,10 @@ export default function Layout({ children, currentPageName }) {
     base44.auth.redirectToLogin(window.location.pathname);
   };
 
+  const handleLogout = () => {
+    base44.auth.logout(createPageUrl("Home"));
+  };
+
   if (!showHeaderFooter) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -103,7 +107,7 @@ export default function Layout({ children, currentPageName }) {
                       Dashboard
                     </Link>
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={() => base44.auth.logout()}>
+                  <Button variant="ghost" size="sm" onClick={handleLogout}>
                     <LogOut className="w-4 h-4 mr-2" />
                     Logout
                   </Button>
@@ -151,7 +155,7 @@ export default function Layout({ children, currentPageName }) {
                     <Button variant="outline" asChild className="w-full">
                       <Link to={createPageUrl("UserDashboard")}>Dashboard</Link>
                     </Button>
-                    <Button variant="outline" onClick={() => base44.auth.logout()} className="w-full">
+                    <Button variant="outline" onClick={handleLogout} className="w-full">
                       Logout
                     </Button>
                   </div>
