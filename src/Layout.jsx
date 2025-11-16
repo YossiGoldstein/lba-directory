@@ -50,11 +50,11 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const handleLogin = () => {
-    base44.auth.redirectToLogin(window.location.pathname);
+    base44.auth.redirectToLogin("/");
   };
 
   const handleLogout = () => {
-    base44.auth.logout();
+    base44.auth.logout("/");
   };
 
   if (!showHeaderFooter) {

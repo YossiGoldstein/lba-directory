@@ -43,7 +43,7 @@ export default function UserDashboard() {
       } catch (error) {
         console.error("Failed to load user:", error);
         // Redirect to login if not authenticated
-        base44.auth.redirectToLogin(createPageUrl("UserDashboard"));
+        base44.auth.redirectToLogin("/");
       }
     };
 

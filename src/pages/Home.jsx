@@ -112,7 +112,7 @@ export default function Home() {
   };
 
   const handleRegister = () => {
-    base44.auth.redirectToLogin(window.location.pathname);
+    base44.auth.redirectToLogin("/");
   };
 
   const categories = [

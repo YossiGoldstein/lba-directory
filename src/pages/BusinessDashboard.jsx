@@ -30,7 +30,7 @@ export default function BusinessDashboard() {
         const userData = await base44.auth.me();
         setUser(userData);
       } catch (error) {
-        base44.auth.redirectToLogin(createPageUrl("BusinessDashboard"));
+        base44.auth.redirectToLogin("/");
       } finally {
         setUserLoading(false);
       }
