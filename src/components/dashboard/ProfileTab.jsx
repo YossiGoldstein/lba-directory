@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, Mail, Phone, Globe, Check } from "lucide-react";
+import { User, Mail, Phone, Globe } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ProfileTab({ user, onUserUpdate }) {
@@ -14,7 +14,6 @@ export default function ProfileTab({ user, onUserUpdate }) {
     email: user?.email || "",
     phone: user?.phone || "",
     preferred_language: user?.preferred_language || "he",
-    shomer_shabbos: user?.shomer_shabbos !== false,
   });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -33,7 +32,6 @@ export default function ProfileTab({ user, onUserUpdate }) {
       await base44.auth.updateMe({
         phone: formData.phone,
         preferred_language: formData.preferred_language,
-        shomer_shabbos: formData.shomer_shabbos,
       });
 
       toast.success("Profile updated successfully!");
@@ -124,26 +122,6 @@ export default function ProfileTab({ user, onUserUpdate }) {
                 <SelectItem value="he">עברית (Hebrew)</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-
-          {/* Shomer Shabbos */}
-          <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <input
-              type="checkbox"
-              id="shomer_shabbos"
-              checked={formData.shomer_shabbos}
-              onChange={(e) => setFormData({ ...formData, shomer_shabbos: e.target.checked })}
-              className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-            />
-            <Label htmlFor="shomer_shabbos" className="cursor-pointer flex-1">
-              <span className="font-medium text-gray-900">Shomer Shabbos</span>
-              <p className="text-sm text-gray-600 mt-1">
-                Help us provide you with more relevant suggestions
-              </p>
-            </Label>
-            {formData.shomer_shabbos && (
-              <Check className="w-5 h-5 text-blue-600" />
-            )}
           </div>
 
           {/* Save Button */}
