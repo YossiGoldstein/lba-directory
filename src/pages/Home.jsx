@@ -151,17 +151,17 @@ export default function Home() {
         </div>
 
         <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-12 sm:py-20">
-          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-2 text-white drop-shadow-2xl leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-2xl whitespace-nowrap">
             Lakewood Business Alliance
           </h1>
-          <p className="text-xl sm:text-3xl md:text-4xl text-white mb-2 sm:mb-3 font-medium px-4">
+          <p className="text-xl sm:text-2xl md:text-3xl text-white mt-3 font-medium whitespace-nowrap">
             Comprehensive business directory
           </p>
-          <p className="text-lg sm:text-2xl md:text-3xl text-white mb-8 sm:mb-12 font-light px-4">
+          <p className="text-lg sm:text-xl md:text-2xl text-white mt-2 mb-8 sm:mb-12 font-light whitespace-nowrap">
             Your search starts (and ends) here
           </p>
 
-          <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-8 sm:mb-16 px-2">
+          <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-8 sm:mb-12 px-2">
             <div className="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-2xl overflow-hidden flex flex-col sm:flex-row items-stretch sm:items-center sm:gap-3 sm:p-3">
               <div className="flex items-center flex-1 px-4 py-4 sm:px-0 sm:py-0">
                 <Search className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 ml-0 sm:ml-4 flex-shrink-0" />
@@ -186,18 +186,18 @@ export default function Home() {
             </p>
           </form>
 
-          {/* Category Icons */}
-          <div className="grid grid-cols-5 gap-3 sm:flex sm:flex-wrap sm:justify-center sm:gap-6 mb-8 px-2 max-w-2xl mx-auto">
+          {/* Category Icons - Single Row */}
+          <div className="flex flex-wrap justify-center gap-6 sm:gap-8 mb-8 px-2">
             {categories.map((category) => {
               const IconComponent = category.icon;
               return (
                 <Link
                   key={category.id}
                   to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
-                  className="flex flex-col items-center gap-1 sm:gap-2 group"
+                  className="flex flex-col items-center gap-2 group"
                 >
-                  <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full border-2 sm:border-3 border-white/80 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
-                    <IconComponent className="w-6 h-6 sm:w-9 sm:h-9 text-white" strokeWidth={1.5} />
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 sm:border-3 border-white/80 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
+                    <IconComponent className="w-7 h-7 sm:w-9 sm:h-9 text-white" strokeWidth={1.5} />
                   </div>
                   <span className="text-white text-xs sm:text-sm font-medium">{category.name}</span>
                 </Link>
