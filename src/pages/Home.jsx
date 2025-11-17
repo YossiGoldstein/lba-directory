@@ -266,8 +266,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Logo - Positioned to not overlap text on mobile */}
-        <div className="absolute top-24 left-4 sm:top-20 sm:left-8 z-10">
+        {/* Logo - With space below */}
+        <div className="absolute top-20 left-4 sm:top-20 sm:left-8 z-10">
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
             alt="LBA Directory"
@@ -275,8 +275,8 @@ export default function Home() {
           />
         </div>
 
-        {/* Main Content - With padding-top for logo space on mobile */}
-        <div className="relative z-10 flex-1 flex items-center justify-center pt-16 sm:pt-0">
+        {/* Main Content - With more padding-top for logo space */}
+        <div className="relative z-10 flex-1 flex items-center justify-center pt-28 sm:pt-0">
           <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pb-12">
             <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-2xl mb-6">
               Lakewood Business Alliance
