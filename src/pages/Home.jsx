@@ -131,7 +131,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[75vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden -mt-16 pt-16">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=1920&h=1080&fit=crop" 
@@ -142,7 +142,7 @@ export default function Home() {
         </div>
 
         {/* Logo Overlay */}
-        <div className="absolute top-8 left-8 z-10">
+        <div className="absolute top-24 left-8 z-10">
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
             alt="LBA Directory"
@@ -186,25 +186,23 @@ export default function Home() {
             </p>
           </form>
 
-          {/* Category Icons - Single Row with Scrolling */}
-          <div className="w-full overflow-x-auto pb-4">
-            <div className="flex justify-center items-center gap-6 sm:gap-8 md:gap-10 px-4 min-w-max mx-auto">
-              {categories.map((category) => {
-                const IconComponent = category.icon;
-                return (
-                  <Link
-                    key={category.id}
-                    to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
-                    className="flex flex-col items-center gap-2 group flex-shrink-0"
-                  >
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border-2 sm:border-3 border-white/80 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
-                      <IconComponent className="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 text-white" strokeWidth={1.5} />
-                    </div>
-                    <span className="text-white text-xs sm:text-sm font-medium whitespace-nowrap">{category.name}</span>
-                  </Link>
-                );
-              })}
-            </div>
+          {/* Category Icons - Single Row */}
+          <div className="flex justify-center items-center gap-4 sm:gap-6 md:gap-8 px-4">
+            {categories.map((category) => {
+              const IconComponent = category.icon;
+              return (
+                <Link
+                  key={category.id}
+                  to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
+                  className="flex flex-col items-center gap-2 group"
+                >
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full border-2 border-white/80 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
+                    <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 text-white" strokeWidth={1.5} />
+                  </div>
+                  <span className="text-white text-xs sm:text-sm font-medium">{category.name}</span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

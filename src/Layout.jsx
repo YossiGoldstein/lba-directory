@@ -33,7 +33,7 @@ export default function Layout({ children, currentPageName }) {
     setMobileMenuOpen(false);
   }, [location.pathname, location.search]);
 
-  const noHeaderFooterPages = ["Login", "Register", "ForgotPassword", "Home"];
+  const noHeaderFooterPages = ["Login", "Register", "ForgotPassword"];
   const showHeaderFooter = !noHeaderFooterPages.includes(currentPageName);
 
   // Prepare page context for chat
