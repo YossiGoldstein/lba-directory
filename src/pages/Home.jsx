@@ -7,9 +7,10 @@ import {
   Search, MapPin, TrendingUp, Users, Star, 
   UtensilsCrossed, Shirt, Briefcase, Home as HomeIcon, 
   Car, Book, Sparkles, PartyPopper, GraduationCap, 
-  HandHeart, ArrowRight, Heart
+  HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard
 } from "lucide-react";
 import SearchResultsPanel from "../components/home/SearchResultsPanel";
+import ChatButton from "../components/chat/ChatButton";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -19,6 +20,8 @@ export default function Home() {
   const [matchedBusinesses, setMatchedBusinesses] = useState([]);
   const [conversation, setConversation] = useState(null);
   const [allBusinesses, setAllBusinesses] = useState([]);
+  const [user, setUser] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const loadBusinesses = async () => {
@@ -30,6 +33,18 @@ export default function Home() {
       }
     };
     loadBusinesses();
+  }, []);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const userData = await base44.auth.me();
+        setUser(userData);
+      } catch (error) {
+        setUser(null);
+      }
+    };
+    loadUser();
   }, []);
 
   const handleSearch = async (e) => {
@@ -115,6 +130,14 @@ export default function Home() {
     base44.auth.redirectToLogin("/");
   };
 
+  const handleLogin = () => {
+    base44.auth.redirectToLogin("/");
+  };
+
+  const handleLogout = () => {
+    base44.auth.logout("/");
+  };
+
   const categories = [
     { id: 1, name: "Food", slug: "food", icon: UtensilsCrossed },
     { id: 2, name: "Apparel", slug: "apparel", icon: Shirt },
@@ -128,10 +151,16 @@ export default function Home() {
     { id: 10, name: "Org./Gmach", slug: "org-gmach", icon: HandHeart },
   ];
 
+  const getPageContext = () => {
+    return {
+      page: "Home",
+    };
+  };
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative min-h-[75vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden -mt-16 pt-16">
+      {/* Hero Section with Integrated Menu */}
+      <section className="relative min-h-[75vh] sm:min-h-[90vh] flex flex-col overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=1920&h=1080&fit=crop" 
@@ -141,68 +170,170 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 via-cyan-800/60 to-blue-900/70"></div>
         </div>
 
-        {/* Logo Overlay */}
-        <div className="absolute top-24 left-8 z-10">
-          <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
-            alt="LBA Directory"
-            className="h-24 sm:h-28 md:h-32 w-auto drop-shadow-2xl"
-          />
+        {/* Menu Bar - Integrated on Image */}
+        <div className="relative z-20 bg-white/10 backdrop-blur-md border-b border-white/20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <Link to={createPageUrl("Home")} className="flex items-center gap-2">
+                <img 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
+                  alt="LBA Directory"
+                  className="h-12 w-auto drop-shadow-lg"
+                />
+              </Link>
+
+              <nav className="hidden md:flex items-center gap-8">
+                <Link to={createPageUrl("Home")} className="text-white hover:text-cyan-200 transition-colors font-medium">
+                  Home
+                </Link>
+                <Link to={createPageUrl("AboutUs")} className="text-white hover:text-cyan-200 transition-colors font-medium">
+                  About
+                </Link>
+                <Link to={createPageUrl("FAQ")} className="text-white hover:text-cyan-200 transition-colors font-medium">
+                  FAQ
+                </Link>
+                <Link to={createPageUrl("AddBusiness")} className="text-white hover:text-cyan-200 transition-colors font-medium">
+                  Add Business
+                </Link>
+                <Link to={createPageUrl("Contact")} className="text-white hover:text-cyan-200 transition-colors font-medium">
+                  Contact
+                </Link>
+              </nav>
+
+              <div className="hidden md:flex items-center gap-4">
+                {user ? (
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-white">Hello, {user.full_name}</span>
+                    <Button variant="ghost" size="sm" asChild className="text-white hover:text-cyan-200 hover:bg-white/10">
+                      <Link to={createPageUrl("UserDashboard")}>
+                        <LayoutDashboard className="w-4 h-4 mr-2" />
+                        Dashboard
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={handleLogout} className="text-white hover:text-cyan-200 hover:bg-white/10">
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Logout
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <Button variant="ghost" onClick={handleLogin} className="text-white hover:text-cyan-200 hover:bg-white/10">
+                      Login
+                    </Button>
+                    <Button className="bg-cyan-600 hover:bg-cyan-700 text-white" onClick={handleLogin}>
+                      Register
+                    </Button>
+                  </>
+                )}
+              </div>
+
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 text-white hover:text-cyan-200"
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
+
+            {mobileMenuOpen && (
+              <div className="md:hidden py-4 border-t border-white/20">
+                <nav className="flex flex-col gap-4">
+                  <Link to={createPageUrl("Home")} className="text-white hover:text-cyan-200 font-medium">
+                    Home
+                  </Link>
+                  <Link to={createPageUrl("AboutUs")} className="text-white hover:text-cyan-200 font-medium">
+                    About
+                  </Link>
+                  <Link to={createPageUrl("FAQ")} className="text-white hover:text-cyan-200 font-medium">
+                    FAQ
+                  </Link>
+                  <Link to={createPageUrl("AddBusiness")} className="text-white hover:text-cyan-200 font-medium">
+                    Add Business
+                  </Link>
+                  <Link to={createPageUrl("Contact")} className="text-white hover:text-cyan-200 font-medium">
+                    Contact
+                  </Link>
+                  {user ? (
+                    <div className="border-t border-white/20 pt-4 mt-2 flex flex-col gap-3">
+                      <Button variant="outline" asChild className="w-full bg-white/10 text-white border-white/30">
+                        <Link to={createPageUrl("UserDashboard")}>Dashboard</Link>
+                      </Button>
+                      <Button variant="outline" onClick={handleLogout} className="w-full bg-white/10 text-white border-white/30">
+                        Logout
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-3 border-t border-white/20 pt-4 mt-2">
+                      <Button variant="outline" onClick={handleLogin} className="w-full bg-white/10 text-white border-white/30">
+                        Login
+                      </Button>
+                      <Button className="bg-cyan-600 hover:bg-cyan-700 w-full text-white" onClick={handleLogin}>
+                        Register
+                      </Button>
+                    </div>
+                  )}
+                </nav>
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-12 sm:py-20">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-2xl mb-4">
-            Lakewood Business Alliance
-          </h1>
-          <p className="text-xl sm:text-2xl md:text-3xl text-white mb-2 font-medium">
-            Comprehensive business directory
-          </p>
-          <p className="text-lg sm:text-xl md:text-2xl text-white mb-10 font-light">
-            Your search starts (and ends) here
-          </p>
-
-          <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-10 px-2">
-            <div className="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-2xl overflow-hidden flex flex-col sm:flex-row items-stretch sm:items-center sm:gap-3 sm:p-3">
-              <div className="flex items-center flex-1 px-4 py-4 sm:px-0 sm:py-0">
-                <Search className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 ml-0 sm:ml-4 flex-shrink-0" />
-                <input
-                  type="text"
-                  placeholder="Search: 'kosher restaurant', 'plumber'..."
-                  className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 text-sm sm:text-lg px-2 py-0"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <Button
-                type="submit"
-                disabled={isSearching}
-                className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-6 sm:px-10 py-4 sm:py-6 sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto rounded-none sm:rounded-full"
-              >
-                {isSearching ? "Searching..." : "Search"}
-              </Button>
-            </div>
-            <p className="text-white/80 text-xs sm:text-sm mt-3 px-4">
-              🤖 Powered by AI - Ask in English or Hebrew!
+        {/* Main Content */}
+        <div className="relative z-10 flex-1 flex items-center justify-center w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-12">
+          <div className="w-full">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-2xl mb-4">
+              Lakewood Business Alliance
+            </h1>
+            <p className="text-xl sm:text-2xl md:text-3xl text-white mb-2 font-medium">
+              Comprehensive business directory
             </p>
-          </form>
+            <p className="text-lg sm:text-xl md:text-2xl text-white mb-10 font-light">
+              Your search starts (and ends) here
+            </p>
 
-          {/* Category Icons - Single Row */}
-          <div className="flex justify-center items-center gap-4 sm:gap-6 md:gap-8 px-4">
-            {categories.map((category) => {
-              const IconComponent = category.icon;
-              return (
-                <Link
-                  key={category.id}
-                  to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
-                  className="flex flex-col items-center gap-2 group"
+            <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-10 px-2">
+              <div className="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-2xl overflow-hidden flex flex-col sm:flex-row items-stretch sm:items-center sm:gap-3 sm:p-3">
+                <div className="flex items-center flex-1 px-4 py-4 sm:px-0 sm:py-0">
+                  <Search className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 ml-0 sm:ml-4 flex-shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="Search: 'kosher restaurant', 'plumber'..."
+                    className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 text-sm sm:text-lg px-2 py-0"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  disabled={isSearching}
+                  className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-6 sm:px-10 py-4 sm:py-6 sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto rounded-none sm:rounded-full"
                 >
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full border-2 border-white/80 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
-                    <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 text-white" strokeWidth={1.5} />
-                  </div>
-                  <span className="text-white text-xs sm:text-sm font-medium">{category.name}</span>
-                </Link>
-              );
-            })}
+                  {isSearching ? "Searching..." : "Search"}
+                </Button>
+              </div>
+              <p className="text-white/80 text-xs sm:text-sm mt-3 px-4">
+                🤖 Powered by AI - Ask in English or Hebrew!
+              </p>
+            </form>
+
+            {/* Category Icons - Single Row */}
+            <div className="flex justify-center items-center gap-4 sm:gap-6 md:gap-8 px-4">
+              {categories.map((category) => {
+                const IconComponent = category.icon;
+                return (
+                  <Link
+                    key={category.id}
+                    to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
+                    className="flex flex-col items-center gap-2 group"
+                  >
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full border-2 border-white/80 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
+                      <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 text-white" strokeWidth={1.5} />
+                    </div>
+                    <span className="text-white text-xs sm:text-sm font-medium">{category.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
@@ -527,6 +658,105 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-gray-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div>
+              <Link to={createPageUrl("Home")} className="flex items-center gap-2 mb-4">
+                <img 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
+                  alt="LBA Directory"
+                  className="h-10 w-auto brightness-0 invert"
+                />
+              </Link>
+              <p className="text-sm text-gray-400 mb-2">
+                Powered by LBA Leagues & TIG Solutions
+              </p>
+              <p className="text-sm text-gray-400">
+                Serving Lakewood, Toms River, Jackson, Brick, Howell, and surrounding areas.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-white font-semibold mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link to={createPageUrl("Home")} className="text-sm hover:text-cyan-400 transition-colors">
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link to={createPageUrl("AboutUs")} className="text-sm hover:text-cyan-400 transition-colors">
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link to={createPageUrl("Contact")} className="text-sm hover:text-cyan-400 transition-colors">
+                    Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link to={createPageUrl("AddBusiness")} className="text-sm hover:text-cyan-400 transition-colors">
+                    Add Business – Free
+                  </Link>
+                </li>
+                <li>
+                  <Link to={createPageUrl("BusinessJoin")} className="text-sm hover:text-cyan-400 transition-colors">
+                    For Business Owners
+                  </Link>
+                </li>
+                <li>
+                  <Link to={createPageUrl("TermsOfUse")} className="text-sm hover:text-cyan-400 transition-colors">
+                    Terms of Use
+                  </Link>
+                </li>
+                <li>
+                  <Link to={createPageUrl("PrivacyPolicy")} className="text-sm hover:text-cyan-400 transition-colors">
+                    Privacy Policy
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-white font-semibold mb-4">Contact</h3>
+              <ul className="space-y-3">
+                <li>
+                  <a 
+                    href="mailto:office@lbadirectory.com" 
+                    className="text-sm hover:text-cyan-400 transition-colors flex items-center gap-2"
+                  >
+                    <Mail className="w-4 h-4" />
+                    office@lbadirectory.com
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href="tel:732-600-1260" 
+                    className="text-sm hover:text-cyan-400 transition-colors flex items-center gap-2"
+                  >
+                    <Phone className="w-4 h-4" />
+                    732-600-1260
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-700 pt-8 text-center">
+            <p className="text-sm text-gray-400 mb-2">
+              © {new Date().getFullYear()} LBA Directory. All rights reserved.
+            </p>
+            <p className="text-sm text-gray-500">
+              Designed for the Lakewood Haredi community.
+            </p>
+          </div>
+        </div>
+      </footer>
+
+      <ChatButton pageContext={getPageContext()} />
     </div>
   );
 }
