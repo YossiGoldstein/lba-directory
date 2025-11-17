@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -27,9 +26,11 @@ export default function Home() {
     const loadBusinesses = async () => {
       try {
         const bizList = await base44.entities.Business.list();
-        setAllBusinesses(bizList.filter(b => b.status === "approved"));
+        const approved = bizList.filter(b => b.status === "approved");
+        console.log("✅ Loaded businesses:", approved.length);
+        setAllBusinesses(approved);
       } catch (error) {
-        console.error("Failed to load businesses:", error);
+        console.error("❌ Failed to load businesses:", error);
       }
     };
     loadBusinesses();
@@ -51,6 +52,7 @@ export default function Home() {
     e.preventDefault();
     if (!searchQuery.trim()) return;
 
+    console.log("🔍 Starting search for:", searchQuery);
     setIsSearching(true);
     setSearchResults(null);
     setAgentResponse("");
@@ -66,6 +68,7 @@ export default function Home() {
         }
       });
 
+      console.log("✅ Conversation created:", conv.id);
       setConversation(conv);
 
       await base44.agents.addMessage(conv, {
@@ -73,15 +76,20 @@ export default function Home() {
         content: `Context: This is a search from the Home Page.\n\nUser search: ${searchQuery}`
       });
 
+      console.log("✅ Message sent to agent");
+
       const unsubscribe = base44.agents.subscribeToConversation(
         conv.id,
         (data) => {
+          console.log("📨 Received update from agent:", data);
           const messages = data.messages || [];
           const lastMessage = messages[messages.length - 1];
           
           if (lastMessage && lastMessage.role === "assistant") {
+            console.log("🤖 Assistant response:", lastMessage.content);
             setAgentResponse(lastMessage.content);
             const extractedBusinesses = extractBusinessesFromResponse(lastMessage.content);
+            console.log("🏢 Extracted businesses:", extractedBusinesses.length);
             setMatchedBusinesses(extractedBusinesses);
             
             setSearchResults({
@@ -95,17 +103,26 @@ export default function Home() {
       );
 
       setTimeout(() => {
+        console.log("⏱️ Timeout reached, unsubscribing");
         unsubscribe();
+        if (isSearching) {
+          console.log("⚠️ Still searching after timeout");
+          setIsSearching(false);
+          setAgentResponse("Search timed out. Please try again.");
+        }
       }, 30000);
 
     } catch (error) {
-      console.error("Search failed:", error);
+      console.error("❌ Search failed:", error);
       setIsSearching(false);
       setAgentResponse("Sorry, I encountered an error while searching. Please try again.");
     }
   };
 
   const extractBusinessesFromResponse = (responseText) => {
+    console.log("🔎 Extracting businesses from response...");
+    console.log("Total businesses available:", allBusinesses.length);
+    
     const businesses = [];
     const responseLines = responseText.toLowerCase();
 
@@ -113,10 +130,13 @@ export default function Home() {
       const businessName = (business.business_name || "").toLowerCase();
       if (businessName && responseLines.includes(businessName)) {
         businesses.push(business);
+        console.log("✓ Found match:", business.business_name);
       }
     });
 
-    return businesses.slice(0, 6);
+    const result = businesses.slice(0, 6);
+    console.log("✅ Final extracted businesses:", result.length);
+    return result;
   };
 
   const handleContinueInChat = () => {
