@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -71,9 +72,22 @@ export default function Home() {
       console.log("✅ Conversation created:", conv.id);
       setConversation(conv);
 
-      await base44.agents.addMessage(conv, {
+      // Fixed: Pass conversation ID instead of full object
+      await base44.agents.addMessage(conv.id, {
         role: "user",
-        content: `Context: This is a search from the Home Page.\n\nUser search: ${searchQuery}`
+        content: `IMPORTANT: The user is searching from the HOME PAGE.
+        
+User search query: "${searchQuery}"
+
+Please provide ONLY the most relevant businesses that DIRECTLY match this specific search query. 
+Be precise and selective - don't recommend all businesses in a category, only those that specifically match what the user is looking for.
+
+For example:
+- If they search "pizza", recommend ONLY pizza shops, not all food businesses
+- If they search "plumber", recommend ONLY plumbing services, not all home services
+- If they search "kosher restaurant", recommend ONLY kosher restaurants, not all restaurants
+
+List up to 3-5 most relevant businesses by their exact business name.`
       });
 
       console.log("✅ Message sent to agent");
