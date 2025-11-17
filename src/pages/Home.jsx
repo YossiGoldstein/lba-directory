@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -7,7 +8,8 @@ import {
   Search, MapPin, TrendingUp, Users, Star, 
   UtensilsCrossed, Shirt, Briefcase, Home as HomeIcon, 
   Car, Book, Sparkles, PartyPopper, GraduationCap, 
-  HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard
+  HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard,
+  Mail, Phone
 } from "lucide-react";
 import SearchResultsPanel from "../components/home/SearchResultsPanel";
 import ChatButton from "../components/chat/ChatButton";
