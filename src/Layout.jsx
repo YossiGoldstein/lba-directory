@@ -34,7 +34,9 @@ export default function Layout({ children, currentPageName }) {
   }, [location.pathname, location.search]);
 
   const noHeaderFooterPages = ["Login", "Register", "ForgotPassword"];
+  const noHeaderPages = ["Home"];
   const showHeaderFooter = !noHeaderFooterPages.includes(currentPageName);
+  const showHeader = !noHeaderPages.includes(currentPageName);
 
   // Prepare page context for chat
   const getPageContext = () => {
@@ -69,112 +71,114 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
-      <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link to={createPageUrl("Home")} className="flex items-center gap-2">
-              <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
-                alt="LBA Directory"
-                className="h-12 w-auto"
-              />
-            </Link>
+      {showHeader && (
+        <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-200 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <Link to={createPageUrl("Home")} className="flex items-center gap-2">
+                <img 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
+                  alt="LBA Directory"
+                  className="h-12 w-auto"
+                />
+              </Link>
 
-            <nav className="hidden md:flex items-center gap-8">
-              <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
-                Home
-              </Link>
-              <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
-                About
-              </Link>
-              <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
-                FAQ
-              </Link>
-              <Link to={createPageUrl("AddBusiness")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
-                Add Business
-              </Link>
-              <Link to={createPageUrl("Contact")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
-                Contact
-              </Link>
-            </nav>
-
-            <div className="hidden md:flex items-center gap-4">
-              {user ? (
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-gray-700">Hello, {user.full_name}</span>
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link to={createPageUrl("UserDashboard")}>
-                      <LayoutDashboard className="w-4 h-4 mr-2" />
-                      Dashboard
-                    </Link>
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={handleLogout}>
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Logout
-                  </Button>
-                </div>
-              ) : (
-                <>
-                  <Button variant="ghost" onClick={handleLogin}>
-                    Login
-                  </Button>
-                  <Button className="bg-cyan-600 hover:bg-cyan-700" onClick={handleLogin}>
-                    Register
-                  </Button>
-                </>
-              )}
-            </div>
-
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-gray-600 hover:text-gray-900"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-
-          {mobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-gray-200">
-              <nav className="flex flex-col gap-4">
-                <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-cyan-600 font-medium">
+              <nav className="hidden md:flex items-center gap-8">
+                <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                   Home
                 </Link>
-                <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-cyan-600 font-medium">
+                <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                   About
                 </Link>
-                <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-cyan-600 font-medium">
+                <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                   FAQ
                 </Link>
-                <Link to={createPageUrl("AddBusiness")} className="text-gray-700 hover:text-cyan-600 font-medium">
+                <Link to={createPageUrl("AddBusiness")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                   Add Business
                 </Link>
-                <Link to={createPageUrl("Contact")} className="text-gray-700 hover:text-cyan-600 font-medium">
+                <Link to={createPageUrl("Contact")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                   Contact
                 </Link>
+              </nav>
+
+              <div className="hidden md:flex items-center gap-4">
                 {user ? (
-                  <div className="border-t border-gray-200 pt-4 mt-2 flex flex-col gap-3">
-                    <Button variant="outline" asChild className="w-full">
-                      <Link to={createPageUrl("UserDashboard")}>Dashboard</Link>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-gray-700">Hello, {user.full_name}</span>
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link to={createPageUrl("UserDashboard")}>
+                        <LayoutDashboard className="w-4 h-4 mr-2" />
+                        Dashboard
+                      </Link>
                     </Button>
-                    <Button variant="outline" onClick={handleLogout} className="w-full">
+                    <Button variant="ghost" size="sm" onClick={handleLogout}>
+                      <LogOut className="w-4 h-4 mr-2" />
                       Logout
                     </Button>
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-3 border-t border-gray-200 pt-4 mt-2">
-                    <Button variant="outline" onClick={handleLogin} className="w-full">
+                  <>
+                    <Button variant="ghost" onClick={handleLogin}>
                       Login
                     </Button>
-                    <Button className="bg-cyan-600 hover:bg-cyan-700 w-full" onClick={handleLogin}>
+                    <Button className="bg-cyan-600 hover:bg-cyan-700" onClick={handleLogin}>
                       Register
                     </Button>
-                  </div>
+                  </>
                 )}
-              </nav>
+              </div>
+
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 text-gray-600 hover:text-gray-900"
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
             </div>
-          )}
-        </div>
-      </header>
+
+            {mobileMenuOpen && (
+              <div className="md:hidden py-4 border-t border-gray-200">
+                <nav className="flex flex-col gap-4">
+                  <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-cyan-600 font-medium">
+                    Home
+                  </Link>
+                  <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-cyan-600 font-medium">
+                    About
+                  </Link>
+                  <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-cyan-600 font-medium">
+                    FAQ
+                  </Link>
+                  <Link to={createPageUrl("AddBusiness")} className="text-gray-700 hover:text-cyan-600 font-medium">
+                    Add Business
+                  </Link>
+                  <Link to={createPageUrl("Contact")} className="text-gray-700 hover:text-cyan-600 font-medium">
+                    Contact
+                  </Link>
+                  {user ? (
+                    <div className="border-t border-gray-200 pt-4 mt-2 flex flex-col gap-3">
+                      <Button variant="outline" asChild className="w-full">
+                        <Link to={createPageUrl("UserDashboard")}>Dashboard</Link>
+                      </Button>
+                      <Button variant="outline" onClick={handleLogout} className="w-full">
+                        Logout
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-3 border-t border-gray-200 pt-4 mt-2">
+                      <Button variant="outline" onClick={handleLogin} className="w-full">
+                        Login
+                      </Button>
+                      <Button className="bg-cyan-600 hover:bg-cyan-700 w-full" onClick={handleLogin}>
+                        Register
+                      </Button>
+                    </div>
+                  )}
+                </nav>
+              </div>
+            )}
+          </div>
+        </header>
+      )}
 
       <main className="flex-1">
         {children}
