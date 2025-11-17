@@ -313,20 +313,20 @@ export default function Home() {
               </p>
             </form>
 
-            {/* Category Icons - Single Row */}
-            <div className="flex justify-center items-center gap-4 sm:gap-6 md:gap-8 px-4">
+            {/* Category Icons - Responsive: Grid on mobile, Single row on desktop */}
+            <div className="grid grid-cols-5 gap-3 sm:gap-4 justify-items-center md:flex md:justify-center md:items-center md:gap-6 lg:gap-8 px-2 md:px-4">
               {categories.map((category) => {
                 const IconComponent = category.icon;
                 return (
                   <Link
                     key={category.id}
                     to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
-                    className="flex flex-col items-center gap-2 group"
+                    className="flex flex-col items-center gap-1 sm:gap-2 group"
                   >
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full border-2 border-white/80 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
-                      <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 text-white" strokeWidth={1.5} />
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full border-2 border-white/80 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
+                      <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-9 lg:h-9 text-white" strokeWidth={1.5} />
                     </div>
-                    <span className="text-white text-xs sm:text-sm font-medium">{category.name}</span>
+                    <span className="text-white text-[10px] sm:text-xs md:text-sm font-medium text-center">{category.name}</span>
                   </Link>
                 );
               })}
