@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -8,11 +7,9 @@ import {
   Search, MapPin, TrendingUp, Users, Star, 
   UtensilsCrossed, Shirt, Briefcase, Home as HomeIcon, 
   Car, Book, Sparkles, PartyPopper, GraduationCap, 
-  HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard,
-  Mail, Phone
+  HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard
 } from "lucide-react";
 import SearchResultsPanel from "../components/home/SearchResultsPanel";
-import ChatButton from "../components/chat/ChatButton";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -153,12 +150,6 @@ export default function Home() {
     { id: 10, name: "Org./Gmach", slug: "org-gmach", icon: HandHeart },
   ];
 
-  const getPageContext = () => {
-    return {
-      page: "Home",
-    };
-  };
-
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section with Integrated Menu */}
@@ -172,17 +163,11 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 via-cyan-800/60 to-blue-900/70"></div>
         </div>
 
-        {/* Menu Bar - Integrated on Image */}
-        <div className="relative z-20 bg-white/10 backdrop-blur-md border-b border-white/20">
+        {/* Navigation Menu on Image */}
+        <div className="relative z-10 w-full">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <Link to={createPageUrl("Home")} className="flex items-center gap-2">
-                <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
-                  alt="LBA Directory"
-                  className="h-12 w-auto drop-shadow-lg"
-                />
-              </Link>
+            <div className="flex items-center justify-between h-16 py-4">
+              <div className="w-48"></div>
 
               <nav className="hidden md:flex items-center gap-8">
                 <Link to={createPageUrl("Home")} className="text-white hover:text-cyan-200 transition-colors font-medium">
@@ -222,7 +207,7 @@ export default function Home() {
                     <Button variant="ghost" onClick={handleLogin} className="text-white hover:text-cyan-200 hover:bg-white/10">
                       Login
                     </Button>
-                    <Button className="bg-cyan-600 hover:bg-cyan-700 text-white" onClick={handleLogin}>
+                    <Button onClick={handleLogin} className="bg-cyan-600 hover:bg-cyan-700">
                       Register
                     </Button>
                   </>
@@ -238,8 +223,8 @@ export default function Home() {
             </div>
 
             {mobileMenuOpen && (
-              <div className="md:hidden py-4 border-t border-white/20">
-                <nav className="flex flex-col gap-4">
+              <div className="md:hidden py-4 bg-black/30 backdrop-blur-sm rounded-lg">
+                <nav className="flex flex-col gap-4 px-4">
                   <Link to={createPageUrl("Home")} className="text-white hover:text-cyan-200 font-medium">
                     Home
                   </Link>
@@ -257,19 +242,19 @@ export default function Home() {
                   </Link>
                   {user ? (
                     <div className="border-t border-white/20 pt-4 mt-2 flex flex-col gap-3">
-                      <Button variant="outline" asChild className="w-full bg-white/10 text-white border-white/30">
+                      <Button variant="outline" asChild className="w-full text-white border-white hover:bg-white/10">
                         <Link to={createPageUrl("UserDashboard")}>Dashboard</Link>
                       </Button>
-                      <Button variant="outline" onClick={handleLogout} className="w-full bg-white/10 text-white border-white/30">
+                      <Button variant="outline" onClick={handleLogout} className="w-full text-white border-white hover:bg-white/10">
                         Logout
                       </Button>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-3 border-t border-white/20 pt-4 mt-2">
-                      <Button variant="outline" onClick={handleLogin} className="w-full bg-white/10 text-white border-white/30">
+                      <Button variant="outline" onClick={handleLogin} className="w-full text-white border-white hover:bg-white/10">
                         Login
                       </Button>
-                      <Button className="bg-cyan-600 hover:bg-cyan-700 w-full text-white" onClick={handleLogin}>
+                      <Button className="bg-cyan-600 hover:bg-cyan-700 w-full" onClick={handleLogin}>
                         Register
                       </Button>
                     </div>
@@ -280,10 +265,19 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="relative z-10 flex-1 flex items-center justify-center w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-12">
-          <div className="w-full">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-2xl mb-4">
+        {/* Logo - Smaller and Higher */}
+        <div className="absolute top-20 left-8 z-10">
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
+            alt="LBA Directory"
+            className="h-16 sm:h-20 md:h-24 w-auto drop-shadow-2xl"
+          />
+        </div>
+
+        {/* Main Content - Pushed Down */}
+        <div className="relative z-10 flex-1 flex items-center justify-center">
+          <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pb-12">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-2xl mb-6">
               Lakewood Business Alliance
             </h1>
             <p className="text-xl sm:text-2xl md:text-3xl text-white mb-2 font-medium">
@@ -660,105 +654,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-gray-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <Link to={createPageUrl("Home")} className="flex items-center gap-2 mb-4">
-                <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
-                  alt="LBA Directory"
-                  className="h-10 w-auto brightness-0 invert"
-                />
-              </Link>
-              <p className="text-sm text-gray-400 mb-2">
-                Powered by LBA Leagues & TIG Solutions
-              </p>
-              <p className="text-sm text-gray-400">
-                Serving Lakewood, Toms River, Jackson, Brick, Howell, and surrounding areas.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-white font-semibold mb-4">Quick Links</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link to={createPageUrl("Home")} className="text-sm hover:text-cyan-400 transition-colors">
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link to={createPageUrl("AboutUs")} className="text-sm hover:text-cyan-400 transition-colors">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link to={createPageUrl("Contact")} className="text-sm hover:text-cyan-400 transition-colors">
-                    Contact Us
-                  </Link>
-                </li>
-                <li>
-                  <Link to={createPageUrl("AddBusiness")} className="text-sm hover:text-cyan-400 transition-colors">
-                    Add Business – Free
-                  </Link>
-                </li>
-                <li>
-                  <Link to={createPageUrl("BusinessJoin")} className="text-sm hover:text-cyan-400 transition-colors">
-                    For Business Owners
-                  </Link>
-                </li>
-                <li>
-                  <Link to={createPageUrl("TermsOfUse")} className="text-sm hover:text-cyan-400 transition-colors">
-                    Terms of Use
-                  </Link>
-                </li>
-                <li>
-                  <Link to={createPageUrl("PrivacyPolicy")} className="text-sm hover:text-cyan-400 transition-colors">
-                    Privacy Policy
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-white font-semibold mb-4">Contact</h3>
-              <ul className="space-y-3">
-                <li>
-                  <a 
-                    href="mailto:office@lbadirectory.com" 
-                    className="text-sm hover:text-cyan-400 transition-colors flex items-center gap-2"
-                  >
-                    <Mail className="w-4 h-4" />
-                    office@lbadirectory.com
-                  </a>
-                </li>
-                <li>
-                  <a 
-                    href="tel:732-600-1260" 
-                    className="text-sm hover:text-cyan-400 transition-colors flex items-center gap-2"
-                  >
-                    <Phone className="w-4 h-4" />
-                    732-600-1260
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-700 pt-8 text-center">
-            <p className="text-sm text-gray-400 mb-2">
-              © {new Date().getFullYear()} LBA Directory. All rights reserved.
-            </p>
-            <p className="text-sm text-gray-500">
-              Designed for the Lakewood Haredi community.
-            </p>
-          </div>
-        </div>
-      </footer>
-
-      <ChatButton pageContext={getPageContext()} />
     </div>
   );
 }
