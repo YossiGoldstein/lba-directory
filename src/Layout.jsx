@@ -33,7 +33,7 @@ export default function Layout({ children, currentPageName }) {
     setMobileMenuOpen(false);
   }, [location.pathname, location.search]);
 
-  const noHeaderFooterPages = ["Login", "Register", "ForgotPassword"];
+  const noHeaderFooterPages = ["Login", "Register", "ForgotPassword", "Home"];
   const showHeaderFooter = !noHeaderFooterPages.includes(currentPageName);
 
   // Prepare page context for chat
@@ -74,7 +74,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="flex items-center justify-between h-16">
             <Link to={createPageUrl("Home")} className="flex items-center gap-2">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/5f159ca8e_LBA.png"
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
                 alt="LBA Directory"
                 className="h-12 w-auto"
               />
@@ -188,7 +188,7 @@ export default function Layout({ children, currentPageName }) {
             <div>
               <Link to={createPageUrl("Home")} className="flex items-center gap-2 mb-4">
                 <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/5f159ca8e_LBA.png"
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
                   alt="LBA Directory"
                   className="h-10 w-auto brightness-0 invert"
                 />

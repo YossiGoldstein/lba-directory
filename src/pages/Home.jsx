@@ -131,7 +131,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] sm:min-h-[85vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[70vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=1920&h=1080&fit=crop" 
@@ -146,22 +146,22 @@ export default function Home() {
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
             alt="LBA Directory"
-            className="h-20 sm:h-24 md:h-28 w-auto drop-shadow-2xl"
+            className="h-24 sm:h-28 md:h-32 w-auto drop-shadow-2xl"
           />
         </div>
 
-        <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-12 sm:py-20">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-2xl whitespace-nowrap">
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-12 sm:py-20">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-2xl mb-4">
             Lakewood Business Alliance
           </h1>
-          <p className="text-xl sm:text-2xl md:text-3xl text-white mt-3 font-medium whitespace-nowrap">
+          <p className="text-xl sm:text-2xl md:text-3xl text-white mb-2 font-medium">
             Comprehensive business directory
           </p>
-          <p className="text-lg sm:text-xl md:text-2xl text-white mt-2 mb-8 sm:mb-12 font-light whitespace-nowrap">
+          <p className="text-lg sm:text-xl md:text-2xl text-white mb-10 font-light">
             Your search starts (and ends) here
           </p>
 
-          <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-8 sm:mb-12 px-2">
+          <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-10 px-2">
             <div className="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-2xl overflow-hidden flex flex-col sm:flex-row items-stretch sm:items-center sm:gap-3 sm:p-3">
               <div className="flex items-center flex-1 px-4 py-4 sm:px-0 sm:py-0">
                 <Search className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 ml-0 sm:ml-4 flex-shrink-0" />
@@ -181,28 +181,30 @@ export default function Home() {
                 {isSearching ? "Searching..." : "Search"}
               </Button>
             </div>
-            <p className="text-white/80 text-xs sm:text-sm mt-3 sm:mt-4 px-4">
+            <p className="text-white/80 text-xs sm:text-sm mt-3 px-4">
               🤖 Powered by AI - Ask in English or Hebrew!
             </p>
           </form>
 
-          {/* Category Icons - Single Row */}
-          <div className="flex flex-wrap justify-center gap-6 sm:gap-8 mb-8 px-2">
-            {categories.map((category) => {
-              const IconComponent = category.icon;
-              return (
-                <Link
-                  key={category.id}
-                  to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
-                  className="flex flex-col items-center gap-2 group"
-                >
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 sm:border-3 border-white/80 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
-                    <IconComponent className="w-7 h-7 sm:w-9 sm:h-9 text-white" strokeWidth={1.5} />
-                  </div>
-                  <span className="text-white text-xs sm:text-sm font-medium">{category.name}</span>
-                </Link>
-              );
-            })}
+          {/* Category Icons - Single Row with Scrolling */}
+          <div className="w-full overflow-x-auto pb-4">
+            <div className="flex justify-center items-center gap-6 sm:gap-8 md:gap-10 px-4 min-w-max mx-auto">
+              {categories.map((category) => {
+                const IconComponent = category.icon;
+                return (
+                  <Link
+                    key={category.id}
+                    to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
+                    className="flex flex-col items-center gap-2 group flex-shrink-0"
+                  >
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border-2 sm:border-3 border-white/80 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
+                      <IconComponent className="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 text-white" strokeWidth={1.5} />
+                    </div>
+                    <span className="text-white text-xs sm:text-sm font-medium whitespace-nowrap">{category.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
