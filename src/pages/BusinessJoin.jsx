@@ -190,26 +190,26 @@ export default function BusinessJoin() {
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Ready to Join?
           </h2>
-          <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
+          <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto px-4">
             Start reaching more customers today. Registration is free and takes less than 5 minutes.
           </p>
 
           <Button 
             asChild
             size="lg"
-            className="bg-white text-blue-700 hover:bg-blue-50 px-12 py-8 text-xl font-bold shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105"
+            className="bg-white text-blue-700 hover:bg-blue-50 px-6 sm:px-12 py-6 sm:py-8 text-base sm:text-xl font-bold shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105"
           >
-            <Link to={createPageUrl("AddBusiness")}>
-              <Sparkles className="w-6 h-6 mr-3" />
-              Register Your Business – FREE
+            <Link to={createPageUrl("AddBusiness")} className="flex items-center justify-center gap-2 sm:gap-3">
+              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+              <span className="whitespace-nowrap">Register Your Business – FREE</span>
             </Link>
           </Button>
 
-          <div className="mt-8 flex flex-col items-center gap-2">
-            <p className="text-white/80 text-sm">
+          <div className="mt-8 flex flex-col items-center gap-2 px-4">
+            <p className="text-white/80 text-sm text-center">
               No credit card required. Listing approval required.
             </p>
-            <div className="flex items-center gap-6 text-white/90 text-sm">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-white/90 text-sm">
               <span className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4" />
                 Free Forever
