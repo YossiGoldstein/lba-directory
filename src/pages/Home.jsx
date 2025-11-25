@@ -387,150 +387,42 @@ List up to 3-5 most relevant businesses by their exact business name.`
         </div>
       </section>
 
-      {/* Shopper Benefits */}
-      <section className="py-12 sm:py-20 bg-gradient-to-br from-cyan-600 to-blue-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
-            <div>
-              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 sm:mb-6">
-                For Shoppers
-              </h2>
-              <p className="text-base sm:text-xl text-cyan-50 mb-6 sm:mb-8">
-                Discover the best local businesses, save your favorites, and never miss a deal
+      {/* Shopper & Business Sections */}
+      <section className="py-12 sm:py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+            {/* For Shoppers */}
+            <div className="bg-gradient-to-br from-cyan-600 to-blue-600 rounded-2xl p-6 sm:p-8 text-white">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">For Shoppers</h2>
+              <p className="text-cyan-50 mb-6">
+                Save favorites, post reviews, get exclusive deals & win giveaways
               </p>
-              <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-                <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-base sm:text-lg mb-1">Save Your Favorites</h3>
-                    <p className="text-cyan-50 text-sm sm:text-base">Keep track of businesses you love</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Star className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-base sm:text-lg mb-1">Post Reviews</h3>
-                    <p className="text-cyan-50 text-sm sm:text-base">Share your experiences with the community</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-cyan-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-base sm:text-lg mb-1">Get Exclusive Deals</h3>
-                    <p className="text-cyan-50 text-sm sm:text-base">Access special promotions and discounts</p>
-                  </div>
-                </div>
-              </div>
               <Button 
                 size="lg"
-                className="bg-white text-cyan-700 hover:bg-cyan-50 px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-semibold w-full sm:w-auto"
-                onClick={handleRegister}
-              >
-                Create Shopper Account
-              </Button>
-            </div>
-            <div className="hidden lg:block">
-              <div className="bg-cyan-500 bg-opacity-30 rounded-2xl p-8 backdrop-blur-sm">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white bg-opacity-20 rounded-xl p-6 text-center">
-                    <Search className="w-12 h-12 mx-auto mb-3" />
-                    <p className="font-semibold">Easy Search</p>
-                  </div>
-                  <div className="bg-white bg-opacity-20 rounded-xl p-6 text-center">
-                    <MapPin className="w-12 h-12 mx-auto mb-3" />
-                    <p className="font-semibold">Local Focus</p>
-                  </div>
-                  <div className="bg-white bg-opacity-20 rounded-xl p-6 text-center">
-                    <Heart className="w-12 h-12 mx-auto mb-3" />
-                    <p className="font-semibold">Save Favorites</p>
-                  </div>
-                  <div className="bg-white bg-opacity-20 rounded-xl p-6 text-center">
-                    <Star className="w-12 h-12 mx-auto mb-3" />
-                    <p className="font-semibold">Read Reviews</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Business Benefits */}
-      <section className="py-12 sm:py-20 bg-gradient-to-br from-blue-700 to-blue-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
-            <div className="hidden lg:block">
-              <div className="bg-blue-600 bg-opacity-30 rounded-2xl p-8 backdrop-blur-sm">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white bg-opacity-20 rounded-xl p-6 text-center">
-                    <TrendingUp className="w-12 h-12 mx-auto mb-3" />
-                    <p className="font-semibold">Grow Sales</p>
-                  </div>
-                  <div className="bg-white bg-opacity-20 rounded-xl p-6 text-center">
-                    <Users className="w-12 h-12 mx-auto mb-3" />
-                    <p className="font-semibold">Reach Customers</p>
-                  </div>
-                  <div className="bg-white bg-opacity-20 rounded-xl p-6 text-center">
-                    <Sparkles className="w-12 h-12 mx-auto mb-3" />
-                    <p className="font-semibold">Feature Deals</p>
-                  </div>
-                  <div className="bg-white bg-opacity-20 rounded-xl p-6 text-center">
-                    <Star className="w-12 h-12 mx-auto mb-3" />
-                    <p className="font-semibold">Build Trust</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 sm:mb-6">
-                For Business Owners
-              </h2>
-              <p className="text-base sm:text-xl text-blue-50 mb-6 sm:mb-8">
-                Grow your business and reach more customers in the Lakewood community
-              </p>
-              <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-                <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-base sm:text-lg mb-1">Increase Visibility</h3>
-                    <p className="text-blue-50 text-sm sm:text-base">Get discovered by thousands of local shoppers</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Users className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-base sm:text-lg mb-1">Connect with Customers</h3>
-                    <p className="text-blue-50 text-sm sm:text-base">Build relationships and grow your customer base</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-base sm:text-lg mb-1">Promote Your Deals</h3>
-                    <p className="text-blue-50 text-sm sm:text-base">Feature special offers and promotions</p>
-                  </div>
-                </div>
-              </div>
-              <Button 
-                size="lg"
-                className="bg-white text-blue-700 hover:bg-blue-50 px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-semibold w-full sm:w-auto"
+                className="bg-white text-cyan-700 hover:bg-cyan-50 font-semibold w-full sm:w-auto"
                 asChild
               >
-                <Link to={createPageUrl("AddBusiness")}>
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                  Add Your Business
+                <Link to={createPageUrl("ForShoppers")}>
+                  Learn More
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </Button>
+            </div>
+
+            {/* For Business Owners */}
+            <div className="bg-gradient-to-br from-blue-700 to-blue-800 rounded-2xl p-6 sm:p-8 text-white">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">For Business Owners</h2>
+              <p className="text-blue-50 mb-6">
+                Get discovered, reach customers & grow your business - Free listing
+              </p>
+              <Button 
+                size="lg"
+                className="bg-white text-blue-700 hover:bg-blue-50 font-semibold w-full sm:w-auto"
+                asChild
+              >
+                <Link to={createPageUrl("BusinessJoin")}>
+                  Learn More
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
             </div>
