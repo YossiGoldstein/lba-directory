@@ -74,19 +74,16 @@ export default function Home() {
       // Fixed: Pass conversation ID instead of full object
       await base44.agents.addMessage(conv.id, {
         role: "user",
-        content: `IMPORTANT: The user is searching from the HOME PAGE.
-        
-User search query: "${searchQuery}"
+        content: `User search query: "${searchQuery}"
 
-Please provide ONLY the most relevant businesses that DIRECTLY match this specific search query. 
-Be precise and selective - don't recommend all businesses in a category, only those that specifically match what the user is looking for.
+CRITICAL INSTRUCTIONS:
+1. Search the Business database for businesses matching this query
+2. For EACH business you recommend, you MUST write its EXACT business_name as it appears in the database
+3. List 3-6 relevant businesses with their exact names
+4. If searching for a category like "food", "restaurants", etc. - show ALL food-related businesses
+5. Include brief details about each business
 
-For example:
-- If they search "pizza", recommend ONLY pizza shops, not all food businesses
-- If they search "plumber", recommend ONLY plumbing services, not all home services
-- If they search "kosher restaurant", recommend ONLY kosher restaurants, not all restaurants
-
-List up to 3-5 most relevant businesses by their exact business name.`
+Remember: I need the EXACT business names to display them to the user.`
       });
 
       console.log("✅ Message sent to agent");
