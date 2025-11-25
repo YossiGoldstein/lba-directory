@@ -135,15 +135,29 @@ List up to 3-5 most relevant businesses by their exact business name.`
   const extractBusinessesFromResponse = (responseText) => {
     console.log("🔎 Extracting businesses from response...");
     console.log("Total businesses available:", allBusinesses.length);
+    console.log("Response text:", responseText);
     
     const businesses = [];
-    const responseLines = responseText.toLowerCase();
+    const responseLower = responseText.toLowerCase();
 
     allBusinesses.forEach(business => {
-      const businessName = (business.business_name || "").toLowerCase();
-      if (businessName && responseLines.includes(businessName)) {
+      const businessName = (business.business_name || "").toLowerCase().trim();
+      // Also try without HTML entities
+      const cleanName = businessName.replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ');
+      
+      if (businessName && (responseLower.includes(businessName) || responseLower.includes(cleanName))) {
         businesses.push(business);
         console.log("✓ Found match:", business.business_name);
+      } else {
+        // Try partial match - if business name has multiple words, check if most words appear
+        const words = cleanName.split(/\s+/).filter(w => w.length > 3);
+        if (words.length >= 2) {
+          const matchedWords = words.filter(word => responseLower.includes(word));
+          if (matchedWords.length >= Math.ceil(words.length * 0.7)) {
+            businesses.push(business);
+            console.log("✓ Found partial match:", business.business_name);
+          }
+        }
       }
     });
 
