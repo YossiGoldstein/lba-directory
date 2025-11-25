@@ -378,38 +378,6 @@ List up to 3-5 most relevant businesses by their exact business name.`
         />
       )}
 
-      {/* About LBA Directory Teaser */}
-      <section className="py-12 sm:py-16 bg-gradient-to-br from-gray-50 to-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 sm:mb-6">
-            About LBA Directory
-          </h2>
-          <div className="prose prose-sm sm:prose-lg max-w-none text-gray-700 leading-relaxed mb-6 sm:mb-8 space-y-3 sm:space-y-4">
-            <p>
-              Lakewood is growing fast — and with thousands of businesses, finding what you need can be overwhelming. LBA Directory is your AI-powered shopping assistant, built for the Lakewood community.
-            </p>
-            <p>
-              Just ask in your own words — <span className="italic text-cyan-700">"dairy restaurant open now,"</span> <span className="italic text-cyan-700">"phone repair,"</span> <span className="italic text-cyan-700">"sheitel stylist,"</span> <span className="italic text-cyan-700">"deals today"</span> — and our assistant instantly finds the best match.
-            </p>
-            <p>
-              Create a free account to bookmark favorites, leave reviews, get exclusive deals, and enjoy member giveaways.
-            </p>
-            <p className="text-lg sm:text-xl font-semibold text-gray-900">
-              LBA Directory — local shopping made simple.
-            </p>
-          </div>
-          <Button
-            asChild
-            size="lg"
-            className="bg-cyan-600 hover:bg-cyan-700 px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg"
-          >
-            <Link to={createPageUrl("AboutUs")}>
-              Learn More About Us
-            </Link>
-          </Button>
-        </div>
-      </section>
-
       {/* Blue Banner */}
       <section className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-400 py-6 sm:py-8">
         <div className="max-w-7xl mx-auto px-4 text-center">
