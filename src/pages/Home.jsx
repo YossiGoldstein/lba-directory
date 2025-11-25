@@ -388,7 +388,7 @@ List up to 3-5 most relevant businesses by their exact business name.`
       </section>
 
       {/* Shopper & Business Sections */}
-      <section className="py-12 sm:py-16">
+      <section className="py-12 sm:py-16 bg-gray-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             {/* For Shoppers */}
