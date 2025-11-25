@@ -388,45 +388,41 @@ List up to 3-5 most relevant businesses by their exact business name.`
       </section>
 
       {/* Shopper & Business Sections */}
-      <section className="py-12 sm:py-16 bg-gray-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-            {/* For Shoppers */}
-            <div className="bg-gradient-to-br from-cyan-600 to-blue-600 rounded-2xl p-6 sm:p-8 text-white">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-3">For Shoppers</h2>
-              <p className="text-cyan-50 mb-6">
-                Save favorites, post reviews, get exclusive deals & win giveaways
-              </p>
-              <Button 
-                size="lg"
-                className="bg-white text-cyan-700 hover:bg-cyan-50 font-semibold w-full sm:w-auto"
-                asChild
-              >
-                <Link to={createPageUrl("ForShoppers")}>
-                  Learn More
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
-            </div>
+      <section className="bg-gradient-to-br from-cyan-600 to-blue-600 py-10 sm:py-14">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-white text-center mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3">For Shoppers</h2>
+          <p className="text-cyan-50 mb-6">
+            Save favorites, post reviews, get exclusive deals & win giveaways
+          </p>
+          <Button 
+            size="lg"
+            className="bg-white text-cyan-700 hover:bg-cyan-50 font-semibold"
+            asChild
+          >
+            <Link to={createPageUrl("ForShoppers")}>
+              Learn More
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
+          </Button>
+        </div>
+      </section>
 
-            {/* For Business Owners */}
-            <div className="bg-gradient-to-br from-blue-700 to-blue-800 rounded-2xl p-6 sm:p-8 text-white">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-3">For Business Owners</h2>
-              <p className="text-blue-50 mb-6">
-                Get discovered, reach customers & grow your business - Free listing
-              </p>
-              <Button 
-                size="lg"
-                className="bg-white text-blue-700 hover:bg-blue-50 font-semibold w-full sm:w-auto"
-                asChild
-              >
-                <Link to={createPageUrl("BusinessJoin")}>
-                  Learn More
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
-            </div>
-          </div>
+      <section className="bg-gradient-to-br from-blue-700 to-blue-800 py-10 sm:py-14">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-white text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3">For Business Owners</h2>
+          <p className="text-blue-50 mb-6">
+            Get discovered, reach customers & grow your business - Free listing
+          </p>
+          <Button 
+            size="lg"
+            className="bg-white text-blue-700 hover:bg-blue-50 font-semibold"
+            asChild
+          >
+            <Link to={createPageUrl("BusinessJoin")}>
+              Learn More
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
+          </Button>
         </div>
       </section>
 
