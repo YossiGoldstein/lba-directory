@@ -58,6 +58,8 @@ export default function Home() {
     setAgentResponse("");
     setMatchedBusinesses([]);
 
+    let searchCompleted = false;
+
     try {
       const conv = await base44.agents.createConversation({
         agent_name: "DirectoryAssistant",
@@ -71,23 +73,7 @@ export default function Home() {
       console.log("✅ Conversation created:", conv.id);
       setConversation(conv);
 
-      // Fixed: Pass conversation ID instead of full object
-      await base44.agents.addMessage(conv.id, {
-        role: "user",
-        content: `User search query: "${searchQuery}"
-
-CRITICAL INSTRUCTIONS:
-1. Search the Business database for businesses matching this query
-2. For EACH business you recommend, you MUST write its EXACT business_name as it appears in the database
-3. List 3-6 relevant businesses with their exact names
-4. If searching for a category like "food", "restaurants", etc. - show ALL food-related businesses
-5. Include brief details about each business
-
-Remember: I need the EXACT business names to display them to the user.`
-      });
-
-      console.log("✅ Message sent to agent");
-
+      // Subscribe first before adding message
       const unsubscribe = base44.agents.subscribeToConversation(
         conv.id,
         (data) => {
@@ -95,8 +81,9 @@ Remember: I need the EXACT business names to display them to the user.`
           const messages = data.messages || [];
           const lastMessage = messages[messages.length - 1];
           
-          if (lastMessage && lastMessage.role === "assistant") {
+          if (lastMessage && lastMessage.role === "assistant" && lastMessage.content) {
             console.log("🤖 Assistant response:", lastMessage.content);
+            searchCompleted = true;
             setAgentResponse(lastMessage.content);
             const extractedBusinesses = extractBusinessesFromResponse(lastMessage.content);
             console.log("🏢 Extracted businesses:", extractedBusinesses.length);
@@ -112,10 +99,22 @@ Remember: I need the EXACT business names to display them to the user.`
         }
       );
 
+      // Now send the message
+      await base44.agents.addMessage(conv, {
+        role: "user",
+        content: `User search query: "${searchQuery}"
+
+Search the Business database and find businesses that match this query.
+For each business you recommend, write its EXACT business_name as it appears in the database.
+Show 3-6 relevant businesses with brief details about each one.`
+      });
+
+      console.log("✅ Message sent to agent");
+
       setTimeout(() => {
         console.log("⏱️ Timeout reached, unsubscribing");
         unsubscribe();
-        if (isSearching) {
+        if (!searchCompleted) {
           console.log("⚠️ Still searching after timeout");
           setIsSearching(false);
           setAgentResponse("Search timed out. Please try again.");
