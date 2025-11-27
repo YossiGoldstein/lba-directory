@@ -405,7 +405,7 @@ export default function Home() {
               </p>
               <Button 
                 size="sm"
-                className="bg-white text-cyan-700 hover:bg-cyan-50 font-semibold"
+                className="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-gray-900 font-semibold shadow-lg"
                 asChild
               >
                 <Link to={createPageUrl("ForShoppers")}>
@@ -423,7 +423,7 @@ export default function Home() {
               </p>
               <Button 
                 size="sm"
-                className="bg-white text-blue-700 hover:bg-blue-50 font-semibold"
+                className="bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 text-white font-semibold shadow-lg"
                 asChild
               >
                 <Link to={createPageUrl("BusinessJoin")}>
