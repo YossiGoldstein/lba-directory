@@ -459,7 +459,7 @@ export default function Home() {
       </section>
 
       {/* Trusted by Community */}
-      <section className="py-12 sm:py-16 bg-white">
+      <section className="py-12 sm:py-16 bg-gradient-to-r from-cyan-50 to-blue-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-8">
             Trusted by your community
