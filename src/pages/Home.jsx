@@ -373,9 +373,7 @@ export default function Home() {
                   {isSearching ? "Searching..." : "Search"}
                 </Button>
               </div>
-              <p className="text-white/80 text-xs sm:text-sm mt-3 px-4">
-                🤖 Powered by AI - Ask in English or Hebrew!
-              </p>
+
             </form>
 
             {/* Category Icons - Responsive: Grid on mobile, Single row on desktop */}
