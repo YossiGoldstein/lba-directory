@@ -93,12 +93,19 @@ export default function Layout({ children, currentPageName }) {
                 <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                   FAQ
                 </Link>
-                <Link to={createPageUrl("AddBusiness")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
+                <button 
+                  onClick={async () => {
+                    const isAuth = await base44.auth.isAuthenticated();
+                    if (isAuth) {
+                      window.location.href = createPageUrl("AddBusiness");
+                    } else {
+                      base44.auth.redirectToLogin(createPageUrl("AddBusiness"));
+                    }
+                  }} 
+                  className="text-gray-700 hover:text-cyan-600 transition-colors font-medium"
+                >
                   Add Business
-                </Link>
-                <Link to={createPageUrl("Contact")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
-                  Contact
-                </Link>
+                </button>
               </nav>
 
               <div className="hidden md:flex items-center gap-4">
@@ -118,7 +125,7 @@ export default function Layout({ children, currentPageName }) {
                   </div>
                 ) : (
                   <>
-                    <Button variant="ghost" onClick={handleLogin}>
+                    <Button onClick={handleLogin} className="bg-green-500 hover:bg-green-600 text-white">
                       Login
                     </Button>
                     <Button className="bg-cyan-600 hover:bg-cyan-700" onClick={handleLogin}>
@@ -148,12 +155,19 @@ export default function Layout({ children, currentPageName }) {
                   <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-cyan-600 font-medium">
                     FAQ
                   </Link>
-                  <Link to={createPageUrl("AddBusiness")} className="text-gray-700 hover:text-cyan-600 font-medium">
+                  <button 
+                    onClick={async () => {
+                      const isAuth = await base44.auth.isAuthenticated();
+                      if (isAuth) {
+                        window.location.href = createPageUrl("AddBusiness");
+                      } else {
+                        base44.auth.redirectToLogin(createPageUrl("AddBusiness"));
+                      }
+                    }} 
+                    className="text-gray-700 hover:text-cyan-600 font-medium text-left"
+                  >
                     Add Business
-                  </Link>
-                  <Link to={createPageUrl("Contact")} className="text-gray-700 hover:text-cyan-600 font-medium">
-                    Contact
-                  </Link>
+                  </button>
                   {user ? (
                     <div className="border-t border-gray-200 pt-4 mt-2 flex flex-col gap-3">
                       <Button variant="outline" asChild className="w-full">
@@ -165,7 +179,7 @@ export default function Layout({ children, currentPageName }) {
                     </div>
                   ) : (
                     <div className="flex flex-col gap-3 border-t border-gray-200 pt-4 mt-2">
-                      <Button variant="outline" onClick={handleLogin} className="w-full">
+                      <Button onClick={handleLogin} className="w-full bg-green-500 hover:bg-green-600 text-white">
                         Login
                       </Button>
                       <Button className="bg-cyan-600 hover:bg-cyan-700 w-full" onClick={handleLogin}>

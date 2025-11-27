@@ -219,12 +219,18 @@ export default function Home() {
                 <Link to={createPageUrl("FAQ")} className="text-white hover:text-cyan-200 transition-colors font-medium">
                   FAQ
                 </Link>
-                <Link to={createPageUrl("AddBusiness")} className="text-white hover:text-cyan-200 transition-colors font-medium">
+                <button 
+                  onClick={() => {
+                    if (user) {
+                      window.location.href = createPageUrl("AddBusiness");
+                    } else {
+                      base44.auth.redirectToLogin(createPageUrl("AddBusiness"));
+                    }
+                  }} 
+                  className="text-white hover:text-cyan-200 transition-colors font-medium"
+                >
                   Add Business
-                </Link>
-                <Link to={createPageUrl("Contact")} className="text-white hover:text-cyan-200 transition-colors font-medium">
-                  Contact
-                </Link>
+                </button>
               </nav>
 
               <div className="hidden md:flex items-center gap-4">
@@ -244,7 +250,7 @@ export default function Home() {
                   </div>
                 ) : (
                   <>
-                    <Button variant="ghost" onClick={handleLogin} className="text-white hover:text-cyan-200 hover:bg-white/10">
+                    <Button onClick={handleLogin} className="bg-green-500 hover:bg-green-600 text-white">
                       Login
                     </Button>
                     <Button onClick={handleLogin} className="bg-cyan-600 hover:bg-cyan-700">
@@ -274,12 +280,18 @@ export default function Home() {
                   <Link to={createPageUrl("FAQ")} className="text-white hover:text-cyan-200 font-medium">
                     FAQ
                   </Link>
-                  <Link to={createPageUrl("AddBusiness")} className="text-white hover:text-cyan-200 font-medium">
+                  <button 
+                    onClick={() => {
+                      if (user) {
+                        window.location.href = createPageUrl("AddBusiness");
+                      } else {
+                        base44.auth.redirectToLogin(createPageUrl("AddBusiness"));
+                      }
+                    }} 
+                    className="text-white hover:text-cyan-200 font-medium text-left"
+                  >
                     Add Business
-                  </Link>
-                  <Link to={createPageUrl("Contact")} className="text-white hover:text-cyan-200 font-medium">
-                    Contact
-                  </Link>
+                  </button>
                   {user ? (
                     <div className="border-t border-white/20 pt-4 mt-2 flex flex-col gap-3">
                       <Button variant="outline" asChild className="w-full text-white border-white hover:bg-white/10">
@@ -291,7 +303,7 @@ export default function Home() {
                     </div>
                   ) : (
                     <div className="flex flex-col gap-3 border-t border-white/20 pt-4 mt-2">
-                      <Button variant="outline" onClick={handleLogin} className="w-full text-white border-white hover:bg-white/10">
+                      <Button onClick={handleLogin} className="w-full bg-green-500 hover:bg-green-600 text-white">
                         Login
                       </Button>
                       <Button className="bg-cyan-600 hover:bg-cyan-700 w-full" onClick={handleLogin}>
