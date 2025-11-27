@@ -5,9 +5,9 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { 
   Search, MapPin, TrendingUp, Users, Star, 
-  UtensilsCrossed, Shirt, Briefcase, Home as HomeIcon, 
-  Car, Book, Sparkles, PartyPopper, GraduationCap, 
-  HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard
+  Pizza, Shirt, Briefcase, Home as HomeIcon, 
+  Car, ScrollText, Palette, PartyPopper, GraduationCap, 
+  HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard, Mic
 } from "lucide-react";
 import SearchResultsPanel from "../components/home/SearchResultsPanel";
 
@@ -178,13 +178,13 @@ export default function Home() {
   };
 
   const categories = [
-    { id: 1, name: "Food", slug: "food", icon: UtensilsCrossed },
+    { id: 1, name: "Food", slug: "food", icon: Pizza },
     { id: 2, name: "Apparel", slug: "apparel", icon: Shirt },
     { id: 3, name: "Services", slug: "services", icon: Briefcase },
     { id: 4, name: "Home", slug: "home", icon: HomeIcon },
     { id: 5, name: "Auto", slug: "auto", icon: Car },
-    { id: 6, name: "Judaica", slug: "judaica", icon: Book },
-    { id: 7, name: "Beauty", slug: "beauty", icon: Sparkles },
+    { id: 6, name: "Judaica", slug: "judaica", icon: ScrollText },
+    { id: 7, name: "Beauty", slug: "beauty", icon: Palette },
     { id: 8, name: "Fun", slug: "fun", icon: PartyPopper },
     { id: 9, name: "Education", slug: "education", icon: GraduationCap },
     { id: 10, name: "Org./Gmach", slug: "org-gmach", icon: HandHeart },
@@ -317,14 +317,11 @@ export default function Home() {
         {/* Main Content - With more padding-top for logo space */}
         <div className="relative z-10 flex-1 flex items-center justify-center pt-28 sm:pt-0">
           <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pb-12">
-            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-2xl mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold text-white drop-shadow-2xl mb-6">
               Lakewood Business Alliance
             </h1>
-            <p className="text-lg sm:text-xl md:text-3xl text-white mb-2 font-medium">
-              Comprehensive business directory
-            </p>
             <p className="text-base sm:text-lg md:text-2xl text-white mb-10 font-light">
-              Your search starts (and ends) here
+              AI powered directory for easy searching, connecting, and following
             </p>
 
             <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-10 px-2">
@@ -333,11 +330,28 @@ export default function Home() {
                   <Search className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 ml-0 sm:ml-4 flex-shrink-0" />
                   <input
                     type="text"
-                    placeholder="Search: 'kosher restaurant', 'plumber'..."
+                    placeholder="Search by keyword or sentence"
                     className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 text-sm sm:text-lg px-2 py-0"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
+                  <button
+                    type="button"
+                    className="p-2 text-gray-400 hover:text-cyan-600 transition-colors"
+                    onClick={() => {
+                      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                        const recognition = new SpeechRecognition();
+                        recognition.lang = 'en-US';
+                        recognition.onresult = (event) => {
+                          setSearchQuery(event.results[0][0].transcript);
+                        };
+                        recognition.start();
+                      }
+                    }}
+                  >
+                    <Mic className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </button>
                 </div>
                 <Button
                   type="submit"
@@ -398,36 +412,32 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {/* For Shoppers */}
-            <div className="text-white text-center p-6 bg-white/10 rounded-xl backdrop-blur-sm">
-              <h2 className="text-xl sm:text-2xl font-bold mb-2">For Shoppers</h2>
-              <p className="text-cyan-50 mb-4 text-sm sm:text-base">
-                Save favorites, post reviews, get exclusive deals & win giveaways
-              </p>
+            <div className="text-white text-center p-8 bg-white/10 rounded-xl backdrop-blur-sm">
+              <p className="text-lg sm:text-xl mb-1">Find what you're looking for.</p>
+              <p className="text-lg sm:text-xl mb-1">Follow what you need.</p>
+              <p className="text-lg sm:text-xl mb-6">Save on what you get.</p>
               <Button 
                 size="sm"
                 className="bg-cyan-400 hover:bg-cyan-500 text-white font-semibold shadow-lg"
-                asChild
+                onClick={handleRegister}
               >
-                <Link to={createPageUrl("ForShoppers")}>
-                  Learn More
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
+                Create a free account
+                <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
 
             {/* For Business Owners */}
-            <div className="text-white text-center p-6 bg-white/10 rounded-xl backdrop-blur-sm">
-              <h2 className="text-xl sm:text-2xl font-bold mb-2">For Business Owners</h2>
-              <p className="text-blue-50 mb-4 text-sm sm:text-base">
-                Get discovered, reach customers & grow your business - Free listing
-              </p>
+            <div className="text-white text-center p-8 bg-white/10 rounded-xl backdrop-blur-sm">
+              <p className="text-lg sm:text-xl mb-1">Be visible.</p>
+              <p className="text-lg sm:text-xl mb-1">Attract customers.</p>
+              <p className="text-lg sm:text-xl mb-6">Promote deals.</p>
               <Button 
                 size="sm"
                 className="bg-cyan-400 hover:bg-cyan-500 text-white font-semibold shadow-lg"
                 asChild
               >
-                <Link to={createPageUrl("BusinessJoin")}>
-                  Learn More
+                <Link to={createPageUrl("AddBusiness")}>
+                  Add a business
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
@@ -436,46 +446,35 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-12 sm:py-20 bg-gradient-to-br from-cyan-600 via-blue-700 to-blue-800 text-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 sm:mb-6">
-            Ready to Get Started?
+      {/* Trusted by Community */}
+      <section className="py-12 sm:py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+            Trusted by your community
           </h2>
-          <p className="text-base sm:text-xl md:text-2xl text-cyan-50 mb-8 sm:mb-12 max-w-3xl mx-auto">
-            Join the Lakewood Business Alliance Directory today
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-            <Button 
-              size="lg"
-              className="bg-white text-blue-900 hover:bg-cyan-50 px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-semibold shadow-xl w-full sm:w-auto"
-              asChild
-            >
-              <Link to={createPageUrl("AddBusiness")}>
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                Add Your Business
-              </Link>
-            </Button>
-            <Button 
-              size="lg"
-              variant="outline"
-              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-900 px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-semibold w-full sm:w-auto"
-              onClick={handleRegister}
-            >
-              Create Account
-            </Button>
-          </div>
-
-          <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-cyan-500">
-            <p className="text-cyan-100 mb-3 sm:mb-4 text-sm sm:text-base">Trusted by the Lakewood community</p>
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-cyan-200">
-              <div>✓ Free Basic Listings</div>
-              <div>✓ Verified Reviews</div>
-              <div>✓ Local Community</div>
-              <div>✓ Easy to Use</div>
+          
+          <div className="flex flex-wrap justify-center gap-6 sm:gap-10 mb-10 text-base sm:text-lg text-gray-700">
+            <div className="flex items-center gap-2">
+              <span className="text-cyan-600 font-bold">✓</span> Free Basic Listings
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-cyan-600 font-bold">✓</span> Verified Reviews
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-cyan-600 font-bold">✓</span> Local Businesses
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-cyan-600 font-bold">✓</span> Deals you're looking for
             </div>
           </div>
+
+          <p className="text-gray-600 mb-8 text-base sm:text-lg max-w-2xl mx-auto">
+            Ready to save time and money? Create an account. Login. Add your business. Search without an account.
+          </p>
+
+          <p className="text-gray-500 text-sm sm:text-base">
+            Serving Lakewood, Toms River, Jackson, Brick, Howell, Manchester
+          </p>
         </div>
       </section>
     </div>
