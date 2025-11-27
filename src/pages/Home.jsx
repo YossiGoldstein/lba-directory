@@ -99,14 +99,10 @@ export default function Home() {
         }
       );
 
-      // Now send the message
+      // Now send the message - pass the full conversation object
       await base44.agents.addMessage(conv, {
         role: "user",
-        content: `User search query: "${searchQuery}"
-
-Search the Business database and find businesses that match this query.
-For each business you recommend, write its EXACT business_name as it appears in the database.
-Show 3-6 relevant businesses with brief details about each one.`
+        content: searchQuery
       });
 
       console.log("✅ Message sent to agent");
