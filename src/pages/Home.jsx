@@ -393,42 +393,46 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Shopper & Business Sections */}
-      <section className="bg-gradient-to-br from-cyan-600 to-blue-600 py-10 sm:py-14">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-white text-center mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-3">For Shoppers</h2>
-          <p className="text-cyan-50 mb-6">
-            Save favorites, post reviews, get exclusive deals & win giveaways
-          </p>
-          <Button 
-            size="lg"
-            className="bg-white text-cyan-700 hover:bg-cyan-50 font-semibold"
-            asChild
-          >
-            <Link to={createPageUrl("ForShoppers")}>
-              Learn More
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
-          </Button>
-        </div>
-      </section>
+      {/* Shopper & Business Sections - Side by Side */}
+      <section className="bg-gradient-to-r from-cyan-600 to-blue-700 py-10 sm:py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            {/* For Shoppers */}
+            <div className="text-white text-center p-6 bg-white/10 rounded-xl backdrop-blur-sm">
+              <h2 className="text-xl sm:text-2xl font-bold mb-2">For Shoppers</h2>
+              <p className="text-cyan-50 mb-4 text-sm sm:text-base">
+                Save favorites, post reviews, get exclusive deals & win giveaways
+              </p>
+              <Button 
+                size="sm"
+                className="bg-white text-cyan-700 hover:bg-cyan-50 font-semibold"
+                asChild
+              >
+                <Link to={createPageUrl("ForShoppers")}>
+                  Learn More
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </Button>
+            </div>
 
-      <section className="bg-gradient-to-br from-blue-700 to-blue-800 py-10 sm:py-14">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-white text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-3">For Business Owners</h2>
-          <p className="text-blue-50 mb-6">
-            Get discovered, reach customers & grow your business - Free listing
-          </p>
-          <Button 
-            size="lg"
-            className="bg-white text-blue-700 hover:bg-blue-50 font-semibold"
-            asChild
-          >
-            <Link to={createPageUrl("BusinessJoin")}>
-              Learn More
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
-          </Button>
+            {/* For Business Owners */}
+            <div className="text-white text-center p-6 bg-white/10 rounded-xl backdrop-blur-sm">
+              <h2 className="text-xl sm:text-2xl font-bold mb-2">For Business Owners</h2>
+              <p className="text-blue-50 mb-4 text-sm sm:text-base">
+                Get discovered, reach customers & grow your business - Free listing
+              </p>
+              <Button 
+                size="sm"
+                className="bg-white text-blue-700 hover:bg-blue-50 font-semibold"
+                asChild
+              >
+                <Link to={createPageUrl("BusinessJoin")}>
+                  Learn More
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
