@@ -215,7 +215,7 @@ export default function Layout({ children, currentPageName }) {
                 Powered by LBA Leagues & TIG Solutions
               </p>
               <p className="text-sm text-gray-400">
-                Serving Lakewood, Toms River, Jackson, Brick, Howell, and surrounding areas.
+                Serving Lakewood, Toms River, Jackson, Brick, Howell, Manchester
               </p>
             </div>
 
@@ -293,7 +293,7 @@ export default function Layout({ children, currentPageName }) {
               © {new Date().getFullYear()} LBA Directory. All rights reserved.
             </p>
             <p className="text-sm text-gray-500">
-              Designed for the Lakewood Haredi community.
+              Designed for the Lakewood community.
             </p>
           </div>
         </div>

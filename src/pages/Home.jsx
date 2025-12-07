@@ -5,9 +5,9 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { 
   Search, MapPin, TrendingUp, Users, Star, 
-  Pizza, Shirt, Briefcase, Home as HomeIcon, 
-  Car, ScrollText, Palette, PartyPopper, GraduationCap, 
-  HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard, Mic
+  UtensilsCrossed, Shirt, Briefcase, Home as HomeIcon, 
+  Car, PartyPopper, GraduationCap, 
+  HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard, Mic, Sparkles
 } from "lucide-react";
 import SearchResultsPanel from "../components/home/SearchResultsPanel";
 
@@ -178,13 +178,13 @@ export default function Home() {
   };
 
   const categories = [
-    { id: 1, name: "Food", slug: "food", icon: Pizza },
+    { id: 1, name: "Food", slug: "food", icon: UtensilsCrossed },
     { id: 2, name: "Apparel", slug: "apparel", icon: Shirt },
     { id: 3, name: "Services", slug: "services", icon: Briefcase },
     { id: 4, name: "Home", slug: "home", icon: HomeIcon },
     { id: 5, name: "Auto", slug: "auto", icon: Car },
-    { id: 6, name: "Judaica", slug: "judaica", icon: ScrollText },
-    { id: 7, name: "Beauty", slug: "beauty", icon: Palette },
+    { id: 6, name: "Judaica", slug: "judaica", icon: Star },
+    { id: 7, name: "Beauty", slug: "beauty", icon: Sparkles },
     { id: 8, name: "Fun", slug: "fun", icon: PartyPopper },
     { id: 9, name: "Education", slug: "education", icon: GraduationCap },
     { id: 10, name: "Org./Gmach", slug: "org-gmach", icon: HandHeart },
@@ -420,9 +420,13 @@ export default function Home() {
       {/* Shopper & Business Sections - Side by Side */}
       <section className="bg-gradient-to-r from-cyan-600 to-blue-700 py-10 sm:py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-10">
+            Ready to save time and money? Create an account
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {/* For Shoppers */}
             <div className="text-white text-center p-8 bg-white/10 rounded-xl backdrop-blur-sm">
+              <h3 className="text-2xl sm:text-3xl font-bold mb-6">For Consumers</h3>
               <p className="text-lg sm:text-xl mb-1">Find what you're looking for.</p>
               <p className="text-lg sm:text-xl mb-1">Follow what you need.</p>
               <p className="text-lg sm:text-xl mb-6">Save on what you get.</p>
@@ -438,6 +442,7 @@ export default function Home() {
 
             {/* For Business Owners */}
             <div className="text-white text-center p-8 bg-white/10 rounded-xl backdrop-blur-sm">
+              <h3 className="text-2xl sm:text-3xl font-bold mb-6">For Businesses</h3>
               <p className="text-lg sm:text-xl mb-1">Be visible.</p>
               <p className="text-lg sm:text-xl mb-1">Attract customers.</p>
               <p className="text-lg sm:text-xl mb-6">Promote deals.</p>
@@ -477,10 +482,6 @@ export default function Home() {
               <span className="text-cyan-600 font-bold">✓</span> Deals you're looking for
             </div>
           </div>
-
-          <p className="text-gray-600 mb-8 text-base sm:text-lg max-w-2xl mx-auto">
-            Ready to save time and money? Create an account. Login. Add your business. Search without an account.
-          </p>
 
           <p className="text-gray-500 text-sm sm:text-base">
             Serving Lakewood, Toms River, Jackson, Brick, Howell, Manchester
