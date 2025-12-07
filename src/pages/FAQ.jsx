@@ -298,15 +298,6 @@ Our team will review it promptly.`
           </Link>
         </div>
       </section>
-
-      {/* Floating Ask Button */}
-      <button
-        onClick={handleOpenChat}
-        className="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-14 h-14 bg-cyan-600 hover:bg-cyan-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 z-40"
-        aria-label="Ask us anything"
-      >
-        <MessageCircle className="w-6 h-6" />
-      </button>
     </div>
   );
 }
