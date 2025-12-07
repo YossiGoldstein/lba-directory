@@ -78,7 +78,7 @@ export default function Layout({ children, currentPageName }) {
             <div className="flex items-center justify-between h-16">
               <Link to={createPageUrl("Home")} className="flex items-center gap-2">
                 <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/3a0b2e08d_LBA-directory-logo-color.png"
                   alt="LBA Directory"
                   className="h-12 w-auto"
                 />
