@@ -101,7 +101,7 @@ export default function UserDashboard() {
         {/* User Profile Header */}
         <Card className="mb-8 overflow-hidden">
           <div className="bg-gradient-to-r from-cyan-500 to-blue-600 h-24"></div>
-          <CardContent className="relative pt-0 pb-6">
+          <CardContent className="relative pt-6 pb-6">
             <div className="flex flex-col md:flex-row md:items-end gap-6 -mt-12">
               {/* Avatar */}
               <div className="relative">
