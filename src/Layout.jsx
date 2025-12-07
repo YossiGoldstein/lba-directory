@@ -4,7 +4,7 @@ import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Menu, X, User, LogOut, LayoutDashboard, Mail, Phone } from "lucide-react";
-import ChatButton from "./components/chat/ChatButton";
+
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
@@ -299,8 +299,7 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </footer>
 
-      {/* Chat Assistant with Page Context */}
-      <ChatButton pageContext={getPageContext()} />
+
     </div>
   );
 }
