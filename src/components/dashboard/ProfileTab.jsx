@@ -24,12 +24,13 @@ export default function ProfileTab({ user, onUserUpdate }) {
     try {
       // Validate phone (US format)
       if (formData.phone && !/^[\d\s\-\(\)]+$/.test(formData.phone)) {
-        toast.error("Please enter a valid US phone number");
+        toast.error("Please enter a valid phone number");
         setIsSaving(false);
         return;
       }
 
-      await base44.auth.updateMe({
+      // Update user entity with phone and language
+      await base44.entities.User.update(user.id, {
         phone: formData.phone,
         preferred_language: formData.preferred_language,
       });
@@ -38,6 +39,11 @@ export default function ProfileTab({ user, onUserUpdate }) {
       if (onUserUpdate) {
         onUserUpdate();
       }
+      
+      // Reload page to reflect changes
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       console.error("Failed to update profile:", error);
       toast.error("Failed to update profile. Please try again.");
