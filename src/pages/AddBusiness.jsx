@@ -22,6 +22,7 @@ export default function AddBusiness() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [formData, setFormData] = useState({
     business_name: "",
     category_id: "",
@@ -45,6 +46,23 @@ export default function AddBusiness() {
     gallery_images: [],
     deals: [],
   });
+
+  // Check authentication
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const isAuth = await base44.auth.isAuthenticated();
+        if (!isAuth) {
+          base44.auth.redirectToLogin(createPageUrl("AddBusiness"));
+        } else {
+          setIsCheckingAuth(false);
+        }
+      } catch (error) {
+        base44.auth.redirectToLogin(createPageUrl("AddBusiness"));
+      }
+    };
+    checkAuth();
+  }, []);
 
   // Fetch categories for display
   const { data: categories = [] } = useQuery({
@@ -265,7 +283,7 @@ export default function AddBusiness() {
       // Show success message
       toast.success("Business submitted for approval successfully!");
 
-      // Redirect to success page with business details
+      // Redirect to business dashboard with success flag
       setTimeout(() => {
         navigate(createPageUrl("BusinessDashboard") + "?submitted=true");
       }, 1500);
@@ -315,6 +333,18 @@ export default function AddBusiness() {
         return null;
     }
   };
+
+  // Loading state while checking authentication
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block w-12 h-12 border-4 border-cyan-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-gray-600">Verifying access...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
