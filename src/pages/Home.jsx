@@ -386,8 +386,8 @@ export default function Home() {
                     to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
                     className="flex flex-col items-center gap-1 sm:gap-2 group"
                   >
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full border-2 border-white/80 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
-                      <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-9 lg:h-9 text-white" strokeWidth={1.5} />
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border-2 border-cyan-400/60 bg-white/5 backdrop-blur-sm flex items-center justify-center hover:bg-cyan-400/20 hover:border-cyan-300 transition-all duration-300 group-hover:scale-110">
+                      <IconComponent className="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 text-white" strokeWidth={1.5} />
                     </div>
                     <span className="text-white text-[10px] sm:text-xs md:text-sm font-medium text-center">{category.name}</span>
                   </Link>
