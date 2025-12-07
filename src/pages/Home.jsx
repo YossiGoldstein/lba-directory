@@ -318,7 +318,7 @@ export default function Home() {
         </div>
 
         {/* Logo - With space below */}
-        <div className="absolute top-20 left-4 sm:top-20 sm:left-8 z-10">
+        <div className="absolute top-4 left-4 sm:top-6 sm:left-8 z-10">
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
             alt="LBA Directory"
