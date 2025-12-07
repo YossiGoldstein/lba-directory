@@ -29,16 +29,13 @@ export default function ProfileTab({ user, onUserUpdate }) {
         return;
       }
 
-      // Update user entity with phone and language
-      await base44.entities.User.update(user.id, {
+      // Update user via updateMe
+      await base44.auth.updateMe({
         phone: formData.phone,
         preferred_language: formData.preferred_language,
       });
 
       toast.success("Profile updated successfully!");
-      if (onUserUpdate) {
-        onUserUpdate();
-      }
       
       // Reload page to reflect changes
       setTimeout(() => {
