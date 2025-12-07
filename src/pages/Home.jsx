@@ -5,7 +5,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { 
   Search, MapPin, TrendingUp, Users, Star, 
-  UtensilsCrossed, Shirt, Briefcase, Home as HomeIcon, 
+  ShoppingBasket, Shirt, Briefcase, Home as HomeIcon, 
   Car, PartyPopper, GraduationCap, 
   HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard, Mic, Sparkles
 } from "lucide-react";
@@ -178,7 +178,7 @@ export default function Home() {
   };
 
   const categories = [
-    { id: 1, name: "Food", slug: "food", icon: UtensilsCrossed },
+    { id: 1, name: "Food", slug: "food", icon: ShoppingBasket },
     { id: 2, name: "Apparel", slug: "apparel", icon: Shirt },
     { id: 3, name: "Services", slug: "services", icon: Briefcase },
     { id: 4, name: "Home", slug: "home", icon: HomeIcon },
