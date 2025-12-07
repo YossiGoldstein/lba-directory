@@ -115,7 +115,7 @@ export default function UserDashboard() {
               </div>
 
               {/* User Info */}
-              <div className="flex-1 mt-4">
+              <div className="flex-1 mt-8 md:mt-4">
                 <h2 className="text-2xl font-bold text-gray-900">{user.full_name}</h2>
                 <p className="text-gray-600">{user.email}</p>
               </div>
