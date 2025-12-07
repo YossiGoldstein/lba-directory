@@ -300,7 +300,8 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </footer>
 
-
+      {/* Chat Assistant with Page Context */}
+      <ChatButton pageContext={getPageContext()} />
     </div>
   );
 }
