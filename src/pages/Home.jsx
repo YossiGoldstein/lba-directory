@@ -421,7 +421,7 @@ export default function Home() {
       <section className="bg-gradient-to-r from-cyan-600 to-blue-700 py-10 sm:py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-10">
-            Ready to save time and money? Create an account
+            Ready to save time and money?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {/* For Shoppers */}
