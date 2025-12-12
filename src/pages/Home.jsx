@@ -178,13 +178,13 @@ export default function Home() {
   };
 
   const categories = [
-    { id: 1, name: "Food", slug: "food", icon: ShoppingBasket },
+    { id: 1, name: "Food", slug: "food", icon: ShoppingCart },
     { id: 2, name: "Apparel", slug: "apparel", icon: Shirt },
     { id: 3, name: "Services", slug: "services", icon: Briefcase },
     { id: 4, name: "Home", slug: "home", icon: HomeIcon },
     { id: 5, name: "Auto", slug: "auto", icon: Car },
     { id: 6, name: "Judaica", slug: "judaica", icon: Star },
-    { id: 7, name: "Beauty", slug: "beauty", icon: Sparkles },
+    { id: 7, name: "Beauty", slug: "beauty", icon: Gem },
     { id: 8, name: "Fun", slug: "fun", icon: PartyPopper },
     { id: 9, name: "Education", slug: "education", icon: GraduationCap },
     { id: 10, name: "Org./Gmach", slug: "org-gmach", icon: HandHeart },
