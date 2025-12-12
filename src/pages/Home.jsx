@@ -5,9 +5,9 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { 
   Search, MapPin, TrendingUp, Users, Star, 
-  ShoppingBasket, Shirt, Briefcase, Home as HomeIcon, 
+  ShoppingCart, Shirt, Briefcase, Home as HomeIcon, 
   Car, PartyPopper, GraduationCap, 
-  HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard, Mic, Sparkles
+  HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard, Mic, Gem
 } from "lucide-react";
 import SearchResultsPanel from "../components/home/SearchResultsPanel";
 
