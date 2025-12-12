@@ -4,7 +4,7 @@ import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { 
-  Search, MapPin, TrendingUp, Users, Star, 
+  Search, MapPin, TrendingUp, Users, Shield, 
   ShoppingCart, Shirt, Briefcase, Home as HomeIcon, 
   Car, PartyPopper, GraduationCap, 
   HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard, Mic, Gem
@@ -183,7 +183,7 @@ export default function Home() {
     { id: 3, name: "Services", slug: "services", icon: Briefcase },
     { id: 4, name: "Home", slug: "home", icon: HomeIcon },
     { id: 5, name: "Auto", slug: "auto", icon: Car },
-    { id: 6, name: "Judaica", slug: "judaica", icon: Star },
+    { id: 6, name: "Judaica", slug: "judaica", icon: Shield },
     { id: 7, name: "Beauty", slug: "beauty", icon: Gem },
     { id: 8, name: "Fun", slug: "fun", icon: PartyPopper },
     { id: 9, name: "Education", slug: "education", icon: GraduationCap },
