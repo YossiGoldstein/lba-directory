@@ -19,6 +19,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import BusinessJoin from './pages/BusinessJoin';
 import AdminEmailSettings from './pages/AdminEmailSettings';
 import ForShoppers from './pages/ForShoppers';
+import Welcome from './pages/Welcome';
 import __Layout from './Layout.jsx';
 
 
@@ -44,6 +45,7 @@ export const PAGES = {
     "BusinessJoin": BusinessJoin,
     "AdminEmailSettings": AdminEmailSettings,
     "ForShoppers": ForShoppers,
+    "Welcome": Welcome,
 }
 
 export const pagesConfig = {
