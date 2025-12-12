@@ -425,14 +425,25 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {/* For Shoppers */}
-            <div className="text-white text-center p-8 bg-white/10 rounded-xl backdrop-blur-sm">
-              <h3 className="text-2xl sm:text-3xl font-bold mb-6">For Consumers</h3>
-              <p className="text-lg sm:text-xl mb-1">Find what you're looking for.</p>
-              <p className="text-lg sm:text-xl mb-1">Follow what you need.</p>
-              <p className="text-lg sm:text-xl mb-6">Save on what you get.</p>
+            <div className="text-white text-left p-8 bg-white/10 rounded-xl backdrop-blur-sm">
+              <h3 className="text-2xl sm:text-3xl font-extrabold mb-6">For Consumers</h3>
+              <ul className="space-y-2 mb-6">
+                <li className="text-lg sm:text-xl flex items-start gap-2">
+                  <span className="mt-1">•</span>
+                  <span>Find what you're looking for.</span>
+                </li>
+                <li className="text-lg sm:text-xl flex items-start gap-2">
+                  <span className="mt-1">•</span>
+                  <span>Follow what you need.</span>
+                </li>
+                <li className="text-lg sm:text-xl flex items-start gap-2">
+                  <span className="mt-1">•</span>
+                  <span>Save on what you get.</span>
+                </li>
+              </ul>
               <Button 
-                size="sm"
-                className="bg-cyan-400 hover:bg-cyan-500 text-white font-semibold shadow-lg"
+                size="lg"
+                className="bg-cyan-400 hover:bg-cyan-500 text-white font-bold shadow-lg text-base"
                 onClick={handleRegister}
               >
                 Create a free account
@@ -441,14 +452,25 @@ export default function Home() {
             </div>
 
             {/* For Business Owners */}
-            <div className="text-white text-center p-8 bg-white/10 rounded-xl backdrop-blur-sm">
-              <h3 className="text-2xl sm:text-3xl font-bold mb-6">For Businesses</h3>
-              <p className="text-lg sm:text-xl mb-1">Be visible.</p>
-              <p className="text-lg sm:text-xl mb-1">Attract customers.</p>
-              <p className="text-lg sm:text-xl mb-6">Promote deals.</p>
+            <div className="text-white text-left p-8 bg-white/10 rounded-xl backdrop-blur-sm">
+              <h3 className="text-2xl sm:text-3xl font-extrabold mb-6">For Businesses</h3>
+              <ul className="space-y-2 mb-6">
+                <li className="text-lg sm:text-xl flex items-start gap-2">
+                  <span className="mt-1">•</span>
+                  <span>Be visible.</span>
+                </li>
+                <li className="text-lg sm:text-xl flex items-start gap-2">
+                  <span className="mt-1">•</span>
+                  <span>Attract customers.</span>
+                </li>
+                <li className="text-lg sm:text-xl flex items-start gap-2">
+                  <span className="mt-1">•</span>
+                  <span>Promote deals.</span>
+                </li>
+              </ul>
               <Button 
-                size="sm"
-                className="bg-cyan-400 hover:bg-cyan-500 text-white font-semibold shadow-lg"
+                size="lg"
+                className="bg-cyan-400 hover:bg-cyan-500 text-white font-bold shadow-lg text-base"
                 asChild
               >
                 <Link to={createPageUrl("AddBusiness")}>
