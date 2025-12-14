@@ -183,7 +183,7 @@ export default function Home() {
     { id: 3, name: "Services", slug: "services", icon: Briefcase },
     { id: 4, name: "Home", slug: "home", icon: HomeIcon },
     { id: 5, name: "Auto", slug: "auto", icon: Car },
-    { id: 6, name: "Judaica", slug: "judaica", icon: Shield },
+    { id: 6, name: "Judaica", slug: "judaica", imageUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/216b6efaa_shield.png" },
     { id: 7, name: "Beauty", slug: "beauty", icon: Gem },
     { id: 8, name: "Fun", slug: "fun", icon: PartyPopper },
     { id: 9, name: "Education", slug: "education", icon: GraduationCap },
@@ -387,7 +387,11 @@ export default function Home() {
                     className="flex flex-col items-center gap-1 sm:gap-2 group"
                   >
                     <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border-2 border-cyan-400/60 bg-white/5 backdrop-blur-sm flex items-center justify-center hover:bg-cyan-400/20 hover:border-cyan-300 transition-all duration-300 group-hover:scale-110">
-                      <IconComponent className="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 text-white" strokeWidth={1.5} />
+                      {category.imageUrl ? (
+                        <img src={category.imageUrl} alt={category.name} className="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 object-contain" />
+                      ) : (
+                        <IconComponent className="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 text-white" strokeWidth={1.5} />
+                      )}
                     </div>
                     <span className="text-white text-[10px] sm:text-xs md:text-sm font-medium text-center">{category.name}</span>
                   </Link>
