@@ -36,47 +36,65 @@ export default function AboutUs() {
           
           <div className="space-y-3 mb-8">
             <div className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-gray-400 rounded-full flex-shrink-0 mt-2"></div>
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-red-600 font-bold">✗</span>
+              </div>
               <p className="text-gray-700">Not all businesses have an online or social media presence</p>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-gray-400 rounded-full flex-shrink-0 mt-2"></div>
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-red-600 font-bold">✗</span>
+              </div>
               <p className="text-gray-700">Special or late store hours can be unknown or inaccurate</p>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-gray-400 rounded-full flex-shrink-0 mt-2"></div>
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-red-600 font-bold">✗</span>
+              </div>
               <p className="text-gray-700">Business sales are scattered across different platforms and are hard to find</p>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-gray-400 rounded-full flex-shrink-0 mt-2"></div>
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-red-600 font-bold">✗</span>
+              </div>
               <p className="text-gray-700">No single place for local, reliable business recommendations</p>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-gray-400 rounded-full flex-shrink-0 mt-2"></div>
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-red-600 font-bold">✗</span>
+              </div>
               <p className="text-gray-700">Searching for specific services can be challenging</p>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-gray-400 rounded-full flex-shrink-0 mt-2"></div>
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-red-600 font-bold">✗</span>
+              </div>
               <p className="text-gray-700">Planning the order of stores during a shopping trip can be overwhelming</p>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-gray-400 rounded-full flex-shrink-0 mt-2"></div>
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-red-600 font-bold">✗</span>
+              </div>
               <p className="text-gray-700">Finding accurate business details (links, ads, channels) can be frustrating</p>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-gray-400 rounded-full flex-shrink-0 mt-2"></div>
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-red-600 font-bold">✗</span>
+              </div>
               <p className="text-gray-700">There is no single place with complete information for all businesses</p>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-gray-400 rounded-full flex-shrink-0 mt-2"></div>
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-red-600 font-bold">✗</span>
+              </div>
               <p className="text-gray-700">With so many stores, shoppers may miss sales at their favorite shops</p>
             </div>
           </div>
