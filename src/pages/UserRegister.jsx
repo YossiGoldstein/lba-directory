@@ -61,11 +61,18 @@ export default function UserRegister() {
           </Link>
         </div>
 
+        <div className="text-center mb-8">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+            Welcome to the<br />
+            <span className="text-cyan-600">LBA Directory</span>
+          </h1>
+        </div>
+
         <Card className="shadow-xl">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
             <CardDescription className="text-center">
-              Join LBA Directory and start exploring
+              Join and start exploring
             </CardDescription>
           </CardHeader>
           <CardContent>
