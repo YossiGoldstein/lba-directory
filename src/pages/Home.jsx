@@ -434,19 +434,19 @@ export default function Home() {
               <ul className="space-y-2 mb-6 text-left w-full max-w-md">
                 <li className="text-lg sm:text-xl flex items-center gap-2">
                   <span>•</span>
-                  <span>Find what you're looking for.</span>
+                  <span>Find what you're looking for</span>
                 </li>
                 <li className="text-lg sm:text-xl flex items-center gap-2">
                   <span>•</span>
-                  <span>Follow what you need.</span>
+                  <span>Follow what you need</span>
                 </li>
                 <li className="text-lg sm:text-xl flex items-center gap-2">
                   <span>•</span>
-                  <span>Save on what you get.</span>
+                  <span>Save on what you get</span>
                 </li>
                 <li className="text-lg sm:text-xl flex items-center gap-2">
                   <span>•</span>
-                  <Link to={createPageUrl("ForShoppers")} className="hover:underline">Learn More</Link>
+                  <Link to={createPageUrl("ForShoppers")} className="hover:underline">Learn More...</Link>
                 </li>
               </ul>
               <Button 
@@ -467,19 +467,19 @@ export default function Home() {
               <ul className="space-y-2 mb-6 text-left w-full max-w-md">
                 <li className="text-lg sm:text-xl flex items-center gap-2">
                   <span>•</span>
-                  <span>Be visible.</span>
+                  <span>Be visible</span>
                 </li>
                 <li className="text-lg sm:text-xl flex items-center gap-2">
                   <span>•</span>
-                  <span>Attract customers.</span>
+                  <span>Attract customers</span>
                 </li>
                 <li className="text-lg sm:text-xl flex items-center gap-2">
                   <span>•</span>
-                  <span>Promote deals.</span>
+                  <span>Promote deals</span>
                 </li>
                 <li className="text-lg sm:text-xl flex items-center gap-2">
                   <span>•</span>
-                  <Link to={createPageUrl("BusinessJoin")} className="hover:underline">Learn More</Link>
+                  <Link to={createPageUrl("BusinessJoin")} className="hover:underline">Learn More...</Link>
                 </li>
               </ul>
               <Button 
