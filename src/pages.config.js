@@ -7,7 +7,6 @@ import AboutUs from './pages/AboutUs';
 import Contact from './pages/Contact';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
-import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import UserDashboard from './pages/UserDashboard';
 import BusinessDashboard from './pages/BusinessDashboard';
@@ -33,7 +32,6 @@ export const PAGES = {
     "Contact": Contact,
     "PrivacyPolicy": PrivacyPolicy,
     "TermsOfUse": TermsOfUse,
-    "Register": Register,
     "ForgotPassword": ForgotPassword,
     "UserDashboard": UserDashboard,
     "BusinessDashboard": BusinessDashboard,
