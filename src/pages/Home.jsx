@@ -246,7 +246,7 @@ export default function Home() {
                       <Link to={createPageUrl("SignIn")}>התחברות</Link>
                     </Button>
                     <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
-                      <Link to={createPageUrl("SignUp")}>הרשמה</Link>
+                      <Link to={createPageUrl("UserRegister")}>הרשמה</Link>
                     </Button>
                   </>
                 )}
@@ -299,7 +299,7 @@ export default function Home() {
                         <Link to={createPageUrl("SignIn")}>התחברות</Link>
                       </Button>
                       <Button asChild className="bg-cyan-600 hover:bg-cyan-700 w-full">
-                        <Link to={createPageUrl("SignUp")}>הרשמה</Link>
+                        <Link to={createPageUrl("UserRegister")}>הרשמה</Link>
                       </Button>
                     </div>
                   )}
@@ -450,7 +450,7 @@ export default function Home() {
                 className="bg-cyan-400 hover:bg-cyan-500 text-white font-bold shadow-lg text-base"
                 asChild
               >
-                <Link to={createPageUrl("SignUp")}>
+                <Link to={createPageUrl("UserRegister")}>
                   הרשמה חינם
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>

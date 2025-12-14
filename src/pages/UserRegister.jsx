@@ -7,28 +7,42 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Mail, Lock } from "lucide-react";
+import { User, Mail, Lock, Phone } from "lucide-react";
 
-export default function SignIn() {
+export default function UserRegister() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    fullName: "",
     email: "",
-    password: ""
+    phone: "",
+    password: "",
+    confirmPassword: ""
   });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("הסיסמאות לא תואמות");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast.error("הסיסמה חייבת להכיל לפחות 6 תווים");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // Here you would implement your custom authentication logic
-      // For now, using Base44's auth system
-      toast.success("התחברת בהצלחה!");
-      const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("Home");
-      navigate(nextUrl);
+      // Here you would implement your custom user creation logic
+      // For example, create a User entity with the registration details
+      
+      toast.success("נרשמת בהצלחה! כעת אתה יכול להתחבר");
+      navigate(createPageUrl("SignIn"));
     } catch (error) {
-      toast.error("אימייל או סיסמה שגויים");
+      toast.error("שגיאה בהרשמה, נסה שוב");
       setLoading(false);
     }
   };
@@ -49,13 +63,29 @@ export default function SignIn() {
 
         <Card className="shadow-xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">התחברות</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">הרשמה</CardTitle>
             <CardDescription className="text-center">
-              הכנס את פרטי ההתחברות שלך
+              צור חשבון חדש ב-LBA Directory
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="fullName">שם מלא</Label>
+                <div className="relative">
+                  <User className="absolute right-3 top-3 w-5 h-5 text-gray-400" />
+                  <Input
+                    id="fullName"
+                    type="text"
+                    placeholder="ישראל ישראלי"
+                    value={formData.fullName}
+                    onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                    required
+                    className="pr-10"
+                  />
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="email">אימייל</Label>
                 <div className="relative">
@@ -67,6 +97,22 @@ export default function SignIn() {
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                     required
+                    className="pr-10"
+                    dir="ltr"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone">מספר טלפון (אופציונלי)</Label>
+                <div className="relative">
+                  <Phone className="absolute right-3 top-3 w-5 h-5 text-gray-400" />
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="050-1234567"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
                     className="pr-10"
                     dir="ltr"
                   />
@@ -90,10 +136,21 @@ export default function SignIn() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-sm">
-                <Link to={createPageUrl("ForgotPassword")} className="text-cyan-600 hover:text-cyan-700">
-                  שכחת סיסמה?
-                </Link>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">אימות סיסמה</Label>
+                <div className="relative">
+                  <Lock className="absolute right-3 top-3 w-5 h-5 text-gray-400" />
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="••••••••"
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                    required
+                    className="pr-10"
+                    dir="ltr"
+                  />
+                </div>
               </div>
 
               <Button 
@@ -101,7 +158,7 @@ export default function SignIn() {
                 className="w-full bg-cyan-600 hover:bg-cyan-700"
                 disabled={loading}
               >
-                {loading ? "מתחבר..." : "התחבר"}
+                {loading ? "נרשם..." : "הרשמה"}
               </Button>
             </form>
 
@@ -111,12 +168,12 @@ export default function SignIn() {
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">אין לך חשבון?</span>
+                  <span className="px-2 bg-white text-gray-500">כבר יש לך חשבון?</span>
                 </div>
               </div>
 
               <Button variant="outline" className="w-full mt-4" asChild>
-                <Link to={createPageUrl("UserRegister")}>הרשמה חדשה</Link>
+                <Link to={createPageUrl("SignIn")}>התחברות</Link>
               </Button>
             </div>
           </CardContent>

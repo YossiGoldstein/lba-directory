@@ -20,6 +20,7 @@ import AdminEmailSettings from './pages/AdminEmailSettings';
 import ForShoppers from './pages/ForShoppers';
 import Welcome from './pages/Welcome';
 import SignIn from './pages/SignIn';
+import UserRegister from './pages/UserRegister';
 import __Layout from './Layout.jsx';
 
 
@@ -46,6 +47,7 @@ export const PAGES = {
     "ForShoppers": ForShoppers,
     "Welcome": Welcome,
     "SignIn": SignIn,
+    "UserRegister": UserRegister,
 }
 
 export const pagesConfig = {

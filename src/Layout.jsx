@@ -128,7 +128,7 @@ export default function Layout({ children, currentPageName }) {
                       <Link to={createPageUrl("SignIn")}>התחברות</Link>
                     </Button>
                     <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
-                      <Link to={createPageUrl("SignUp")}>הרשמה</Link>
+                      <Link to={createPageUrl("UserRegister")}>הרשמה</Link>
                     </Button>
                   </>
                 )}
@@ -182,7 +182,7 @@ export default function Layout({ children, currentPageName }) {
                         <Link to={createPageUrl("SignIn")}>התחברות</Link>
                       </Button>
                       <Button asChild className="bg-cyan-600 hover:bg-cyan-700 w-full">
-                        <Link to={createPageUrl("SignUp")}>הרשמה</Link>
+                        <Link to={createPageUrl("UserRegister")}>הרשמה</Link>
                       </Button>
                     </div>
                   )}
