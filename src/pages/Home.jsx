@@ -484,13 +484,18 @@ export default function Home() {
               </ul>
               <Button 
                 size="lg"
+                onClick={async () => {
+                  const isAuth = await base44.auth.isAuthenticated();
+                  if (isAuth) {
+                    window.location.href = createPageUrl("AddBusiness");
+                  } else {
+                    window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
+                  }
+                }}
                 className="bg-cyan-400 hover:bg-cyan-500 text-white font-bold shadow-lg text-base"
-                asChild
               >
-                <Link to={createPageUrl("AddBusiness")}>
-                  Add a business
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
+                Add a business
+                <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
           </div>
