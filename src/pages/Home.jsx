@@ -295,11 +295,11 @@ export default function Home() {
                     </div>
                   ) : (
                     <div className="flex flex-col gap-3 border-t border-white/20 pt-4 mt-2">
-                      <Button asChild className="w-full bg-green-500 hover:bg-green-600 text-white">
-                        <Link to={createPageUrl("SignIn")}>Sign In</Link>
+                      <Button asChild className="w-full bg-green-500 hover:bg-green-600">
+                        <Link to={createPageUrl("SignIn")} className="text-white font-medium">Sign In</Link>
                       </Button>
                       <Button asChild className="bg-cyan-600 hover:bg-cyan-700 w-full">
-                        <Link to={createPageUrl("UserRegister")}>Register</Link>
+                        <Link to={createPageUrl("UserRegister")} className="text-white font-medium">Register</Link>
                       </Button>
                     </div>
                   )}
