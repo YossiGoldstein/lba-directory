@@ -166,11 +166,11 @@ export default function Home() {
   };
 
   const handleRegister = () => {
-    base44.auth.redirectToLogin("/");
+    window.location.href = createPageUrl("Register");
   };
 
   const handleLogin = () => {
-    base44.auth.redirectToLogin("/");
+    window.location.href = createPageUrl("Login");
   };
 
   const handleLogout = () => {

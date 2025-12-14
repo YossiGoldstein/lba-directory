@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Building2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { toast } from "sonner";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -20,37 +21,45 @@ export default function Register() {
     e.preventDefault();
     setLoading(true);
     
-    base44.auth.redirectToLogin(createPageUrl("Home"));
+    try {
+      // Use Base44's authentication redirect for registration
+      const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("Home");
+      base44.auth.redirectToLogin(nextUrl);
+    } catch (error) {
+      toast.error("שגיאה בהרשמה");
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <Link to={createPageUrl("Home")} className="flex items-center gap-2">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center">
-              <Building2 className="w-7 h-7 text-white" />
-            </div>
-            <span className="text-2xl font-bold text-gray-900">BusinessHub</span>
+          <Link to={createPageUrl("Home")}>
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/3a0b2e08d_LBA-directory-logo-color.png"
+              alt="LBA Directory"
+              className="h-16 w-auto"
+            />
           </Link>
         </div>
 
         <Card className="shadow-xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">הרשמה</CardTitle>
             <CardDescription className="text-center">
-              Join BusinessHub and start exploring
+              הצטרף ל-LBA Directory והתחל לחפש עסקים
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="fullName">שם מלא</Label>
                 <Input
                   id="fullName"
                   type="text"
-                  placeholder="John Doe"
+                  placeholder="ישראל ישראלי"
                   value={formData.fullName}
                   onChange={(e) => setFormData({...formData, fullName: e.target.value})}
                   required
@@ -58,7 +67,7 @@ export default function Register() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">אימייל</Label>
                 <Input
                   id="email"
                   type="email"
@@ -66,26 +75,28 @@ export default function Register() {
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
                   required
+                  dir="ltr"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">מספר טלפון</Label>
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="+1 (234) 567-8900"
+                  placeholder="050-1234567"
                   value={formData.phone}
                   onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  dir="ltr"
                 />
               </div>
 
               <Button 
                 type="submit" 
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full bg-cyan-600 hover:bg-cyan-700"
                 disabled={loading}
               >
-                {loading ? "Creating Account..." : "Create Account"}
+                {loading ? "נרשם..." : "הרשמה"}
               </Button>
             </form>
 
@@ -95,16 +106,25 @@ export default function Register() {
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Already have an account?</span>
+                  <span className="px-2 bg-white text-gray-500">כבר יש לך חשבון?</span>
                 </div>
               </div>
 
               <Button variant="outline" className="w-full mt-4" asChild>
-                <Link to={createPageUrl("Login")}>Sign In</Link>
+                <Link to={createPageUrl("Login")}>התחברות</Link>
               </Button>
             </div>
           </CardContent>
         </Card>
+
+        <div className="mt-6 text-center">
+          <Link 
+            to={createPageUrl("Home")} 
+            className="text-sm text-cyan-600 hover:text-cyan-700"
+          >
+            ← חזרה לדף הבית
+          </Link>
+        </div>
       </div>
     </div>
   );

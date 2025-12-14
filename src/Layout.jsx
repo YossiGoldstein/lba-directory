@@ -53,7 +53,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const handleLogin = () => {
-    base44.auth.redirectToLogin("/");
+    window.location.href = createPageUrl("Login");
   };
 
   const handleLogout = () => {
