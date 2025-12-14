@@ -208,35 +208,6 @@ export default function AboutUs() {
             </div>
           </div>
         </section>
-
-        {/* CTA Section */}
-        <section className="text-center py-12 bg-gradient-to-br from-cyan-600 to-blue-700 rounded-2xl text-white">
-          <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
-          <p className="text-xl text-cyan-50 mb-8 max-w-2xl mx-auto">
-            Join LBA Directory today and discover a smarter way to shop in Lakewood
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              asChild
-              size="lg"
-              className="bg-white text-cyan-700 hover:bg-cyan-50 px-8 py-6 text-lg"
-            >
-              <Link to={createPageUrl("UserRegister")}>
-                Create Free Account
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-cyan-700 px-8 py-6 text-lg"
-            >
-              <Link to={createPageUrl("Home")}>
-                Explore Directory
-              </Link>
-            </Button>
-          </div>
-        </section>
       </div>
     </div>
   );
