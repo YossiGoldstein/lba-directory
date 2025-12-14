@@ -34,6 +34,10 @@ export default function AboutUs() {
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">The Challenge</h2>
           
+          <p className="text-lg text-gray-700 mb-6">
+            With the thriving businesses in greater Lakewood comes challenges:
+          </p>
+          
           <div className="space-y-3 mb-8">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
