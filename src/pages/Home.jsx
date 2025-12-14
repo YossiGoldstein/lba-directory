@@ -184,7 +184,7 @@ export default function Home() {
     { id: 4, name: "Home", slug: "home", icon: HomeIcon },
     { id: 5, name: "Auto", slug: "auto", icon: Car },
     { id: 6, name: "Judaica", slug: "judaica", imageUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/216b6efaa_shield.png", whiteFilter: true },
-    { id: 7, name: "Beauty", slug: "beauty", imageUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a898cf554_nail.png", whiteFilter: true, scale: 1.2 },
+    { id: 7, name: "Beauty", slug: "beauty", imageUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/c53f7c7dd_makeup.png", whiteFilter: true },
     { id: 8, name: "Fun", slug: "fun", icon: PartyPopper },
     { id: 9, name: "Education", slug: "education", icon: GraduationCap },
     { id: 10, name: "Org./Gmach", slug: "org-gmach", icon: HandHeart },
