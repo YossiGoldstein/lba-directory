@@ -52,9 +52,7 @@ export default function Layout({ children, currentPageName }) {
     };
   };
 
-  const handleLogin = () => {
-    window.location.href = createPageUrl("Login");
-  };
+
 
   const handleLogout = () => {
     base44.auth.logout("/");
@@ -110,7 +108,7 @@ export default function Layout({ children, currentPageName }) {
               </nav>
 
               <div className="hidden md:flex items-center gap-4">
-                {user ? (
+                {user && (
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-gray-700">Hello, {user.full_name}</span>
                     <Button variant="ghost" size="sm" asChild>
@@ -124,15 +122,6 @@ export default function Layout({ children, currentPageName }) {
                       Logout
                     </Button>
                   </div>
-                ) : (
-                  <>
-                    <Button onClick={handleLogin} className="bg-green-500 hover:bg-green-600 text-white">
-                      Login
-                    </Button>
-                    <Button className="bg-cyan-600 hover:bg-cyan-700" onClick={handleLogin}>
-                      Register
-                    </Button>
-                  </>
                 )}
               </div>
 
@@ -169,22 +158,13 @@ export default function Layout({ children, currentPageName }) {
                   >
                     Add Business
                   </button>
-                  {user ? (
+                  {user && (
                     <div className="border-t border-gray-200 pt-4 mt-2 flex flex-col gap-3">
                       <Button variant="outline" asChild className="w-full">
                         <Link to={createPageUrl("UserDashboard")}>Dashboard</Link>
                       </Button>
                       <Button variant="outline" onClick={handleLogout} className="w-full">
                         Logout
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-3 border-t border-gray-200 pt-4 mt-2">
-                      <Button onClick={handleLogin} className="w-full bg-green-500 hover:bg-green-600 text-white">
-                        Login
-                      </Button>
-                      <Button className="bg-cyan-600 hover:bg-cyan-700 w-full" onClick={handleLogin}>
-                        Register
                       </Button>
                     </div>
                   )}
