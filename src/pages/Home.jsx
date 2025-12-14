@@ -286,27 +286,33 @@ export default function Home() {
                   </button>
                   {user ? (
                     <div className="border-t border-white/20 pt-4 mt-2 flex flex-col gap-3">
-                      <Button variant="outline" asChild className="w-full text-white border-white hover:bg-white/10">
-                        <Link to={createPageUrl("UserDashboard")}>Dashboard</Link>
-                      </Button>
-                      <Button variant="outline" onClick={handleLogout} className="w-full text-white border-white hover:bg-white/10">
+                      <button 
+                        onClick={() => window.location.href = createPageUrl("UserDashboard")}
+                        className="w-full bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors border border-white/40"
+                      >
+                        Dashboard
+                      </button>
+                      <button 
+                        onClick={handleLogout}
+                        className="w-full bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors border border-white/40"
+                      >
                         Logout
-                      </Button>
+                      </button>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-3 border-t border-white/20 pt-4 mt-2">
-                      <Link 
-                        to={createPageUrl("SignIn")} 
-                        className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors"
+                      <button 
+                        onClick={() => window.location.href = createPageUrl("SignIn")}
+                        className="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors shadow-md"
                       >
                         Sign In
-                      </Link>
-                      <Link 
-                        to={createPageUrl("UserRegister")} 
-                        className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors"
+                      </button>
+                      <button 
+                        onClick={() => window.location.href = createPageUrl("UserRegister")}
+                        className="w-full bg-cyan-600 hover:bg-cyan-700 active:bg-cyan-800 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors shadow-md"
                       >
                         Register
-                      </Link>
+                      </button>
                     </div>
                   )}
                 </nav>
