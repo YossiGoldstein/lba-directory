@@ -178,11 +178,11 @@ export default function Layout({ children, currentPageName }) {
                     </div>
                   ) : (
                     <div className="flex flex-col gap-3 border-t border-gray-200 pt-4 mt-2">
-                      <Button asChild className="w-full bg-green-500 hover:bg-green-600 text-white">
-                        <Link to={createPageUrl("SignIn")}>Sign In</Link>
+                      <Button asChild className="w-full bg-green-500 hover:bg-green-600 text-white font-medium">
+                        <Link to={createPageUrl("SignIn")} className="text-white">Sign In</Link>
                       </Button>
-                      <Button asChild className="bg-cyan-600 hover:bg-cyan-700 w-full">
-                        <Link to={createPageUrl("UserRegister")}>Register</Link>
+                      <Button asChild className="bg-cyan-600 hover:bg-cyan-700 w-full text-white font-medium">
+                        <Link to={createPageUrl("UserRegister")} className="text-white">Register</Link>
                       </Button>
                     </div>
                   )}
