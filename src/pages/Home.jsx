@@ -183,7 +183,7 @@ export default function Home() {
     { id: 3, name: "Services", slug: "services", icon: Briefcase },
     { id: 4, name: "Home", slug: "home", icon: HomeIcon },
     { id: 5, name: "Auto", slug: "auto", icon: Car },
-    { id: 6, name: "Judaica", slug: "judaica", imageUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/216b6efaa_shield.png" },
+    { id: 6, name: "Judaica", slug: "judaica", imageUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/216b6efaa_shield.png", whiteFilter: true },
     { id: 7, name: "Beauty", slug: "beauty", icon: Gem },
     { id: 8, name: "Fun", slug: "fun", icon: PartyPopper },
     { id: 9, name: "Education", slug: "education", icon: GraduationCap },
