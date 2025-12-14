@@ -108,9 +108,9 @@ export default function Layout({ children, currentPageName }) {
               </nav>
 
               <div className="hidden md:flex items-center gap-4">
-                {user && (
+                {user ? (
                   <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-700">Hello, {user.full_name}</span>
+                    <span className="text-sm text-gray-700">שלום, {user.full_name}</span>
                     <Button variant="ghost" size="sm" asChild>
                       <Link to={createPageUrl("UserDashboard")}>
                         <LayoutDashboard className="w-4 h-4 mr-2" />
@@ -119,9 +119,18 @@ export default function Layout({ children, currentPageName }) {
                     </Button>
                     <Button variant="ghost" size="sm" onClick={handleLogout}>
                       <LogOut className="w-4 h-4 mr-2" />
-                      Logout
+                      יציאה
                     </Button>
                   </div>
+                ) : (
+                  <>
+                    <Button asChild className="bg-green-500 hover:bg-green-600 text-white">
+                      <Link to={createPageUrl("SignIn")}>התחברות</Link>
+                    </Button>
+                    <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
+                      <Link to={createPageUrl("SignUp")}>הרשמה</Link>
+                    </Button>
+                  </>
                 )}
               </div>
 
@@ -158,13 +167,22 @@ export default function Layout({ children, currentPageName }) {
                   >
                     Add Business
                   </button>
-                  {user && (
+                  {user ? (
                     <div className="border-t border-gray-200 pt-4 mt-2 flex flex-col gap-3">
                       <Button variant="outline" asChild className="w-full">
                         <Link to={createPageUrl("UserDashboard")}>Dashboard</Link>
                       </Button>
                       <Button variant="outline" onClick={handleLogout} className="w-full">
-                        Logout
+                        יציאה
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-3 border-t border-gray-200 pt-4 mt-2">
+                      <Button asChild className="w-full bg-green-500 hover:bg-green-600 text-white">
+                        <Link to={createPageUrl("SignIn")}>התחברות</Link>
+                      </Button>
+                      <Button asChild className="bg-cyan-600 hover:bg-cyan-700 w-full">
+                        <Link to={createPageUrl("SignUp")}>הרשמה</Link>
                       </Button>
                     </div>
                   )}

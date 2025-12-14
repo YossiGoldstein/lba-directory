@@ -226,9 +226,9 @@ export default function Home() {
               </nav>
 
               <div className="hidden md:flex items-center gap-4">
-                {user && (
+                {user ? (
                   <div className="flex items-center gap-3">
-                    <span className="text-sm text-white">Hello, {user.full_name}</span>
+                    <span className="text-sm text-white">שלום, {user.full_name}</span>
                     <Button variant="ghost" size="sm" asChild className="text-white hover:text-cyan-200 hover:bg-white/10">
                       <Link to={createPageUrl("UserDashboard")}>
                         <LayoutDashboard className="w-4 h-4 mr-2" />
@@ -237,9 +237,18 @@ export default function Home() {
                     </Button>
                     <Button variant="ghost" size="sm" onClick={handleLogout} className="text-white hover:text-cyan-200 hover:bg-white/10">
                       <LogOut className="w-4 h-4 mr-2" />
-                      Logout
+                      יציאה
                     </Button>
                   </div>
+                ) : (
+                  <>
+                    <Button asChild className="bg-green-500 hover:bg-green-600 text-white">
+                      <Link to={createPageUrl("SignIn")}>התחברות</Link>
+                    </Button>
+                    <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
+                      <Link to={createPageUrl("SignUp")}>הרשמה</Link>
+                    </Button>
+                  </>
                 )}
               </div>
 
@@ -275,13 +284,22 @@ export default function Home() {
                   >
                     Add Business
                   </button>
-                  {user && (
+                  {user ? (
                     <div className="border-t border-white/20 pt-4 mt-2 flex flex-col gap-3">
                       <Button variant="outline" asChild className="w-full text-white border-white hover:bg-white/10">
                         <Link to={createPageUrl("UserDashboard")}>Dashboard</Link>
                       </Button>
                       <Button variant="outline" onClick={handleLogout} className="w-full text-white border-white hover:bg-white/10">
-                        Logout
+                        יציאה
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-3 border-t border-white/20 pt-4 mt-2">
+                      <Button asChild className="w-full bg-green-500 hover:bg-green-600 text-white">
+                        <Link to={createPageUrl("SignIn")}>התחברות</Link>
+                      </Button>
+                      <Button asChild className="bg-cyan-600 hover:bg-cyan-700 w-full">
+                        <Link to={createPageUrl("SignUp")}>הרשמה</Link>
                       </Button>
                     </div>
                   )}
@@ -432,8 +450,8 @@ export default function Home() {
                 className="bg-cyan-400 hover:bg-cyan-500 text-white font-bold shadow-lg text-base"
                 asChild
               >
-                <Link to={createPageUrl("CategoryListing?slug=food")}>
-                  Start Browsing
+                <Link to={createPageUrl("SignUp")}>
+                  הרשמה חינם
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
