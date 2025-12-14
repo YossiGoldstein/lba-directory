@@ -295,12 +295,18 @@ export default function Home() {
                     </div>
                   ) : (
                     <div className="flex flex-col gap-3 border-t border-white/20 pt-4 mt-2">
-                      <Button asChild className="w-full bg-green-500 hover:bg-green-600">
-                        <Link to={createPageUrl("SignIn")} className="text-white font-medium">Sign In</Link>
-                      </Button>
-                      <Button asChild className="bg-cyan-600 hover:bg-cyan-700 w-full">
-                        <Link to={createPageUrl("UserRegister")} className="text-white font-medium">Register</Link>
-                      </Button>
+                      <Link 
+                        to={createPageUrl("SignIn")} 
+                        className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors"
+                      >
+                        Sign In
+                      </Link>
+                      <Link 
+                        to={createPageUrl("UserRegister")} 
+                        className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors"
+                      >
+                        Register
+                      </Link>
                     </div>
                   )}
                 </nav>
