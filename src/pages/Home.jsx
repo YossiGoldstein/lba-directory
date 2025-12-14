@@ -184,7 +184,7 @@ export default function Home() {
     { id: 4, name: "Home", slug: "home", icon: HomeIcon },
     { id: 5, name: "Auto", slug: "auto", icon: Car },
     { id: 6, name: "Judaica", slug: "judaica", imageUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/216b6efaa_shield.png", whiteFilter: true },
-    { id: 7, name: "Beauty", slug: "beauty", imageUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a898cf554_nail.png", whiteFilter: true },
+    { id: 7, name: "Beauty", slug: "beauty", imageUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a898cf554_nail.png", whiteFilter: true, scale: 1.2 },
     { id: 8, name: "Fun", slug: "fun", icon: PartyPopper },
     { id: 9, name: "Education", slug: "education", icon: GraduationCap },
     { id: 10, name: "Org./Gmach", slug: "org-gmach", icon: HandHeart },
@@ -392,7 +392,10 @@ export default function Home() {
                           src={category.imageUrl} 
                           alt={category.name} 
                           className="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 object-contain"
-                          style={category.whiteFilter ? { filter: 'brightness(0) invert(1)' } : {}}
+                          style={{
+                            ...(category.whiteFilter ? { filter: 'brightness(0) invert(1)' } : {}),
+                            ...(category.scale ? { transform: `scale(${category.scale})` } : {})
+                          }}
                         />
                       ) : (
                         <IconComponent className="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 text-white" strokeWidth={1.5} />
