@@ -216,7 +216,7 @@ export default function Home() {
                     if (user) {
                       window.location.href = createPageUrl("AddBusiness");
                     } else {
-                      base44.auth.redirectToLogin(createPageUrl("AddBusiness"));
+                      window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                     }
                   }} 
                   className="text-white hover:text-cyan-200 transition-colors font-medium"
@@ -277,7 +277,7 @@ export default function Home() {
                       if (user) {
                         window.location.href = createPageUrl("AddBusiness");
                       } else {
-                        base44.auth.redirectToLogin(createPageUrl("AddBusiness"));
+                        window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                       }
                     }} 
                     className="text-white hover:text-cyan-200 font-medium text-left"

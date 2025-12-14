@@ -98,7 +98,7 @@ export default function Layout({ children, currentPageName }) {
                     if (isAuth) {
                       window.location.href = createPageUrl("AddBusiness");
                     } else {
-                      base44.auth.redirectToLogin(createPageUrl("AddBusiness"));
+                      window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                     }
                   }} 
                   className="text-gray-700 hover:text-cyan-600 transition-colors font-medium"
@@ -160,7 +160,7 @@ export default function Layout({ children, currentPageName }) {
                       if (isAuth) {
                         window.location.href = createPageUrl("AddBusiness");
                       } else {
-                        base44.auth.redirectToLogin(createPageUrl("AddBusiness"));
+                        window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                       }
                     }} 
                     className="text-gray-700 hover:text-cyan-600 font-medium text-left"
