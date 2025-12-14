@@ -24,11 +24,11 @@ export default function SignIn() {
     try {
       // Here you would implement your custom authentication logic
       // For now, using Base44's auth system
-      toast.success("התחברת בהצלחה!");
+      toast.success("Successfully signed in!");
       const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("Home");
       navigate(nextUrl);
     } catch (error) {
-      toast.error("אימייל או סיסמה שגויים");
+      toast.error("Invalid email or password");
       setLoading(false);
     }
   };
@@ -49,17 +49,17 @@ export default function SignIn() {
 
         <Card className="shadow-xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">התחברות</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
             <CardDescription className="text-center">
-              הכנס את פרטי ההתחברות שלך
+              Enter your credentials to access your account
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">אימייל</Label>
+                <Label htmlFor="email">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute right-3 top-3 w-5 h-5 text-gray-400" />
+                  <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                   <Input
                     id="email"
                     type="email"
@@ -67,16 +67,15 @@ export default function SignIn() {
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                     required
-                    className="pr-10"
-                    dir="ltr"
+                    className="pl-10"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">סיסמה</Label>
+                <Label htmlFor="password">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute right-3 top-3 w-5 h-5 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                   <Input
                     id="password"
                     type="password"
@@ -84,15 +83,14 @@ export default function SignIn() {
                     value={formData.password}
                     onChange={(e) => setFormData({...formData, password: e.target.value})}
                     required
-                    className="pr-10"
-                    dir="ltr"
+                    className="pl-10"
                   />
                 </div>
               </div>
 
               <div className="flex items-center justify-between text-sm">
                 <Link to={createPageUrl("ForgotPassword")} className="text-cyan-600 hover:text-cyan-700">
-                  שכחת סיסמה?
+                  Forgot password?
                 </Link>
               </div>
 
@@ -101,7 +99,7 @@ export default function SignIn() {
                 className="w-full bg-cyan-600 hover:bg-cyan-700"
                 disabled={loading}
               >
-                {loading ? "מתחבר..." : "התחבר"}
+                {loading ? "Signing In..." : "Sign In"}
               </Button>
             </form>
 
@@ -111,12 +109,12 @@ export default function SignIn() {
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">אין לך חשבון?</span>
+                  <span className="px-2 bg-white text-gray-500">Don't have an account?</span>
                 </div>
               </div>
 
               <Button variant="outline" className="w-full mt-4" asChild>
-                <Link to={createPageUrl("UserRegister")}>הרשמה חדשה</Link>
+                <Link to={createPageUrl("UserRegister")}>Create Account</Link>
               </Button>
             </div>
           </CardContent>
@@ -127,7 +125,7 @@ export default function SignIn() {
             to={createPageUrl("Home")} 
             className="text-sm text-cyan-600 hover:text-cyan-700"
           >
-            ← חזרה לדף הבית
+            ← Back to Home
           </Link>
         </div>
       </div>

@@ -24,12 +24,12 @@ export default function UserRegister() {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
-      toast.error("הסיסמאות לא תואמות");
+      toast.error("Passwords do not match");
       return;
     }
 
     if (formData.password.length < 6) {
-      toast.error("הסיסמה חייבת להכיל לפחות 6 תווים");
+      toast.error("Password must be at least 6 characters");
       return;
     }
 
@@ -39,10 +39,10 @@ export default function UserRegister() {
       // Here you would implement your custom user creation logic
       // For example, create a User entity with the registration details
       
-      toast.success("נרשמת בהצלחה! כעת אתה יכול להתחבר");
+      toast.success("Successfully registered! You can now sign in");
       navigate(createPageUrl("SignIn"));
     } catch (error) {
-      toast.error("שגיאה בהרשמה, נסה שוב");
+      toast.error("Registration failed, please try again");
       setLoading(false);
     }
   };
@@ -63,33 +63,33 @@ export default function UserRegister() {
 
         <Card className="shadow-xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">הרשמה</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
             <CardDescription className="text-center">
-              צור חשבון חדש ב-LBA Directory
+              Join LBA Directory and start exploring
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName">שם מלא</Label>
+                <Label htmlFor="fullName">Full Name</Label>
                 <div className="relative">
-                  <User className="absolute right-3 top-3 w-5 h-5 text-gray-400" />
+                  <User className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                   <Input
                     id="fullName"
                     type="text"
-                    placeholder="ישראל ישראלי"
+                    placeholder="John Doe"
                     value={formData.fullName}
                     onChange={(e) => setFormData({...formData, fullName: e.target.value})}
                     required
-                    className="pr-10"
+                    className="pl-10"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">אימייל</Label>
+                <Label htmlFor="email">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute right-3 top-3 w-5 h-5 text-gray-400" />
+                  <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                   <Input
                     id="email"
                     type="email"
@@ -97,32 +97,30 @@ export default function UserRegister() {
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                     required
-                    className="pr-10"
-                    dir="ltr"
+                    className="pl-10"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">מספר טלפון (אופציונלי)</Label>
+                <Label htmlFor="phone">Phone Number (Optional)</Label>
                 <div className="relative">
-                  <Phone className="absolute right-3 top-3 w-5 h-5 text-gray-400" />
+                  <Phone className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                   <Input
                     id="phone"
                     type="tel"
-                    placeholder="050-1234567"
+                    placeholder="(555) 123-4567"
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    className="pr-10"
-                    dir="ltr"
+                    className="pl-10"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">סיסמה</Label>
+                <Label htmlFor="password">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute right-3 top-3 w-5 h-5 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                   <Input
                     id="password"
                     type="password"
@@ -130,16 +128,15 @@ export default function UserRegister() {
                     value={formData.password}
                     onChange={(e) => setFormData({...formData, password: e.target.value})}
                     required
-                    className="pr-10"
-                    dir="ltr"
+                    className="pl-10"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">אימות סיסמה</Label>
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <div className="relative">
-                  <Lock className="absolute right-3 top-3 w-5 h-5 text-gray-400" />
+                  <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                   <Input
                     id="confirmPassword"
                     type="password"
@@ -147,8 +144,7 @@ export default function UserRegister() {
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
                     required
-                    className="pr-10"
-                    dir="ltr"
+                    className="pl-10"
                   />
                 </div>
               </div>
@@ -158,7 +154,7 @@ export default function UserRegister() {
                 className="w-full bg-cyan-600 hover:bg-cyan-700"
                 disabled={loading}
               >
-                {loading ? "נרשם..." : "הרשמה"}
+                {loading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
 
@@ -168,12 +164,12 @@ export default function UserRegister() {
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">כבר יש לך חשבון?</span>
+                  <span className="px-2 bg-white text-gray-500">Already have an account?</span>
                 </div>
               </div>
 
               <Button variant="outline" className="w-full mt-4" asChild>
-                <Link to={createPageUrl("SignIn")}>התחברות</Link>
+                <Link to={createPageUrl("SignIn")}>Sign In</Link>
               </Button>
             </div>
           </CardContent>
@@ -184,7 +180,7 @@ export default function UserRegister() {
             to={createPageUrl("Home")} 
             className="text-sm text-cyan-600 hover:text-cyan-700"
           >
-            ← חזרה לדף הבית
+            ← Back to Home
           </Link>
         </div>
       </div>
