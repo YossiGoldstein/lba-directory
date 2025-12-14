@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Search, Heart, Gift, MapPin, TrendingUp, Star } from "lucide-react";
+import { Sparkles, Search, Heart, Gift, MapPin, TrendingUp, Star, Clock, Share2, Info } from "lucide-react";
 
 export default function AboutUs() {
   return (
@@ -119,7 +119,7 @@ export default function AboutUs() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-cyan-200">
-              <MapPin className="w-6 h-6 text-cyan-600 flex-shrink-0" />
+              <Clock className="w-6 h-6 text-cyan-600 flex-shrink-0" />
               <span className="text-gray-700">Up-to-date store hours</span>
             </div>
 
@@ -129,7 +129,7 @@ export default function AboutUs() {
             </div>
 
             <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-cyan-200">
-              <Search className="w-6 h-6 text-cyan-600 flex-shrink-0" />
+              <Share2 className="w-6 h-6 text-cyan-600 flex-shrink-0" />
               <span className="text-gray-700">Social media links</span>
             </div>
 
@@ -139,7 +139,7 @@ export default function AboutUs() {
             </div>
 
             <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-cyan-200 md:col-span-2">
-              <MapPin className="w-6 h-6 text-cyan-600 flex-shrink-0" />
+              <Info className="w-6 h-6 text-cyan-600 flex-shrink-0" />
               <span className="text-gray-700">Full business details</span>
             </div>
           </div>
