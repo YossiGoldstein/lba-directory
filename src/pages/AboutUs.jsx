@@ -106,9 +106,9 @@ export default function AboutUs() {
 
         {/* That's Where the LBA Directory Comes In */}
         <section className="mb-16">
-          <p className="text-xl font-semibold text-gray-900 mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
             That's Where the LBA Directory Comes In
-          </p>
+          </h2>
           <p className="text-gray-700 leading-relaxed mb-8">
             The Lakewood Business Alliance Directory serves as a central hub for everything related to the Lakewood business and shopping world.
           </p>
@@ -116,7 +116,6 @@ export default function AboutUs() {
 
         {/* What LBA Directory Offers */}
         <section className="mb-16 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-8 border border-cyan-200">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">What LBA Directory Offers</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-cyan-200">
