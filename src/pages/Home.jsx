@@ -429,20 +429,24 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {/* For Shoppers */}
-            <div className="text-white text-left p-8 bg-white/10 rounded-xl backdrop-blur-sm">
-              <h3 className="text-2xl sm:text-3xl font-extrabold mb-6">For Consumers</h3>
-              <ul className="space-y-2 mb-6">
-                <li className="text-lg sm:text-xl flex items-start gap-2">
-                  <span className="mt-1">•</span>
+            <div className="text-white p-8 bg-white/10 rounded-xl backdrop-blur-sm flex flex-col items-center">
+              <h3 className="text-2xl sm:text-3xl font-extrabold mb-6 text-center">For Consumers</h3>
+              <ul className="space-y-2 mb-6 text-left w-full max-w-md">
+                <li className="text-lg sm:text-xl flex items-center gap-2">
+                  <span>•</span>
                   <span>Find what you're looking for.</span>
                 </li>
-                <li className="text-lg sm:text-xl flex items-start gap-2">
-                  <span className="mt-1">•</span>
+                <li className="text-lg sm:text-xl flex items-center gap-2">
+                  <span>•</span>
                   <span>Follow what you need.</span>
                 </li>
-                <li className="text-lg sm:text-xl flex items-start gap-2">
-                  <span className="mt-1">•</span>
+                <li className="text-lg sm:text-xl flex items-center gap-2">
+                  <span>•</span>
                   <span>Save on what you get.</span>
+                </li>
+                <li className="text-lg sm:text-xl flex items-center gap-2">
+                  <span>•</span>
+                  <Link to={createPageUrl("ForShoppers")} className="hover:underline">Learn More</Link>
                 </li>
               </ul>
               <Button 
@@ -458,20 +462,24 @@ export default function Home() {
             </div>
 
             {/* For Business Owners */}
-            <div className="text-white text-left p-8 bg-white/10 rounded-xl backdrop-blur-sm">
-              <h3 className="text-2xl sm:text-3xl font-extrabold mb-6">For Businesses</h3>
-              <ul className="space-y-2 mb-6">
-                <li className="text-lg sm:text-xl flex items-start gap-2">
-                  <span className="mt-1">•</span>
+            <div className="text-white p-8 bg-white/10 rounded-xl backdrop-blur-sm flex flex-col items-center">
+              <h3 className="text-2xl sm:text-3xl font-extrabold mb-6 text-center">For Businesses</h3>
+              <ul className="space-y-2 mb-6 text-left w-full max-w-md">
+                <li className="text-lg sm:text-xl flex items-center gap-2">
+                  <span>•</span>
                   <span>Be visible.</span>
                 </li>
-                <li className="text-lg sm:text-xl flex items-start gap-2">
-                  <span className="mt-1">•</span>
+                <li className="text-lg sm:text-xl flex items-center gap-2">
+                  <span>•</span>
                   <span>Attract customers.</span>
                 </li>
-                <li className="text-lg sm:text-xl flex items-start gap-2">
-                  <span className="mt-1">•</span>
+                <li className="text-lg sm:text-xl flex items-center gap-2">
+                  <span>•</span>
                   <span>Promote deals.</span>
+                </li>
+                <li className="text-lg sm:text-xl flex items-center gap-2">
+                  <span>•</span>
+                  <Link to={createPageUrl("BusinessJoin")} className="hover:underline">Learn More</Link>
                 </li>
               </ul>
               <Button 
