@@ -67,7 +67,7 @@ export default function BusinessJoin() {
             {/* Benefit 2 */}
             <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
               <div className="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center mb-4">
-                <Search className="w-6 h-6 text-cyan-600" />
+                <Zap className="w-6 h-6 text-cyan-600" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
                 AI-Powered Discovery
