@@ -165,7 +165,7 @@ export default function BusinessJoin() {
                   Create an account and add your business
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Fill out a simple form with your business details. Use our AI assistant if you need help creating a professional listing. No need to complete everything at once – our team is happy to assist.
+                  Fill out a simple form with your business details. Use our AI assistant if you need help creating a professional listing. No need to complete everything at once, our team is happy to assist.
                 </p>
               </div>
             </div>
