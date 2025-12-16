@@ -96,7 +96,7 @@ export default function ForShoppers() {
                 Discover a Smarter Way to Shop in Lakewood
               </h1>
               <p className="text-xl md:text-2xl text-cyan-50 mb-8">
-                AI-powered search, verified business info, personalized deals — all in one place.
+                AI-powered search, verified business info, personalized deals, all in one place.
               </p>
               <Button
                 onClick={handleSignup}
