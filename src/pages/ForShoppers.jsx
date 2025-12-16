@@ -221,7 +221,7 @@ export default function ForShoppers() {
             size="lg"
             className="bg-white text-cyan-700 hover:bg-cyan-50 px-10 py-7 text-xl font-semibold shadow-2xl"
           >
-            Sign Up Now - It's Free!
+            Get Started Now! It's Free
           </Button>
           
           <div className="mt-12 pt-8 border-t border-white/20">
