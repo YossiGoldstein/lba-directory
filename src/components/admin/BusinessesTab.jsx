@@ -1,17 +1,22 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, ExternalLink, Edit, Eye } from "lucide-react";
+import { Search, ExternalLink, Edit, Eye, Trash2, Plus } from "lucide-react";
 import { createPageUrl } from "@/utils";
+import { toast } from "sonner";
+import AdminEditBusinessModal from "./AdminEditBusinessModal";
 
 export default function BusinessesTab({ onUpdate }) {
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [editingBusiness, setEditingBusiness] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const { data: businesses = [], isLoading, refetch } = useQuery({
     queryKey: ["admin-businesses"],
@@ -65,6 +70,40 @@ export default function BusinessesTab({ onUpdate }) {
     return <Badge className={variants[status] || ""}>{status}</Badge>;
   };
 
+  const deleteMutation = useMutation({
+    mutationFn: async (businessId) => {
+      return await base44.entities.Business.delete(businessId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-businesses"] });
+      toast.success("Business deleted successfully!");
+      if (onUpdate) onUpdate();
+    },
+    onError: () => {
+      toast.error("Failed to delete business");
+    }
+  });
+
+  const handleEdit = (business) => {
+    setEditingBusiness(business);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDelete = (business) => {
+    if (confirm(`Are you sure you want to delete "${business.business_name}"? This action cannot be undone.`)) {
+      deleteMutation.mutate(business.id);
+    }
+  };
+
+  const handleEditSave = () => {
+    refetch();
+    if (onUpdate) onUpdate();
+  };
+
+  const handleAddNew = () => {
+    window.open(createPageUrl("AddBusiness"), "_blank");
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -77,13 +116,20 @@ export default function BusinessesTab({ onUpdate }) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>All Businesses</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4">
+    <>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>All Businesses</CardTitle>
+            <Button onClick={handleAddNew} className="bg-green-600 hover:bg-green-700 gap-2">
+              <Plus className="w-4 h-4" />
+              Add New Business
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Filters */}
+          <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
@@ -152,6 +198,7 @@ export default function BusinessesTab({ onUpdate }) {
                         size="sm"
                         variant="ghost"
                         asChild
+                        title="View"
                       >
                         <a
                           href={`${createPageUrl("BusinessListing")}?id=${business.id}`}
@@ -164,12 +211,19 @@ export default function BusinessesTab({ onUpdate }) {
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => {
-                          // TODO: Implement edit functionality
-                          alert("Edit functionality coming soon");
-                        }}
+                        onClick={() => handleEdit(business)}
+                        title="Edit"
                       >
                         <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleDelete(business)}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
                   </td>
@@ -186,5 +240,16 @@ export default function BusinessesTab({ onUpdate }) {
         </div>
       </CardContent>
     </Card>
+
+    <AdminEditBusinessModal
+      business={editingBusiness}
+      isOpen={isEditModalOpen}
+      onClose={() => {
+        setIsEditModalOpen(false);
+        setEditingBusiness(null);
+      }}
+      onSave={handleEditSave}
+    />
+  </>
   );
 }
