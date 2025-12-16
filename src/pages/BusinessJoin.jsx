@@ -37,7 +37,7 @@ export default function BusinessJoin() {
             onClick={handleGetStarted}
             className="bg-white text-cyan-700 hover:bg-cyan-50 font-bold text-lg px-8 py-6 shadow-xl"
           >
-            Get Started – It's Free
+            Get Started - It's Free
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
@@ -215,7 +215,7 @@ export default function BusinessJoin() {
             onClick={handleGetStarted}
             className="bg-white text-cyan-700 hover:bg-cyan-50 font-bold text-lg px-10 py-6 shadow-xl"
           >
-            GET STARTED NOW – IT'S FREE!
+            GET STARTED NOW - IT'S FREE!
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
