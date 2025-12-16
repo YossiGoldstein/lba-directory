@@ -35,10 +35,9 @@ export default function BusinessJoin() {
           <Button 
             size="lg"
             onClick={handleGetStarted}
-            className="bg-white text-cyan-700 hover:bg-cyan-50 font-bold text-lg px-8 py-6 shadow-xl mx-auto flex items-center justify-center"
+            className="bg-white text-cyan-700 hover:bg-cyan-50 font-bold text-lg px-8 py-6 shadow-xl"
           >
             Get Started Now! It's Free
-            <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
       </section>
@@ -213,10 +212,9 @@ export default function BusinessJoin() {
           <Button 
             size="lg"
             onClick={handleGetStarted}
-            className="bg-white text-cyan-700 hover:bg-cyan-50 font-bold text-lg px-10 py-6 shadow-xl mx-auto flex items-center justify-center"
+            className="bg-white text-cyan-700 hover:bg-cyan-50 font-bold text-lg px-10 py-6 shadow-xl"
           >
             Get Started Now! It's Free
-            <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
       </section>
