@@ -206,7 +206,7 @@ export default function Contact() {
             {/* Ask the AI Section */}
             <Card className="shadow-lg bg-gradient-to-br from-cyan-50 to-blue-50 border-cyan-200">
               <CardContent className="p-6">
-                <div className="flex items-start gap-4">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
                   <div className="w-12 h-12 bg-cyan-600 rounded-full flex items-center justify-center flex-shrink-0">
                     <MessageCircle className="w-6 h-6 text-white" />
                   </div>
@@ -219,7 +219,7 @@ export default function Contact() {
                     </p>
                     <Button
                       onClick={handleOpenChat}
-                      className="bg-cyan-600 hover:bg-cyan-700 gap-2"
+                      className="bg-cyan-600 hover:bg-cyan-700 gap-2 w-full sm:w-auto"
                     >
                       <MessageCircle className="w-4 h-4" />
                       Chat with the Directory Assistant
@@ -232,11 +232,11 @@ export default function Contact() {
             {/* Map Placeholder */}
             <Card className="shadow-lg overflow-hidden">
               <div className="h-64 bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center">
-                <div className="text-center">
+                <div className="text-center px-4">
                   <MapPin className="w-12 h-12 text-cyan-600 mx-auto mb-3" />
                   <p className="text-gray-700 font-semibold">Serving the Lakewood area</p>
                   <p className="text-gray-600 text-sm mt-1">
-                    Lakewood, Toms River, Jackson, and beyond
+                    Lakewood, Toms River, Jackson, Brick, Howell, Manchester
                   </p>
                 </div>
               </div>

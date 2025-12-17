@@ -239,7 +239,7 @@ export default function Layout({ children, currentPageName }) {
                 </li>
                 <li>
                   <Link to={createPageUrl("AddBusiness")} className="text-sm hover:text-cyan-400 transition-colors">
-                    Add Business – Free
+                    Add a Business
                   </Link>
                 </li>
                 <li>
