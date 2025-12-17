@@ -458,7 +458,7 @@ export default function Home() {
                 </li>
                 <li className="text-lg sm:text-xl flex items-center gap-2">
                   <span>•</span>
-                  <Link to={createPageUrl("ForShoppers")} className="hover:underline">Learn More...</Link>
+                  <Link to={createPageUrl("AboutUs")} className="hover:underline">Learn More...</Link>
                 </li>
               </ul>
               <Button 
