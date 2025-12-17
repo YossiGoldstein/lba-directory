@@ -14,7 +14,8 @@ import {
   MessageCircle, 
   Send,
   CheckCircle,
-  MapPin
+  MapPin,
+  MessageSquare
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -177,6 +178,24 @@ export default function Contact() {
                       <p className="text-sm text-gray-600">Email</p>
                       <p className="text-lg font-semibold text-gray-900 group-hover:text-cyan-700">
                         office@lbadirectory.com
+                      </p>
+                    </div>
+                  </a>
+
+                  {/* WhatsApp */}
+                  <a
+                    href="https://wa.me/17326001260"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors group"
+                  >
+                    <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                      <MessageSquare className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">WhatsApp</p>
+                      <p className="text-lg font-semibold text-gray-900 group-hover:text-green-700">
+                        732-600-1260
                       </p>
                     </div>
                   </a>
