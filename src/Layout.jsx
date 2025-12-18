@@ -282,6 +282,17 @@ export default function Layout({ children, currentPageName }) {
                     732-600-1260
                   </a>
                 </li>
+                <li>
+                  <a 
+                    href="https://wa.me/17326001260" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm hover:text-cyan-400 transition-colors flex items-center gap-2"
+                  >
+                    <Phone className="w-4 h-4" />
+                    WhatsApp: 732-600-1260
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
