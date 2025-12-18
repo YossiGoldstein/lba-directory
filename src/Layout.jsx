@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogOut, LayoutDashboard, Mail, Phone } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, Mail, Phone, MessageSquare } from "lucide-react";
 import ChatButton from "./components/chat/ChatButton";
 
 
@@ -289,8 +289,8 @@ export default function Layout({ children, currentPageName }) {
                     rel="noopener noreferrer"
                     className="text-sm hover:text-cyan-400 transition-colors flex items-center gap-2"
                   >
-                    <Phone className="w-4 h-4" />
-                    WhatsApp: 732-600-1260
+                    <MessageSquare className="w-4 h-4" />
+                    732-600-1260
                   </a>
                 </li>
               </ul>
