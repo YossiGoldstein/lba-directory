@@ -197,9 +197,6 @@ Our team will review it promptly.`
           </nav>
 
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Frequently Asked Questions</h1>
-          <p className="text-xl text-cyan-50">
-            Everything you need to know about LBA Directory
-          </p>
         </div>
       </section>
 
