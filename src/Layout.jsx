@@ -238,9 +238,19 @@ export default function Layout({ children, currentPageName }) {
                   </Link>
                 </li>
                 <li>
-                  <Link to={createPageUrl("AddBusiness")} className="text-sm hover:text-cyan-400 transition-colors">
+                  <button 
+                    onClick={async () => {
+                      const isAuth = await base44.auth.isAuthenticated();
+                      if (isAuth) {
+                        window.location.href = createPageUrl("AddBusiness");
+                      } else {
+                        window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
+                      }
+                    }}
+                    className="text-sm hover:text-cyan-400 transition-colors text-left"
+                  >
                     Add a Business
-                  </Link>
+                  </button>
                 </li>
                 <li>
                   <Link to={createPageUrl("BusinessJoin")} className="text-sm hover:text-cyan-400 transition-colors">
