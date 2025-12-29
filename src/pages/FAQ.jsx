@@ -21,161 +21,41 @@ export default function FAQ() {
   const faqs = [
     {
       id: "1",
-      icon: Building2,
-      question: "What is LBA Directory?",
-      answer: `LBA Directory is a smart, AI-powered business directory created for the Lakewood community. It helps you find local shops, services, restaurants, and professionals across Lakewood, Toms River, Jackson, Brick, Howell, and surrounding areas.
-
-Instead of scrolling through weekly papers or searching multiple places, you can simply ask in natural language — and our assistant finds what you need.`
+      question: "Do I need to have an account to search?",
+      answer: `No. You can search freely without an account.
+  By creating a free consumer account, you benefit from:
+  • The ability to bookmark and follow your favorite businesses
+  • Submitting reviews
+  • Access to exclusive deals`
     },
     {
       id: "2",
-      icon: Search,
-      question: "How do I search for a business?",
-      answer: `Just type what you're looking for into the search bar on the Home Page or start chatting with our Directory Assistant.
-
-Examples:
-• "Dairy restaurant open now in Lakewood"
-• "Phone repair near me"
-• "Kids clothing store with good reviews"
-• "Plumber available tonight"
-
-No filters are needed — the AI understands your request and delivers the most relevant options.`
+      question: "Does the directory cover businesses outside of Lakewood?",
+      answer: `Yes. We cover the greater Lakewood area, including:
+  Toms River, Jackson, Brick, Howell, and Manchester.`
     },
     {
       id: "3",
-      icon: Sparkles,
-      question: "What makes the AI different from regular search?",
-      answer: `Our AI doesn't rely on strict filters.
-It understands intent, context, and the unique needs of the Lakewood community.
-
-It can:
-• Interpret free-text questions
-• Suggest related categories
-• Find similar businesses
-• Provide hours, deals, and directions
-• Recommend kosher-appropriate options
-• Avoid irrelevant or non-kosher results
-
-It's like having a personal assistant who knows the entire local shopping scene.`
+      question: "If I upgrade to a premium listing package, can I downgrade back anytime?",
+      answer: `Yes. Paid memberships are on a month-to-month basis.
+  You can try it out, and if it's not for you, you can downgrade back to the free version at any time.`
     },
     {
       id: "4",
-      icon: Shield,
-      question: "Is everything on the site kosher-appropriate?",
-      answer: `Yes.
-Results and recommendations are tailored to the standards of the Lakewood Haredi community.
-
-The system avoids:
-• Non-kosher restaurants
-• Inappropriate categories
-• Suggestions that don't fit the community
-
-All content and results are reviewed with this in mind.`
+      question: "With the premium listing packages, what type of advertising do you offer?",
+      answer: `We offer targeted advertising through WhatsApp and Instagram platforms under our TIG Solutions marketing.
+  Our WhatsApp status and some of our WhatsApp groups are dedicated to ads only.
+  We have thousands of Lakewood-area followers, and ads are posted on the platforms most relevant to each specific business.
+  The standard advertising rate is $125 per ad.
+  With a premium listing package, you receive several of these ads per year at no additional cost.`
     },
     {
       id: "5",
-      question: "Do I need an account to use the site?",
-      answer: `No — you can search freely without an account.
-
-But creating a free shopper account gives you:
-• The ability to bookmark favorites
-• Write reviews
-• Access exclusive monthly deals
-• Eligibility for giveaways and special promotions`
-    },
-    {
-      id: "6",
-      question: "How do I add my business to the directory?",
-      answer: `You can add a business through our Add Business Wizard.
-
-It guides you step-by-step through:
-• Business details
-• Category
-• Tags
-• Hours
-• Gallery
-• Deals
-• AI-assisted optimization
-
-Once submitted, your business enters approval review before going live.`
-    },
-    {
-      id: "7",
-      question: "How does the AI help business owners?",
-      answer: `Inside the Business Owner Dashboard, there is a dedicated AI Assistant.
-
-It can:
-• Improve your business description
-• Suggest better tags
-• Recommend deals
-• Rewrite content professionally
-• Help optimize hours
-• Explain what customers are searching for
-
-This gives every owner a powerful marketing assistant.`
-    },
-    {
-      id: "8",
-      question: "Are my searches or data shared with anyone?",
-      answer: `Absolutely not.
-
-Your data is:
-• Private
-• Not sold
-• Not shared with businesses
-• Used only to improve your personal experience (e.g., recent searches, AI suggestions)
-
-We take privacy seriously and follow community expectations for discretion and tznius.`
-    },
-    {
-      id: "9",
-      question: "Does the site work on Shabbos?",
-      answer: `The site is accessible, but:
-
-• We do not encourage live interaction or commercial activity on Shabbos
-• Business hours shown may indicate "Closed for Shabbos"
-• No Shabbos-specific actions (e.g., "Open now") will be suggested during Shabbos times`
-    },
-    {
-      id: "10",
-      question: "How often is business information updated?",
-      answer: `Business owners can update their information anytime from their dashboard.
-
-We also use:
-• AI moderation
-• Community feedback
-• Review updates
-
-to help ensure hours, deals, and details stay accurate.`
-    },
-    {
-      id: "11",
-      question: "What areas does the directory cover?",
-      answer: `Primarily Lakewood and its natural extensions:
-
-• Lakewood
-• Toms River
-• Jackson
-• Brick
-• Howell
-• Manchester
-• Surrounding neighborhoods
-
-More areas may be added as the community grows.`
-    },
-    {
-      id: "12",
-      question: "What should I do if I find incorrect information?",
-      answer: `Use the "Report an Issue" button on any business page.
-
-You can report:
-• Incorrect hours
-• Wrong category
-• Duplicate listing
-• Inappropriate content
-• Non-kosher relevance
-
-Our team will review it promptly.`
+      question: "What's the difference between the LBA Directory and Google?",
+      answer: `Great question, and that's exactly why we're here.
+  Not all businesses are on Google, and many do not have complete or accurate business details listed there.
+  Google is not specifically targeted to the Jewish Lakewood community and may return irrelevant results when users search without a specific business name.
+  The LBA Directory is built specifically for the local Lakewood area and focuses on accurate, community-driven business information.`
     }
   ];
 
@@ -203,35 +83,25 @@ Our team will review it promptly.`
       {/* FAQ Content */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <Accordion type="single" collapsible className="space-y-4">
-          {faqs.map((faq) => {
-            const IconComponent = faq.icon;
-            return (
+          {faqs.map((faq) => (
               <AccordionItem
                 key={faq.id}
                 value={faq.id}
                 className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
               >
                 <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-gray-50 text-left">
-                  <div className="flex items-start gap-3 pr-4">
-                    {IconComponent && (
-                      <div className="w-8 h-8 bg-cyan-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                        <IconComponent className="w-5 h-5 text-cyan-600" />
-                      </div>
-                    )}
-                    <span className="text-lg font-semibold text-gray-900">
-                      {faq.question}
-                    </span>
-                  </div>
+                  <span className="text-lg font-semibold text-gray-900">
+                    {faq.question}
+                  </span>
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-6">
-                  <div className="pl-11 text-gray-700 leading-relaxed whitespace-pre-line">
+                  <div className="text-gray-700 leading-relaxed whitespace-pre-line">
                     {faq.answer}
                   </div>
                 </AccordionContent>
               </AccordionItem>
-            );
-          })}
-        </Accordion>
+              ))}
+              </Accordion>
 
         {/* Still Have Questions */}
         <div className="mt-16 text-center">
