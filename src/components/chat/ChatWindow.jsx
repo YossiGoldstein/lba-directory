@@ -170,11 +170,13 @@ export default function ChatWindow({
         {messages.length === 0 && (
           <div className="text-center text-gray-500 mt-8">
             <div className="mb-4 flex justify-center">
-              <svg className="w-20 h-20 text-cyan-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="8" r="4" fill="currentColor"/>
-                <path d="M6 21v-2a6 6 0 0112 0v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M19 9a2 2 0 012 2v2a2 2 0 01-2 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M5 9a2 2 0 00-2 2v2a2 2 0 002 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <svg className="w-20 h-20 text-cyan-600" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="20" r="10" fill="currentColor"/>
+                <path d="M18 50c0-7.732 6.268-14 14-14s14 6.268 14 14v4H18v-4z" fill="currentColor"/>
+                <path d="M48 26c0-2.21 1.79-4 4-4s4 1.79 4 4v8c0 2.21-1.79 4-4 4s-4-1.79-4-4v-8z" fill="currentColor"/>
+                <path d="M8 26c0-2.21 1.79-4 4-4s4 1.79 4 4v8c0 2.21-1.79 4-4 4s-4-1.79-4-4v-8z" fill="currentColor"/>
+                <rect x="48" y="36" width="2" height="8" rx="1" fill="currentColor"/>
+                <circle cx="49" cy="46" r="2" fill="currentColor"/>
               </svg>
             </div>
             <p className="text-lg font-semibold mb-2">Hi, I'm your LBA Directory Assistant</p>
