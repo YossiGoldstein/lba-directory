@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X, Send, Loader2, Minimize2 } from "lucide-react";
+import { X, Send, Loader2, Minimize2, Headphones } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import BusinessResultCard from "./BusinessResultCard";
 
@@ -170,14 +170,9 @@ export default function ChatWindow({
         {messages.length === 0 && (
           <div className="text-center text-gray-500 mt-8">
             <div className="mb-4 flex justify-center">
-              <svg className="w-20 h-20 text-cyan-600" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="32" cy="20" r="10" fill="currentColor"/>
-                <path d="M18 50c0-7.732 6.268-14 14-14s14 6.268 14 14v4H18v-4z" fill="currentColor"/>
-                <path d="M48 26c0-2.21 1.79-4 4-4s4 1.79 4 4v8c0 2.21-1.79 4-4 4s-4-1.79-4-4v-8z" fill="currentColor"/>
-                <path d="M8 26c0-2.21 1.79-4 4-4s4 1.79 4 4v8c0 2.21-1.79 4-4 4s-4-1.79-4-4v-8z" fill="currentColor"/>
-                <rect x="48" y="36" width="2" height="8" rx="1" fill="currentColor"/>
-                <circle cx="49" cy="46" r="2" fill="currentColor"/>
-              </svg>
+              <div className="w-20 h-20 bg-cyan-100 rounded-full flex items-center justify-center">
+                <Headphones className="w-10 h-10 text-cyan-600" strokeWidth={2} />
+              </div>
             </div>
             <p className="text-lg font-semibold mb-2">Hi, I'm your LBA Directory Assistant</p>
             <p className="text-sm mb-4 text-gray-600">I am here to help with anything from business information to general inquiries, for a quick and direct response.</p>
