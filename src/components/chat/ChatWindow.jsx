@@ -170,9 +170,21 @@ export default function ChatWindow({
         {messages.length === 0 && (
           <div className="text-center text-gray-500 mt-8">
             <div className="mb-4 flex justify-center">
-              <div className="w-20 h-20 bg-cyan-100 rounded-full flex items-center justify-center">
-                <Headphones className="w-10 h-10 text-cyan-600" strokeWidth={2} />
-              </div>
+              <svg className="w-20 h-20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Head */}
+                <circle cx="50" cy="45" r="18" fill="#0891b2" />
+                {/* Body */}
+                <path d="M32 75c0-9.941 8.059-18 18-18s18 8.059 18 18v10H32V75z" fill="#0891b2" />
+                {/* Headset arc */}
+                <path d="M28 45c0-12.15 9.85-22 22-22s22 9.85 22 22" stroke="#0e7490" strokeWidth="4" strokeLinecap="round" fill="none" />
+                {/* Left earpiece */}
+                <rect x="22" y="42" width="8" height="12" rx="2" fill="#0e7490" />
+                {/* Right earpiece */}
+                <rect x="70" y="42" width="8" height="12" rx="2" fill="#0e7490" />
+                {/* Microphone */}
+                <path d="M68 54v8" stroke="#0e7490" strokeWidth="3" strokeLinecap="round" />
+                <circle cx="68" cy="64" r="2.5" fill="#0e7490" />
+              </svg>
             </div>
             <p className="text-lg font-semibold mb-2">Hi, I'm your LBA Directory Assistant</p>
             <p className="text-sm mb-4 text-gray-600">I am here to help with anything from business information to general inquiries, for a quick and direct response.</p>
