@@ -145,8 +145,7 @@ export default function ChatWindow({
       {/* Header */}
       <div className="bg-gradient-to-r from-cyan-600 to-blue-700 text-white p-4 flex items-center justify-between" style={{ borderTopLeftRadius: isMobile ? 0 : '0.5rem', borderTopRightRadius: isMobile ? 0 : '0.5rem' }}>
         <div>
-          <h3 className="font-semibold">Directory Assistant</h3>
-          <p className="text-xs text-cyan-100">Ask me about local businesses</p>
+          <h3 className="font-semibold">LBA Directory Assistant</h3>
         </div>
         <div className="flex gap-2">
           {!isMobile && (
@@ -170,31 +169,16 @@ export default function ChatWindow({
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
         {messages.length === 0 && (
           <div className="text-center text-gray-500 mt-8">
-            <div className="mb-4 text-4xl">👋</div>
-            <p className="text-lg font-semibold mb-2">Hi! I'm your Directory Assistant</p>
-            <p className="text-sm mb-4">I can help you find local businesses, deals, hours, and more.</p>
-            
-            {pageContext?.page === "CategoryListing" && pageContext?.categoryName && (
-              <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-3 mb-4 text-sm">
-                I can see you're browsing <strong>{pageContext.categoryName}</strong>.
-                Ask me anything about these businesses!
-              </div>
-            )}
-            
-            {pageContext?.page === "BusinessListing" && pageContext?.businessName && (
-              <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-3 mb-4 text-sm">
-                I can see you're viewing <strong>{pageContext.businessName}</strong>.
-                Ask me about similar places or anything else!
-              </div>
-            )}
-
-            <div className="text-left bg-white rounded-lg p-4 space-y-2 text-sm shadow-sm">
-              <p className="font-medium text-gray-700 mb-2">Try asking:</p>
-              <p className="text-gray-600">• "Find me a kosher restaurant in Lakewood"</p>
-              <p className="text-gray-600">• "תמצא לי חנות יודאיקה טובה"</p>
-              <p className="text-gray-600">• "Show me places with deals this week"</p>
-              <p className="text-gray-600">• "Who's open on Sunday mornings?"</p>
+            <div className="mb-4 flex justify-center">
+              <svg className="w-20 h-20 text-cyan-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="8" r="4" fill="currentColor"/>
+                <path d="M6 21v-2a6 6 0 0112 0v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M19 9a2 2 0 012 2v2a2 2 0 01-2 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M5 9a2 2 0 00-2 2v2a2 2 0 002 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
             </div>
+            <p className="text-lg font-semibold mb-2">Hi, I'm your LBA Directory Assistant</p>
+            <p className="text-sm mb-4 text-gray-600">I am here to help with anything from business information to general inquiries, for a quick and direct response.</p>
           </div>
         )}
 
@@ -295,7 +279,7 @@ export default function ChatWindow({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask about businesses, deals, hours..."
+            placeholder="Type what you're looking for"
             disabled={isLoading || !conversation}
             className="flex-1"
           />
