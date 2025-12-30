@@ -195,7 +195,7 @@ export default function Contact() {
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">צור קשר</p>
+                      <p className="text-sm text-gray-600">WhatsApp</p>
                       <p className="text-lg font-semibold text-gray-900 group-hover:text-green-700">
                         732-600-1260
                       </p>
