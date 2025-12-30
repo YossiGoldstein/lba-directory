@@ -170,20 +170,42 @@ export default function ChatWindow({
         {messages.length === 0 && (
           <div className="text-center text-gray-500 mt-8">
             <div className="mb-4 flex justify-center">
-              <svg className="w-20 h-20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Head */}
-                <circle cx="50" cy="45" r="18" fill="#0891b2" />
-                {/* Body */}
-                <path d="M32 75c0-9.941 8.059-18 18-18s18 8.059 18 18v10H32V75z" fill="#0891b2" />
-                {/* Headset arc */}
-                <path d="M28 45c0-12.15 9.85-22 22-22s22 9.85 22 22" stroke="#0e7490" strokeWidth="4" strokeLinecap="round" fill="none" />
-                {/* Left earpiece */}
-                <rect x="22" y="42" width="8" height="12" rx="2" fill="#0e7490" />
-                {/* Right earpiece */}
-                <rect x="70" y="42" width="8" height="12" rx="2" fill="#0e7490" />
-                {/* Microphone */}
-                <path d="M68 54v8" stroke="#0e7490" strokeWidth="3" strokeLinecap="round" />
-                <circle cx="68" cy="64" r="2.5" fill="#0e7490" />
+              <svg className="w-24 h-24" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="headGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#06b6d4" />
+                    <stop offset="100%" stopColor="#0891b2" />
+                  </linearGradient>
+                  <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#0891b2" />
+                    <stop offset="100%" stopColor="#0e7490" />
+                  </linearGradient>
+                </defs>
+                
+                <ellipse cx="60" cy="105" rx="30" ry="5" fill="#000" opacity="0.1" />
+                
+                <path d="M38 85c0-12.15 9.85-22 22-22s22 9.85 22 22v20H38V85z" fill="url(#bodyGradient)" />
+                
+                <rect x="52" y="62" width="16" height="8" rx="2" fill="url(#headGradient)" />
+                
+                <circle cx="60" cy="45" r="20" fill="url(#headGradient)" />
+                <circle cx="60" cy="45" r="20" fill="#fff" opacity="0.1" />
+                
+                <path d="M35 45c0-13.807 11.193-25 25-25s25 11.193 25 25" stroke="#334155" strokeWidth="5" strokeLinecap="round" fill="none" />
+                <path d="M36 45c0-13.255 10.745-24 24-24s24 10.745 24 24" stroke="#475569" strokeWidth="3" strokeLinecap="round" fill="none" />
+                
+                <rect x="28" y="42" width="10" height="16" rx="3" fill="#1e293b" />
+                <rect x="29" y="43" width="8" height="14" rx="2" fill="#334155" />
+                <circle cx="33" cy="50" r="2" fill="#06b6d4" opacity="0.5" />
+                
+                <rect x="82" y="42" width="10" height="16" rx="3" fill="#1e293b" />
+                <rect x="83" y="43" width="8" height="14" rx="2" fill="#334155" />
+                <circle cx="87" cy="50" r="2" fill="#06b6d4" opacity="0.5" />
+                
+                <path d="M82 50 Q88 52, 90 58" stroke="#334155" strokeWidth="3" strokeLinecap="round" fill="none" />
+                
+                <ellipse cx="91" cy="60" rx="3" ry="4" fill="#1e293b" />
+                <ellipse cx="91" cy="60" rx="2" ry="3" fill="#475569" />
               </svg>
             </div>
             <p className="text-lg font-semibold mb-2">Hi, I'm your LBA Directory Assistant</p>
