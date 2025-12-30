@@ -52,7 +52,7 @@ export default function ChatButton({ pageContext }) {
       {/* Floating Chat Bubble */}
       <button
         onClick={handleToggle}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 z-50 transition-all hover:scale-110 flex items-center justify-center"
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 z-[9999] transition-all hover:scale-110 flex items-center justify-center"
         aria-label="Open chat assistant"
       >
         {isOpen && !isMinimized ? (
