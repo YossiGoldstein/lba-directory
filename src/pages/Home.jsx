@@ -188,11 +188,11 @@ export default function Home() {
       <section className="relative min-h-[75vh] sm:min-h-[90vh] flex flex-col overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&h=1080&fit=crop" 
+            src="https://images.unsplash.com/photo-1519167758481-83f29da8c2af?w=1920&h=1080&fit=crop" 
             alt="Local businesses" 
-            className="w-full h-full object-cover filter brightness-50 scale-105"
+            className="w-full h-full object-cover filter brightness-[35] scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/75 via-cyan-800/70 to-blue-900/75"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-cyan-800/75 to-blue-900/80"></div>
         </div>
 
         {/* Navigation Menu on Image */}
