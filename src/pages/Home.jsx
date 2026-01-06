@@ -190,9 +190,9 @@ export default function Home() {
           <img 
             src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&h=1080&fit=crop" 
             alt="Local businesses" 
-            className="w-full h-full object-cover scale-105"
+            className="w-full h-full object-cover filter brightness-[0.4] scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/50 via-cyan-800/45 to-blue-900/50"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 via-cyan-800/55 to-blue-900/60"></div>
         </div>
 
         {/* Navigation Menu on Image */}
