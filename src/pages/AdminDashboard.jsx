@@ -233,6 +233,7 @@ export default function AdminDashboard() {
             <TabsTrigger value="deals">Deals</TabsTrigger>
             <TabsTrigger value="categories">Categories</TabsTrigger>
             <TabsTrigger value="ai">AI Moderation</TabsTrigger>
+            <TabsTrigger value="geocode">Geocode</TabsTrigger>
           </TabsList>
 
           <TabsContent value="businesses">
@@ -262,8 +263,107 @@ export default function AdminDashboard() {
           <TabsContent value="ai">
             <AiModerationTab />
           </TabsContent>
+
+          <TabsContent value="geocode">
+            <Card>
+              <CardHeader>
+                <CardTitle>Geocode Business Addresses</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <GeocodeTab onUpdate={loadStats} />
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
+    </div>
+  );
+}
+
+function GeocodeTab({ onUpdate }) {
+  const [isRunning, setIsRunning] = useState(false);
+  const [result, setResult] = useState(null);
+
+  const handleGeocode = async () => {
+    setIsRunning(true);
+    setResult(null);
+    
+    try {
+      const response = await base44.functions.invoke('geocodeBusinesses', {});
+      setResult(response.data);
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      setResult({ error: error.message });
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <p className="text-sm text-gray-700">
+          כלי זה ממיר כתובות של עסקים לקואורדינטות GPS ושומר אותן במסד הנתונים. 
+          זה נחוץ כדי שהעסקים יופיעו על המפה בדפי הקטגוריות.
+        </p>
+        <p className="text-sm text-gray-600 mt-2">
+          הפעולה לוקחת כשנייה לכל עסק (בגלל הגבלת קצב של OpenStreetMap).
+        </p>
+      </div>
+
+      <Button 
+        onClick={handleGeocode} 
+        disabled={isRunning}
+        className="bg-cyan-600 hover:bg-cyan-700"
+      >
+        {isRunning ? 'מעבד...' : 'המר כתובות לקואורדינטות'}
+      </Button>
+
+      {result && (
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <h3 className="font-semibold text-gray-900 mb-3">תוצאות:</h3>
+          {result.error ? (
+            <p className="text-red-600">{result.error}</p>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="bg-gray-50 p-3 rounded">
+                  <p className="text-sm text-gray-600">סה"כ עסקים</p>
+                  <p className="text-2xl font-bold text-gray-900">{result.total}</p>
+                </div>
+                <div className="bg-blue-50 p-3 rounded">
+                  <p className="text-sm text-gray-600">דרשו המרה</p>
+                  <p className="text-2xl font-bold text-blue-600">{result.needGeocoding}</p>
+                </div>
+                <div className="bg-green-50 p-3 rounded">
+                  <p className="text-sm text-gray-600">עודכנו בהצלחה</p>
+                  <p className="text-2xl font-bold text-green-600">{result.updated}</p>
+                </div>
+                <div className="bg-red-50 p-3 rounded">
+                  <p className="text-sm text-gray-600">נכשלו</p>
+                  <p className="text-2xl font-bold text-red-600">{result.failed}</p>
+                </div>
+              </div>
+
+              {result.details && result.details.length > 0 && (
+                <div className="max-h-96 overflow-y-auto">
+                  <h4 className="font-semibold text-gray-900 mb-2">פירוט:</h4>
+                  <div className="space-y-2">
+                    {result.details.map((item, idx) => (
+                      <div key={idx} className="text-sm border-b border-gray-100 pb-2">
+                        <p className="font-medium">{item.business}</p>
+                        <p className={item.status === 'success' ? 'text-green-600' : 'text-red-600'}>
+                          {item.status === 'success' ? '✓ הצליח' : '✗ ' + item.status}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
