@@ -83,13 +83,13 @@ export default function Layout({ children, currentPageName }) {
               </Link>
 
               <nav className="hidden md:flex items-center gap-8">
-                <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
+                <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium text-lg">
                   Home
                 </Link>
-                <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
+                <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium text-lg">
                   About
                 </Link>
-                <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
+                <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium text-lg">
                   FAQ
                 </Link>
                 <button 
@@ -101,7 +101,7 @@ export default function Layout({ children, currentPageName }) {
                       window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                     }
                   }} 
-                  className="text-gray-700 hover:text-cyan-600 transition-colors font-medium"
+                  className="text-gray-700 hover:text-cyan-600 transition-colors font-medium text-lg"
                 >
                   Add Business
                 </button>
@@ -145,13 +145,13 @@ export default function Layout({ children, currentPageName }) {
             {mobileMenuOpen && (
               <div className="md:hidden py-4 border-t border-gray-200">
                 <nav className="flex flex-col gap-4">
-                  <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-cyan-600 font-medium">
+                  <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-cyan-600 font-medium text-lg">
                     Home
                   </Link>
-                  <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-cyan-600 font-medium">
+                  <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-cyan-600 font-medium text-lg">
                     About
                   </Link>
-                  <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-cyan-600 font-medium">
+                  <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-cyan-600 font-medium text-lg">
                     FAQ
                   </Link>
                   <button 
@@ -163,7 +163,7 @@ export default function Layout({ children, currentPageName }) {
                         window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                       }
                     }} 
-                    className="text-gray-700 hover:text-cyan-600 font-medium text-left"
+                    className="text-gray-700 hover:text-cyan-600 font-medium text-lg text-left"
                   >
                     Add Business
                   </button>
