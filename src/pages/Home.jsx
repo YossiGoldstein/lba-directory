@@ -58,6 +58,54 @@ export default function Home() {
     setAgentResponse("");
     setMatchedBusinesses([]);
 
+    // Step 1: Direct business lookup
+    const query = searchQuery.toLowerCase().trim();
+    const directMatches = allBusinesses.filter(business => {
+      const name = (business.business_name || "").toLowerCase();
+      const slug = (business.slug || "").toLowerCase();
+      
+      // Exact match
+      if (name === query || slug === query) return true;
+      
+      // Contains match
+      if (name.includes(query) || query.includes(name)) return true;
+      
+      // Word match - if query has multiple words, check if most appear in business name
+      const queryWords = query.split(/\s+/).filter(w => w.length > 2);
+      const nameWords = name.split(/\s+/);
+      if (queryWords.length >= 2) {
+        const matchedWords = queryWords.filter(qw => 
+          nameWords.some(nw => nw.includes(qw) || qw.includes(nw))
+        );
+        if (matchedWords.length >= Math.ceil(queryWords.length * 0.7)) return true;
+      }
+      
+      return false;
+    });
+
+    // If single exact match, navigate directly
+    if (directMatches.length === 1) {
+      const business = directMatches[0];
+      console.log("✅ Single exact match found, navigating to:", business.business_name);
+      window.location.href = createPageUrl(`BusinessListing?id=${business.id}`);
+      return;
+    }
+
+    // If multiple clear matches, show them without AI
+    if (directMatches.length > 0 && directMatches.length <= 10) {
+      console.log("✅ Found", directMatches.length, "direct matches");
+      setMatchedBusinesses(directMatches);
+      setAgentResponse(`Found ${directMatches.length} business${directMatches.length !== 1 ? 'es' : ''} matching "${searchQuery}"`);
+      setSearchResults({
+        response: `Found ${directMatches.length} business${directMatches.length !== 1 ? 'es' : ''} matching "${searchQuery}"`,
+        businesses: directMatches
+      });
+      setIsSearching(false);
+      return;
+    }
+
+    // Step 2: Fall back to AI if no clear matches
+    console.log("⚠️ No clear matches, using AI assistant");
     let searchCompleted = false;
 
     try {
@@ -73,7 +121,6 @@ export default function Home() {
       console.log("✅ Conversation created:", conv.id);
       setConversation(conv);
 
-      // Subscribe first before adding message
       const unsubscribe = base44.agents.subscribeToConversation(
         conv.id,
         (data) => {
@@ -99,7 +146,6 @@ export default function Home() {
         }
       );
 
-      // Now send the message - pass the full conversation object
       await base44.agents.addMessage(conv, {
         role: "user",
         content: searchQuery

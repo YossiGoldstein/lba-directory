@@ -126,6 +126,52 @@ export default function CategoryListing() {
     setAgentResponse("");
     setMatchedBusinesses([]);
 
+    // Step 1: Direct business lookup within current category
+    const query = searchQuery.toLowerCase().trim();
+    const searchPool = slug === "all" ? allBusinesses : categoryBusinesses;
+    
+    const directMatches = searchPool.filter(business => {
+      const name = (business.business_name || "").toLowerCase();
+      const slug = (business.slug || "").toLowerCase();
+      
+      // Exact match
+      if (name === query || slug === query) return true;
+      
+      // Contains match
+      if (name.includes(query) || query.includes(name)) return true;
+      
+      // Word match
+      const queryWords = query.split(/\s+/).filter(w => w.length > 2);
+      const nameWords = name.split(/\s+/);
+      if (queryWords.length >= 2) {
+        const matchedWords = queryWords.filter(qw => 
+          nameWords.some(nw => nw.includes(qw) || qw.includes(nw))
+        );
+        if (matchedWords.length >= Math.ceil(queryWords.length * 0.7)) return true;
+      }
+      
+      return false;
+    });
+
+    // If single exact match, navigate directly
+    if (directMatches.length === 1) {
+      window.location.href = createPageUrl(`BusinessListing?id=${directMatches[0].id}`);
+      return;
+    }
+
+    // If multiple clear matches, show them without AI
+    if (directMatches.length > 0 && directMatches.length <= 10) {
+      setMatchedBusinesses(directMatches);
+      setAgentResponse(`Found ${directMatches.length} business${directMatches.length !== 1 ? 'es' : ''} matching "${searchQuery}"`);
+      setSearchResults({
+        response: `Found ${directMatches.length} business${directMatches.length !== 1 ? 'es' : ''} matching "${searchQuery}"`,
+        businesses: directMatches
+      });
+      setIsSearching(false);
+      return;
+    }
+
+    // Step 2: Fall back to AI if no clear matches
     try {
       const conv = await base44.agents.createConversation({
         agent_name: "DirectoryAssistant",
