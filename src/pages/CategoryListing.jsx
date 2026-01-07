@@ -269,16 +269,6 @@ export default function CategoryListing() {
           </p>
         </div>
 
-        {/* Related Categories */}
-        {!searchResults && !isSearching && currentCategory && (
-          <RelatedCategories
-            currentCategory={currentCategory}
-            categories={categories}
-            businesses={allBusinesses}
-            onCategoryClick={handleRelatedCategoryClick}
-          />
-        )}
-
         {/* Loading State */}
         {isSearching && (
           <div className="bg-white rounded-xl shadow-md border border-gray-200 p-12 text-center">
@@ -362,17 +352,18 @@ export default function CategoryListing() {
           <div>
             {/* Info Block */}
             {categoryBusinesses.length > 0 && (
-              <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg p-6 mb-6 border border-cyan-200">
-                <p className="text-gray-700 text-lg">
-                  <strong>Total businesses in this category: {categoryBusinesses.length}</strong>
+              <div className="bg-cyan-50 rounded-lg p-4 mb-4 border border-cyan-200">
+                <p className="text-gray-700 text-sm">
+                  Total businesses in this category: <strong>{categoryBusinesses.length}</strong>
                 </p>
                 {displayedBusinesses.length < categoryBusinesses.length && (
-                  <div className="mt-3">
-                    <p className="text-gray-600 mb-3">
+                  <div className="mt-2 flex items-center gap-3">
+                    <p className="text-gray-600 text-sm">
                       {categoryBusinesses.length - displayedBusinesses.length} more businesses in this category
                     </p>
                     <Button 
                       onClick={() => setDisplayLimit(prev => prev + 6)}
+                      size="sm"
                       className="bg-cyan-600 hover:bg-cyan-700"
                     >
                       Load more
@@ -418,6 +409,18 @@ export default function CategoryListing() {
                     />
                   ))}
                 </div>
+
+                {/* Related Categories */}
+                {currentCategory && (
+                  <div className="mt-8">
+                    <RelatedCategories
+                      currentCategory={currentCategory}
+                      categories={categories}
+                      businesses={allBusinesses}
+                      onCategoryClick={handleRelatedCategoryClick}
+                    />
+                  </div>
+                )}
 
                 {/* AI Advanced Search Section */}
                 <div className="mt-8 bg-white rounded-xl shadow-md border border-gray-200 p-6">
