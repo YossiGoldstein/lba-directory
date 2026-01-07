@@ -190,7 +190,7 @@ export default function Home() {
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/13b936918_Gemini_Generated_Image_n1c1xgn1c1xgn1c1.png" 
             alt="Local businesses" 
-            className="w-full h-full object-cover filter brightness-[0.4] scale-105"
+            className="w-full h-full object-cover object-top filter brightness-[0.4] scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 via-cyan-800/55 to-blue-900/60"></div>
         </div>
