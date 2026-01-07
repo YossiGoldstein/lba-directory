@@ -26,7 +26,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
     : business.logo_url;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300 overflow-hidden flex flex-col h-full">
       {/* Cover Image */}
       <div className="relative h-48 bg-gray-100">
         {coverImage ? (
@@ -75,7 +75,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
       </div>
 
       {/* Content Section */}
-      <div className="p-5 pt-12">
+      <div className="p-5 pt-12 flex flex-col flex-1">
         {/* Business Name - Centered */}
         <h3 className="text-lg font-bold text-gray-900 mb-3 text-center">
           {business.business_name}
@@ -105,6 +105,9 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
             </a>
           </div>
         )}
+
+        {/* Spacer to push button to bottom */}
+        <div className="flex-1"></div>
 
         {/* Action Button */}
         <Button

@@ -5,13 +5,24 @@ import { createPageUrl } from "@/utils";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// Fix for default marker icons in react-leaflet
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-});
+// Create custom marker with business logo
+const createCustomIcon = (logoUrl, businessName) => {
+  const iconHtml = logoUrl 
+    ? `<div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); background: white;">
+         <img src="${logoUrl}" alt="${businessName}" style="width: 100%; height: 100%; object-fit: cover;" />
+       </div>`
+    : `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">
+         ${businessName.charAt(0)}
+       </div>`;
+
+  return L.divIcon({
+    html: iconHtml,
+    className: "custom-marker",
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    popupAnchor: [0, -40],
+  });
+};
 
 export default function BusinessMap({ businesses }) {
   const [center, setCenter] = useState([40.0960, -74.2179]); // Lakewood, NJ default
@@ -46,6 +57,7 @@ export default function BusinessMap({ businesses }) {
           <Marker
             key={business.id}
             position={[business.latitude, business.longitude]}
+            icon={createCustomIcon(business.logo_url, business.business_name)}
           >
             <Popup>
               <div className="text-sm">
