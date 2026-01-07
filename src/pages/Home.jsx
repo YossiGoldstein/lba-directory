@@ -248,13 +248,13 @@ export default function Home() {
               <div className="w-48"></div>
 
               <nav className="hidden md:flex items-center gap-8">
-                <Link to={createPageUrl("Home")} className="text-white hover:text-cyan-200 transition-colors font-medium">
+                <Link to={createPageUrl("Home")} className="text-white hover:text-cyan-200 transition-colors font-medium text-lg">
                   Home
                 </Link>
-                <Link to={createPageUrl("AboutUs")} className="text-white hover:text-cyan-200 transition-colors font-medium">
+                <Link to={createPageUrl("AboutUs")} className="text-white hover:text-cyan-200 transition-colors font-medium text-lg">
                   About
                 </Link>
-                <Link to={createPageUrl("FAQ")} className="text-white hover:text-cyan-200 transition-colors font-medium">
+                <Link to={createPageUrl("FAQ")} className="text-white hover:text-cyan-200 transition-colors font-medium text-lg">
                   FAQ
                 </Link>
                 <button 
@@ -265,7 +265,7 @@ export default function Home() {
                       window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                     }
                   }} 
-                  className="text-white hover:text-cyan-200 transition-colors font-medium"
+                  className="text-white hover:text-cyan-200 transition-colors font-medium text-lg"
                 >
                   Add Business
                 </button>
@@ -274,14 +274,14 @@ export default function Home() {
               <div className="hidden md:flex items-center gap-4">
                 {user ? (
                   <div className="flex items-center gap-3">
-                    <span className="text-sm text-white">Hello, {user.full_name}</span>
-                    <Button variant="ghost" size="sm" asChild className="text-white hover:text-cyan-200 hover:bg-white/10">
+                    <span className="text-lg text-white">Hello, {user.full_name}</span>
+                    <Button variant="ghost" size="sm" asChild className="text-white hover:text-cyan-200 hover:bg-white/10 text-lg">
                       <Link to={createPageUrl("UserDashboard")}>
                         <LayoutDashboard className="w-4 h-4 mr-2" />
                         Dashboard
                       </Link>
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={handleLogout} className="text-white hover:text-cyan-200 hover:bg-white/10">
+                    <Button variant="ghost" size="sm" onClick={handleLogout} className="text-white hover:text-cyan-200 hover:bg-white/10 text-lg">
                       <LogOut className="w-4 h-4 mr-2" />
                       Logout
                     </Button>
