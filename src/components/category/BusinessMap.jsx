@@ -26,68 +26,27 @@ const createCustomIcon = (logoUrl, businessName) => {
 
 export default function BusinessMap({ businesses }) {
   const [center, setCenter] = useState([40.0960, -74.2179]); // Lakewood, NJ default
-  const [geocodedBusinesses, setGeocodedBusinesses] = useState([]);
-  const [isGeocoding, setIsGeocoding] = useState(false);
 
-  // Geocode addresses for businesses without coordinates
+  const businessesWithCoords = businesses.filter(b => b.latitude && b.longitude);
+
   useEffect(() => {
-    const geocodeBusinesses = async () => {
-      const needGeocoding = businesses.filter(b => !b.latitude && !b.longitude && b.address_line1);
-      
-      if (needGeocoding.length === 0) {
-        setGeocodedBusinesses(businesses.filter(b => b.latitude && b.longitude));
-        return;
-      }
-
-      setIsGeocoding(true);
-      const results = [];
-
-      for (const business of needGeocoding) {
-        const address = `${business.address_line1}, ${business.city || 'Lakewood'}, ${business.state || 'NJ'}, ${business.zip_code || ''}`;
-        
-        try {
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
-          );
-          const data = await response.json();
-          
-          if (data && data.length > 0) {
-            results.push({
-              ...business,
-              latitude: parseFloat(data[0].lat),
-              longitude: parseFloat(data[0].lon)
-            });
-          }
-          
-          // Rate limit: wait 1 second between requests (Nominatim requirement)
-          await new Promise(resolve => setTimeout(resolve, 1000));
-        } catch (error) {
-          console.error(`Failed to geocode ${business.business_name}:`, error);
-        }
-      }
-
-      const existingWithCoords = businesses.filter(b => b.latitude && b.longitude);
-      setGeocodedBusinesses([...existingWithCoords, ...results]);
-      setIsGeocoding(false);
-    };
-
-    geocodeBusinesses();
-  }, [businesses]);
-
-  // Calculate center based on geocoded businesses
-  useEffect(() => {
-    if (geocodedBusinesses.length > 0) {
-      const avgLat = geocodedBusinesses.reduce((sum, b) => sum + b.latitude, 0) / geocodedBusinesses.length;
-      const avgLng = geocodedBusinesses.reduce((sum, b) => sum + b.longitude, 0) / geocodedBusinesses.length;
+    if (businessesWithCoords.length > 0) {
+      const avgLat = businessesWithCoords.reduce((sum, b) => sum + b.latitude, 0) / businessesWithCoords.length;
+      const avgLng = businessesWithCoords.reduce((sum, b) => sum + b.longitude, 0) / businessesWithCoords.length;
       setCenter([avgLat, avgLng]);
     }
-  }, [geocodedBusinesses]);
+  }, [businessesWithCoords.length]);
 
   return (
     <div className="h-full w-full rounded-lg overflow-hidden shadow-lg border border-gray-200 relative">
-      {isGeocoding && (
-        <div className="absolute top-4 right-4 z-[1000] bg-white px-3 py-2 rounded-lg shadow-lg border border-gray-200">
-          <p className="text-xs text-gray-600">Loading locations...</p>
+      {businessesWithCoords.length === 0 && (
+        <div className="absolute inset-0 z-[1000] bg-white/95 flex items-center justify-center">
+          <div className="text-center p-6">
+            <p className="text-gray-900 font-semibold mb-2">אין מיקומים זמינים</p>
+            <p className="text-sm text-gray-600">
+              {businesses.length} עסקים נמצאו, אבל אין להם קואורדינטות עדיין.
+            </p>
+          </div>
         </div>
       )}
       
@@ -102,7 +61,7 @@ export default function BusinessMap({ businesses }) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         
-        {geocodedBusinesses.map((business) => (
+        {businessesWithCoords.map((business) => (
           <Marker
             key={business.id}
             position={[business.latitude, business.longitude]}
