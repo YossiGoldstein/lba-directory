@@ -319,7 +319,7 @@ export default function CategoryListing() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   {matchedBusinesses.length} Result{matchedBusinesses.length !== 1 ? 's' : ''} Found
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {matchedBusinesses.map((business) => (
                     <BusinessCard
                       key={business.id}
