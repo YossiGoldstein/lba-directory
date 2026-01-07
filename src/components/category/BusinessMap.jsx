@@ -42,9 +42,9 @@ export default function BusinessMap({ businesses }) {
       {businessesWithCoords.length === 0 && (
         <div className="absolute inset-0 z-[1000] bg-white/95 flex items-center justify-center">
           <div className="text-center p-6">
-            <p className="text-gray-900 font-semibold mb-2">אין מיקומים זמינים</p>
+            <p className="text-gray-900 font-semibold mb-2">No locations available</p>
             <p className="text-sm text-gray-600">
-              {businesses.length} עסקים נמצאו, אבל אין להם קואורדינטות עדיין.
+              {businesses.length} businesses found, but coordinates not yet added.
             </p>
           </div>
         </div>

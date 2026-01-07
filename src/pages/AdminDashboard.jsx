@@ -303,11 +303,11 @@ function GeocodeTab({ onUpdate }) {
     <div className="space-y-4">
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <p className="text-sm text-gray-700">
-          כלי זה ממיר כתובות של עסקים לקואורדינטות GPS ושומר אותן במסד הנתונים. 
-          זה נחוץ כדי שהעסקים יופיעו על המפה בדפי הקטגוריות.
+          This tool converts business addresses to GPS coordinates and saves them to the database. 
+          This is required for businesses to appear on the map in category pages.
         </p>
         <p className="text-sm text-gray-600 mt-2">
-          הפעולה לוקחת כשנייה לכל עסק (בגלל הגבלת קצב של OpenStreetMap).
+          The process takes about 1 second per business (due to OpenStreetMap rate limits).
         </p>
       </div>
 
@@ -316,44 +316,44 @@ function GeocodeTab({ onUpdate }) {
         disabled={isRunning}
         className="bg-cyan-600 hover:bg-cyan-700"
       >
-        {isRunning ? 'מעבד...' : 'המר כתובות לקואורדינטות'}
+        {isRunning ? 'Processing...' : 'Convert Addresses to Coordinates'}
       </Button>
 
       {result && (
         <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <h3 className="font-semibold text-gray-900 mb-3">תוצאות:</h3>
+          <h3 className="font-semibold text-gray-900 mb-3">Results:</h3>
           {result.error ? (
             <p className="text-red-600">{result.error}</p>
           ) : (
             <>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className="bg-gray-50 p-3 rounded">
-                  <p className="text-sm text-gray-600">סה"כ עסקים</p>
+                  <p className="text-sm text-gray-600">Total Businesses</p>
                   <p className="text-2xl font-bold text-gray-900">{result.total}</p>
                 </div>
                 <div className="bg-blue-50 p-3 rounded">
-                  <p className="text-sm text-gray-600">דרשו המרה</p>
+                  <p className="text-sm text-gray-600">Needed Geocoding</p>
                   <p className="text-2xl font-bold text-blue-600">{result.needGeocoding}</p>
                 </div>
                 <div className="bg-green-50 p-3 rounded">
-                  <p className="text-sm text-gray-600">עודכנו בהצלחה</p>
+                  <p className="text-sm text-gray-600">Successfully Updated</p>
                   <p className="text-2xl font-bold text-green-600">{result.updated}</p>
                 </div>
                 <div className="bg-red-50 p-3 rounded">
-                  <p className="text-sm text-gray-600">נכשלו</p>
+                  <p className="text-sm text-gray-600">Failed</p>
                   <p className="text-2xl font-bold text-red-600">{result.failed}</p>
                 </div>
               </div>
 
               {result.details && result.details.length > 0 && (
                 <div className="max-h-96 overflow-y-auto">
-                  <h4 className="font-semibold text-gray-900 mb-2">פירוט:</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">Details:</h4>
                   <div className="space-y-2">
                     {result.details.map((item, idx) => (
                       <div key={idx} className="text-sm border-b border-gray-100 pb-2">
                         <p className="font-medium">{item.business}</p>
                         <p className={item.status === 'success' ? 'text-green-600' : 'text-red-600'}>
-                          {item.status === 'success' ? '✓ הצליח' : '✗ ' + item.status}
+                          {item.status === 'success' ? '✓ Success' : '✗ ' + item.status}
                         </p>
                       </div>
                     ))}
