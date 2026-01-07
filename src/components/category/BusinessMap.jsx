@@ -31,17 +31,6 @@ export default function BusinessMap({ businesses }) {
   useEffect(() => {
     const validBusinesses = businesses.filter(b => b.latitude && b.longitude);
     
-    console.log("📍 Map Debug:", {
-      totalBusinesses: businesses.length,
-      businessesWithCoords: validBusinesses.length,
-      businesses: businesses.map(b => ({
-        name: b.business_name,
-        lat: b.latitude,
-        lng: b.longitude,
-        hasCoords: !!(b.latitude && b.longitude)
-      }))
-    });
-    
     if (validBusinesses.length > 0) {
       const avgLat = validBusinesses.reduce((sum, b) => sum + b.latitude, 0) / validBusinesses.length;
       const avgLng = validBusinesses.reduce((sum, b) => sum + b.longitude, 0) / validBusinesses.length;
@@ -52,18 +41,7 @@ export default function BusinessMap({ businesses }) {
   const businessesWithCoords = businesses.filter(b => b.latitude && b.longitude);
 
   return (
-    <div className="h-full w-full rounded-lg overflow-hidden shadow-lg border border-gray-200 relative">
-      {/* Debug Info */}
-      {businessesWithCoords.length === 0 && (
-        <div className="absolute inset-0 z-[1000] bg-white/90 flex items-center justify-center">
-          <div className="text-center p-6">
-            <p className="text-gray-900 font-semibold mb-2">No locations available</p>
-            <p className="text-sm text-gray-600">
-              {businesses.length} businesses found, but none have GPS coordinates yet.
-            </p>
-          </div>
-        </div>
-      )}
+    <div className="h-full w-full rounded-lg overflow-hidden shadow-lg border border-gray-200">
       <MapContainer
         center={center}
         zoom={13}
