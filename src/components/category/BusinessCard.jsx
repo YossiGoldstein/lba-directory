@@ -76,56 +76,33 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
 
       {/* Content Section */}
       <div className="p-5 pt-12">
-        <div className="mb-2">
-          <h3 className="text-lg font-bold text-gray-900 mb-1">
-            {business.business_name}
-          </h3>
-          <p className="text-sm text-cyan-600 font-medium">{categoryName}</p>
-        </div>
+        {/* Business Name - Centered */}
+        <h3 className="text-lg font-bold text-gray-900 mb-3 text-center">
+          {business.business_name}
+        </h3>
 
-        {/* Rating */}
-        {business.average_rating > 0 && (
-          <div className="flex items-center gap-2 mb-3">
-            <div className="flex gap-0.5">
-              {renderStars(Math.round(business.average_rating))}
-            </div>
-            <span className="text-sm text-gray-600">
-              {business.average_rating.toFixed(1)} ({business.reviews_count || 0} reviews)
-            </span>
-          </div>
-        )}
-
-        {/* Location */}
-        {(business.city || business.state) && (
-          <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
-            <MapPin className="w-4 h-4" />
+        {/* Address */}
+        {business.address_line1 && (
+          <div className="flex items-start gap-2 text-sm text-gray-600 mb-2">
+            <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <span>
-              {business.city}
-              {business.city && business.state && ", "}
-              {business.state}
+              {business.address_line1}
+              {business.city && `, ${business.city}`}
+              {business.state && `, ${business.state}`}
+              {business.zip_code && ` ${business.zip_code}`}
             </span>
           </div>
         )}
 
-        {/* Description */}
-        {business.short_description && (
-          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-            {business.short_description}
-          </p>
-        )}
-
-        {/* Tags */}
-        {business.tags && business.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-4">
-            {business.tags.slice(0, 3).map((tag, idx) => (
-              <span
-                key={idx}
-                className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded"
-              >
-                <Tag className="w-3 h-3" />
-                {tag}
-              </span>
-            ))}
+        {/* Phone */}
+        {business.phone && (
+          <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            <a href={`tel:${business.phone}`} className="hover:text-cyan-600">
+              {business.phone}
+            </a>
           </div>
         )}
 
