@@ -284,9 +284,9 @@ export default function CategoryListing() {
 
         {/* Search Results */}
         {searchResults && !isSearching && (
-          <div className="flex gap-6">
+          <div className="flex gap-8">
             {/* Search Results Column */}
-            <div className="flex-1">
+            <div className="flex-[0_0_calc(100%-650px)]">
               <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden mb-8">
             {/* Agent Response */}
             <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-cyan-50 to-blue-50">
@@ -355,19 +355,19 @@ export default function CategoryListing() {
         </div>
 
         {/* Map Column for Search Results - Fixed on desktop */}
-        <div className="hidden lg:block w-[400px] xl:w-[500px]">
+        <div className="hidden lg:block w-[600px]">
           <div className="sticky top-24 h-[calc(100vh-7rem)]">
             <BusinessMap businesses={businessesToMap} />
           </div>
         </div>
-      </div>
+        </div>
         )}
 
         {/* Default View - Businesses */}
         {!searchResults && !isSearching && (
-          <div className="flex gap-6">
+          <div className="flex gap-8">
             {/* Listings Column */}
-            <div className="flex-1">
+            <div className="flex-[0_0_calc(100%-650px)]">
             {/* Info Block */}
             {categoryBusinesses.length > 0 && (
               <div className="bg-cyan-50 rounded-lg p-4 mb-4 border border-cyan-200">
@@ -417,7 +417,7 @@ export default function CategoryListing() {
 
             {!businessesLoading && displayedBusinesses.length > 0 && (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {displayedBusinesses.map((business) => (
                     <BusinessCard
                       key={business.id}
@@ -476,13 +476,13 @@ export default function CategoryListing() {
           </div>
 
           {/* Map Column - Fixed on desktop */}
-          <div className="hidden lg:block w-[400px] xl:w-[500px]">
+          <div className="hidden lg:block w-[600px]">
             <div className="sticky top-24 h-[calc(100vh-7rem)]">
               <BusinessMap businesses={businessesToMap} />
             </div>
           </div>
-        </div>
-        )}
+          </div>
+          )}
       </div>
     </div>
   );
