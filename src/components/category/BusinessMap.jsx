@@ -84,7 +84,13 @@ export default function BusinessMap({ businesses }) {
   }, [geocodedBusinesses]);
 
   return (
-    <div className="h-full w-full rounded-lg overflow-hidden shadow-lg border border-gray-200">
+    <div className="h-full w-full rounded-lg overflow-hidden shadow-lg border border-gray-200 relative">
+      {isGeocoding && (
+        <div className="absolute top-4 right-4 z-[1000] bg-white px-3 py-2 rounded-lg shadow-lg border border-gray-200">
+          <p className="text-xs text-gray-600">Loading locations...</p>
+        </div>
+      )}
+      
       <MapContainer
         center={center}
         zoom={13}
@@ -96,7 +102,7 @@ export default function BusinessMap({ businesses }) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         
-        {businessesWithCoords.map((business) => (
+        {geocodedBusinesses.map((business) => (
           <Marker
             key={business.id}
             position={[business.latitude, business.longitude]}
