@@ -26,19 +26,62 @@ const createCustomIcon = (logoUrl, businessName) => {
 
 export default function BusinessMap({ businesses }) {
   const [center, setCenter] = useState([40.0960, -74.2179]); // Lakewood, NJ default
+  const [geocodedBusinesses, setGeocodedBusinesses] = useState([]);
+  const [isGeocoding, setIsGeocoding] = useState(false);
 
-  // Calculate center based on businesses with valid coordinates
+  // Geocode addresses for businesses without coordinates
   useEffect(() => {
-    const validBusinesses = businesses.filter(b => b.latitude && b.longitude);
-    
-    if (validBusinesses.length > 0) {
-      const avgLat = validBusinesses.reduce((sum, b) => sum + b.latitude, 0) / validBusinesses.length;
-      const avgLng = validBusinesses.reduce((sum, b) => sum + b.longitude, 0) / validBusinesses.length;
-      setCenter([avgLat, avgLng]);
-    }
+    const geocodeBusinesses = async () => {
+      const needGeocoding = businesses.filter(b => !b.latitude && !b.longitude && b.address_line1);
+      
+      if (needGeocoding.length === 0) {
+        setGeocodedBusinesses(businesses.filter(b => b.latitude && b.longitude));
+        return;
+      }
+
+      setIsGeocoding(true);
+      const results = [];
+
+      for (const business of needGeocoding) {
+        const address = `${business.address_line1}, ${business.city || 'Lakewood'}, ${business.state || 'NJ'}, ${business.zip_code || ''}`;
+        
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
+          );
+          const data = await response.json();
+          
+          if (data && data.length > 0) {
+            results.push({
+              ...business,
+              latitude: parseFloat(data[0].lat),
+              longitude: parseFloat(data[0].lon)
+            });
+          }
+          
+          // Rate limit: wait 1 second between requests (Nominatim requirement)
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        } catch (error) {
+          console.error(`Failed to geocode ${business.business_name}:`, error);
+        }
+      }
+
+      const existingWithCoords = businesses.filter(b => b.latitude && b.longitude);
+      setGeocodedBusinesses([...existingWithCoords, ...results]);
+      setIsGeocoding(false);
+    };
+
+    geocodeBusinesses();
   }, [businesses]);
 
-  const businessesWithCoords = businesses.filter(b => b.latitude && b.longitude);
+  // Calculate center based on geocoded businesses
+  useEffect(() => {
+    if (geocodedBusinesses.length > 0) {
+      const avgLat = geocodedBusinesses.reduce((sum, b) => sum + b.latitude, 0) / geocodedBusinesses.length;
+      const avgLng = geocodedBusinesses.reduce((sum, b) => sum + b.longitude, 0) / geocodedBusinesses.length;
+      setCenter([avgLat, avgLng]);
+    }
+  }, [geocodedBusinesses]);
 
   return (
     <div className="h-full w-full rounded-lg overflow-hidden shadow-lg border border-gray-200">
