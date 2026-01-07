@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Search, ChevronRight, Sparkles, TrendingUp } from "lucide-react";
 import BusinessCard from "../components/category/BusinessCard";
 import RelatedCategories from "../components/category/RelatedCategories";
+import BusinessMap from "../components/category/BusinessMap";
 import ReactMarkdown from "react-markdown";
 
 export default function CategoryListing() {
@@ -240,6 +241,9 @@ export default function CategoryListing() {
     }
   };
 
+  // Determine which businesses to show on map
+  const businessesToMap = searchResults ? matchedBusinesses : displayedBusinesses;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -280,7 +284,10 @@ export default function CategoryListing() {
 
         {/* Search Results */}
         {searchResults && !isSearching && (
-          <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden mb-8">
+          <div className="flex gap-6">
+            {/* Search Results Column */}
+            <div className="flex-1">
+              <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden mb-8">
             {/* Agent Response */}
             <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-cyan-50 to-blue-50">
               <div className="flex items-start gap-3 mb-3">
@@ -345,11 +352,22 @@ export default function CategoryListing() {
               </Button>
             </div>
           </div>
+        </div>
+
+        {/* Map Column for Search Results - Fixed on desktop */}
+        <div className="hidden lg:block w-[400px] xl:w-[500px]">
+          <div className="sticky top-24 h-[calc(100vh-7rem)]">
+            <BusinessMap businesses={businessesToMap} />
+          </div>
+        </div>
+      </div>
         )}
 
         {/* Default View - Businesses */}
         {!searchResults && !isSearching && (
-          <div>
+          <div className="flex gap-6">
+            {/* Listings Column */}
+            <div className="flex-1">
             {/* Info Block */}
             {categoryBusinesses.length > 0 && (
               <div className="bg-cyan-50 rounded-lg p-4 mb-4 border border-cyan-200">
@@ -456,6 +474,14 @@ export default function CategoryListing() {
               </>
             )}
           </div>
+
+          {/* Map Column - Fixed on desktop */}
+          <div className="hidden lg:block w-[400px] xl:w-[500px]">
+            <div className="sticky top-24 h-[calc(100vh-7rem)]">
+              <BusinessMap businesses={businessesToMap} />
+            </div>
+          </div>
+        </div>
         )}
       </div>
     </div>
