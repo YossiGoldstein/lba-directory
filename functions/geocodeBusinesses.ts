@@ -20,7 +20,19 @@ Deno.serve(async (req) => {
       needGeocoding: needGeocoding.length,
       updated: 0,
       failed: 0,
-      details: []
+      details: [],
+      debug: {
+        withCoords: businesses.filter(b => b.latitude && b.longitude).length,
+        withoutCoords: businesses.filter(b => !b.latitude || !b.longitude).length,
+        withAddress: businesses.filter(b => b.address_line1).length,
+        withoutAddress: businesses.filter(b => !b.address_line1).length,
+        sampleBusinesses: businesses.slice(0, 3).map(b => ({
+          name: b.business_name,
+          hasLat: !!b.latitude,
+          hasLng: !!b.longitude,
+          hasAddress: !!b.address_line1
+        }))
+      }
     };
 
     for (const business of needGeocoding) {
