@@ -72,7 +72,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Header */}
       {showHeader && (
         <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-200 shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16 relative">
               <Link to={createPageUrl("Home")} className="flex items-center gap-2">
                 <img 
@@ -199,7 +199,7 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Footer */}
       <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-gray-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             {/* Column 1 - Branding */}
             <div>

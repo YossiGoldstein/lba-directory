@@ -333,7 +333,7 @@ export default function Home() {
         {/* Main Content - Adjusted padding */}
         <div className="relative z-10 flex-1 flex items-center justify-center pt-16 sm:pt-20 md:pt-0">
           <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pb-8 sm:pb-12">
-            <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold text-white drop-shadow-2xl mb-4 sm:mb-6 mt-2 sm:mt-0">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold text-white drop-shadow-2xl mb-4 sm:mb-6 mt-2 sm:mt-0 whitespace-nowrap">
               Lakewood Business Alliance
             </h1>
             <p className="text-base sm:text-lg md:text-2xl text-white mb-10 font-light">
