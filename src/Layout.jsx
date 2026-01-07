@@ -73,7 +73,7 @@ export default function Layout({ children, currentPageName }) {
       {showHeader && (
         <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-200 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
+            <div className="flex items-center justify-between h-16 relative">
               <Link to={createPageUrl("Home")} className="flex items-center gap-2">
                 <img 
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/3a0b2e08d_LBA-directory-logo-color.png"
@@ -143,7 +143,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
 
             {mobileMenuOpen && (
-              <div className="md:hidden py-4 border-t border-gray-200">
+              <div className="md:hidden py-4 border-t border-gray-200 bg-white relative z-50">
                 <nav className="flex flex-col gap-4">
                   <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-cyan-600 font-medium text-lg">
                     Home

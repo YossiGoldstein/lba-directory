@@ -20,6 +20,7 @@ export default function CategoryListing() {
   const [agentResponse, setAgentResponse] = useState("");
   const [matchedBusinesses, setMatchedBusinesses] = useState([]);
   const [conversation, setConversation] = useState(null);
+  const [displayLimit, setDisplayLimit] = useState(6);
 
   // Fetch categories
   const { data: categories = [] } = useQuery({
@@ -69,8 +70,8 @@ export default function CategoryListing() {
     });
   }, [allBusinesses, categories, slug]);
 
-  // Get popular businesses (top rated or most reviewed)
-  const popularBusinesses = React.useMemo(() => {
+  // Get sorted businesses (featured and sponsors first, then by rating)
+  const sortedBusinesses = React.useMemo(() => {
     return [...categoryBusinesses]
       .sort((a, b) => {
         if (a.is_featured && !b.is_featured) return -1;
@@ -78,9 +79,10 @@ export default function CategoryListing() {
         if (a.is_lba_sponsor && !b.is_lba_sponsor) return -1;
         if (!a.is_lba_sponsor && b.is_lba_sponsor) return 1;
         return (b.average_rating || 0) - (a.average_rating || 0);
-      })
-      .slice(0, 6);
+      });
   }, [categoryBusinesses]);
+
+  const displayedBusinesses = sortedBusinesses.slice(0, displayLimit);
 
   const getCategoryName = (categoryId) => {
     const cat = categories.find((c) => c.id === categoryId);
@@ -277,38 +279,6 @@ export default function CategoryListing() {
           />
         )}
 
-        {/* AI Search Bar */}
-        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6 mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-cyan-600" />
-            <h2 className="text-lg font-semibold text-gray-900">
-              AI-Powered Search
-            </h2>
-          </div>
-          <form onSubmit={handleSearch} className="flex gap-3">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <Input
-                type="text"
-                placeholder={`Ask anything about ${currentCategory?.name || 'businesses'}, e.g. "open now", "with parking", "best rated"...`}
-                className="pl-10 h-12"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <Button 
-              type="submit" 
-              className="bg-cyan-600 hover:bg-cyan-700 h-12 px-8"
-              disabled={isSearching}
-            >
-              {isSearching ? "Searching..." : "Search"}
-            </Button>
-          </form>
-          <p className="text-xs text-gray-500 mt-3">
-            💡 Try: "dairy restaurant", "open on Sunday", "with good reviews", "near Ridge Avenue"
-          </p>
-        </div>
-
         {/* Loading State */}
         {isSearching && (
           <div className="bg-white rounded-xl shadow-md border border-gray-200 p-12 text-center">
@@ -387,21 +357,30 @@ export default function CategoryListing() {
           </div>
         )}
 
-        {/* Default View - Popular/Featured Businesses */}
+        {/* Default View - Businesses */}
         {!searchResults && !isSearching && (
           <div>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {categoryBusinesses.length > 0 
-                    ? `Featured ${currentCategory?.name || 'Businesses'}` 
-                    : 'No businesses found'}
-                </h2>
-                <p className="text-gray-600 mt-1">
-                  {categoryBusinesses.length} business{categoryBusinesses.length !== 1 ? 'es' : ''} in this category
+            {/* Info Block */}
+            {categoryBusinesses.length > 0 && (
+              <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg p-6 mb-6 border border-cyan-200">
+                <p className="text-gray-700 text-lg">
+                  <strong>Total businesses in this category: {categoryBusinesses.length}</strong>
                 </p>
+                {displayedBusinesses.length < categoryBusinesses.length && (
+                  <div className="mt-3">
+                    <p className="text-gray-600 mb-3">
+                      {categoryBusinesses.length - displayedBusinesses.length} more businesses in this category
+                    </p>
+                    <Button 
+                      onClick={() => setDisplayLimit(prev => prev + 6)}
+                      className="bg-cyan-600 hover:bg-cyan-700"
+                    >
+                      Load more
+                    </Button>
+                  </div>
+                )}
               </div>
-            </div>
+            )}
 
             {businessesLoading && (
               <div className="text-center py-12">
@@ -427,29 +406,51 @@ export default function CategoryListing() {
               </div>
             )}
 
-            {!businessesLoading && popularBusinesses.length > 0 && (
-              <div className="space-y-4">
-                {popularBusinesses.map((business) => (
-                  <BusinessCard
-                    key={business.id}
-                    business={business}
-                    categoryName={getCategoryName(business.category_id)}
-                    hasActiveDeals={hasActiveDeals(business.id)}
-                  />
-                ))}
+            {!businessesLoading && displayedBusinesses.length > 0 && (
+              <>
+                <div className="space-y-4">
+                  {displayedBusinesses.map((business) => (
+                    <BusinessCard
+                      key={business.id}
+                      business={business}
+                      categoryName={getCategoryName(business.category_id)}
+                      hasActiveDeals={hasActiveDeals(business.id)}
+                    />
+                  ))}
+                </div>
 
-                {categoryBusinesses.length > popularBusinesses.length && (
-                  <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg p-6 text-center border border-cyan-200">
-                    <TrendingUp className="w-8 h-8 text-cyan-600 mx-auto mb-3" />
-                    <p className="text-gray-700 mb-2">
-                      <strong>{categoryBusinesses.length - popularBusinesses.length}</strong> more businesses available in this category
-                    </p>
-                    <p className="text-sm text-gray-600 mb-4">
-                      Use the AI search above to find exactly what you're looking for!
-                    </p>
+                {/* AI Advanced Search Section */}
+                <div className="mt-8 bg-white rounded-xl shadow-md border border-gray-200 p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Sparkles className="w-5 h-5 text-cyan-600" />
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      Advance your current search
+                    </h2>
                   </div>
-                )}
-              </div>
+                  <form onSubmit={handleSearch} className="flex gap-3">
+                    <div className="flex-1 relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Input
+                        type="text"
+                        placeholder="Refine your search with AI..."
+                        className="pl-10 h-12"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                    </div>
+                    <Button 
+                      type="submit" 
+                      className="bg-cyan-600 hover:bg-cyan-700 h-12 px-8"
+                      disabled={isSearching}
+                    >
+                      {isSearching ? "Searching..." : "Search"}
+                    </Button>
+                  </form>
+                  <p className="text-xs text-gray-500 mt-3">
+                    Ex. Take out closed businesses, show only my favorites
+                  </p>
+                </div>
+              </>
             )}
           </div>
         )}
