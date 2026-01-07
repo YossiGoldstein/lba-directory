@@ -330,18 +330,83 @@ export default function CategoryListing() {
 
         {/* Search Results */}
         {searchResults && !isSearching && (
-          <div className="flex gap-8">
-            {/* Search Results Column */}
-            <div className="flex-[0_0_calc(100%-650px)]">
-              <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden mb-8">
-            {/* Agent Response */}
-            <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-cyan-50 to-blue-50">
-              <div className="flex items-start gap-3 mb-3">
-                <div className="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-5 h-5 text-white" />
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Business Results Column */}
+            <div className="flex-1 min-w-0">
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  {matchedBusinesses.length} Result{matchedBusinesses.length !== 1 ? 's' : ''} Found
+                </h3>
+                <p className="text-gray-600">Matching "{searchQuery}"</p>
+              </div>
+
+              {matchedBusinesses.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {matchedBusinesses.map((business) => (
+                    <BusinessCard
+                      key={business.id}
+                      business={business}
+                      categoryName={getCategoryName(business.category_id)}
+                      hasActiveDeals={hasActiveDeals(business.id)}
+                    />
+                  ))}
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 mb-2">AI Assistant Response:</h3>
+              ) : (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+                  <Search className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <p className="text-gray-600">No specific matches found</p>
+                  <p className="text-sm text-gray-500 mt-1">Try refining your search or browse the full list below</p>
+                </div>
+              )}
+
+              {/* AI Assistant Panel - Mobile (After Results) */}
+              <div className="lg:hidden mt-8 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                <div className="p-6 bg-gradient-to-r from-cyan-50 to-blue-50">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Sparkles className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900 mb-2">AI Assistant</h3>
+                      <ReactMarkdown
+                        className="prose prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-cyan-600"
+                        components={{
+                          a: ({ children, ...props }) => (
+                            <a {...props} target="_blank" rel="noopener noreferrer" className="underline">
+                              {children}
+                            </a>
+                          ),
+                          p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                        }}
+                      >
+                        {agentResponse}
+                      </ReactMarkdown>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4 bg-gray-50 border-t border-gray-200 text-center">
+                  <Button
+                    onClick={handleContinueInChat}
+                    variant="outline"
+                    className="gap-2"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    Continue in chat
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* AI Assistant Panel - Desktop (Side) */}
+            <div className="hidden lg:block w-80 flex-shrink-0">
+              <div className="sticky top-24 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                <div className="p-6 bg-gradient-to-r from-cyan-50 to-blue-50">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Sparkles className="w-5 h-5 text-white" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900">AI Assistant</h3>
+                  </div>
                   <ReactMarkdown
                     className="prose prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-cyan-600"
                     components={{
@@ -356,49 +421,19 @@ export default function CategoryListing() {
                     {agentResponse}
                   </ReactMarkdown>
                 </div>
-              </div>
-            </div>
-
-            {/* Business Results */}
-            {matchedBusinesses.length > 0 && (
-              <div className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  {matchedBusinesses.length} Result{matchedBusinesses.length !== 1 ? 's' : ''} Found
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {matchedBusinesses.map((business) => (
-                    <BusinessCard
-                      key={business.id}
-                      business={business}
-                      categoryName={getCategoryName(business.category_id)}
-                      hasActiveDeals={hasActiveDeals(business.id)}
-                    />
-                  ))}
+                <div className="p-4 bg-gray-50 border-t border-gray-200 text-center">
+                  <Button
+                    onClick={handleContinueInChat}
+                    variant="outline"
+                    size="sm"
+                    className="gap-2 w-full"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    Continue in chat
+                  </Button>
                 </div>
               </div>
-            )}
-
-            {matchedBusinesses.length === 0 && (
-              <div className="p-8 text-center">
-                <Search className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-600">No specific matches found</p>
-                <p className="text-sm text-gray-500 mt-1">Try refining your search or browse the full list below</p>
-              </div>
-            )}
-
-            {/* Continue in Chat */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200 text-center">
-              <Button
-                onClick={handleContinueInChat}
-                variant="outline"
-                className="gap-2"
-              >
-                <Sparkles className="w-4 h-4" />
-                Continue this search in chat
-              </Button>
             </div>
-          </div>
-        </div>
 
         {/* Map Column for Search Results - Fixed on desktop */}
         <div className="hidden lg:block w-[600px]">
