@@ -188,7 +188,7 @@ export default function Home() {
       <section className="relative min-h-[75vh] sm:min-h-[90vh] flex flex-col overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&h=1080&fit=crop" 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/13b936918_Gemini_Generated_Image_n1c1xgn1c1xgn1c1.png" 
             alt="Local businesses" 
             className="w-full h-full object-cover filter brightness-[0.4] scale-105"
           />
