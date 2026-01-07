@@ -254,14 +254,14 @@ export default function Home() {
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 text-white hover:text-cyan-200"
+                className="md:hidden p-2 text-white hover:text-cyan-200 z-50 relative"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
-            </div>
+              </div>
 
-            {mobileMenuOpen && (
-              <div className="md:hidden py-4 bg-black/30 backdrop-blur-sm rounded-lg">
+              {mobileMenuOpen && (
+              <div className="md:hidden py-4 bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-md rounded-lg absolute left-4 right-4 top-16 z-40 shadow-2xl">
                 <nav className="flex flex-col gap-4 px-4">
                   <Link to={createPageUrl("Home")} className="text-white hover:text-cyan-200 font-medium">
                     Home
@@ -321,19 +321,19 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Logo - With space below */}
-        <div className="absolute top-4 left-4 sm:top-6 sm:left-8 z-10">
+        {/* Logo - Fixed positioning */}
+        <div className="absolute top-2 left-2 sm:top-4 sm:left-6 z-10">
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
             alt="LBA Directory"
-            className="h-12 sm:h-16 md:h-20 w-auto drop-shadow-2xl brightness-0 invert"
+            className="h-10 sm:h-14 md:h-20 w-auto drop-shadow-2xl brightness-0 invert"
           />
         </div>
 
-        {/* Main Content - With more padding-top for logo space */}
-        <div className="relative z-10 flex-1 flex items-center justify-center pt-28 sm:pt-0">
-          <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pb-12">
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold text-white drop-shadow-2xl mb-6">
+        {/* Main Content - Adjusted padding */}
+        <div className="relative z-10 flex-1 flex items-center justify-center pt-16 sm:pt-20 md:pt-0">
+          <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pb-8 sm:pb-12">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold text-white drop-shadow-2xl mb-4 sm:mb-6 mt-2 sm:mt-0">
               Lakewood Business Alliance
             </h1>
             <p className="text-base sm:text-lg md:text-2xl text-white mb-10 font-light">

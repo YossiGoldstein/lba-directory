@@ -136,15 +136,15 @@ export default function Layout({ children, currentPageName }) {
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 text-gray-600 hover:text-gray-900"
+                className="md:hidden p-2 text-gray-600 hover:text-gray-900 z-50 relative"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
-            </div>
+              </div>
 
-            {mobileMenuOpen && (
-              <div className="md:hidden py-4 border-t border-gray-200 bg-white relative z-50">
-                <nav className="flex flex-col gap-4">
+              {mobileMenuOpen && (
+              <div className="md:hidden py-4 border-t border-gray-200 bg-white absolute left-0 right-0 top-16 z-40 shadow-lg">
+                <nav className="flex flex-col gap-4 px-4">
                   <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-cyan-600 font-medium text-lg">
                     Home
                   </Link>
