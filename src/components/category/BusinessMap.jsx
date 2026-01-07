@@ -39,17 +39,6 @@ export default function BusinessMap({ businesses }) {
 
   return (
     <div className="h-full w-full rounded-lg overflow-hidden shadow-lg border border-gray-200 relative">
-      {businessesWithCoords.length === 0 && (
-        <div className="absolute inset-0 z-[1000] bg-white/95 flex items-center justify-center">
-          <div className="text-center p-6">
-            <p className="text-gray-900 font-semibold mb-2">No locations available</p>
-            <p className="text-sm text-gray-600">
-              {businesses.length} businesses found, but coordinates not yet added.
-            </p>
-          </div>
-        </div>
-      )}
-      
       <MapContainer
         center={center}
         zoom={13}
