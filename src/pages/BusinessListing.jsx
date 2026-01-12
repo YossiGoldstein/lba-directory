@@ -225,29 +225,6 @@ export default function BusinessListing() {
                   {business.business_name}
                 </h1>
 
-                {/* Ratings Row - Single Line */}
-                <div className="flex items-center gap-2 sm:gap-3 mb-3 text-xs sm:text-sm overflow-x-auto">
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <span className="text-white font-medium drop-shadow">G:</span>
-                    <div className="flex gap-0.5">
-                      {renderStars(business.general_rating || 0)}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <span className="text-white font-medium drop-shadow">S:</span>
-                    <div className="flex gap-0.5">
-                      {renderStars(business.servicing_rating || 0)}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <span className="text-white font-medium drop-shadow">P:</span>
-                    <div className="flex gap-0.5">
-                      {renderStars(business.pricing_rating || 0)}
-                    </div>
-                  </div>
-                  <span className="text-white text-xs drop-shadow flex-shrink-0">({business.reviews_count} {business.reviews_count === 1 ? 'review' : 'reviews'})</span>
-                </div>
-                
                 <div className="flex flex-col gap-2 text-white">
                   {/* Address */}
                   {(business.address_line1 || business.city) && (
@@ -281,6 +258,30 @@ export default function BusinessListing() {
                     <Badge className="bg-yellow-500 text-white">Featured</Badge>
                   )}
                 </div>
+
+                {/* Ratings Row */}
+                {business.reviews_count > 0 && (
+                  <div className="flex items-center gap-3 sm:gap-4 mt-3 flex-wrap">
+                    <div className="flex items-center gap-2">
+                      <span className="text-white text-sm sm:text-base font-medium drop-shadow">General:</span>
+                      <div className="flex gap-0.5">
+                        {renderStars(business.general_rating || 0)}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-white text-sm sm:text-base font-medium drop-shadow">Servicing:</span>
+                      <div className="flex gap-0.5">
+                        {renderStars(business.servicing_rating || 0)}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-white text-sm sm:text-base font-medium drop-shadow">Pricing:</span>
+                      <div className="flex gap-0.5">
+                        {renderStars(business.pricing_rating || 0)}
+                      </div>
+                    </div>
+                  </div>
+                )}
                 </div>
                 </div>
 
