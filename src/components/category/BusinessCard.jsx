@@ -26,9 +26,9 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
     : business.logo_url;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300 overflow-hidden flex flex-col h-full">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300 overflow-hidden flex flex-row h-full">
       {/* Cover Image */}
-      <div className="relative h-48 bg-gray-100">
+      <div className="relative w-48 flex-shrink-0 bg-gray-100">
         {coverImage ? (
           <img
             src={coverImage}
@@ -45,8 +45,8 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
         
         {/* Circular Logo Overlay */}
         {business.logo_url && (
-          <div className="absolute bottom-0 left-4 transform translate-y-1/2">
-            <div className="w-20 h-20 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
+          <div className="absolute bottom-4 right-4">
+            <div className="w-16 h-16 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
               <img
                 src={business.logo_url}
                 alt={business.business_name}
@@ -75,9 +75,9 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
       </div>
 
       {/* Content Section */}
-      <div className="p-5 pt-12 flex flex-col flex-1">
-        {/* Business Name - Centered */}
-        <h3 className="text-lg font-bold text-gray-900 mb-3 text-center">
+      <div className="p-5 flex flex-col flex-1 justify-between">
+        {/* Business Name */}
+        <h3 className="text-lg font-bold text-gray-900 mb-3">
           {business.business_name}
         </h3>
 
@@ -96,7 +96,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
 
         {/* Phone */}
         {business.phone && (
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+          <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
             <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
@@ -106,18 +106,17 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
           </div>
         )}
 
-        {/* Spacer to push button to bottom */}
-        <div className="flex-1"></div>
-
         {/* Action Button */}
-        <Button
-          asChild
-          className="w-full bg-cyan-600 hover:bg-cyan-700"
-        >
-          <Link to={createPageUrl(`BusinessListing?id=${business.id}`)}>
-            View Details
-          </Link>
-        </Button>
+        <div>
+          <Button
+            asChild
+            className="w-full bg-cyan-600 hover:bg-cyan-700"
+          >
+            <Link to={createPageUrl(`BusinessListing?id=${business.id}`)}>
+              View Details
+            </Link>
+          </Button>
+        </div>
       </div>
     </div>
   );
