@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Phone, Star, ExternalLink, Navigation, CheckCircle } from "lucide-react";
 
-export default function BusinessResultCard({ business }) {
+export default function BusinessResultCard({ business, hasActiveDeals }) {
   // Check if business is currently open
   const isBusinessOpen = () => {
     if (!business.opening_hours_json) return null;
@@ -61,7 +61,7 @@ export default function BusinessResultCard({ business }) {
             
             {/* Tier/Deal Badges - Top Right */}
             <div className="absolute top-2 right-2 flex gap-1">
-              {business.has_deals && (
+              {hasActiveDeals && (
                 <div className="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">
                   SALE
                 </div>

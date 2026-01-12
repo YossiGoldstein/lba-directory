@@ -50,7 +50,11 @@ export default function SearchResultsPanel({
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {businesses.map((business) => (
-                    <BusinessResultCard key={business.id} business={business} />
+                    <BusinessResultCard 
+                      key={business.id} 
+                      business={business} 
+                      hasActiveDeals={business.has_deals || false}
+                    />
                   ))}
                 </div>
               </>
