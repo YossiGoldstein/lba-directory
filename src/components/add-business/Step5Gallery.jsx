@@ -40,6 +40,7 @@ export default function Step5Gallery({ data, onChange }) {
   };
 
   const handleGalleryUpload = async (e) => {
+    e.preventDefault();
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
@@ -62,6 +63,8 @@ export default function Step5Gallery({ data, onChange }) {
       toast.error("העלאת התמונות נכשלה");
     } finally {
       setIsUploadingGallery(false);
+      // Reset input
+      e.target.value = "";
     }
   };
 
