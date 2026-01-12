@@ -282,63 +282,76 @@ export default function AddBusiness() {
       try {
         await base44.integrations.Core.SendEmail({
           to: user.email,
-          subject: "Your Business Has Been Submitted for Approval - LBA Directory",
+          subject: "✅ הרישום שלכם התקבל - LBA Directory",
           body: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2 style="color: #0891b2;">Hello ${user.full_name},</h2>
-              
-              <p>Thank you for joining LBA Directory!</p>
-              
-              <p>We have received your business details:</p>
-              
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; direction: rtl;">
+              <h2 style="color: #0891b2;">שלום ${user.full_name}! 👋</h2>
+
+              <p>תודה רבה שנרשמתם ל-<strong>LBA Directory</strong>!</p>
+
+              <p>קיבלנו את הרישום שלכם בהצלחה:</p>
+
               <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="margin-top: 0; color: #0891b2;">📋 Submitted Business Details:</h3>
-                <p><strong>Business Name:</strong> ${formData.business_name}</p>
-                <p><strong>Category:</strong> ${formData.category_name}</p>
-                <p><strong>Phone:</strong> ${formData.phone}</p>
-                <p><strong>Address:</strong> ${formData.address_line1}, ${formData.city}</p>
+                <h3 style="margin-top: 0; color: #0891b2;">📋 פרטי הרישום:</h3>
+                <p><strong>שם העסק:</strong> ${formData.business_name}</p>
+                <p><strong>קטגוריה:</strong> ${formData.category_name}</p>
+                <p><strong>טלפון:</strong> ${formData.phone}</p>
+                <p><strong>כתובת:</strong> ${formData.address_line1}, ${formData.city}</p>
               </div>
-              
-              <p><strong>What's Next:</strong></p>
-              <p>Our team will review your business details within 1-2 business days. Once approved, your business will be live on the site and customers will be able to find you.</p>
-              
-              <p>We'll send you an email notification as soon as your business is approved.</p>
-              
+
+              <p><strong>⏳ מה קורה עכשיו?</strong></p>
+              <p>הצוות שלנו יבדוק את פרטי העסק שלכם תוך <strong>1-2 ימי עסקים</strong>. לאחר האישור, העסק שלכם יהיה חי בדיקטוריון!</p>
+
+              <p>אנחנו נשלח לכם אימייל ברגע שהעסק יאושר.</p>
+
               <div style="background: #ecfccb; border: 2px solid #84cc16; padding: 20px; border-radius: 8px; margin: 25px 0;">
-                <h3 style="margin-top: 0; color: #365314;">✏️ Manage Your Business</h3>
-                <p style="margin-bottom: 15px;">You can update, edit, and modify your business details anytime through the Business Dashboard.</p>
-                
-                <p style="margin-bottom: 10px;"><strong>What can you do in the dashboard?</strong></p>
-                <ul style="margin: 10px 0; padding-left: 20px;">
-                  <li>✅ Update business details (address, phone, hours)</li>
-                  <li>✅ Add and edit photos and gallery</li>
-                  <li>✅ Create and update deals and promotions</li>
-                  <li>✅ View reviews and respond to customers</li>
-                  <li>✅ Use AI assistant to improve your description</li>
+                <h3 style="margin-top: 0; color: #365314;">✏️ ניהול העסק שלכם</h3>
+                <p style="margin-bottom: 15px;">אתם יכולים לעדכן ולשנות את פרטי העסק בכל עת דרך לוח הבקרה שלנו.</p>
+
+                <p style="margin-bottom: 10px;"><strong>מה אתם יכולים לעשות בלוח הבקרה?</strong></p>
+                <ul style="margin: 10px 0; padding-right: 20px;">
+                  <li>✅ עדכון פרטי העסק (כתובת, טלפון, שעות)</li>
+                  <li>✅ הוספה ועריכה של תמונות</li>
+                  <li>✅ יצירה ועדכון של עסקאות וקופונים</li>
+                  <li>✅ צפייה בביקורות ותגובה ללקוחות</li>
+                  <li>✅ שימוש בעוזר AI לשיפור התיאור</li>
                 </ul>
-                
+
                 <div style="text-align: center; margin-top: 20px;">
                   <a href="${dashboardUrl}" 
                      style="display: inline-block; background: #0891b2; color: white; padding: 12px 30px; 
-                            text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                    Go to My Business Dashboard
+                             text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                    לוח הבקרה שלי
                   </a>
                 </div>
               </div>
-              
+
+              <div style="background: #fef3c7; border: 2px solid #f59e0b; padding: 20px; border-radius: 8px; margin: 25px 0;">
+                <h3 style="margin-top: 0; color: #92400e;">🚀 רוצים לקדם את העסק שלכם?</h3>
+                <p>אנחנו מציעים שירותים נוספים:</p>
+                <ul style="margin: 10px 0; padding-right: 20px;">
+                  <li>🎨 בניית לוגו</li>
+                  <li>💻 בניית אתר</li>
+                  <li>🎥 סרטון תדמית</li>
+                  <li>📊 ייעוץ שיווקי</li>
+                </ul>
+                <p><strong>צרו איתנו קשר!</strong></p>
+              </div>
+
               <p style="font-size: 14px; color: #6b7280; margin-top: 20px;">
-                💡 <strong>Tip:</strong> You can access the dashboard anytime from the website by logging in with your email.
+                💡 <strong>טיפ:</strong> אתם יכולים לגשת ללוח הבקרה בכל עת דרך ההתחברות לאתר.
               </p>
-              
-              <p>If you have any questions, feel free to contact us.</p>
-              
-              <p style="margin-top: 30px;">Best regards,<br>LBA Directory Team</p>
-              
+
+              <p>אם יש לכם שאלות, אנחנו כאן כדי לעזור!</p>
+
+              <p style="margin-top: 30px;">בברכה,<br><strong>צוות LBA Directory</strong></p>
+
               <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-              
-              <p style="font-size: 12px; color: #6b7280; text-align: center;">
-                LBA Directory - Lakewood's Business Directory
-              </p>
+
+              <div style="text-align: center; font-size: 12px; color: #6b7280;">
+                <p>📞 <strong>צור קשר:</strong> office@lbadirectory.com | 732-600-1260</p>
+                <p style="margin-bottom: 0;">LBA Directory - דיקטוריון העסקים של לייקווד</p>
+              </div>
             </div>
           `
         });
