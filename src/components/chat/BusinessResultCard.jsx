@@ -4,9 +4,30 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Phone, Star, ExternalLink, Navigation } from "lucide-react";
+import { MapPin, Phone, Star, ExternalLink, Navigation, CheckCircle } from "lucide-react";
 
 export default function BusinessResultCard({ business }) {
+  // Check if business is currently open
+  const isBusinessOpen = () => {
+    if (!business.opening_hours_json) return null;
+    
+    const now = new Date();
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const currentDay = dayNames[now.getDay()];
+    const hours = business.opening_hours_json[currentDay];
+    
+    if (!hours || hours.closed) return false;
+    
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+    const [openHour, openMin] = hours.open.split(':').map(Number);
+    const [closeHour, closeMin] = hours.close.split(':').map(Number);
+    const openTime = openHour * 60 + openMin;
+    const closeTime = closeHour * 60 + closeMin;
+    
+    return currentTime >= openTime && currentTime <= closeTime;
+  };
+
+  const isOpen = isBusinessOpen();
   const handleCall = (phone) => {
     window.location.href = `tel:${phone}`;
   };
@@ -17,13 +38,60 @@ export default function BusinessResultCard({ business }) {
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="hover:shadow-md transition-shadow overflow-hidden">
+      {/* Cover Image with Icons - if available */}
+      {business.gallery_images && business.gallery_images.length > 0 && (
+        <div className="relative w-full h-32 bg-gray-100 overflow-hidden">
+          <img
+            src={business.gallery_images[0]}
+            alt={business.business_name}
+            className="w-full h-full object-cover"
+          />
+          
+          {/* Status Badges */}
+          <div className="absolute inset-0 pointer-events-none">
+            {/* Open/Closed - Top Left */}
+            {isOpen !== null && (
+              <div className={`absolute top-2 left-2 px-2 py-1 rounded text-xs font-bold ${
+                isOpen ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+              }`}>
+                {isOpen ? 'OPEN' : 'CLOSED'}
+              </div>
+            )}
+            
+            {/* Tier/Deal Badges - Top Right */}
+            <div className="absolute top-2 right-2 flex gap-1">
+              {business.has_deals && (
+                <div className="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">
+                  SALE
+                </div>
+              )}
+              {business.listing_tier === 'pro' && (
+                <div className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold">
+                  PRO
+                </div>
+              )}
+              {business.listing_tier === 'premium' && (
+                <div className="bg-purple-600 text-white px-2 py-1 rounded text-xs font-bold">
+                  PREMIUM
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-2">
           <div className="flex-1">
-            <h4 className="font-semibold text-gray-900 mb-1">
-              {business.business_name || business.name}
-            </h4>
+            <div className="flex items-center gap-1.5">
+              <h4 className="font-semibold text-gray-900 mb-1">
+                {business.business_name || business.name}
+              </h4>
+              {business.listing_tier === 'premium' && (
+                <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
+              )}
+            </div>
             {business.category && (
               <p className="text-sm text-cyan-600">{business.category}</p>
             )}
