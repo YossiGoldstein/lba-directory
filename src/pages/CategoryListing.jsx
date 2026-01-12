@@ -513,17 +513,7 @@ export default function CategoryListing() {
                   ))}
                 </div>
 
-                {/* Related Categories */}
-                {currentCategory && (
-                  <div className="mt-8">
-                    <RelatedCategories
-                      currentCategory={currentCategory}
-                      categories={categories}
-                      businesses={allBusinesses}
-                      onCategoryClick={handleRelatedCategoryClick}
-                    />
-                  </div>
-                )}
+
 
                 {/* AI Advanced Search Section */}
                 <div className="mt-8 bg-white rounded-xl shadow-md border border-gray-200 p-6">
