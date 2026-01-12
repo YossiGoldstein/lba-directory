@@ -38,7 +38,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
     <Link to={createPageUrl(`BusinessListing?id=${business.id}`)} className="block group">
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300 overflow-hidden">
         {/* Wide Cover Image - Banner Style */}
-        <div className="relative w-full h-32 sm:h-36 bg-gray-100">
+        <div className="relative w-full h-24 sm:h-28 bg-gray-100">
           <img
             src={coverImage}
             alt={business.business_name}
@@ -77,8 +77,8 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
           </div>
 
           {/* Circular Logo - Overlaid on cover */}
-          <div className="absolute -bottom-8 left-4">
-            <div className="w-16 h-16 rounded-full border-[3px] border-white shadow-lg overflow-hidden bg-white flex items-center justify-center">
+          <div className="absolute -bottom-6 left-4">
+            <div className="w-12 h-12 rounded-full border-[3px] border-white shadow-lg overflow-hidden bg-white flex items-center justify-center">
               {business.logo_url ? (
                 <img
                   src={business.logo_url}
@@ -95,7 +95,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
         </div>
 
         {/* Content Section */}
-        <div className="pt-10 pb-4 px-4">
+        <div className="pt-8 pb-3 px-4">
           {/* Business Name */}
           <div className="flex items-center gap-1.5 mb-2">
             <h3 className="text-base font-bold text-gray-900 group-hover:text-cyan-600 transition-colors line-clamp-1">
