@@ -23,101 +23,83 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
 
   const coverImage = business.gallery_images && business.gallery_images.length > 0 
     ? business.gallery_images[0] 
-    : business.logo_url;
+    : "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=450&fit=crop";
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300 overflow-hidden flex flex-row h-full">
-      {/* Cover Image */}
-      <div className="relative w-48 flex-shrink-0 bg-gray-100">
-        {coverImage ? (
+    <Link to={createPageUrl(`BusinessListing?id=${business.id}`)} className="block">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-full">
+        {/* Cover Image */}
+        <div className="relative w-full aspect-[16/9] bg-gray-100">
           <img
             src={coverImage}
             alt={business.business_name}
             className="w-full h-full object-cover"
           />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan-100 to-blue-100">
-            <span className="text-4xl font-bold text-cyan-600">
-              {business.business_name.charAt(0)}
-            </span>
+
+          {/* Status Badges - Top Right */}
+          <div className="absolute top-2 right-2 flex gap-1">
+            {business.is_lba_sponsor && (
+              <Badge className="bg-blue-600 text-white text-xs shadow-md">Sponsor</Badge>
+            )}
+            {business.listing_tier === "premium" && (
+              <Badge className="bg-purple-600 text-white text-xs shadow-md">Premium</Badge>
+            )}
+            {business.listing_tier === "pro" && (
+              <Badge className="bg-orange-600 text-white text-xs shadow-md">Pro</Badge>
+            )}
+            {hasActiveDeals && (
+              <Badge className="bg-red-600 text-white text-xs shadow-md">Sale</Badge>
+            )}
           </div>
-        )}
-        
-        {/* Circular Logo Overlay */}
-        {business.logo_url && (
-          <div className="absolute bottom-4 right-4">
-            <div className="w-16 h-16 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
-              <img
-                src={business.logo_url}
-                alt={business.business_name}
-                className="w-full h-full object-cover"
-              />
+
+          {/* Open/Closed Badge - Top Left */}
+          <div className="absolute top-2 left-2">
+            <Badge className="bg-green-600 text-white text-xs shadow-md">Open</Badge>
+          </div>
+        </div>
+
+        {/* Content Section with Logo Overlap */}
+        <div className="relative px-4 pt-8 pb-4">
+          {/* Circular Logo - Positioned to overlap cover image */}
+          {business.logo_url && (
+            <div className="absolute -top-10 left-4">
+              <div className="w-20 h-20 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
+                <img
+                  src={business.logo_url}
+                  alt={business.business_name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Badges on image */}
-        <div className="absolute top-2 right-2 flex flex-col gap-1">
-          {business.is_lba_sponsor && (
-            <Badge className="bg-blue-600 text-white text-xs">LBA Sponsor</Badge>
+          {/* Business Name */}
+          <h3 className="text-lg font-bold text-gray-900 mb-2 hover:text-cyan-600 transition-colors">
+            {business.business_name}
+          </h3>
+
+          {/* Address */}
+          {business.address_line1 && (
+            <div className="flex items-start gap-2 text-sm text-gray-600 mb-1">
+              <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <span className="line-clamp-1">
+                {business.address_line1}
+                {business.city && `, ${business.city}`}
+              </span>
+            </div>
           )}
-          {business.is_featured && (
-            <Badge className="bg-yellow-500 text-white text-xs">Featured</Badge>
-          )}
-          {hasActiveDeals && (
-            <Badge className="bg-green-600 text-white text-xs">Deals Available</Badge>
+
+          {/* Phone */}
+          {business.phone && (
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              <span>{business.phone}</span>
+            </div>
           )}
         </div>
-
-        <button className="absolute top-2 left-2 text-white hover:text-red-500 transition-colors bg-black/30 hover:bg-white rounded-full p-2">
-          <Heart className="w-5 h-5" />
-        </button>
       </div>
-
-      {/* Content Section */}
-      <div className="p-5 flex flex-col flex-1 justify-between">
-        {/* Business Name */}
-        <h3 className="text-lg font-bold text-gray-900 mb-3">
-          {business.business_name}
-        </h3>
-
-        {/* Address */}
-        {business.address_line1 && (
-          <div className="flex items-start gap-2 text-sm text-gray-600 mb-2">
-            <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
-            <span>
-              {business.address_line1}
-              {business.city && `, ${business.city}`}
-              {business.state && `, ${business.state}`}
-              {business.zip_code && ` ${business.zip_code}`}
-            </span>
-          </div>
-        )}
-
-        {/* Phone */}
-        {business.phone && (
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
-            <a href={`tel:${business.phone}`} className="hover:text-cyan-600">
-              {business.phone}
-            </a>
-          </div>
-        )}
-
-        {/* Action Button */}
-        <div>
-          <Button
-            asChild
-            className="w-full bg-cyan-600 hover:bg-cyan-700"
-          >
-            <Link to={createPageUrl(`BusinessListing?id=${business.id}`)}>
-              View Details
-            </Link>
-          </Button>
-        </div>
-      </div>
-    </div>
+    </Link>
   );
 }
