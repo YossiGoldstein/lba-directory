@@ -46,33 +46,38 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
           />
           
           {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
 
-          {/* Open/Closed Badge - Top Left */}
+          {/* Status Badge Overlays - Top Left */}
           {isOpen !== null && (
-            <div className="absolute top-2 left-2">
-              <Badge className={`${isOpen ? 'bg-green-500' : 'bg-red-500'} text-white text-[10px] px-2 py-0.5 shadow-lg font-bold uppercase tracking-wide`}>
+            <div className="absolute top-2 left-2 z-10 pointer-events-none">
+              <div className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide text-white shadow-md ${isOpen ? 'bg-green-500' : 'bg-red-500'}`}>
                 {isOpen ? 'Open' : 'Closed'}
-              </Badge>
+              </div>
             </div>
           )}
 
           {/* Status Badges - Top Right */}
-          <div className="absolute top-2 right-2 flex gap-1.5">
+          <div className="absolute top-2 right-2 flex gap-1.5 z-10 pointer-events-none">
             {hasActiveDeals && (
-              <Badge className="bg-red-500 text-white text-[10px] px-2 py-0.5 shadow-lg font-bold uppercase tracking-wide">
+              <div className="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md">
                 Sale
-              </Badge>
+              </div>
             )}
             {isFeatured && (
-              <Badge className="bg-amber-500 text-white text-[10px] px-2 py-0.5 shadow-lg font-bold uppercase tracking-wide">
+              <div className="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md">
                 Featured
-              </Badge>
+              </div>
             )}
             {isPaid && !isFeatured && (
-              <Badge className="bg-cyan-600 text-white text-[10px] px-2 py-0.5 shadow-lg font-bold uppercase tracking-wide">
+              <div className="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md">
                 Pro
-              </Badge>
+              </div>
+            )}
+            {business.listing_tier === 'premium' && (
+              <div className="bg-purple-600 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md">
+                Premium
+              </div>
             )}
           </div>
 
