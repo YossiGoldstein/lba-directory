@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import WizardProgress from "../components/add-business/WizardProgress";
+import Step0Pricing from "../components/add-business/Step0Pricing";
 import Step1Basics from "../components/add-business/Step1Basics";
 import Step2Category from "../components/add-business/Step2Category";
 import Step3Location from "../components/add-business/Step3Location";
@@ -16,7 +17,7 @@ import Step7Optimization from "../components/add-business/Step7Optimization";
 import Step8Review from "../components/add-business/Step8Review";
 import { toast } from "sonner";
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 9;
 
 export default function AddBusiness() {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ export default function AddBusiness() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [formData, setFormData] = useState({
+    listing_tier: "free",
     business_name: "",
     category_id: "",
     category_name: "",
@@ -104,20 +106,27 @@ export default function AddBusiness() {
   const handleNext = () => {
     // Validation
     if (currentStep === 0) {
+      if (!formData.listing_tier) {
+        toast.error("Please select a listing plan");
+        return;
+      }
+    }
+
+    if (currentStep === 1) {
       if (!formData.business_name.trim()) {
         toast.error("Please enter a business name");
         return;
       }
     }
 
-    if (currentStep === 1) {
+    if (currentStep === 2) {
       if (!formData.category_id) {
         toast.error("Please select a category");
         return;
       }
     }
 
-    if (currentStep === 2) {
+    if (currentStep === 3) {
       if (!formData.city.trim()) {
         toast.error("City is required");
         return;
@@ -133,7 +142,7 @@ export default function AddBusiness() {
       }
     }
 
-    if (currentStep === 4) {
+    if (currentStep === 5) {
       if (!formData.logo_url) {
         toast.error("Please upload a business logo before proceeding");
         return;
@@ -155,6 +164,56 @@ export default function AddBusiness() {
     try {
       // Get current user for email
       const user = await base44.auth.me();
+
+      // If paid tier, redirect to Stripe checkout
+      if (formData.listing_tier === "pro" || formData.listing_tier === "premium") {
+        // Check if running in iframe
+        if (window.self !== window.top) {
+          toast.error("Payment checkout must be completed from the published app, not in preview mode.");
+          setIsSubmitting(false);
+          return;
+        }
+
+        // Prepare business data for checkout
+        const businessData = {
+          business_name: formData.business_name,
+          category_id: formData.category_id,
+          short_description: formData.short_description,
+          long_description: formData.long_description,
+          tags: formData.tags.split(",").map(t => t.trim()).filter(t => t.length > 0),
+          address_line1: formData.address_line1,
+          address_line2: formData.address_line2,
+          city: formData.city,
+          state: formData.state,
+          zip_code: formData.zip_code,
+          phone: formData.phone,
+          whatsapp_number: formData.whatsapp_number,
+          email: formData.email,
+          website_url: formData.website_url,
+          opening_hours_text: formData.use_structured_hours 
+            ? generateTextFromStructured(formData.opening_hours_json)
+            : formData.opening_hours_text,
+          opening_hours_json: formData.use_structured_hours ? formData.opening_hours_json : null,
+          logo_url: formData.logo_url,
+          gallery_images: formData.gallery_images,
+        };
+
+        // Create checkout session
+        const response = await base44.functions.invoke('createCheckoutSession', {
+          listing_tier: formData.listing_tier,
+          business_data: businessData
+        });
+
+        if (response.data.url) {
+          // Redirect to Stripe Checkout
+          window.location.href = response.data.url;
+          return;
+        } else {
+          throw new Error("Failed to create checkout session");
+        }
+      }
+
+      // Free tier - create business immediately
 
       // Process tags
       const tagsArray = formData.tags
@@ -184,6 +243,9 @@ export default function AddBusiness() {
         opening_hours_json: formData.use_structured_hours ? formData.opening_hours_json : null,
         logo_url: formData.logo_url,
         gallery_images: formData.gallery_images,
+        listing_tier: "free",
+        listing_rank: 1,
+        payment_status: "paid",
         status: "pending",
       };
 
@@ -314,20 +376,22 @@ export default function AddBusiness() {
   const renderStep = () => {
     switch (currentStep) {
       case 0:
-        return <Step1Basics data={formData} onChange={setFormData} />;
+        return <Step0Pricing formData={formData} setFormData={setFormData} onNext={handleNext} />;
       case 1:
-        return <Step2Category data={formData} onChange={setFormData} />;
+        return <Step1Basics data={formData} onChange={setFormData} />;
       case 2:
-        return <Step3Location data={formData} onChange={setFormData} />;
+        return <Step2Category data={formData} onChange={setFormData} />;
       case 3:
-        return <Step4Hours data={formData} onChange={setFormData} />;
+        return <Step3Location data={formData} onChange={setFormData} />;
       case 4:
-        return <Step5Gallery data={formData} onChange={setFormData} />;
+        return <Step4Hours data={formData} onChange={setFormData} />;
       case 5:
-        return <Step6Deals data={formData} onChange={setFormData} />;
+        return <Step5Gallery data={formData} onChange={setFormData} />;
       case 6:
-        return <Step7Optimization data={formData} onChange={setFormData} />;
+        return <Step6Deals data={formData} onChange={setFormData} />;
       case 7:
+        return <Step7Optimization data={formData} onChange={setFormData} />;
+      case 8:
         return <Step8Review data={formData} />;
       default:
         return null;
