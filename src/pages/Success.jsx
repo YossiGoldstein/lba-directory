@@ -18,7 +18,7 @@ export default function Success() {
 
   if (verifying) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-blue-50 flex items-center justify-center p-4">
         <div className="text-center">
           <Loader2 className="w-16 h-16 text-cyan-600 animate-spin mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -31,7 +31,7 @@ export default function Success() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-blue-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <CheckCircle className="w-12 h-12 text-green-600" />

@@ -229,7 +229,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-blue-50">
       {/* Hero Section with Integrated Menu */}
       <section className="relative min-h-[75vh] sm:min-h-[90vh] flex flex-col overflow-hidden">
         <div className="absolute inset-0 z-0">

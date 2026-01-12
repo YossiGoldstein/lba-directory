@@ -60,7 +60,7 @@ export default function Layout({ children, currentPageName }) {
 
   if (!showHeaderFooter) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-blue-50">
         {children}
         <ChatButton pageContext={getPageContext()} />
       </div>
@@ -68,7 +68,7 @@ export default function Layout({ children, currentPageName }) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-blue-50">
       {/* Header */}
       {showHeader && (
         <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-200 shadow-sm">
