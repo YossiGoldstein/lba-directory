@@ -12,6 +12,7 @@ export default function Step5Gallery({ data, onChange }) {
   const images = data.gallery_images || [];
 
   const handleLogoUpload = async (e) => {
+    e.preventDefault();
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -33,6 +34,8 @@ export default function Step5Gallery({ data, onChange }) {
       toast.error("Failed to upload logo");
     } finally {
       setIsUploadingLogo(false);
+      // Reset input
+      e.target.value = "";
     }
   };
 
