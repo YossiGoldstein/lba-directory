@@ -292,7 +292,8 @@ export default function CategoryListing() {
 
   return (
     <div className="min-h-screen bg-blue-50">
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full py-8">
+        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
           <Link
@@ -318,21 +319,24 @@ export default function CategoryListing() {
               : "Browse all listings in the directory"}
           </p>
         </div>
+        </div>
 
         {/* Loading State */}
         {isSearching && (
+          <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-xl shadow-md border border-gray-200 p-12 text-center">
             <div className="inline-block w-12 h-12 border-4 border-cyan-600 border-t-transparent rounded-full animate-spin mb-4"></div>
             <p className="text-lg text-gray-600">Searching for the best matches...</p>
             <p className="text-sm text-gray-500 mt-2">Our AI assistant is analyzing your request</p>
           </div>
+          </div>
         )}
 
         {/* Search Results */}
         {searchResults && !isSearching && (
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex flex-col lg:flex-row gap-0">
             {/* Business Results Column */}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8">
               <div className="mb-6">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
                   {matchedBusinesses.length} Result{matchedBusinesses.length !== 1 ? 's' : ''} Found
@@ -435,9 +439,9 @@ export default function CategoryListing() {
               </div>
             </div>
 
-        {/* Map Column for Search Results - Fixed on desktop */}
-        <div className="hidden lg:block w-[600px]">
-          <div className="sticky top-24 h-[calc(100vh-7rem)]">
+        {/* Map Column for Search Results - Sticky on desktop */}
+        <div className="hidden lg:block w-[45%] max-w-[900px]">
+          <div className="sticky top-20 h-[calc(100vh-5rem)]">
             <BusinessMap businesses={businessesToMap} />
           </div>
         </div>
@@ -448,7 +452,7 @@ export default function CategoryListing() {
         {!searchResults && !isSearching && (
           <div className="flex gap-0">
             {/* Listings Column */}
-            <div className="flex-1 pr-8">
+            <div className="flex-1 px-4 sm:px-6 lg:px-8">
             {/* Info Block */}
             {categoryBusinesses.length > 0 && (
               <div className="bg-cyan-50 rounded-lg p-4 mb-4 border border-cyan-200">
@@ -556,9 +560,9 @@ export default function CategoryListing() {
             )}
           </div>
 
-          {/* Map Column - Fixed on desktop, edge to edge */}
-          <div className="hidden lg:block w-[50%] max-w-[800px]">
-            <div className="sticky top-24 h-[calc(100vh-7rem)] -mr-8">
+          {/* Map Column - Sticky on desktop */}
+          <div className="hidden lg:block w-[45%] max-w-[900px]">
+            <div className="sticky top-20 h-[calc(100vh-5rem)]">
               <BusinessMap businesses={businessesToMap} />
             </div>
           </div>
