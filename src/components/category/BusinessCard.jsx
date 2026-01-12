@@ -33,6 +33,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
 
   const isPaid = business.listing_tier === "pro" || business.listing_tier === "premium";
   const isFeatured = business.is_featured || business.listing_tier === "premium";
+  const hasDeals = hasActiveDeals === true;
 
   return (
     <Link to={createPageUrl(`BusinessListing?id=${business.id}`)} className="block group">
