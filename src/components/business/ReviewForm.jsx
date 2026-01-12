@@ -1,167 +1,115 @@
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Star } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { Button } from "@/components/ui/button";
+import { Star } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ReviewForm({ businessId, onReviewSubmitted }) {
-  const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [visitDate, setVisitDate] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [generalRating, setGeneralRating] = useState(0);
+  const [servicingRating, setServicingRating] = useState(0);
+  const [pricingRating, setPricingRating] = useState(0);
+  const [hoveredGeneral, setHoveredGeneral] = useState(0);
+  const [hoveredServicing, setHoveredServicing] = useState(0);
+  const [hoveredPricing, setHoveredPricing] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (rating === 0) {
-      toast.error("Please select a rating");
+    if (generalRating === 0 || servicingRating === 0 || pricingRating === 0) {
+      toast.error("Please rate all three categories");
       return;
     }
 
-    if (!body.trim()) {
-      toast.error("Please write your review");
-      return;
-    }
+    setIsSubmitting(true);
 
-    setSubmitting(true);
     try {
       await base44.entities.Review.create({
         business_id: businessId,
-        rating,
-        title: title.trim() || null,
-        body: body.trim(),
-        visit_date: visitDate || null,
-        is_approved: false,
+        general_rating: generalRating,
+        servicing_rating: servicingRating,
+        pricing_rating: pricingRating,
       });
 
-      toast.success("Review submitted successfully! It will appear after moderation.");
-      
-      // Send email notification to business owner
-      try {
-        await base44.functions.invoke('sendBusinessEmail', {
-          type: 'new_review',
-          businessId: businessId,
-          data: {
-            stars: '⭐'.repeat(rating),
-            reviewText: body.trim()
-          }
-        });
-      } catch (emailError) {
-        console.error("Failed to send review notification email:", emailError);
-      }
+      toast.success("Review submitted successfully!");
       
       // Reset form
-      setRating(0);
-      setTitle("");
-      setBody("");
-      setVisitDate("");
+      setGeneralRating(0);
+      setServicingRating(0);
+      setPricingRating(0);
       
       if (onReviewSubmitted) {
         onReviewSubmitted();
       }
     } catch (error) {
+      console.error("Failed to submit review:", error);
       toast.error("Failed to submit review. Please try again.");
     } finally {
-      setSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Write a Review</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Rating */}
-          <div className="space-y-2">
-            <Label>Your Rating *</Label>
-            <div className="flex gap-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  onClick={() => setRating(star)}
-                  onMouseEnter={() => setHoverRating(star)}
-                  onMouseLeave={() => setHoverRating(0)}
-                  className="transition-transform hover:scale-110"
-                >
-                  <Star
-                    className={`w-8 h-8 ${
-                      star <= (hoverRating || rating)
-                        ? "text-yellow-400 fill-yellow-400"
-                        : "text-gray-300"
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-            {rating > 0 && (
-              <p className="text-sm text-gray-600">
-                {rating === 1 && "Poor"}
-                {rating === 2 && "Fair"}
-                {rating === 3 && "Good"}
-                {rating === 4 && "Very Good"}
-                {rating === 5 && "Excellent"}
-              </p>
-            )}
-          </div>
-
-          {/* Title */}
-          <div className="space-y-2">
-            <Label htmlFor="review-title">Review Title (Optional)</Label>
-            <Input
-              id="review-title"
-              placeholder="Sum up your experience"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-
-          {/* Body */}
-          <div className="space-y-2">
-            <Label htmlFor="review-body">Your Review *</Label>
-            <Textarea
-              id="review-body"
-              placeholder="Share your experience with this business..."
-              rows={5}
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              required
-            />
-          </div>
-
-          {/* Visit Date */}
-          <div className="space-y-2">
-            <Label htmlFor="visit-date">When did you visit? (Optional)</Label>
-            <Input
-              id="visit-date"
-              type="date"
-              value={visitDate}
-              onChange={(e) => setVisitDate(e.target.value)}
-            />
-          </div>
-
-          {/* Submit Button */}
-          <Button 
-            type="submit" 
-            className="w-full bg-cyan-600 hover:bg-cyan-700"
-            disabled={submitting}
+  const RatingRow = ({ label, rating, setRating, hovered, setHovered }) => (
+    <div className="flex items-center justify-between">
+      <label className="text-sm font-medium text-gray-700 w-32">
+        {label}
+      </label>
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            onClick={() => setRating(star)}
+            onMouseEnter={() => setHovered(star)}
+            onMouseLeave={() => setHovered(0)}
+            className="transition-transform hover:scale-110"
           >
-            {submitting ? "Submitting..." : "Submit Review"}
-          </Button>
+            <Star
+              className={`w-6 h-6 ${
+                star <= (hovered || rating)
+                  ? "text-yellow-400 fill-yellow-400"
+                  : "text-gray-300"
+              }`}
+            />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 
-          <p className="text-xs text-gray-500 text-center">
-            Your review will be published after moderation
-          </p>
-        </form>
-      </CardContent>
-    </Card>
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-4">
+        <RatingRow
+          label="General"
+          rating={generalRating}
+          setRating={setGeneralRating}
+          hovered={hoveredGeneral}
+          setHovered={setHoveredGeneral}
+        />
+        <RatingRow
+          label="Servicing"
+          rating={servicingRating}
+          setRating={setServicingRating}
+          hovered={hoveredServicing}
+          setHovered={setHoveredServicing}
+        />
+        <RatingRow
+          label="Pricing"
+          rating={pricingRating}
+          setRating={setPricingRating}
+          hovered={hoveredPricing}
+          setHovered={setHoveredPricing}
+        />
+      </div>
+
+      <Button
+        type="submit"
+        disabled={isSubmitting}
+        className="bg-cyan-600 hover:bg-cyan-700 w-full"
+      >
+        {isSubmitting ? "Submitting..." : "Submit Review"}
+      </Button>
+    </form>
   );
 }
