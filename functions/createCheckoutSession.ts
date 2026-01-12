@@ -18,20 +18,19 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Define pricing
-    const prices = {
-      pro: { amount: 5000, name: "Pro Listing" }, // $50/month
-      premium: { amount: 10000, name: "Premium Listing" } // $100/month
+    // Define pricing with Stripe price IDs
+    const priceIds = {
+      pro: 'price_1SoncPI5Qw91YGJt6LsXpbm7',
+      premium: 'price_1SoncPI5Qw91YGJtsV9xwc2U'
     };
 
-    if (!prices[listing_tier]) {
+    if (!priceIds[listing_tier]) {
       return Response.json({ error: 'Invalid listing tier' }, { status: 400 });
     }
 
-    const price = prices[listing_tier];
-
     // Store business data temporarily in session metadata
     const sessionMetadata = {
+      base44_app_id: Deno.env.get("BASE44_APP_ID"),
       user_id: user.id,
       listing_tier: listing_tier,
       business_data: JSON.stringify(business_data)
@@ -43,17 +42,7 @@ Deno.serve(async (req) => {
       mode: 'subscription',
       line_items: [
         {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: price.name,
-              description: `Monthly ${listing_tier} business listing on LBA Directory`
-            },
-            recurring: {
-              interval: 'month'
-            },
-            unit_amount: price.amount
-          },
+          price: priceIds[listing_tier],
           quantity: 1
         }
       ],
