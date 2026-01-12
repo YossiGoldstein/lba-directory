@@ -19,7 +19,7 @@ export default function BusinessJoin() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-blue-50">
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-cyan-600 to-blue-700 text-white py-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
