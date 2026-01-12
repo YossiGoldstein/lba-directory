@@ -223,6 +223,30 @@ export default function BusinessListing() {
                 <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 drop-shadow-lg">
                   {business.business_name}
                 </h1>
+
+                {/* Ratings Row */}
+                {business.reviews_count > 0 && (
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-white font-medium drop-shadow">General:</span>
+                      <div className="flex gap-1">
+                        {renderStars(business.general_rating || 0)}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-white font-medium drop-shadow">Servicing:</span>
+                      <div className="flex gap-1">
+                        {renderStars(business.servicing_rating || 0)}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-white font-medium drop-shadow">Pricing:</span>
+                      <div className="flex gap-1">
+                        {renderStars(business.pricing_rating || 0)}
+                      </div>
+                    </div>
+                  </div>
+                )}
                 
                 <div className="flex flex-col gap-2 text-white">
                   {/* Address */}
