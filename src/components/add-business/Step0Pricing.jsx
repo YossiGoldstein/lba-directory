@@ -81,7 +81,7 @@ export default function Step0Pricing({ formData, setFormData, onNext }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
         {plans.map((plan) => {
           const Icon = plan.icon;
           const isSelected = formData.listing_tier === plan.id;
@@ -89,7 +89,7 @@ export default function Step0Pricing({ formData, setFormData, onNext }) {
           return (
             <Card
               key={plan.id}
-              className={`relative transition-all cursor-pointer ${
+              className={`relative transition-all cursor-pointer flex flex-col h-full ${
                 isSelected
                   ? `ring-2 ring-offset-2 ${plan.color.replace('text-', 'ring-')} shadow-lg scale-105`
                   : 'hover:shadow-md'
@@ -117,8 +117,8 @@ export default function Step0Pricing({ formData, setFormData, onNext }) {
                 </CardDescription>
               </CardHeader>
 
-              <CardContent>
-                <ul className="space-y-3">
+              <CardContent className="flex-1 flex flex-col">
+                <ul className="space-y-3 flex-1 mb-6">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-2">
                       <Check className={`w-5 h-5 ${plan.color} flex-shrink-0 mt-0.5`} />
@@ -128,7 +128,7 @@ export default function Step0Pricing({ formData, setFormData, onNext }) {
                 </ul>
 
                 <Button
-                  className={`w-full mt-6 ${
+                  className={`w-full ${
                     isSelected
                       ? plan.id === 'premium'
                         ? 'bg-purple-600 hover:bg-purple-700'
