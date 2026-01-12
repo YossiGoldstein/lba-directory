@@ -206,21 +206,22 @@ export default function BusinessListing() {
         {/* Business Info Overlay - Bottom */}
         <div className="absolute bottom-0 left-0 right-0 pb-8">
           <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-end gap-6">
-              {/* Logo Circle */}
-              {business.logo_url && (
-                <div className="w-32 h-32 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-white flex-shrink-0">
-                  <img
-                    src={business.logo_url}
-                    alt={business.business_name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              
-              {/* Business Details */}
-              <div className="flex-1 pb-2">
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 drop-shadow-lg">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-end gap-4 md:gap-6">
+                {/* Logo Circle */}
+                {business.logo_url && (
+                  <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-white flex-shrink-0">
+                    <img
+                      src={business.logo_url}
+                      alt={business.business_name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+
+                {/* Business Details */}
+                <div className="flex-1 pb-2 min-w-0">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 drop-shadow-lg break-words">
                   {business.business_name}
                 </h1>
 
@@ -281,20 +282,21 @@ export default function BusinessListing() {
                     <Badge className="bg-yellow-500 text-white">Featured</Badge>
                   )}
                 </div>
-              </div>
+                </div>
+                </div>
 
-              {/* Favorite Button */}
-              <Button 
+                {/* Favorite Button - Full width on mobile, auto on desktop */}
+                <Button 
                 size="lg"
                 variant="outline" 
-                className="bg-white/90 hover:bg-white border-2 border-white mb-2"
-              >
+                className="bg-white/90 hover:bg-white border-2 border-white w-full md:w-auto md:self-end"
+                >
                 <Heart className="w-5 h-5 mr-2" />
                 Add to Favorites
-              </Button>
-            </div>
-          </div>
-        </div>
+                </Button>
+                </div>
+                </div>
+                </div>
       </div>
 
       {/* Reviews Section - Below Hero */}
