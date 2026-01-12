@@ -83,13 +83,13 @@ export default function Layout({ children, currentPageName }) {
               </Link>
 
               <nav className="hidden md:flex items-center gap-8">
-                <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium text-lg">
+                <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-[#00D4AA] transition-colors font-medium text-lg">
                   Home
                 </Link>
-                <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium text-lg">
+                <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-[#00D4AA] transition-colors font-medium text-lg">
                   About
                 </Link>
-                <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-cyan-600 transition-colors font-medium text-lg">
+                <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-[#00D4AA] transition-colors font-medium text-lg">
                   FAQ
                 </Link>
                 <button 
@@ -101,7 +101,7 @@ export default function Layout({ children, currentPageName }) {
                       window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                     }
                   }} 
-                  className="text-gray-700 hover:text-cyan-600 transition-colors font-medium text-lg"
+                  className="text-gray-700 hover:text-[#00D4AA] transition-colors font-medium text-lg"
                 >
                   Add Business
                 </button>
@@ -124,10 +124,10 @@ export default function Layout({ children, currentPageName }) {
                   </div>
                 ) : (
                   <>
-                    <Button asChild className="bg-green-500 hover:bg-green-600 text-white">
+                    <Button asChild className="bg-[#00D4AA] hover:bg-[#00BF99] text-white">
                       <Link to={createPageUrl("SignIn")}>Sign In</Link>
                     </Button>
-                    <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
+                    <Button asChild className="bg-[#00D4AA] hover:bg-[#00BF99]">
                       <Link to={createPageUrl("UserRegister")}>Register</Link>
                     </Button>
                   </>
@@ -228,16 +228,16 @@ export default function Layout({ children, currentPageName }) {
                   </Link>
                 </li>
                 <li>
-                  <Link to={createPageUrl("AboutUs")} className="text-sm hover:text-cyan-400 transition-colors">
+                  <Link to={createPageUrl("AboutUs")} className="text-sm hover:text-[#00D4AA] transition-colors">
                     About Us
                   </Link>
                 </li>
                 <li>
-                  <Link to={createPageUrl("Contact")} className="text-sm hover:text-cyan-400 transition-colors">
+                  <Link to={createPageUrl("Contact")} className="text-sm hover:text-[#00D4AA] transition-colors">
                     Contact Us
                   </Link>
-                </li>
-                <li>
+                  </li>
+                  <li>
                   <button 
                     onClick={async () => {
                       const isAuth = await base44.auth.isAuthenticated();
@@ -247,23 +247,23 @@ export default function Layout({ children, currentPageName }) {
                         window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                       }
                     }}
-                    className="text-sm hover:text-cyan-400 transition-colors text-left"
+                    className="text-sm hover:text-[#00D4AA] transition-colors text-left"
                   >
                     Add a Business
                   </button>
-                </li>
-                <li>
-                  <Link to={createPageUrl("BusinessJoin")} className="text-sm hover:text-cyan-400 transition-colors">
+                  </li>
+                  <li>
+                  <Link to={createPageUrl("BusinessJoin")} className="text-sm hover:text-[#00D4AA] transition-colors">
                     For Business Owners
                   </Link>
-                </li>
-                <li>
-                  <Link to={createPageUrl("TermsOfUse")} className="text-sm hover:text-cyan-400 transition-colors">
+                  </li>
+                  <li>
+                  <Link to={createPageUrl("TermsOfUse")} className="text-sm hover:text-[#00D4AA] transition-colors">
                     Terms of Use
                   </Link>
-                </li>
-                <li>
-                  <Link to={createPageUrl("PrivacyPolicy")} className="text-sm hover:text-cyan-400 transition-colors">
+                  </li>
+                  <li>
+                  <Link to={createPageUrl("PrivacyPolicy")} className="text-sm hover:text-[#00D4AA] transition-colors">
                     Privacy Policy
                   </Link>
                 </li>

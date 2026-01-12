@@ -269,13 +269,13 @@ export default function Home() {
               <div className="w-48"></div>
 
               <nav className="hidden md:flex items-center gap-8">
-                <Link to={createPageUrl("Home")} className="text-white hover:text-cyan-200 transition-colors font-medium text-lg">
+                <Link to={createPageUrl("Home")} className="text-white hover:text-[#00D4AA] transition-colors font-medium text-lg">
                   Home
                 </Link>
-                <Link to={createPageUrl("AboutUs")} className="text-white hover:text-cyan-200 transition-colors font-medium text-lg">
+                <Link to={createPageUrl("AboutUs")} className="text-white hover:text-[#00D4AA] transition-colors font-medium text-lg">
                   About
                 </Link>
-                <Link to={createPageUrl("FAQ")} className="text-white hover:text-cyan-200 transition-colors font-medium text-lg">
+                <Link to={createPageUrl("FAQ")} className="text-white hover:text-[#00D4AA] transition-colors font-medium text-lg">
                   FAQ
                 </Link>
                 <button 
@@ -286,7 +286,7 @@ export default function Home() {
                       window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                     }
                   }} 
-                  className="text-white hover:text-cyan-200 transition-colors font-medium text-lg"
+                  className="text-white hover:text-[#00D4AA] transition-colors font-medium text-lg"
                 >
                   Add Business
                 </button>
@@ -309,10 +309,10 @@ export default function Home() {
                   </div>
                 ) : (
                   <>
-                    <Button asChild className="bg-green-500 hover:bg-green-600 text-white">
+                    <Button asChild className="bg-[#00D4AA] hover:bg-[#00BF99] text-white">
                       <Link to={createPageUrl("SignIn")}>Sign In</Link>
                     </Button>
-                    <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
+                    <Button asChild className="bg-[#00D4AA] hover:bg-[#00BF99]">
                       <Link to={createPageUrl("UserRegister")}>Register</Link>
                     </Button>
                   </>
@@ -370,13 +370,13 @@ export default function Home() {
                     <div className="flex flex-col gap-3 border-t border-white/20 pt-4 mt-2">
                       <button 
                         onClick={() => window.location.href = createPageUrl("SignIn")}
-                        className="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors shadow-md"
+                        className="w-full bg-[#00D4AA] hover:bg-[#00BF99] active:bg-[#00AA88] text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors shadow-md"
                       >
                         Sign In
                       </button>
                       <button 
                         onClick={() => window.location.href = createPageUrl("UserRegister")}
-                        className="w-full bg-cyan-600 hover:bg-cyan-700 active:bg-cyan-800 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors shadow-md"
+                        className="w-full bg-[#00D4AA] hover:bg-[#00BF99] active:bg-[#00AA88] text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors shadow-md"
                       >
                         Register
                       </button>
@@ -439,7 +439,7 @@ export default function Home() {
                 <Button
                   type="submit"
                   disabled={isSearching}
-                  className="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white px-6 sm:px-10 py-4 sm:py-6 sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto rounded-none sm:rounded-full"
+                  className="bg-gradient-to-r from-[#00D4AA] to-[#00BF99] hover:from-[#00BF99] hover:to-[#00AA88] text-white px-6 sm:px-10 py-4 sm:py-6 sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto rounded-none sm:rounded-full"
                 >
                   {isSearching ? "Searching..." : "Search"}
                 </Button>
@@ -457,7 +457,7 @@ export default function Home() {
                     to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
                     className="flex flex-col items-center gap-1 sm:gap-2 group"
                   >
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border-2 border-cyan-400/60 bg-white/5 backdrop-blur-sm flex items-center justify-center hover:bg-cyan-400/20 hover:border-cyan-300 transition-all duration-300 group-hover:scale-110">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border-2 border-[#00D4AA]/60 bg-white/5 backdrop-blur-sm flex items-center justify-center hover:bg-[#00D4AA]/20 hover:border-[#00D4AA] transition-all duration-300 group-hover:scale-110">
                       {category.imageUrl ? (
                         <img 
                           src={category.imageUrl} 
@@ -492,7 +492,7 @@ export default function Home() {
       )}
 
       {/* Blue Banner */}
-      <section className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-400 py-6 sm:py-8">
+      <section className="bg-gradient-to-r from-[#00D4AA] via-[#00BF99] to-[#00D4AA] py-6 sm:py-8">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white leading-tight">
             Bringing all Lakewood's Business Information to one place
@@ -501,7 +501,7 @@ export default function Home() {
       </section>
 
       {/* Shopper & Business Sections - Side by Side */}
-      <section className="bg-gradient-to-r from-cyan-600 to-blue-700 py-10 sm:py-12">
+      <section className="bg-gradient-to-r from-[#003D5C] to-[#002D45] py-10 sm:py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-10">
             Ready to save time and money?
@@ -530,7 +530,7 @@ export default function Home() {
               </ul>
               <Button 
                 size="lg"
-                className="bg-cyan-400 hover:bg-cyan-500 text-white font-bold shadow-lg text-base"
+                className="bg-[#00D4AA] hover:bg-[#00BF99] text-white font-bold shadow-lg text-base"
                 asChild
               >
                 <Link to={createPageUrl("UserRegister")}>
@@ -571,7 +571,7 @@ export default function Home() {
                     window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                   }
                 }}
-                className="bg-cyan-400 hover:bg-cyan-500 text-white font-bold shadow-lg text-base"
+                className="bg-[#00D4AA] hover:bg-[#00BF99] text-white font-bold shadow-lg text-base"
               >
                 Add a business
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -582,7 +582,7 @@ export default function Home() {
       </section>
 
       {/* Trusted by Community */}
-      <section className="py-12 sm:py-16 bg-gradient-to-r from-cyan-50 to-blue-50">
+      <section className="py-12 sm:py-16 bg-gradient-to-r from-blue-50 to-cyan-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-8">
             Trusted by your community
@@ -590,16 +590,16 @@ export default function Home() {
           
           <div className="flex flex-wrap justify-center gap-6 sm:gap-10 mb-10 text-base sm:text-lg text-gray-700">
             <div className="flex items-center gap-2">
-              <span className="text-cyan-600 font-bold">✓</span> Free Basic Listings
+              <span className="text-[#00D4AA] font-bold">✓</span> Free Basic Listings
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-cyan-600 font-bold">✓</span> Verified Reviews
+              <span className="text-[#00D4AA] font-bold">✓</span> Verified Reviews
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-cyan-600 font-bold">✓</span> Local Businesses
+              <span className="text-[#00D4AA] font-bold">✓</span> Local Businesses
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-cyan-600 font-bold">✓</span> Deals you're looking for
+              <span className="text-[#00D4AA] font-bold">✓</span> Deals you're looking for
             </div>
           </div>
 
