@@ -188,125 +188,133 @@ export default function BusinessListing() {
 
   return (
     <div className="min-h-screen bg-blue-50">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Breadcrumbs */}
-        <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
-          <Link to={createPageUrl("Home")} className="hover:text-cyan-600 transition-colors">
-            Home
-          </Link>
-          <ChevronRight className="w-4 h-4" />
-          {category && (
-            <>
-              <Link
-                to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
-                className="hover:text-cyan-600 transition-colors"
-              >
-                {category.name}
-              </Link>
-              <ChevronRight className="w-4 h-4" />
-            </>
-          )}
-          <span className="font-medium text-gray-900">{business.business_name}</span>
-        </nav>
+      {/* Hero Section with Cover Image */}
+      <div className="relative w-full h-[60vh] min-h-[400px] bg-gray-900">
+        {/* Cover Image */}
+        <img
+          src={business.gallery_images && business.gallery_images.length > 0 
+            ? business.gallery_images[0] 
+            : "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&h=800&fit=crop"}
+          alt={business.business_name}
+          className="w-full h-full object-cover"
+        />
+        
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/80"></div>
 
-        {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-            <div className="flex-1">
-              {/* Logo & Title */}
-              <div className="flex items-start gap-4 mb-4">
-                {business.logo_url && (
+        {/* Business Info Overlay - Bottom */}
+        <div className="absolute bottom-0 left-0 right-0 pb-8">
+          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-end gap-6">
+              {/* Logo Circle */}
+              {business.logo_url && (
+                <div className="w-32 h-32 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-white flex-shrink-0">
                   <img
                     src={business.logo_url}
                     alt={business.business_name}
-                    className="w-20 h-20 rounded-lg object-cover border-2 border-gray-200"
+                    className="w-full h-full object-cover"
                   />
-                )}
-                <div className="flex-1">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    {business.business_name}
-                  </h1>
-                  <div className="flex flex-wrap items-center gap-2 mb-3">
-                    {category && (
-                      <Link
-                        to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
-                        className="text-cyan-600 hover:text-cyan-700 font-medium"
-                      >
-                        {category.name}
-                      </Link>
-                    )}
-                    {(business.city || business.state) && (
-                      <>
-                        <span className="text-gray-400">•</span>
-                        <span className="text-gray-600">
-                          {business.city}
-                          {business.city && business.state && ", "}
-                          {business.state}
-                        </span>
-                      </>
-                    )}
-                  </div>
+                </div>
+              )}
+              
+              {/* Business Details */}
+              <div className="flex-1 pb-2">
+                <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 drop-shadow-lg">
+                  {business.business_name}
+                </h1>
+                
+                <div className="flex flex-col gap-2 text-white">
+                  {/* Address */}
+                  {(business.address_line1 || business.city) && (
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-5 h-5 flex-shrink-0" />
+                      <span className="text-lg drop-shadow">
+                        {business.address_line1 && `${business.address_line1}, `}
+                        {business.city}
+                        {business.state && `, ${business.state}`}
+                      </span>
+                    </div>
+                  )}
                   
-                  {/* Badges */}
-                  <div className="flex flex-wrap gap-2">
-                    {business.is_lba_sponsor && (
-                      <Badge className="bg-blue-600 text-white">LBA Sponsor</Badge>
-                    )}
-                    {business.is_featured && (
-                      <Badge className="bg-yellow-500 text-white">Featured</Badge>
-                    )}
-                  </div>
+                  {/* Phone */}
+                  {business.phone && (
+                    <div className="flex items-center gap-2">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                      <span className="text-lg drop-shadow">{business.phone}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Badges */}
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {business.is_lba_sponsor && (
+                    <Badge className="bg-blue-600 text-white">LBA Sponsor</Badge>
+                  )}
+                  {business.is_featured && (
+                    <Badge className="bg-yellow-500 text-white">Featured</Badge>
+                  )}
                 </div>
               </div>
 
-              {/* Rating */}
-              <div className="flex items-center gap-4">
-                {business.average_rating > 0 ? (
-                  <>
-                    <div className="flex gap-1">
-                      {renderStars(business.average_rating)}
-                    </div>
-                    <span className="text-gray-600">
-                      {business.average_rating.toFixed(1)} ({business.reviews_count || 0} reviews)
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-gray-500">No reviews yet - be the first to review</span>
-                )}
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="flex gap-2">
-              <Button variant="outline" size="icon" onClick={handleShare}>
-                <Share2 className="w-4 h-4" />
-              </Button>
-              <Button variant="outline" size="icon">
-                <Heart className="w-4 h-4" />
+              {/* Favorite Button */}
+              <Button 
+                size="lg"
+                variant="outline" 
+                className="bg-white/90 hover:bg-white border-2 border-white mb-2"
+              >
+                <Heart className="w-5 h-5 mr-2" />
+                Add to Favorites
               </Button>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* AI Interaction Panel - Ask About This Business */}
-        <div className="mb-6">
-          <AskAboutBusiness 
-            business={business} 
-            category={category}
-            activeDeals={deals}
-          />
+      {/* Reviews Section - Below Hero */}
+      <div className="bg-white border-b border-gray-200 py-4">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-6">
+            {business.average_rating > 0 ? (
+              <>
+                <div className="flex gap-1">
+                  {renderStars(business.average_rating)}
+                </div>
+                <span className="text-lg text-gray-700 font-medium">
+                  {business.average_rating.toFixed(1)} ({business.reviews_count || 0} reviews)
+                </span>
+              </>
+            ) : (
+              <span className="text-gray-500">No reviews yet - be the first to review</span>
+            )}
+            
+            {category && (
+              <>
+                <span className="text-gray-300">|</span>
+                <Link
+                  to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
+                  className="text-cyan-600 hover:text-cyan-700 font-medium"
+                >
+                  {category.name}
+                </Link>
+              </>
+            )}
+          </div>
         </div>
+      </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column */}
-          <div className="lg:col-span-2 space-y-6">
+      {/* Main Content - Two Column Layout */}
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Right Column - Gallery & Map */}
+          <div className="lg:col-span-1 space-y-6 order-1 lg:order-2">
             {/* Gallery */}
-            {business.gallery_images && business.gallery_images.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Gallery</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {business.gallery_images.map((img, idx) => (
+            {business.gallery_images && business.gallery_images.length > 1 && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <h3 className="text-lg font-bold text-gray-900 mb-3">Gallery</h3>
+                <div className="grid grid-cols-3 gap-2">
+                  {business.gallery_images.slice(1).map((img, idx) => (
                     <button
                       key={idx}
                       onClick={() => setSelectedImage(img)}
@@ -323,6 +331,33 @@ export default function BusinessListing() {
               </div>
             )}
 
+            {/* Map */}
+            {business.latitude && business.longitude && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div className="p-4 border-b border-gray-200">
+                  <h3 className="text-lg font-bold text-gray-900">Location</h3>
+                </div>
+                <div className="h-80">
+                  <MapContainer
+                    center={[business.latitude, business.longitude]}
+                    zoom={15}
+                    style={{ height: "100%", width: "100%" }}
+                  >
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <Marker position={[business.latitude, business.longitude]}>
+                      <Popup>{business.business_name}</Popup>
+                    </Marker>
+                  </MapContainer>
+                </div>
+              </div>
+            )}
+
+            {/* Contact Card */}
+            <ContactCard business={business} />
+          </div>
+
+          {/* Left Column - Business Details */}
+          <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
             {/* Description */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">About this business</h2>
@@ -344,6 +379,14 @@ export default function BusinessListing() {
               </div>
             )}
 
+            {/* Opening Hours */}
+            {business.opening_hours_text && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Opening Hours</h2>
+                <p className="text-gray-700 whitespace-pre-line">{business.opening_hours_text}</p>
+              </div>
+            )}
+
             {/* Tags */}
             {business.tags && business.tags.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -360,29 +403,6 @@ export default function BusinessListing() {
                 </div>
               </div>
             )}
-
-            {/* Map */}
-            {business.latitude && business.longitude && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div className="h-64">
-                  <MapContainer
-                    center={[business.latitude, business.longitude]}
-                    zoom={15}
-                    style={{ height: "100%", width: "100%" }}
-                  >
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    <Marker position={[business.latitude, business.longitude]}>
-                      <Popup>{business.business_name}</Popup>
-                    </Marker>
-                  </MapContainer>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Right Column */}
-          <div className="lg:col-span-1">
-            <ContactCard business={business} />
           </div>
         </div>
 
