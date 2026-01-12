@@ -81,79 +81,80 @@ export default function Step0Pricing({ formData, setFormData, onNext }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {plans.map((plan) => {
           const Icon = plan.icon;
           const isSelected = formData.listing_tier === plan.id;
 
           return (
-            <Card
-              key={plan.id}
-              className={`relative transition-all cursor-pointer flex flex-col h-full ${
-                isSelected
-                  ? `ring-2 ring-offset-2 ${plan.color.replace('text-', 'ring-')} shadow-lg scale-105`
-                  : 'hover:shadow-md'
-              } ${plan.borderColor} border-2`}
-              onClick={() => handleSelectPlan(plan.id)}
-            >
-              {plan.badge && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <Badge className={`${plan.color} ${plan.bgColor}`}>
-                    {plan.badge}
-                  </Badge>
-                </div>
-              )}
-
-              <CardHeader className="text-center pb-4">
-                <div className={`w-16 h-16 mx-auto ${plan.bgColor} rounded-full flex items-center justify-center mb-4`}>
-                  <Icon className={`w-8 h-8 ${plan.color}`} />
-                </div>
-                <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                <CardDescription>
-                  <div className="mt-2">
-                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
-                    <span className="text-gray-500 ml-2">/{plan.period}</span>
+            <div key={plan.id} className="flex">
+              <Card
+                className={`relative transition-all cursor-pointer flex flex-col w-full ${
+                  isSelected
+                    ? `ring-2 ring-offset-2 ${plan.color.replace('text-', 'ring-')} shadow-lg scale-105`
+                    : 'hover:shadow-md'
+                } ${plan.borderColor} border-2`}
+                onClick={() => handleSelectPlan(plan.id)}
+              >
+                {plan.badge && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <Badge className={`${plan.color} ${plan.bgColor}`}>
+                      {plan.badge}
+                    </Badge>
                   </div>
-                </CardDescription>
-              </CardHeader>
+                )}
 
-              <CardContent className="flex-1 flex flex-col">
-                <ul className="space-y-3 flex-1 mb-6">
-                  {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <Check className={`w-5 h-5 ${plan.color} flex-shrink-0 mt-0.5`} />
-                      <span className="text-sm text-gray-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+                <CardHeader className="text-center pb-4">
+                  <div className={`w-16 h-16 mx-auto ${plan.bgColor} rounded-full flex items-center justify-center mb-4`}>
+                    <Icon className={`w-8 h-8 ${plan.color}`} />
+                  </div>
+                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                  <CardDescription>
+                    <div className="mt-2">
+                      <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                      <span className="text-gray-500 ml-2">/{plan.period}</span>
+                    </div>
+                  </CardDescription>
+                </CardHeader>
 
-                <Button
-                  className={`w-full ${
-                    isSelected
-                      ? plan.id === 'premium'
-                        ? 'bg-purple-600 hover:bg-purple-700'
-                        : plan.id === 'pro'
-                        ? 'bg-cyan-600 hover:bg-cyan-700'
-                        : 'bg-gray-600 hover:bg-gray-700'
-                      : 'bg-white text-gray-900 border-2 border-gray-300 hover:bg-gray-50'
-                  }`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSelectPlan(plan.id);
-                    onNext();
-                  }}
-                >
-                  {isSelected ? 'Selected - Continue' : 'Select Plan'}
-                </Button>
-              </CardContent>
-            </Card>
+                <CardContent className="flex-1 flex flex-col">
+                  <ul className="space-y-3 flex-1 min-h-[280px]">
+                    {plan.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <Check className={`w-5 h-5 ${plan.color} flex-shrink-0 mt-0.5`} />
+                        <span className="text-sm text-gray-700">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Button
+                    className={`w-full mt-6 ${
+                      isSelected
+                        ? plan.id === 'premium'
+                          ? 'bg-purple-600 hover:bg-purple-700'
+                          : plan.id === 'pro'
+                          ? 'bg-cyan-600 hover:bg-cyan-700'
+                          : 'bg-gray-600 hover:bg-gray-700'
+                        : 'bg-white text-gray-900 border-2 border-gray-300 hover:bg-gray-50'
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectPlan(plan.id);
+                      onNext();
+                    }}
+                  >
+                    {isSelected ? 'Selected - Continue' : 'Select Plan'}
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           );
         })}
       </div>
 
       <div className="text-center mt-8 text-sm text-gray-500">
         <p>All plans include a 7-day free trial. Cancel anytime.</p>
-        <p className="mt-1">Paid plans require admin approval before going live.</p>
+        <p className="mt-1">All plans require admin approval before going live.</p>
       </div>
     </div>
   );
