@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, MapPin, Tag, Heart } from "lucide-react";
+import { Star, MapPin, Tag, Heart, CheckCircle } from "lucide-react";
 
 export default function BusinessCard({ business, categoryName, hasActiveDeals }) {
   const renderStars = (rating) => {
@@ -21,6 +21,28 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
     return stars;
   };
 
+  // Check if business is currently open
+  const isBusinessOpen = () => {
+    if (!business.opening_hours_json) return null;
+    
+    const now = new Date();
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const currentDay = dayNames[now.getDay()];
+    const hours = business.opening_hours_json[currentDay];
+    
+    if (!hours || hours.closed) return false;
+    
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+    const [openHour, openMin] = hours.open.split(':').map(Number);
+    const [closeHour, closeMin] = hours.close.split(':').map(Number);
+    const openTime = openHour * 60 + openMin;
+    const closeTime = closeHour * 60 + closeMin;
+    
+    return currentTime >= openTime && currentTime <= closeTime;
+  };
+
+  const isOpen = isBusinessOpen();
+
   const coverImage = business.gallery_images && business.gallery_images.length > 0 
     ? business.gallery_images[0] 
     : "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=450&fit=crop";
@@ -36,25 +58,23 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
             className="w-full h-full object-cover"
           />
 
+          {/* Open/Closed Badge - Top Left */}
+          {isOpen !== null && (
+            <div className="absolute top-2 left-2">
+              <Badge className={`${isOpen ? 'bg-green-600' : 'bg-red-600'} text-white text-xs shadow-md font-semibold`}>
+                {isOpen ? 'OPEN' : 'CLOSED'}
+              </Badge>
+            </div>
+          )}
+
           {/* Status Badges - Top Right */}
           <div className="absolute top-2 right-2 flex gap-1">
-            {business.is_lba_sponsor && (
-              <Badge className="bg-blue-600 text-white text-xs shadow-md">Sponsor</Badge>
-            )}
-            {business.listing_tier === "premium" && (
-              <Badge className="bg-purple-600 text-white text-xs shadow-md">Premium</Badge>
-            )}
-            {business.listing_tier === "pro" && (
-              <Badge className="bg-orange-600 text-white text-xs shadow-md">Pro</Badge>
-            )}
             {hasActiveDeals && (
-              <Badge className="bg-red-600 text-white text-xs shadow-md">Sale</Badge>
+              <Badge className="bg-red-600 text-white text-xs shadow-md font-semibold">SALE</Badge>
             )}
-          </div>
-
-          {/* Open/Closed Badge - Top Left */}
-          <div className="absolute top-2 left-2">
-            <Badge className="bg-green-600 text-white text-xs shadow-md">Open</Badge>
+            {(business.listing_tier === "pro" || business.listing_tier === "premium") && (
+              <Badge className="bg-orange-500 text-white text-xs shadow-md font-semibold">PAID</Badge>
+            )}
           </div>
         </div>
 
@@ -74,9 +94,14 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
           )}
 
           {/* Business Name */}
-          <h3 className="text-lg font-bold text-gray-900 mb-2 hover:text-cyan-600 transition-colors">
-            {business.business_name}
-          </h3>
+          <div className="flex items-center gap-2 mb-2">
+            <h3 className="text-lg font-bold text-gray-900 hover:text-cyan-600 transition-colors">
+              {business.business_name}
+            </h3>
+            {business.listing_tier === "premium" && (
+              <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0" />
+            )}
+          </div>
 
           {/* Address */}
           {business.address_line1 && (
