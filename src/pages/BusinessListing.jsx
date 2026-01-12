@@ -373,18 +373,18 @@ export default function BusinessListing() {
               </div>
             </div>
 
-            {/* Deals */}
-            {deals.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <DealsSection deals={deals} />
-              </div>
-            )}
-
             {/* Opening Hours */}
             {business.opening_hours_text && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Opening Hours</h2>
                 <p className="text-gray-700 whitespace-pre-line">{business.opening_hours_text}</p>
+              </div>
+            )}
+
+            {/* Deals / Sales */}
+            {deals.length > 0 && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <DealsSection deals={deals} />
               </div>
             )}
 
