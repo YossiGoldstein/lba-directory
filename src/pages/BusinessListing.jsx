@@ -11,7 +11,8 @@ import {
   Star, 
   Heart, 
   Share2,
-  AlertCircle
+  AlertCircle,
+  MapPin
 } from "lucide-react";
 import ContactCard from "../components/business/ContactCard";
 import ReviewCard from "../components/business/ReviewCard";
