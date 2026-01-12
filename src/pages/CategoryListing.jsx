@@ -292,7 +292,7 @@ export default function CategoryListing() {
 
   return (
     <div className="min-h-screen bg-blue-50">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
           <Link
@@ -341,7 +341,7 @@ export default function CategoryListing() {
               </div>
 
               {matchedBusinesses.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {matchedBusinesses.map((business) => (
                     <BusinessCard
                       key={business.id}
@@ -446,9 +446,9 @@ export default function CategoryListing() {
 
         {/* Default View - Businesses */}
         {!searchResults && !isSearching && (
-          <div className="flex gap-8">
+          <div className="flex gap-0">
             {/* Listings Column */}
-            <div className="flex-[0_0_calc(100%-650px)]">
+            <div className="flex-1 pr-8">
             {/* Info Block */}
             {categoryBusinesses.length > 0 && (
               <div className="bg-cyan-50 rounded-lg p-4 mb-4 border border-cyan-200">
@@ -498,7 +498,7 @@ export default function CategoryListing() {
 
             {!businessesLoading && displayedBusinesses.length > 0 && (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {displayedBusinesses.map((business) => (
                     <BusinessCard
                       key={business.id}
@@ -556,9 +556,9 @@ export default function CategoryListing() {
             )}
           </div>
 
-          {/* Map Column - Fixed on desktop */}
-          <div className="hidden lg:block w-[600px]">
-            <div className="sticky top-24 h-[calc(100vh-7rem)]">
+          {/* Map Column - Fixed on desktop, edge to edge */}
+          <div className="hidden lg:block w-[50%] max-w-[800px]">
+            <div className="sticky top-24 h-[calc(100vh-7rem)] -mr-8">
               <BusinessMap businesses={businessesToMap} />
             </div>
           </div>
