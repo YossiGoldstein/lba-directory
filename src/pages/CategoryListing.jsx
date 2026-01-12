@@ -440,8 +440,8 @@ export default function CategoryListing() {
             </div>
 
         {/* Map Column for Search Results - Sticky on desktop */}
-        <div className="hidden lg:block w-[45%] max-w-[900px]">
-          <div className="sticky top-20 h-[calc(100vh-5rem)]">
+        <div className="hidden lg:block w-[35%] max-w-[600px] flex-shrink-0 pr-4">
+          <div className="sticky top-20 h-[calc(100vh-5rem)] rounded-xl overflow-hidden shadow-lg border border-gray-200">
             <BusinessMap businesses={businessesToMap} />
           </div>
         </div>
@@ -450,9 +450,9 @@ export default function CategoryListing() {
 
         {/* Default View - Businesses */}
         {!searchResults && !isSearching && (
-          <div className="flex gap-0">
-            {/* Listings Column */}
-            <div className="flex-1 px-4 sm:px-6 lg:px-8">
+          <div className="flex gap-6">
+            {/* Listings Column - Takes more space for wide cards */}
+            <div className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8">
             {/* Info Block */}
             {categoryBusinesses.length > 0 && (
               <div className="bg-cyan-50 rounded-lg p-4 mb-4 border border-cyan-200">
@@ -560,9 +560,9 @@ export default function CategoryListing() {
             )}
           </div>
 
-          {/* Map Column - Sticky on desktop */}
-          <div className="hidden lg:block w-[45%] max-w-[900px]">
-            <div className="sticky top-20 h-[calc(100vh-5rem)]">
+          {/* Map Column - Sticky on desktop, narrower to give cards more space */}
+          <div className="hidden lg:block w-[35%] max-w-[600px] flex-shrink-0 pr-4">
+            <div className="sticky top-20 h-[calc(100vh-5rem)] rounded-xl overflow-hidden shadow-lg border border-gray-200">
               <BusinessMap businesses={businessesToMap} />
             </div>
           </div>
