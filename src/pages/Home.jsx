@@ -19,21 +19,26 @@ export default function Home() {
   const [matchedBusinesses, setMatchedBusinesses] = useState([]);
   const [conversation, setConversation] = useState(null);
   const [allBusinesses, setAllBusinesses] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const loadBusinesses = async () => {
+    const loadData = async () => {
       try {
-        const bizList = await base44.entities.Business.list();
+        const [bizList, catList] = await Promise.all([
+          base44.entities.Business.list(),
+          base44.entities.Category.list()
+        ]);
         const approved = bizList.filter(b => b.status === "approved");
         console.log("✅ Loaded businesses:", approved.length);
         setAllBusinesses(approved);
+        setCategories(catList.filter(c => c.is_active));
       } catch (error) {
-        console.error("❌ Failed to load businesses:", error);
+        console.error("❌ Failed to load data:", error);
       }
     };
-    loadBusinesses();
+    loadData();
   }, []);
 
   useEffect(() => {
@@ -58,24 +63,40 @@ export default function Home() {
     setAgentResponse("");
     setMatchedBusinesses([]);
 
-    // Step 1: Direct business lookup
+    // Step 1: Direct business lookup - search in name, description, tags, and category
     const query = searchQuery.toLowerCase().trim();
     const directMatches = allBusinesses.filter(business => {
       const name = (business.business_name || "").toLowerCase();
       const slug = (business.slug || "").toLowerCase();
+      const shortDesc = (business.short_description || "").toLowerCase();
+      const longDesc = (business.long_description || "").toLowerCase();
+      const tags = business.tags ? business.tags.map(t => t.toLowerCase()).join(" ") : "";
       
-      // Exact match
+      // Get category name for this business
+      const category = categories.find(c => c.id === business.category_id);
+      const categoryName = category ? category.name.toLowerCase() : "";
+      
+      // Exact match in name
       if (name === query || slug === query) return true;
       
-      // Contains match
+      // Contains match in name
       if (name.includes(query) || query.includes(name)) return true;
       
-      // Word match - if query has multiple words, check if most appear in business name
+      // Search in descriptions
+      if (shortDesc.includes(query) || longDesc.includes(query)) return true;
+      
+      // Search in tags
+      if (tags.includes(query)) return true;
+      
+      // Search in category name
+      if (categoryName.includes(query)) return true;
+      
+      // Word match - if query has multiple words, check if most appear in business content
       const queryWords = query.split(/\s+/).filter(w => w.length > 2);
-      const nameWords = name.split(/\s+/);
+      const contentWords = `${name} ${shortDesc} ${longDesc} ${tags} ${categoryName}`.split(/\s+/);
       if (queryWords.length >= 2) {
         const matchedWords = queryWords.filter(qw => 
-          nameWords.some(nw => nw.includes(qw) || qw.includes(nw))
+          contentWords.some(cw => cw.includes(qw) || qw.includes(cw))
         );
         if (matchedWords.length >= Math.ceil(queryWords.length * 0.7)) return true;
       }
