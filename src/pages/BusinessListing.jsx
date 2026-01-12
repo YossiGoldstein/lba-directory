@@ -133,7 +133,7 @@ export default function BusinessListing() {
       stars.push(
         <Star
           key={i}
-          className={`w-5 h-5 ${
+          className={`w-4 h-4 sm:w-5 sm:h-5 ${
             i <= Math.round(rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
           }`}
         />
@@ -225,24 +225,24 @@ export default function BusinessListing() {
                   {business.business_name}
                 </h1>
 
-                {/* Ratings Row */}
+                {/* Ratings Row - Single Line */}
                 {business.reviews_count > 0 && (
-                  <div className="flex items-center gap-4 mb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-white font-medium drop-shadow">General:</span>
-                      <div className="flex gap-1">
+                  <div className="flex items-center gap-3 sm:gap-4 mb-3 flex-wrap">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-white text-sm sm:text-base font-medium drop-shadow">General:</span>
+                      <div className="flex gap-0.5">
                         {renderStars(business.general_rating || 0)}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-white font-medium drop-shadow">Servicing:</span>
-                      <div className="flex gap-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-white text-sm sm:text-base font-medium drop-shadow">Servicing:</span>
+                      <div className="flex gap-0.5">
                         {renderStars(business.servicing_rating || 0)}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-white font-medium drop-shadow">Pricing:</span>
-                      <div className="flex gap-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-white text-sm sm:text-base font-medium drop-shadow">Pricing:</span>
+                      <div className="flex gap-0.5">
                         {renderStars(business.pricing_rating || 0)}
                       </div>
                     </div>
