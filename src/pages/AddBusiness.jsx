@@ -15,9 +15,10 @@ import Step5Gallery from "../components/add-business/Step5Gallery";
 import Step6Deals from "../components/add-business/Step6Deals";
 import Step7Optimization from "../components/add-business/Step7Optimization";
 import Step8Review from "../components/add-business/Step8Review";
+import Step9Upgrade from "../components/add-business/Step9Upgrade";
 import { toast } from "sonner";
 
-const TOTAL_STEPS = 9;
+const TOTAL_STEPS = 10;
 
 export default function AddBusiness() {
   const navigate = useNavigate();
@@ -45,6 +46,7 @@ export default function AddBusiness() {
     opening_hours_json: null,
     use_structured_hours: true,
     logo_url: "",
+    cover_image_url: "",
     gallery_images: [],
     deals: [],
   });
@@ -144,7 +146,11 @@ export default function AddBusiness() {
 
     if (currentStep === 5) {
       if (!formData.logo_url) {
-        toast.error("Please upload a business logo before proceeding");
+        toast.error("צריך להעלות לוגו");
+        return;
+      }
+      if (!formData.cover_image_url) {
+        toast.error("צריך להעלות תמונת שער");
         return;
       }
     }
@@ -393,6 +399,8 @@ export default function AddBusiness() {
         return <Step7Optimization data={formData} onChange={setFormData} />;
       case 8:
         return <Step8Review data={formData} />;
+      case 9:
+        return <Step9Upgrade data={formData} onChange={setFormData} />;
       default:
         return null;
     }
