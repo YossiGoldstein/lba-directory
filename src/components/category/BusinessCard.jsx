@@ -109,11 +109,12 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
           {/* Address */}
           <div className="flex items-start gap-1.5 text-xs text-gray-500 mb-1">
             <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-gray-400" />
-            <span className="line-clamp-1">
+            <span className="line-clamp-2">
               {business.address_line1 ? (
                 <>
                   {business.address_line1}
                   {business.city && `, ${business.city}`}
+                  {business.state && `, ${business.state}`}
                 </>
               ) : (
                 business.city || "Lakewood, NJ"
