@@ -266,42 +266,45 @@ export default function BusinessListing() {
                     <Badge className="bg-yellow-500 text-white">Featured</Badge>
                   )}
                 </div>
-
-                {/* Ratings Row */}
-                {business.reviews_count > 0 && (
-                  <div className="flex items-center gap-3 sm:gap-4 mt-3 flex-wrap">
-                    <div className="flex items-center gap-2">
-                      <span className="text-white text-sm sm:text-base font-medium drop-shadow">General:</span>
-                      <div className="flex gap-0.5">
-                        {renderStars(business.general_rating || 0)}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-white text-sm sm:text-base font-medium drop-shadow">Servicing:</span>
-                      <div className="flex gap-0.5">
-                        {renderStars(business.servicing_rating || 0)}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-white text-sm sm:text-base font-medium drop-shadow">Pricing:</span>
-                      <div className="flex gap-0.5">
-                        {renderStars(business.pricing_rating || 0)}
-                      </div>
-                    </div>
-                  </div>
-                )}
                 </div>
                 </div>
 
-                {/* Favorite Button - Full width on mobile, auto on desktop */}
-                <Button 
-                size="lg"
-                variant="outline" 
-                className="bg-white/90 hover:bg-white border-2 border-white w-full md:w-auto md:self-end"
-                >
-                <Heart className="w-5 h-5 mr-2" />
-                Add to Favorites
-                </Button>
+                {/* Bottom Row - Ratings and Favorite Button */}
+                <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-4 w-full md:w-auto">
+                  {/* Ratings Row */}
+                  {business.reviews_count > 0 && (
+                    <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+                      <div className="flex items-center gap-2">
+                        <span className="text-white text-sm sm:text-base font-medium drop-shadow">General:</span>
+                        <div className="flex gap-0.5">
+                          {renderStars(business.general_rating || 0)}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-white text-sm sm:text-base font-medium drop-shadow">Servicing:</span>
+                        <div className="flex gap-0.5">
+                          {renderStars(business.servicing_rating || 0)}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-white text-sm sm:text-base font-medium drop-shadow">Pricing:</span>
+                        <div className="flex gap-0.5">
+                          {renderStars(business.pricing_rating || 0)}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Favorite Button */}
+                  <Button 
+                  size="lg"
+                  variant="outline" 
+                  className="bg-white/90 hover:bg-white border-2 border-white w-full md:w-auto"
+                  >
+                  <Heart className="w-5 h-5 mr-2" />
+                  Add to Favorites
+                  </Button>
+                </div>
                 </div>
                 </div>
                 </div>
