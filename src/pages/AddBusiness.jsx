@@ -207,10 +207,11 @@ export default function AddBusiness() {
         // Create checkout session
         const response = await base44.functions.invoke('createCheckoutSession', {
           listing_tier: formData.listing_tier,
-          business_data: businessData
+          business_data: businessData,
+        listing_tier: formData.listing_tier
         });
 
-        if (response.data.url) {
+        if (response.data?.url) {
           // Redirect to Stripe Checkout
           window.location.href = response.data.url;
           return;
@@ -349,11 +350,11 @@ export default function AddBusiness() {
       localStorage.removeItem("addBusinessFormData");
 
       // Show success message
-      toast.success("Business submitted for approval successfully!");
+      toast.success("🎉 העסק שלכם נשמר בהצלחה!");
 
-      // Redirect to business dashboard with success flag
+      // Redirect to success page
       setTimeout(() => {
-        navigate(createPageUrl("BusinessDashboard") + "?submitted=true");
+        navigate(createPageUrl("SubmissionSuccess") + `?businessName=${encodeURIComponent(formData.business_name)}`);
       }, 1500);
 
     } catch (error) {
