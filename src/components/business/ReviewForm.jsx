@@ -31,6 +31,9 @@ export default function ReviewForm({ businessId, onReviewSubmitted }) {
         pricing_rating: pricingRating,
       });
 
+      // Update business ratings
+      await base44.functions.invoke('updateBusinessRatings', { businessId });
+
       toast.success("Review submitted successfully!");
       
       // Reset form
