@@ -460,15 +460,7 @@ export default function BusinessListing() {
           </div>
         </div>
 
-        {/* Related Businesses */}
-        {relatedBusinesses.length > 0 && (
-          <div className="mt-12">
-            <RelatedBusinesses 
-              businesses={relatedBusinesses} 
-              categoryName={category?.name || ""}
-            />
-          </div>
-        )}
+
       </div>
 
       {/* Image Lightbox */}
