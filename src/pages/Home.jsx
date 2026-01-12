@@ -236,7 +236,7 @@ export default function Home() {
     base44.auth.logout("/");
   };
 
-  const categories = [
+  const categoryIcons = [
     { id: 1, name: "Food", slug: "food", imageUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/f970f0592_goods.png", whiteFilter: true },
     { id: 2, name: "Apparel", slug: "apparel", icon: Shirt },
     { id: 3, name: "Services", slug: "services", icon: Briefcase },
@@ -449,7 +449,7 @@ export default function Home() {
 
             {/* Category Icons - Responsive: Grid on mobile, Single row on desktop */}
             <div className="grid grid-cols-5 gap-3 sm:gap-4 justify-items-center md:flex md:justify-center md:items-center md:gap-6 lg:gap-8 px-2 md:px-4">
-              {categories.map((category) => {
+              {categoryIcons.map((category) => {
                 const IconComponent = category.icon;
                 return (
                   <Link
