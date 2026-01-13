@@ -106,51 +106,19 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
 
           {/* Ratings Row */}
           {business.reviews_count > 0 && (
-            <div className="flex items-center gap-3 mb-2 text-xs">
-              <div className="flex items-center gap-1">
-                <span className="text-gray-500 font-medium">G:</span>
-                <div className="flex gap-0.5">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      className={`w-3 h-3 ${
-                        star <= Math.round(business.general_rating || 0)
-                          ? "text-yellow-400 fill-yellow-400"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="text-gray-500 font-medium">S:</span>
-                <div className="flex gap-0.5">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      className={`w-3 h-3 ${
-                        star <= Math.round(business.servicing_rating || 0)
-                          ? "text-yellow-400 fill-yellow-400"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="text-gray-500 font-medium">P:</span>
-                <div className="flex gap-0.5">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      className={`w-3 h-3 ${
-                        star <= Math.round(business.pricing_rating || 0)
-                          ? "text-yellow-400 fill-yellow-400"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-gray-500 text-xs font-medium">Reviews:</span>
+              <div className="flex gap-0.5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`w-3 h-3 ${
+                      star <= Math.round(business.general_rating || 0)
+                        ? "text-yellow-400 fill-yellow-400"
+                        : "text-gray-300"
+                    }`}
+                  />
+                ))}
               </div>
             </div>
           )}
