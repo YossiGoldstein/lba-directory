@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     }
 
     const appId = Deno.env.get("BASE44_APP_ID");
-    const baseUrl = appId ? `https://${appId}.base44.app` : window.location.origin;
+    const baseUrl = `https://${appId}.base44.app`;
     const dashboardUrl = `${baseUrl}/#/business-dashboard`;
     const businessUrl = `${baseUrl}/#/business-listing?id=${business.id}`;
 
