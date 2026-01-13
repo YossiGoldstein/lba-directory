@@ -31,8 +31,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'No email address found for business' }, { status: 404 });
     }
 
-    const dashboardUrl = `${Deno.env.get("BASE44_APP_ID") ? `https://${Deno.env.get("BASE44_APP_ID")}.lakewoodlba.com` : 'https://lakewoodlba.com'}/business-dashboard`;
-    const businessUrl = `${Deno.env.get("BASE44_APP_ID") ? `https://${Deno.env.get("BASE44_APP_ID")}.lakewoodlba.com` : 'https://lakewoodlba.com'}/business-listing?id=${business.id}`;
+    const appId = Deno.env.get("BASE44_APP_ID");
+    const baseUrl = appId ? `https://${appId}.base44.app` : window.location.origin;
+    const dashboardUrl = `${baseUrl}/#/business-dashboard`;
+    const businessUrl = `${baseUrl}/#/business-listing?id=${business.id}`;
 
     // Send approval email to business email
     await base44.integrations.Core.SendEmail({
@@ -40,19 +42,19 @@ Deno.serve(async (req) => {
       subject: "🎉 Your Business Has Been Approved! - LBA Directory",
       body: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #10b981;">Congratulations! 🎉</h2>
+          <h2 style="color: #10b981;">Your Business Has Been Approved</h2>
           
-          <p>We're excited to let you know that your business <strong>"${business.business_name}"</strong> has been approved and is now live on the directory!</p>
+          <p>Your business <strong>"${business.business_name}"</strong> has been approved and is now live on LBA Directory.</p>
           
           <div style="background: #d1fae5; padding: 20px; border-radius: 8px; margin: 20px 0; border: 2px solid #10b981;">
-            <h3 style="margin-top: 0; color: #047857;">✅ Your Business Details:</h3>
+            <h3 style="margin-top: 0; color: #047857;">Your Business Details:</h3>
             <p><strong>Business Name:</strong> ${business.business_name}</p>
             <p><strong>Phone:</strong> ${business.phone}</p>
             <p><strong>Address:</strong> ${business.address_line1}, ${business.city}</p>
             <p><strong>View Your Page:</strong> <a href="${businessUrl}" target="_blank" style="color: #0891b2; text-decoration: none;">Click here to see your listing</a></p>
           </div>
           
-          <p><strong>🚀 What's Next?</strong></p>
+          <p><strong>What's Next?</strong></p>
           <ul style="margin: 10px 0; padding-left: 20px;">
             <li>Customers can now find you in the directory</li>
             <li>You can manage your business through the dashboard</li>
@@ -61,7 +63,7 @@ Deno.serve(async (req) => {
           </ul>
           
           <div style="background: #ede9fe; border: 2px solid #a78bfa; padding: 20px; border-radius: 8px; margin: 25px 0;">
-            <h3 style="margin-top: 0; color: #5b21b6;">💼 Manage Your Business</h3>
+            <h3 style="margin-top: 0; color: #5b21b6;">Manage Your Business</h3>
             <div style="text-align: center; margin: 20px 0;">
               <a href="${dashboardUrl}" 
                  style="display: inline-block; background: #0891b2; color: white; padding: 12px 30px; 
@@ -72,23 +74,23 @@ Deno.serve(async (req) => {
           </div>
           
           <div style="background: #fef3c7; border: 2px solid #f59e0b; padding: 20px; border-radius: 8px; margin: 25px 0;">
-            <h3 style="margin-top: 0; color: #92400e;">🌟 Want More Visibility?</h3>
-            <p>Want to succeed even more? We offer:</p>
+            <h3 style="margin-top: 0; color: #92400e;">Want More Visibility?</h3>
+            <p>We offer additional services:</p>
             <ul style="margin: 10px 0; padding-left: 20px;">
-              <li>📱 Upgrade to <strong>Pro</strong> - Priority ranking and unlimited images</li>
-              <li>🎨 <strong>Logo Design</strong> - Professional design for your business</li>
-              <li>💻 <strong>Website Building</strong> - Your own website with online ordering</li>
-              <li>🎥 <strong>Promotional Videos</strong> - Professional video for your business</li>
-              <li>📊 <strong>Marketing Consulting</strong> - Help promoting your business</li>
+              <li>Upgrade to Pro - Priority ranking and unlimited images</li>
+              <li>Logo Design - Professional design for your business</li>
+              <li>Website Building - Your own website with online ordering</li>
+              <li>Promotional Videos - Professional video for your business</li>
+              <li>Marketing Consulting - Help promoting your business</li>
             </ul>
             <p><strong>Contact us!</strong></p>
           </div>
           
           <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 25px 0;">
             <p style="margin: 0; text-align: center; color: #6b7280;">
-              <strong>📞 Contact Us:</strong><br>
-              📧 office@lbadirectory.com<br>
-              📱 732-600-1260 (WhatsApp & Phone)<br>
+              <strong>Contact Us:</strong><br>
+              Email: office@lbadirectory.com<br>
+              Phone: 732-600-1260<br>
             </p>
           </div>
           
