@@ -209,7 +209,7 @@ export default function BusinessListing() {
         />
         
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/80"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/85"></div>
         
         {/* Status Badges */}
         <div className="absolute inset-0 pointer-events-none">
