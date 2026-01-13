@@ -334,9 +334,9 @@ export default function CategoryListing() {
 
         {/* Search Results */}
         {searchResults && !isSearching && (
-          <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-16rem)]">
             {/* Business Results Column - Scrollable */}
-            <div className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 overflow-y-auto">
+            <div className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 overflow-y-auto h-full">
               <div className="mb-6">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
                   {matchedBusinesses.length} Result{matchedBusinesses.length !== 1 ? 's' : ''} Found
@@ -401,7 +401,7 @@ export default function CategoryListing() {
               </div>
 
               {/* AI Assistant Panel - Desktop (Below Results) */}
-              <div className="hidden lg:block mt-8 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+              <div className="hidden lg:block mt-8 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden mb-8">
                 <div className="p-6 bg-gradient-to-r from-cyan-50 to-blue-50">
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -438,9 +438,9 @@ export default function CategoryListing() {
               </div>
             </div>
 
-            {/* Map Column for Search Results - Sticky on desktop */}
-            <div className="hidden lg:block w-[40%] max-w-[600px] flex-shrink-0 pr-4">
-              <div className="sticky top-20 h-[calc(100vh-5rem)] rounded-xl overflow-hidden shadow-lg border border-gray-200">
+            {/* Map Column for Search Results - Fixed position */}
+            <div className="hidden lg:block w-[40%] max-w-[600px] flex-shrink-0 pr-4 h-full">
+              <div className="h-full rounded-xl overflow-hidden shadow-lg border border-gray-200">
                 <BusinessMap businesses={businessesToMap} />
               </div>
             </div>
@@ -449,9 +449,9 @@ export default function CategoryListing() {
 
         {/* Default View - Businesses */}
         {!searchResults && !isSearching && (
-          <div className="flex gap-6">
+          <div className="flex gap-6 h-[calc(100vh-16rem)]">
             {/* Listings Column - Takes more space for wide cards */}
-            <div className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8">
+            <div className="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 overflow-y-auto h-full">
             {/* Info Block */}
             {categoryBusinesses.length > 0 && (
               <div className="bg-cyan-50 rounded-lg p-4 mb-4 border border-cyan-200">
@@ -549,9 +549,9 @@ export default function CategoryListing() {
             )}
           </div>
 
-          {/* Map Column - Sticky on desktop, narrower to give cards more space */}
-          <div className="hidden lg:block w-[32%] max-w-[550px] flex-shrink-0 pr-4">
-            <div className="sticky top-20 h-[calc(100vh-5rem)] rounded-xl overflow-hidden shadow-lg border border-gray-200">
+          {/* Map Column - Fixed position */}
+          <div className="hidden lg:block w-[40%] max-w-[600px] flex-shrink-0 pr-4 h-full">
+            <div className="h-full rounded-xl overflow-hidden shadow-lg border border-gray-200">
               <BusinessMap businesses={businessesToMap} />
             </div>
           </div>
