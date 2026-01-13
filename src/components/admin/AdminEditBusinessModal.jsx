@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { X, Upload, Loader2 } from "lucide-react";
+import { X, Upload, Loader2, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminEditBusinessModal({ business, isOpen, onClose, onSave }) {
@@ -161,6 +161,17 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
     }
 
     setFormData(updatedData);
+  };
+
+  const handleSetAsCover = (index) => {
+    const newGallery = [...formData.gallery_images];
+    const [coverImage] = newGallery.splice(index, 1);
+    newGallery.unshift(coverImage);
+    setFormData({
+      ...formData,
+      gallery_images: newGallery,
+    });
+    toast.success("Cover image updated!");
   };
 
   return (
@@ -397,6 +408,9 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
 
               <div>
                 <Label>Gallery Images</Label>
+                <p className="text-sm text-gray-500 mt-1 mb-3">
+                  The first image will be used as the cover image on the business page
+                </p>
                 <div className="mt-2">
                   <input
                     type="file"
@@ -431,23 +445,49 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
                     </Button>
                   </label>
 
-                  <div className="grid grid-cols-4 gap-3">
-                    {(formData.gallery_images || []).map((imageUrl, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={imageUrl}
-                          alt={`Gallery ${index + 1}`}
-                          className="w-full aspect-square object-cover rounded-lg border"
-                        />
-                        <button
-                          onClick={() => handleRemoveImage(index)}
-                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                  {(formData.gallery_images || []).length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      No images uploaded yet
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-4 gap-3">
+                      {(formData.gallery_images || []).map((imageUrl, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={imageUrl}
+                            alt={`Gallery ${index + 1}`}
+                            className={`w-full aspect-square object-cover rounded-lg border-2 ${
+                              index === 0 ? 'border-cyan-500' : 'border-gray-200'
+                            }`}
+                          />
+                          {index === 0 && (
+                            <div className="absolute top-2 left-2 bg-cyan-500 text-white text-xs px-2 py-1 rounded">
+                              Cover
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            {index !== 0 && (
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => handleSetAsCover(index)}
+                                className="mr-1"
+                              >
+                                <ImageIcon className="w-3 h-3 mr-1" />
+                                Set as Cover
+                              </Button>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => handleRemoveImage(index)}
+                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
