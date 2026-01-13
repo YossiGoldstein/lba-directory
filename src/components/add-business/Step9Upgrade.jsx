@@ -24,8 +24,8 @@ export default function Step9Upgrade({ data, onChange }) {
               <CardTitle>Free</CardTitle>
               <Badge className="bg-gray-100 text-gray-800">Current</Badge>
             </div>
-            <p className="text-3xl font-bold text-gray-900 mt-2">₪0</p>
-            <p className="text-sm text-gray-500">לחודש</p>
+            <p className="text-3xl font-bold text-gray-900 mt-2">$0</p>
+            <p className="text-sm text-gray-500">per month</p>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-3">
@@ -60,8 +60,8 @@ export default function Step9Upgrade({ data, onChange }) {
               </div>
               {data.listing_tier === "pro" && <Badge className="bg-cyan-100 text-cyan-800">Selected</Badge>}
             </div>
-            <p className="text-3xl font-bold text-gray-900 mt-2">₪99</p>
-            <p className="text-sm text-gray-500">לחודש</p>
+            <p className="text-3xl font-bold text-gray-900 mt-2">$99</p>
+            <p className="text-sm text-gray-500">per month</p>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-3 mb-4">
