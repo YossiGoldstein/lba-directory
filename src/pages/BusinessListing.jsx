@@ -211,58 +211,7 @@ export default function BusinessListing() {
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/85"></div>
         
-        {/* Status Badges */}
-        <div className="absolute inset-0 pointer-events-none">
-          {/* Open/Closed - Top Left */}
-          {business.opening_hours_json && (
-            <div className={`absolute top-4 left-4 px-3 py-1.5 rounded-lg text-sm font-bold ${
-              (() => {
-                const now = new Date();
-                const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-                const hours = business.opening_hours_json[dayNames[now.getDay()]];
-                if (!hours || hours.closed) return 'bg-red-500 text-white';
-                const currentTime = now.getHours() * 60 + now.getMinutes();
-                const [openHour, openMin] = hours.open.split(':').map(Number);
-                const [closeHour, closeMin] = hours.close.split(':').map(Number);
-                const openTime = openHour * 60 + openMin;
-                const closeTime = closeHour * 60 + closeMin;
-                return (currentTime >= openTime && currentTime <= closeTime) ? 'bg-green-500 text-white' : 'bg-red-500 text-white';
-              })()
-            }`}>
-              {(() => {
-                const now = new Date();
-                const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-                const hours = business.opening_hours_json[dayNames[now.getDay()]];
-                if (!hours || hours.closed) return 'CLOSED';
-                const currentTime = now.getHours() * 60 + now.getMinutes();
-                const [openHour, openMin] = hours.open.split(':').map(Number);
-                const [closeHour, closeMin] = hours.close.split(':').map(Number);
-                const openTime = openHour * 60 + openMin;
-                const closeTime = closeHour * 60 + closeMin;
-                return (currentTime >= openTime && currentTime <= closeTime) ? 'OPEN' : 'CLOSED';
-              })()}
-            </div>
-          )}
-          
-          {/* Tier & Deal Badges - Top Left */}
-          <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-            {deals.length > 0 && (
-              <div className="bg-red-600/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-sm font-bold">
-                SALE
-              </div>
-            )}
-            {business.listing_tier === 'pro' && (
-              <div className="bg-blue-600/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-sm font-bold">
-                PRO
-              </div>
-            )}
-            {business.listing_tier === 'premium' && (
-              <div className="bg-purple-600/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-sm font-bold">
-                PREMIUM
-              </div>
-            )}
-          </div>
-        </div>
+
 
         {/* Business Info Overlay - Bottom */}
         <div className="absolute bottom-0 left-0 right-0 pb-8">
@@ -287,7 +236,7 @@ export default function BusinessListing() {
                     {business.business_name}
                   </h1>
                   {business.listing_tier === 'premium' && (
-                    <svg className="w-8 h-8 text-blue-400 flex-shrink-0 drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-7 h-7 sm:w-8 sm:h-8 text-blue-400 flex-shrink-0 drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                     </svg>
                   )}
