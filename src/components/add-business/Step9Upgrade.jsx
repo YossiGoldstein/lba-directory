@@ -8,10 +8,10 @@ export default function Step9Upgrade({ data, onChange }) {
     <div className="space-y-6">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          האם אתם מעוניינים לשדרג את התוכנית שלכם?
+          Would you like to upgrade your plan?
         </h2>
         <p className="text-gray-600">
-          בחרו התוכנית המתאימה ביותר לעסק שלכם
+          Choose the plan that best fits your business
         </p>
       </div>
 
@@ -21,8 +21,8 @@ export default function Step9Upgrade({ data, onChange }) {
           onClick={() => onChange({ ...data, listing_tier: "free" })}>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>חינם</CardTitle>
-              <Badge className="bg-gray-100 text-gray-800">עכשיו זה</Badge>
+              <CardTitle>Free</CardTitle>
+              <Badge className="bg-gray-100 text-gray-800">Current</Badge>
             </div>
             <p className="text-3xl font-bold text-gray-900 mt-2">₪0</p>
             <p className="text-sm text-gray-500">לחודש</p>
@@ -31,19 +31,19 @@ export default function Step9Upgrade({ data, onChange }) {
             <div className="space-y-3">
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700">רישום בדיקטוריון</span>
+                <span className="text-gray-700">Directory listing</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700">הצגת 3 תמונות</span>
+                <span className="text-gray-700">Display up to 3 images</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700">דירוגים וביקורות</span>
+                <span className="text-gray-700">Ratings and reviews</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700">טופס יצירת קשר</span>
+                <span className="text-gray-700">Contact form</span>
               </div>
             </div>
           </CardContent>
@@ -58,35 +58,35 @@ export default function Step9Upgrade({ data, onChange }) {
                 <CardTitle>Pro</CardTitle>
                 <Zap className="w-5 h-5 text-yellow-500" />
               </div>
-              {data.listing_tier === "pro" && <Badge className="bg-cyan-100 text-cyan-800">בחור</Badge>}
+              {data.listing_tier === "pro" && <Badge className="bg-cyan-100 text-cyan-800">Selected</Badge>}
             </div>
             <p className="text-3xl font-bold text-gray-900 mt-2">₪99</p>
             <p className="text-sm text-gray-500">לחודש</p>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-3 mb-4">
-              <p className="text-sm font-semibold text-cyan-900">🎯 הטוב ביותר לעסקים קטנים</p>
+              <p className="text-sm font-semibold text-cyan-900">🎯 Best for small businesses</p>
             </div>
             <div className="space-y-3">
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700">כל היתרונות של חינם</span>
+                <span className="text-gray-700">All free plan benefits</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700">תמונות ללא הגבלה</span>
+                <span className="text-gray-700">Unlimited images</span>
               </div>
               <div className="flex items-start gap-3">
                 <TrendingUp className="w-5 h-5 text-cyan-600 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700">דירוג עדיפי בחיפוש</span>
+                <span className="text-gray-700">Priority ranking in search</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700">יצירת עסקאות וקופונים</span>
+                <span className="text-gray-700">Create deals and coupons</span>
               </div>
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700">ניתוח סטטיסטיקות</span>
+                <span className="text-gray-700">Analytics and statistics</span>
               </div>
             </div>
           </CardContent>
@@ -97,9 +97,9 @@ export default function Step9Upgrade({ data, onChange }) {
         <div className="flex gap-3">
           <Users className="w-6 h-6 text-blue-600 flex-shrink-0" />
           <div>
-            <h4 className="font-semibold text-gray-900 mb-2">💡 הצעה מיוחדת</h4>
+            <h4 className="font-semibold text-gray-900 mb-2">💡 Special Offer</h4>
             <p className="text-sm text-gray-700">
-              אם תשדרגו ל-Pro, אתם תקבלו את החודש הראשון ב-₪49 בלבד! ואחרי זה רק ₪99 לחודש.
+              Upgrade to Pro and get your first month for just $49! After that, only $99/month.
             </p>
           </div>
         </div>
@@ -107,7 +107,7 @@ export default function Step9Upgrade({ data, onChange }) {
 
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
         <p className="text-sm text-gray-700">
-          <strong>📝 הערה:</strong> אתם תוכלו לשדרג או לשנות את התוכנית שלכם בכל עת מדוד לוח הבקרה שלכם.
+          <strong>📝 Note:</strong> You can upgrade or change your plan anytime from your dashboard.
         </p>
       </div>
     </div>
