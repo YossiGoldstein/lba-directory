@@ -46,6 +46,9 @@ export default function BusinessesTab({ onUpdate }) {
   };
 
   const getOwnerName = (createdBy) => {
+    if (createdBy === "office@lbadirectory.com") {
+      return "LBA Directory";
+    }
     const owner = users.find(u => u.email === createdBy);
     return owner ? owner.full_name : createdBy;
   };

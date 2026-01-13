@@ -42,12 +42,12 @@ export default function BusinessDashboard() {
   }, []);
 
   const { data: businesses = [], isLoading: businessesLoading, refetch: refetchBusinesses } = useQuery({
-    queryKey: ["my-businesses", user?.email],
+    queryKey: ["my-businesses", user?.id],
     queryFn: async () => {
-      if (!user?.email) return [];
+      if (!user?.id) return [];
       return await base44.entities.Business.filter({ created_by: user.email });
     },
-    enabled: !!user?.email,
+    enabled: !!user?.id,
   });
 
   const { data: categories = [] } = useQuery({
