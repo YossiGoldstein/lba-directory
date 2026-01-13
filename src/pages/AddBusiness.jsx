@@ -146,11 +146,11 @@ export default function AddBusiness() {
 
     if (currentStep === 5) {
       if (!formData.logo_url) {
-        toast.error("צריך להעלות לוגו");
+        toast.error("Please upload a business logo before proceeding");
         return;
       }
       if (!formData.cover_image_url) {
-        toast.error("צריך להעלות תמונת שער");
+        toast.error("Please upload a cover image before proceeding");
         return;
       }
     }
@@ -282,75 +282,75 @@ export default function AddBusiness() {
       try {
         await base44.integrations.Core.SendEmail({
           to: user.email,
-          subject: "✅ הרישום שלכם התקבל - LBA Directory",
+          subject: "✅ Your Submission Was Received - LBA Directory",
           body: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; direction: rtl;">
-              <h2 style="color: #0891b2;">שלום ${user.full_name}! 👋</h2>
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #0891b2;">Hello ${user.full_name}! 👋</h2>
 
-              <p>תודה רבה שנרשמתם ל-<strong>LBA Directory</strong>!</p>
+              <p>Thank you for submitting to <strong>LBA Directory</strong>!</p>
 
-              <p>קיבלנו את הרישום שלכם בהצלחה:</p>
+              <p>We have successfully received your submission:</p>
 
               <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="margin-top: 0; color: #0891b2;">📋 פרטי הרישום:</h3>
-                <p><strong>שם העסק:</strong> ${formData.business_name}</p>
-                <p><strong>קטגוריה:</strong> ${formData.category_name}</p>
-                <p><strong>טלפון:</strong> ${formData.phone}</p>
-                <p><strong>כתובת:</strong> ${formData.address_line1}, ${formData.city}</p>
+                <h3 style="margin-top: 0; color: #0891b2;">📋 Submission Details:</h3>
+                <p><strong>Business Name:</strong> ${formData.business_name}</p>
+                <p><strong>Category:</strong> ${formData.category_name}</p>
+                <p><strong>Phone:</strong> ${formData.phone}</p>
+                <p><strong>Address:</strong> ${formData.address_line1}, ${formData.city}</p>
               </div>
 
-              <p><strong>⏳ מה קורה עכשיו?</strong></p>
-              <p>הצוות שלנו יבדוק את פרטי העסק שלכם תוך <strong>1-2 ימי עסקים</strong>. לאחר האישור, העסק שלכם יהיה חי בדיקטוריון!</p>
+              <p><strong>⏳ What Happens Next?</strong></p>
+              <p>Our team will review your business details within <strong>1-2 business days</strong>. Once approved, your business will be live on the directory!</p>
 
-              <p>אנחנו נשלח לכם אימייל ברגע שהעסק יאושר.</p>
+              <p>We'll send you an email as soon as your business is approved.</p>
 
               <div style="background: #ecfccb; border: 2px solid #84cc16; padding: 20px; border-radius: 8px; margin: 25px 0;">
-                <h3 style="margin-top: 0; color: #365314;">✏️ ניהול העסק שלכם</h3>
-                <p style="margin-bottom: 15px;">אתם יכולים לעדכן ולשנות את פרטי העסק בכל עת דרך לוח הבקרה שלנו.</p>
+                <h3 style="margin-top: 0; color: #365314;">✏️ Manage Your Business</h3>
+                <p style="margin-bottom: 15px;">You can update and modify your business details anytime through our dashboard.</p>
 
-                <p style="margin-bottom: 10px;"><strong>מה אתם יכולים לעשות בלוח הבקרה?</strong></p>
-                <ul style="margin: 10px 0; padding-right: 20px;">
-                  <li>✅ עדכון פרטי העסק (כתובת, טלפון, שעות)</li>
-                  <li>✅ הוספה ועריכה של תמונות</li>
-                  <li>✅ יצירה ועדכון של עסקאות וקופונים</li>
-                  <li>✅ צפייה בביקורות ותגובה ללקוחות</li>
-                  <li>✅ שימוש בעוזר AI לשיפור התיאור</li>
+                <p style="margin-bottom: 10px;"><strong>What can you do in the dashboard?</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                  <li>✅ Update business details (address, phone, hours)</li>
+                  <li>✅ Add and edit images</li>
+                  <li>✅ Create and update deals and coupons</li>
+                  <li>✅ View reviews and respond to customers</li>
+                  <li>✅ Use AI assistant to improve your description</li>
                 </ul>
 
                 <div style="text-align: center; margin-top: 20px;">
                   <a href="${dashboardUrl}" 
                      style="display: inline-block; background: #0891b2; color: white; padding: 12px 30px; 
                              text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                    לוח הבקרה שלי
+                    My Dashboard
                   </a>
                 </div>
               </div>
 
               <div style="background: #fef3c7; border: 2px solid #f59e0b; padding: 20px; border-radius: 8px; margin: 25px 0;">
-                <h3 style="margin-top: 0; color: #92400e;">🚀 רוצים לקדם את העסק שלכם?</h3>
-                <p>אנחנו מציעים שירותים נוספים:</p>
-                <ul style="margin: 10px 0; padding-right: 20px;">
-                  <li>🎨 בניית לוגו</li>
-                  <li>💻 בניית אתר</li>
-                  <li>🎥 סרטון תדמית</li>
-                  <li>📊 ייעוץ שיווקי</li>
+                <h3 style="margin-top: 0; color: #92400e;">🚀 Want to Promote Your Business?</h3>
+                <p>We offer additional services:</p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                  <li>🎨 Logo Design</li>
+                  <li>💻 Website Building</li>
+                  <li>🎥 Promotional Videos</li>
+                  <li>📊 Marketing Consulting</li>
                 </ul>
-                <p><strong>צרו איתנו קשר!</strong></p>
+                <p><strong>Contact us!</strong></p>
               </div>
 
               <p style="font-size: 14px; color: #6b7280; margin-top: 20px;">
-                💡 <strong>טיפ:</strong> אתם יכולים לגשת ללוח הבקרה בכל עת דרך ההתחברות לאתר.
+                💡 <strong>Tip:</strong> You can access the dashboard anytime by logging into the website.
               </p>
 
-              <p>אם יש לכם שאלות, אנחנו כאן כדי לעזור!</p>
+              <p>If you have any questions, we're here to help!</p>
 
-              <p style="margin-top: 30px;">בברכה,<br><strong>צוות LBA Directory</strong></p>
+              <p style="margin-top: 30px;">Best regards,<br><strong>LBA Directory Team</strong></p>
 
               <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
 
               <div style="text-align: center; font-size: 12px; color: #6b7280;">
-                <p>📞 <strong>צור קשר:</strong> office@lbadirectory.com | 732-600-1260</p>
-                <p style="margin-bottom: 0;">LBA Directory - דיקטוריון העסקים של לייקווד</p>
+                <p>📞 <strong>Contact:</strong> office@lbadirectory.com | 732-600-1260</p>
+                <p style="margin-bottom: 0;">LBA Directory - Lakewood's Business Directory</p>
               </div>
             </div>
           `
@@ -363,7 +363,7 @@ export default function AddBusiness() {
       localStorage.removeItem("addBusinessFormData");
 
       // Show success message
-      toast.success("🎉 העסק שלכם נשמר בהצלחה!");
+      toast.success("🎉 Business submitted successfully!");
 
       // Redirect to success page
       setTimeout(() => {
