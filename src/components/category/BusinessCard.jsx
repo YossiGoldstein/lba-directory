@@ -49,22 +49,22 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
 
-          {/* Status Badge Overlays - Top Left */}
-          {isOpen !== null && (
-            <div className="absolute top-2 left-2 z-10 pointer-events-none">
-              <div className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide text-white shadow-md ${isOpen ? 'bg-green-500' : 'bg-red-500'}`}>
-                {isOpen ? 'Open' : 'Closed'}
-              </div>
-            </div>
-          )}
-
-          {/* Status Badges - Top Right */}
-          <div className="absolute top-2 right-2 flex gap-1.5 z-10 pointer-events-none">
+          {/* Status Badges - Top Left */}
+          <div className="absolute top-2 left-2 flex gap-1.5 z-10 pointer-events-none">
             {hasDeals && (
               <div className="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md">
                 Sale
               </div>
             )}
+            {isOpen !== null && (
+              <div className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide text-white shadow-md ${isOpen ? 'bg-green-500' : 'bg-red-500'}`}>
+                {isOpen ? 'Open' : 'Closed'}
+              </div>
+            )}
+          </div>
+
+          {/* Tier Badges - Top Right */}
+          <div className="absolute top-2 right-2 flex gap-1.5 z-10 pointer-events-none">
             {isFeatured && (
               <div className="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md">
                 Featured
