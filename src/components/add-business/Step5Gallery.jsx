@@ -27,10 +27,10 @@ export default function Step5Gallery({ data, onChange }) {
         ...data,
         logo_url: file_url,
       });
-      toast.success("לוגו הועלה בהצלחה!");
+      toast.success("Logo uploaded successfully!");
     } catch (error) {
       console.error("Logo upload failed:", error);
-      toast.error("העלאת הלוגו נכשלה");
+      toast.error("Logo upload failed");
     } finally {
       setIsUploadingLogo(false);
       e.target.value = "";
@@ -49,10 +49,10 @@ export default function Step5Gallery({ data, onChange }) {
         ...data,
         cover_image_url: file_url,
       });
-      toast.success("תמונת שער הועלתה בהצלחה!");
+      toast.success("Cover image uploaded successfully!");
     } catch (error) {
       console.error("Cover upload failed:", error);
-      toast.error("העלאת תמונת השער נכשלה");
+      toast.error("Cover upload failed");
     } finally {
       setIsUploadingCover(false);
       e.target.value = "";
@@ -66,7 +66,7 @@ export default function Step5Gallery({ data, onChange }) {
 
     const totalWillBe = gallery.length + files.length;
     if (totalWillBe > maxGalleryImages) {
-      toast.error(`אתה יכול להעלות עד ${maxGalleryImages} תמונות בסך הכל`);
+      toast.error(`You can upload up to ${maxGalleryImages} images total`);
       return;
     }
 
@@ -82,10 +82,10 @@ export default function Step5Gallery({ data, onChange }) {
         ...data,
         gallery_images: [...gallery, ...uploadedUrls],
       });
-      toast.success(`${uploadedUrls.length} תמונ${uploadedUrls.length === 1 ? 'ה' : 'ות'} הועל${uploadedUrls.length === 1 ? 'תה' : 'ו'} בהצלחה`);
+      toast.success(`${uploadedUrls.length} image${uploadedUrls.length === 1 ? '' : 's'} uploaded successfully`);
     } catch (error) {
       console.error("Gallery upload failed:", error);
-      toast.error("העלאת התמונות נכשלה");
+      toast.error("Gallery upload failed");
     } finally {
       setIsUploadingGallery(false);
       e.target.value = "";
@@ -121,12 +121,12 @@ export default function Step5Gallery({ data, onChange }) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Building2 className="w-5 h-5 text-cyan-600" />
-            תמונה ראשונה: לוגו העסק (חובה)
+            Image 1: Business Logo (Required)
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-gray-600 mb-4">
-            העלו את הלוגו של העסק שלכם.
+            Upload your business logo.
           </p>
 
           {!logo ? (
@@ -148,9 +148,9 @@ export default function Step5Gallery({ data, onChange }) {
                     <Upload className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {isUploadingLogo ? "מעלה..." : "העלו לוגו"}
+                    {isUploadingLogo ? "Uploading..." : "Upload Logo"}
                   </h3>
-                  <p className="text-sm text-gray-600">לחצו כדי לבחור תמונה</p>
+                  <p className="text-sm text-gray-600">Click to choose an image</p>
                 </div>
               </label>
             </div>
@@ -174,7 +174,7 @@ export default function Step5Gallery({ data, onChange }) {
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span className="text-sm font-medium">לוגו הועלה בהצלחה</span>
+                <span className="text-sm font-medium">Logo uploaded successfully</span>
               </div>
             </div>
           )}
@@ -186,12 +186,12 @@ export default function Step5Gallery({ data, onChange }) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ImageIcon className="w-5 h-5 text-cyan-600" />
-            תמונה שניה: תמונת שער (חובה)
+            Image 2: Cover Image (Required)
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-gray-600 mb-4">
-            העלו תמונת שער של העסק שלכם - זו תהיה התמונה המרכזית שתופיע בדף העסק.
+            Upload a cover image for your business - this will be the main image on your business page.
           </p>
 
           {!cover ? (
@@ -213,9 +213,9 @@ export default function Step5Gallery({ data, onChange }) {
                     <Upload className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {isUploadingCover ? "מעלה..." : "העלו תמונת שער"}
+                    {isUploadingCover ? "Uploading..." : "Upload Cover Image"}
                   </h3>
-                  <p className="text-sm text-gray-600">לחצו כדי לבחור תמונה</p>
+                  <p className="text-sm text-gray-600">Click to choose an image</p>
                 </div>
               </label>
             </div>
@@ -239,7 +239,7 @@ export default function Step5Gallery({ data, onChange }) {
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span className="text-sm font-medium">תמונת שער הועלתה בהצלחה</span>
+                <span className="text-sm font-medium">Cover image uploaded successfully</span>
               </div>
             </div>
           )}
@@ -251,12 +251,12 @@ export default function Step5Gallery({ data, onChange }) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ImageIcon className="w-5 h-5 text-cyan-600" />
-            גלריית תמונות נוספות ({gallery.length}/{maxGalleryImages})
+            Additional Gallery Images ({gallery.length}/{maxGalleryImages})
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <p className="text-sm text-gray-600">
-            הוסיפו תמונות נוספות של העסק, המוצרים או השירותים שלכם {isPaid ? '(ללא הגבלה)' : '(עד 3 תמונות)'}.
+            Add more images of your business, products, or services {isPaid ? '(unlimited)' : '(up to 3 images)'}.
           </p>
 
           {gallery.length < maxGalleryImages && (
@@ -279,9 +279,9 @@ export default function Step5Gallery({ data, onChange }) {
                     <Upload className="w-8 h-8 text-gray-600" />
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {isUploadingGallery ? "מעלה תמונות..." : "הוסיפו תמונות"}
+                    {isUploadingGallery ? "Uploading images..." : "Add Images"}
                   </h3>
-                  <p className="text-sm text-gray-600">לחצו כדי לבחור או גררו תמונות</p>
+                  <p className="text-sm text-gray-600">Click to choose or drag images</p>
                 </div>
               </label>
             </div>
@@ -313,7 +313,7 @@ export default function Step5Gallery({ data, onChange }) {
           ) : (
             <div className="text-center py-8 text-gray-500">
               <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <p>עדיין לא הועלו תמונות</p>
+              <p>No images uploaded yet</p>
             </div>
           )}
         </CardContent>
