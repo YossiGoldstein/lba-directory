@@ -278,10 +278,10 @@ export default function AddBusiness() {
       // Get the full dashboard URL
       const dashboardUrl = `${window.location.origin}${createPageUrl("BusinessDashboard")}`;
 
-      // Send confirmation email
+      // Send confirmation email to business email
       try {
         await base44.integrations.Core.SendEmail({
-          to: user.email,
+          to: formData.email || user.email,
           subject: "✅ Your Submission Was Received - LBA Directory",
           body: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
