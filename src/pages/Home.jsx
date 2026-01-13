@@ -297,7 +297,7 @@ export default function Home() {
                   <div className="flex items-center gap-3">
                     <span className="text-lg text-white">Hello, {user.full_name}</span>
                     <Button variant="ghost" size="sm" asChild className="text-white hover:text-cyan-200 hover:bg-white/10 text-lg">
-                      <Link to={createPageUrl("UserDashboard")}>
+                      <Link to={createPageUrl(user.role === "admin" ? "AdminDashboard" : "UserDashboard")}>
                         <LayoutDashboard className="w-4 h-4 mr-2" />
                         Dashboard
                       </Link>
@@ -354,7 +354,7 @@ export default function Home() {
                   {user ? (
                     <div className="border-t border-white/20 pt-4 mt-2 flex flex-col gap-3">
                       <button 
-                        onClick={() => window.location.href = createPageUrl("UserDashboard")}
+                        onClick={() => window.location.href = createPageUrl(user.role === "admin" ? "AdminDashboard" : "UserDashboard")}
                         className="w-full bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors border border-white/40"
                       >
                         Dashboard
