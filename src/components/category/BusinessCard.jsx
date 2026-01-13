@@ -36,8 +36,8 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
   const hasDeals = hasActiveDeals === true;
 
   return (
-    <Link to={createPageUrl(`BusinessListing?id=${business.id}`)} className="block group">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300 overflow-hidden">
+    <Link to={createPageUrl(`BusinessListing?id=${business.id}`)} className="block group h-full">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300 overflow-hidden h-full flex flex-col">
         {/* Wide Cover Image - Banner Style */}
         <div className="relative w-full h-24 sm:h-28 bg-gray-100">
           <img
@@ -101,7 +101,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
         </div>
 
         {/* Content Section */}
-        <div className="pt-8 pb-3 px-4">
+        <div className="pt-8 pb-3 px-4 flex-1">
           {/* Business Name */}
           <div className="flex items-center gap-1.5 mb-2">
             <h3 className="text-base font-bold text-gray-900 group-hover:text-cyan-600 transition-colors line-clamp-1">
