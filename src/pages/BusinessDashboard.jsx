@@ -45,7 +45,8 @@ export default function BusinessDashboard() {
     queryKey: ["my-businesses", user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      return await base44.entities.Business.filter({ created_by: user.email });
+      const allBusinesses = await base44.entities.Business.list();
+      return allBusinesses.filter(b => b.created_by_id === user.id);
     },
     enabled: !!user?.id,
   });
