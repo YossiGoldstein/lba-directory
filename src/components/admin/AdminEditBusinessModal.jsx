@@ -450,7 +450,7 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
                       No images uploaded yet
                     </div>
                   ) : (
-                    <div className="grid grid-cols-4 gap-3">
+                    <div className="grid grid-cols-3 gap-4">
                       {(formData.gallery_images || []).map((imageUrl, index) => (
                         <div key={index} className="relative group">
                           <img
@@ -461,26 +461,24 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
                             }`}
                           />
                           {index === 0 && (
-                            <div className="absolute top-2 left-2 bg-cyan-500 text-white text-xs px-2 py-1 rounded">
-                              Cover
+                            <div className="absolute top-2 left-2 bg-cyan-500 text-white text-xs px-2 py-1 rounded font-semibold">
+                              Cover Image
                             </div>
                           )}
-                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
-                            {index !== 0 && (
-                              <Button
-                                size="sm"
-                                variant="secondary"
-                                onClick={() => handleSetAsCover(index)}
-                                className="mr-1"
-                              >
-                                <ImageIcon className="w-3 h-3 mr-1" />
-                                Set as Cover
-                              </Button>
-                            )}
-                          </div>
+                          {index !== 0 && (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => handleSetAsCover(index)}
+                              className="absolute bottom-2 left-2 right-2 opacity-90 hover:opacity-100"
+                            >
+                              <ImageIcon className="w-3 h-3 mr-1" />
+                              Set as Cover
+                            </Button>
+                          )}
                           <button
                             onClick={() => handleRemoveImage(index)}
-                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors z-10"
                           >
                             <X className="w-3 h-3" />
                           </button>
