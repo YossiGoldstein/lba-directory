@@ -61,7 +61,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
           {/* Status Badges - Top Left */}
           <div className="absolute top-2 left-2 flex gap-1.5 z-10 pointer-events-none">
             {hasDeals && (
-              <div className="bg-white/70 backdrop-blur-sm text-blue-700 text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md">
+              <div className="bg-white/70 backdrop-blur-sm text-[#003D5C] text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md">
                 Sale
               </div>
             )}

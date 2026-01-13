@@ -403,7 +403,7 @@ export default function Home() {
             <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold text-white drop-shadow-2xl mb-4 sm:mb-6 mt-2 sm:mt-0 text-center">
               Lakewood Business Alliance
             </h1>
-            <p className="text-base sm:text-lg md:text-2xl text-white mb-10 font-light">
+            <p className="text-base sm:text-lg md:text-2xl text-white mb-10 font-light text-center">
               AI powered directory for easy searching, connecting, and following
             </p>
 
