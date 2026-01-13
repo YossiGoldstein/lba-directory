@@ -112,7 +112,7 @@ export default function Layout({ children, currentPageName }) {
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-gray-700">Hello, {user.full_name}</span>
                     <Button variant="ghost" size="sm" asChild>
-                      <Link to={createPageUrl("UserDashboard")}>
+                      <Link to={createPageUrl(user.role === "admin" ? "AdminDashboard" : "UserDashboard")}>
                         <LayoutDashboard className="w-4 h-4 mr-2" />
                         Dashboard
                       </Link>
@@ -170,7 +170,7 @@ export default function Layout({ children, currentPageName }) {
                   {user ? (
                     <div className="border-t border-gray-200 pt-4 mt-2 flex flex-col gap-3">
                       <Button variant="outline" asChild className="w-full">
-                        <Link to={createPageUrl("UserDashboard")}>Dashboard</Link>
+                        <Link to={createPageUrl(user.role === "admin" ? "AdminDashboard" : "UserDashboard")}>Dashboard</Link>
                       </Button>
                       <Button variant="outline" onClick={handleLogout} className="w-full">
                         Logout

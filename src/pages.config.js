@@ -16,12 +16,12 @@ import NotFound from './pages/NotFound';
 import Pricing from './pages/Pricing';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import SignIn from './pages/SignIn';
+import SubmissionSuccess from './pages/SubmissionSuccess';
 import Success from './pages/Success';
 import TermsOfUse from './pages/TermsOfUse';
 import UserDashboard from './pages/UserDashboard';
 import UserRegister from './pages/UserRegister';
 import Welcome from './pages/Welcome';
-import SubmissionSuccess from './pages/SubmissionSuccess';
 import __Layout from './Layout.jsx';
 
 
@@ -44,12 +44,12 @@ export const PAGES = {
     "Pricing": Pricing,
     "PrivacyPolicy": PrivacyPolicy,
     "SignIn": SignIn,
+    "SubmissionSuccess": SubmissionSuccess,
     "Success": Success,
     "TermsOfUse": TermsOfUse,
     "UserDashboard": UserDashboard,
     "UserRegister": UserRegister,
     "Welcome": Welcome,
-    "SubmissionSuccess": SubmissionSuccess,
 }
 
 export const pagesConfig = {
