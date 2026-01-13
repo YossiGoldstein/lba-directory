@@ -24,24 +24,23 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Business not found' }, { status: 404 });
     }
 
-    // Get owner email from created_by
-    const users = await base44.entities.User.list();
-    const owner = users.find(u => u.email === business.created_by);
-
-    if (!owner) {
-      return Response.json({ error: 'Owner not found' }, { status: 404 });
+    // Use business email address
+    const ownerEmail = business.email || business.created_by;
+    
+    if (!ownerEmail) {
+      return Response.json({ error: 'No email address found for business' }, { status: 404 });
     }
 
     const dashboardUrl = `${Deno.env.get("BASE44_APP_ID") ? `https://${Deno.env.get("BASE44_APP_ID")}.lakewoodlba.com` : 'https://lakewoodlba.com'}/business-dashboard`;
     const businessUrl = `${Deno.env.get("BASE44_APP_ID") ? `https://${Deno.env.get("BASE44_APP_ID")}.lakewoodlba.com` : 'https://lakewoodlba.com'}/business-listing?id=${business.id}`;
 
-    // Send approval email to owner
+    // Send approval email to business email
     await base44.integrations.Core.SendEmail({
-      to: owner.email,
+      to: ownerEmail,
       subject: "🎉 Your Business Has Been Approved! - LBA Directory",
       body: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #10b981;">Congratulations! 🎉 ${owner.full_name}</h2>
+          <h2 style="color: #10b981;">Congratulations! 🎉</h2>
           
           <p>We're excited to let you know that your business <strong>"${business.business_name}"</strong> has been approved and is now live on the directory!</p>
           
