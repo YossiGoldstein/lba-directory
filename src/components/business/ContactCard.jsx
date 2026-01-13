@@ -3,6 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, Mail, Globe, MessageCircle, Facebook, Instagram, MapPin, ExternalLink } from "lucide-react";
 
+const formatPhoneNumber = (phone) => {
+  if (!phone) return "";
+  const cleaned = phone.replace(/\D/g, "");
+  if (cleaned.length === 10) {
+    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+  }
+  return phone;
+};
+
 export default function ContactCard({ business }) {
   return (
     <Card className="sticky top-6">
@@ -58,7 +67,7 @@ export default function ContactCard({ business }) {
             <div className="flex items-center gap-3 text-sm">
               <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
               <a href={`tel:${business.phone}`} className="text-gray-700 hover:text-cyan-600">
-                {business.phone}
+                {formatPhoneNumber(business.phone)}
               </a>
             </div>
           )}
@@ -74,7 +83,7 @@ export default function ContactCard({ business }) {
                 rel="noopener noreferrer"
                 className="text-gray-700 hover:text-green-600"
               >
-                WhatsApp
+                {formatPhoneNumber(business.whatsapp_number)}
               </a>
             </div>
           )}
