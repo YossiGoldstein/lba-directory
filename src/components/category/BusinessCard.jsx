@@ -4,6 +4,15 @@ import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Phone, CheckCircle, Star } from "lucide-react";
 
+const formatPhoneNumber = (phone) => {
+  if (!phone) return "";
+  const cleaned = phone.replace(/\D/g, "");
+  if (cleaned.length === 10) {
+    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+  }
+  return phone;
+};
+
 export default function BusinessCard({ business, categoryName, hasActiveDeals }) {
   // Check if business is currently open
   const isBusinessOpen = () => {
@@ -143,7 +152,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
           {business.phone && (
             <div className="flex items-center gap-1.5 text-xs text-gray-500">
               <Phone className="w-3.5 h-3.5 flex-shrink-0 text-gray-400" />
-              <span>{business.phone}</span>
+              <span>{formatPhoneNumber(business.phone)}</span>
             </div>
           )}
         </div>
