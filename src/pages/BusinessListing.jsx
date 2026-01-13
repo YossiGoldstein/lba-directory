@@ -39,18 +39,27 @@ export default function BusinessListing() {
 
   const [user, setUser] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isAddingFavorite, setIsAddingFavorite] = useState(false);
 
   useEffect(() => {
     const loadUser = async () => {
       try {
         const userData = await base44.auth.me();
         setUser(userData);
+        
+        // Check if business is already in favorites
+        if (userData && businessId) {
+          const favorites = await base44.entities.Favorite.list();
+          const isFav = favorites.some(f => f.business_id === businessId && f.user_id === userData.id);
+          setIsFavorite(isFav);
+        }
       } catch (error) {
         setUser(null);
       }
     };
     loadUser();
-  }, []);
+  }, [businessId]);
 
   // Fetch business
   const { data: business, isLoading: businessLoading } = useQuery({
@@ -163,6 +172,40 @@ export default function BusinessListing() {
     }
   };
 
+  const handleToggleFavorite = async () => {
+    if (!user) {
+      toast.error("Please log in to add favorites");
+      return;
+    }
+
+    setIsAddingFavorite(true);
+    try {
+      if (isFavorite) {
+        // Remove from favorites
+        const favorites = await base44.entities.Favorite.list();
+        const favorite = favorites.find(f => f.business_id === businessId && f.user_id === user.id);
+        if (favorite) {
+          await base44.entities.Favorite.delete(favorite.id);
+          setIsFavorite(false);
+          toast.success("Removed from favorites");
+        }
+      } else {
+        // Add to favorites
+        await base44.entities.Favorite.create({
+          user_id: user.id,
+          business_id: businessId
+        });
+        setIsFavorite(true);
+        toast.success("Added to favorites!");
+      }
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error);
+      toast.error("Failed to update favorites");
+    } finally {
+      setIsAddingFavorite(false);
+    }
+  };
+
   // Loading state
   if (businessLoading) {
     return (
@@ -271,9 +314,6 @@ export default function BusinessListing() {
                   {business.is_lba_sponsor && (
                     <Badge className="bg-blue-600 text-white">LBA Sponsor</Badge>
                   )}
-                  {business.is_featured && (
-                    <Badge className="bg-yellow-500 text-white">Featured</Badge>
-                  )}
                 </div>
                 </div>
                 </div>
@@ -308,10 +348,16 @@ export default function BusinessListing() {
                   <Button 
                   size="lg"
                   variant="outline" 
-                  className="bg-white/90 hover:bg-white border-2 border-white w-full md:w-auto"
+                  onClick={handleToggleFavorite}
+                  disabled={isAddingFavorite}
+                  className={`${
+                    isFavorite 
+                      ? 'bg-red-500 hover:bg-red-600 text-white border-red-500' 
+                      : 'bg-white/90 hover:bg-white border-2 border-white'
+                  } w-full md:w-auto transition-colors`}
                   >
-                  <Heart className="w-5 h-5 mr-2" />
-                  Add to Favorites
+                  <Heart className={`w-5 h-5 mr-2 ${isFavorite ? 'fill-white' : ''}`} />
+                  {isFavorite ? 'Saved' : 'Add to Favorites'}
                   </Button>
                 </div>
                 </div>
