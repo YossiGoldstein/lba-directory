@@ -156,7 +156,7 @@ export default function PendingApprovalsTab({ onUpdate }) {
                     <Badge className="bg-orange-500">Pending Review</Badge>
                   </div>
                   <p className="text-sm text-gray-600">
-                    Owner: {business.created_by} • Submitted: {new Date(business.created_date).toLocaleDateString()}
+                    Owner: {business.created_by === "office@lbadirectory.com" ? "LBA Directory" : business.created_by} • Submitted: {new Date(business.created_date).toLocaleDateString()}
                   </p>
                 </div>
                 <Button
