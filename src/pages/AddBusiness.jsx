@@ -359,6 +359,46 @@ export default function AddBusiness() {
         console.error("Failed to send confirmation email:", emailError);
       }
 
+      // Notify admin
+      try {
+        await base44.integrations.Core.SendEmail({
+          to: "office@lbadirectory.com",
+          subject: "🔔 New Business Submission - LBA Directory",
+          body: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #0891b2;">New Business Submission</h2>
+              
+              <p>A new business has been submitted to the directory and is <strong>pending approval</strong>.</p>
+              
+              <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h3 style="margin-top: 0; color: #0891b2;">📋 Business Details:</h3>
+                <p><strong>Business Name:</strong> ${formData.business_name}</p>
+                <p><strong>Owner:</strong> ${user.full_name} (${user.email})</p>
+                <p><strong>Category:</strong> ${formData.category_name}</p>
+                <p><strong>Phone:</strong> ${formData.phone}</p>
+                <p><strong>Address:</strong> ${formData.address_line1}, ${formData.city}, ${formData.state} ${formData.zip_code}</p>
+                ${formData.website_url ? `<p><strong>Website:</strong> ${formData.website_url}</p>` : ''}
+                <p><strong>Tier:</strong> ${formData.listing_tier || 'free'}</p>
+              </div>
+              
+              <div style="text-align: center; margin: 20px 0;">
+                <a href="${window.location.origin}${createPageUrl("AdminDashboard")}" 
+                   style="display: inline-block; background: #0891b2; color: white; padding: 12px 30px; 
+                           text-decoration: none; border-radius: 8px; font-weight: bold;">
+                  Review in Admin Dashboard
+                </a>
+              </div>
+              
+              <p style="font-size: 12px; color: #6b7280; text-align: center;">
+                LBA Directory - Admin Notification
+              </p>
+            </div>
+          `
+        });
+      } catch (adminEmailError) {
+        console.error("Failed to send admin notification email:", adminEmailError);
+      }
+
       // Clear saved data
       localStorage.removeItem("addBusinessFormData");
 
