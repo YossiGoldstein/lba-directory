@@ -244,20 +244,20 @@ export default function BusinessListing() {
             </div>
           )}
           
-          {/* Tier & Deal Badges - Top Right */}
-          <div className="absolute top-4 right-4 flex flex-wrap gap-2 justify-end">
+          {/* Tier & Deal Badges - Top Left */}
+          <div className="absolute top-4 left-4 flex flex-wrap gap-2">
             {deals.length > 0 && (
-              <div className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-bold">
+              <div className="bg-red-600/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-sm font-bold">
                 SALE
               </div>
             )}
             {business.listing_tier === 'pro' && (
-              <div className="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-bold">
+              <div className="bg-blue-600/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-sm font-bold">
                 PRO
               </div>
             )}
             {business.listing_tier === 'premium' && (
-              <div className="bg-purple-600 text-white px-3 py-1.5 rounded-lg text-sm font-bold">
+              <div className="bg-purple-600/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-sm font-bold">
                 PREMIUM
               </div>
             )}
