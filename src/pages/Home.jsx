@@ -439,7 +439,7 @@ export default function Home() {
                 <Button
                   type="submit"
                   disabled={isSearching}
-                  className="bg-gradient-to-r from-[#00D4AA] to-[#00BF99] hover:from-[#00BF99] hover:to-[#00AA88] text-white px-6 sm:px-10 py-4 sm:py-6 sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto rounded-none sm:rounded-full"
+                  className="bg-gradient-to-r from-[#10B981] to-[#059669] hover:from-[#059669] hover:to-[#047857] text-white px-6 sm:px-10 py-4 sm:py-6 sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto rounded-none sm:rounded-full"
                 >
                   {isSearching ? "Searching..." : "Search"}
                 </Button>
@@ -530,7 +530,7 @@ export default function Home() {
               </ul>
               <Button 
                 size="lg"
-                className="bg-[#00D4AA] hover:bg-[#00BF99] text-white font-bold shadow-lg text-base"
+                className="bg-[#10B981] hover:bg-[#059669] text-white font-bold shadow-lg text-base"
                 asChild
               >
                 <Link to={createPageUrl("UserRegister")}>
@@ -571,7 +571,7 @@ export default function Home() {
                     window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                   }
                 }}
-                className="bg-[#00D4AA] hover:bg-[#00BF99] text-white font-bold shadow-lg text-base"
+                className="bg-[#10B981] hover:bg-[#059669] text-white font-bold shadow-lg text-base"
               >
                 Add a business
                 <ArrowRight className="w-4 h-4 ml-2" />
