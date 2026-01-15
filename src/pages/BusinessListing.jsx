@@ -340,7 +340,7 @@ export default function BusinessListing() {
                 </div>
                 </div>
 
-                {/* Bottom Row - Ratings and Favorite Button */}
+                {/* Bottom Row - Ratings and Action Buttons */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 w-full">
                   {/* Ratings Row */}
                   {business.reviews_count > 0 && (
@@ -366,8 +366,8 @@ export default function BusinessListing() {
                     </div>
                   )}
 
-                  {/* Action Buttons */}
-                  <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                  {/* Action Buttons - Always on the right */}
+                  <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto md:ml-auto">
                     <Button 
                     size="lg"
                     variant="outline" 
@@ -385,8 +385,9 @@ export default function BusinessListing() {
 
                     <Button 
                     size="lg"
+                    variant="outline"
                     onClick={handleSubmitReview}
-                    className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white shadow-lg w-full sm:w-auto"
+                    className="bg-white/90 hover:bg-white border-2 border-white w-full sm:w-auto transition-colors"
                     >
                     <MessageSquare className="w-5 h-5 mr-2" />
                     Submit a Review
