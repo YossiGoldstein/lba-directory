@@ -184,7 +184,7 @@ export default function BusinessListing() {
 
   const handleToggleFavorite = async () => {
     if (!user) {
-      base44.auth.redirectToLogin(window.location.pathname + window.location.search);
+      window.location.href = createPageUrl("UserRegister") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
       return;
     }
 
