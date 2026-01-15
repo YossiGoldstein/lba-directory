@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 
 export default function Step4Hours({ data, onChange }) {
-  const [useStructured, setUseStructured] = useState(data.use_structured_hours !== false);
+  const [mode, setMode] = useState(
+    data.by_appointment_only ? 'appointment' : 'hours'
+  );
 
   const defaultStructuredHours = {
     sunday: { open: "09:00", close: "17:00", closed: false },
@@ -42,15 +43,16 @@ export default function Step4Hours({ data, onChange }) {
     onChange({
       ...data,
       opening_hours_json: updated,
-      use_structured_hours: true,
+      by_appointment_only: false,
     });
   };
 
-  const handleModeChange = (structured) => {
-    setUseStructured(structured);
+  const handleModeChange = (newMode) => {
+    setMode(newMode);
     onChange({
       ...data,
-      use_structured_hours: structured,
+      by_appointment_only: newMode === 'appointment',
+      opening_hours_json: newMode === 'hours' ? structuredHours : null,
     });
   };
 
@@ -61,29 +63,29 @@ export default function Step4Hours({ data, onChange }) {
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Toggle Mode */}
-        <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200 flex-wrap">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="radio"
-              checked={useStructured}
-              onChange={() => handleModeChange(true)}
+              checked={mode === 'hours'}
+              onChange={() => handleModeChange('hours')}
               className="w-4 h-4"
             />
-            <span className="font-medium text-gray-900">Structured Hours</span>
+            <span className="font-medium text-gray-900">Set Opening Hours</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="radio"
-              checked={!useStructured}
-              onChange={() => handleModeChange(false)}
+              checked={mode === 'appointment'}
+              onChange={() => handleModeChange('appointment')}
               className="w-4 h-4"
             />
-            <span className="font-medium text-gray-900">Free Text</span>
+            <span className="font-medium text-gray-900">By Appointment Only</span>
           </label>
         </div>
 
         {/* Structured Hours */}
-        {useStructured && (
+        {mode === 'hours' && (
           <div className="space-y-3">
             {days.map(({ key, label }) => (
               <div key={key} className="flex items-center gap-4">
@@ -131,19 +133,14 @@ export default function Step4Hours({ data, onChange }) {
           </div>
         )}
 
-        {/* Free Text */}
-        {!useStructured && (
-          <div className="space-y-2">
-            <Label htmlFor="hours_text">Opening Hours (Free Text)</Label>
-            <Textarea
-              id="hours_text"
-              value={data.opening_hours_text || ""}
-              onChange={(e) => onChange({ ...data, opening_hours_text: e.target.value })}
-              rows={8}
-              placeholder="Sunday: 9:00 AM - 5:00 PM&#10;Monday: 9:00 AM - 5:00 PM&#10;..."
-            />
-            <p className="text-xs text-gray-500">
-              Enter your opening hours in any format
+        {/* By Appointment */}
+        {mode === 'appointment' && (
+          <div className="p-6 bg-cyan-50 border border-cyan-200 rounded-lg text-center">
+            <p className="text-gray-700 font-medium">
+              Your business will be marked as "By Appointment Only"
+            </p>
+            <p className="text-sm text-gray-600 mt-2">
+              Customers will know to contact you to schedule a visit
             </p>
           </div>
         )}

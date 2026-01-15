@@ -14,16 +14,27 @@ const formatPhoneNumber = (phone) => {
 };
 
 export default function BusinessCard({ business, categoryName, hasActiveDeals }) {
-  // Check if business is currently open
-  const isBusinessOpen = () => {
-    if (!business.opening_hours_json) return null;
+  // Check business status
+  const getBusinessStatus = () => {
+    // By appointment only
+    if (business.by_appointment_only) {
+      return { type: 'appointment', label: 'By Appointment' };
+    }
     
+    // No hours set
+    if (!business.opening_hours_json) {
+      return null;
+    }
+    
+    // Check if currently open
     const now = new Date();
     const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     const currentDay = dayNames[now.getDay()];
     const hours = business.opening_hours_json[currentDay];
     
-    if (!hours || hours.closed) return false;
+    if (!hours || hours.closed) {
+      return { type: 'closed', label: 'Closed' };
+    }
     
     const currentTime = now.getHours() * 60 + now.getMinutes();
     const [openHour, openMin] = hours.open.split(':').map(Number);
@@ -31,10 +42,11 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
     const openTime = openHour * 60 + openMin;
     const closeTime = closeHour * 60 + closeMin;
     
-    return currentTime >= openTime && currentTime <= closeTime;
+    const isOpen = currentTime >= openTime && currentTime <= closeTime;
+    return { type: isOpen ? 'open' : 'closed', label: isOpen ? 'Open' : 'Closed' };
   };
 
-  const isOpen = isBusinessOpen();
+  const businessStatus = getBusinessStatus();
 
   const coverImage = business.gallery_images && business.gallery_images.length > 0 
     ? business.gallery_images[0] 
@@ -65,9 +77,15 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
                 Sale
               </div>
             )}
-            {isOpen !== null && (
-              <div className="bg-white/70 backdrop-blur-sm text-blue-700 text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md">
-                {isOpen ? 'Open' : 'Closed'}
+            {businessStatus && (
+              <div className={`backdrop-blur-sm text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md ${
+                businessStatus.type === 'open' 
+                  ? 'bg-green-500/90 text-white' 
+                  : businessStatus.type === 'appointment'
+                  ? 'bg-blue-500/90 text-white'
+                  : 'bg-gray-500/90 text-white'
+              }`}>
+                {businessStatus.label}
               </div>
             )}
           </div>
