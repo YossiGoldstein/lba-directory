@@ -270,15 +270,7 @@ export default function ContactCard({ business }) {
           </div>
         )}
 
-        {/* Opening Hours */}
-        {business.opening_hours_text && (
-          <div className="pt-4 border-t">
-            <p className="text-sm font-medium text-gray-700 mb-2">Opening Hours</p>
-            <div className="text-sm text-gray-600 whitespace-pre-line">
-              {business.opening_hours_text}
-            </div>
-          </div>
-        )}
+
       </CardContent>
     </Card>
   );
