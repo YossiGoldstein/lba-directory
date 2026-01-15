@@ -309,10 +309,10 @@ export default function Home() {
                   </div>
                 ) : (
                   <>
-                    <Button asChild className="bg-cyan-600 hover:bg-cyan-700 text-white">
+                    <Button asChild className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white shadow-lg">
                       <Link to={createPageUrl("SignIn")}>Sign In</Link>
                     </Button>
-                    <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
+                    <Button asChild className="bg-gradient-to-r from-[#0E8DAA] to-[#0C7B95] hover:from-[#0C7B95] hover:to-[#0E8DAA] text-white shadow-lg">
                       <Link to={createPageUrl("UserRegister")}>Register</Link>
                     </Button>
                   </>
@@ -328,15 +328,15 @@ export default function Home() {
               </div>
 
               {mobileMenuOpen && (
-              <div className="md:hidden py-4 bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-md rounded-lg fixed left-4 right-4 top-20 z-[100] shadow-2xl max-w-md mx-auto">
+              <div className="md:hidden py-4 bg-gray-900 backdrop-blur-md rounded-lg fixed left-4 right-4 top-20 z-[100] shadow-2xl max-w-md mx-auto">
                 <nav className="flex flex-col gap-4 px-4">
-                  <Link to={createPageUrl("Home")} className="text-white hover:text-cyan-200 font-medium">
+                  <Link to={createPageUrl("Home")} className="text-white hover:text-green-400 font-medium">
                     Home
                   </Link>
-                  <Link to={createPageUrl("AboutUs")} className="text-white hover:text-cyan-200 font-medium">
+                  <Link to={createPageUrl("AboutUs")} className="text-white hover:text-green-400 font-medium">
                     About
                   </Link>
-                  <Link to={createPageUrl("FAQ")} className="text-white hover:text-cyan-200 font-medium">
+                  <Link to={createPageUrl("FAQ")} className="text-white hover:text-green-400 font-medium">
                     FAQ
                   </Link>
                   <button 
@@ -347,36 +347,36 @@ export default function Home() {
                         window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                       }
                     }} 
-                    className="text-white hover:text-cyan-200 font-medium text-left"
+                    className="text-white hover:text-green-400 font-medium text-left"
                   >
                     Add Business
                   </button>
                   {user ? (
-                    <div className="border-t border-white/20 pt-4 mt-2 flex flex-col gap-3">
+                    <div className="border-t border-gray-700 pt-4 mt-2 flex flex-col gap-3">
                       <button 
                         onClick={() => window.location.href = createPageUrl(user.role === "admin" ? "AdminDashboard" : "UserDashboard")}
-                        className="w-full bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors border border-white/40"
+                        className="w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors border border-gray-700"
                       >
                         Dashboard
                       </button>
                       <button 
                         onClick={handleLogout}
-                        className="w-full bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors border border-white/40"
+                        className="w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors border border-gray-700"
                       >
                         Logout
                       </button>
                     </div>
                   ) : (
-                    <div className="flex flex-col gap-3 border-t border-white/20 pt-4 mt-2">
+                    <div className="flex flex-col gap-3 border-t border-gray-700 pt-4 mt-2">
                       <button 
                         onClick={() => window.location.href = createPageUrl("SignIn")}
-                        className="w-full bg-cyan-600 hover:bg-cyan-700 active:bg-cyan-800 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors shadow-md"
+                        className="w-full bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors shadow-lg"
                       >
                         Sign In
                       </button>
                       <button 
                         onClick={() => window.location.href = createPageUrl("UserRegister")}
-                        className="w-full bg-cyan-600 hover:bg-cyan-700 active:bg-cyan-800 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors shadow-md"
+                        className="w-full bg-gradient-to-r from-[#0E8DAA] to-[#0C7B95] hover:from-[#0C7B95] hover:to-[#0E8DAA] text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors shadow-lg"
                       >
                         Register
                       </button>
@@ -384,7 +384,7 @@ export default function Home() {
                   )}
                 </nav>
               </div>
-            )}
+              )}
           </div>
         </div>
 
@@ -530,7 +530,7 @@ export default function Home() {
               </ul>
               <Button 
                 size="lg"
-                className="bg-[#10B981] hover:bg-[#059669] text-white font-bold shadow-lg text-base"
+                className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white font-bold shadow-lg text-base"
                 asChild
               >
                 <Link to={createPageUrl("UserRegister")}>
@@ -571,7 +571,7 @@ export default function Home() {
                     window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                   }
                 }}
-                className="bg-[#10B981] hover:bg-[#059669] text-white font-bold shadow-lg text-base"
+                className="bg-gradient-to-r from-[#0E8DAA] to-[#0C7B95] hover:from-[#0C7B95] hover:to-[#0E8DAA] text-white font-bold shadow-lg text-base"
               >
                 Add a business
                 <ArrowRight className="w-4 h-4 ml-2" />

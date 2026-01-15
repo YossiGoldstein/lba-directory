@@ -124,10 +124,10 @@ export default function Layout({ children, currentPageName }) {
                   </div>
                 ) : (
                   <>
-                    <Button asChild className="bg-cyan-600 hover:bg-cyan-700 text-white">
+                    <Button asChild className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white shadow-lg">
                       <Link to={createPageUrl("SignIn")}>Sign In</Link>
                     </Button>
-                    <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
+                    <Button asChild className="bg-gradient-to-r from-[#0E8DAA] to-[#0C7B95] hover:from-[#0C7B95] hover:to-[#0E8DAA] text-white shadow-lg">
                       <Link to={createPageUrl("UserRegister")}>Register</Link>
                     </Button>
                   </>
@@ -143,15 +143,15 @@ export default function Layout({ children, currentPageName }) {
               </div>
 
               {mobileMenuOpen && (
-              <div className="md:hidden py-4 border-t border-gray-200 bg-white absolute left-0 right-0 top-16 z-40 shadow-lg">
+              <div className="md:hidden py-4 border-t border-gray-800 bg-gray-900 absolute left-0 right-0 top-16 z-40 shadow-lg">
                 <nav className="flex flex-col gap-4 px-4">
-                  <Link to={createPageUrl("Home")} className="text-gray-700 hover:text-cyan-600 font-medium text-lg">
+                  <Link to={createPageUrl("Home")} className="text-white hover:text-green-400 font-medium text-lg">
                     Home
                   </Link>
-                  <Link to={createPageUrl("AboutUs")} className="text-gray-700 hover:text-cyan-600 font-medium text-lg">
+                  <Link to={createPageUrl("AboutUs")} className="text-white hover:text-green-400 font-medium text-lg">
                     About
                   </Link>
-                  <Link to={createPageUrl("FAQ")} className="text-gray-700 hover:text-cyan-600 font-medium text-lg">
+                  <Link to={createPageUrl("FAQ")} className="text-white hover:text-green-400 font-medium text-lg">
                     FAQ
                   </Link>
                   <button 
@@ -163,32 +163,32 @@ export default function Layout({ children, currentPageName }) {
                         window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                       }
                     }} 
-                    className="text-gray-700 hover:text-cyan-600 font-medium text-lg text-left"
+                    className="text-white hover:text-green-400 font-medium text-lg text-left"
                   >
                     Add Business
                   </button>
                   {user ? (
-                    <div className="border-t border-gray-200 pt-4 mt-2 flex flex-col gap-3">
-                      <Button variant="outline" asChild className="w-full">
+                    <div className="border-t border-gray-700 pt-4 mt-2 flex flex-col gap-3">
+                      <Button variant="outline" asChild className="w-full bg-gray-800 text-white border-gray-700 hover:bg-gray-700">
                         <Link to={createPageUrl(user.role === "admin" ? "AdminDashboard" : "UserDashboard")}>Dashboard</Link>
                       </Button>
-                      <Button variant="outline" onClick={handleLogout} className="w-full">
+                      <Button variant="outline" onClick={handleLogout} className="w-full bg-gray-800 text-white border-gray-700 hover:bg-gray-700">
                         Logout
                       </Button>
                     </div>
                   ) : (
-                    <div className="flex flex-col gap-3 border-t border-gray-200 pt-4 mt-2">
-                      <Button asChild className="w-full bg-green-500 hover:bg-green-600 text-white font-medium">
+                    <div className="flex flex-col gap-3 border-t border-gray-700 pt-4 mt-2">
+                      <Button asChild className="w-full bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white font-medium shadow-lg">
                         <Link to={createPageUrl("SignIn")} className="text-white">Sign In</Link>
                       </Button>
-                      <Button asChild className="bg-cyan-600 hover:bg-cyan-700 w-full text-white font-medium">
+                      <Button asChild className="w-full bg-gradient-to-r from-[#0E8DAA] to-[#0C7B95] hover:from-[#0C7B95] hover:to-[#0E8DAA] text-white font-medium shadow-lg">
                         <Link to={createPageUrl("UserRegister")} className="text-white">Register</Link>
                       </Button>
                     </div>
                   )}
                 </nav>
               </div>
-            )}
+              )}
           </div>
         </header>
       )}
