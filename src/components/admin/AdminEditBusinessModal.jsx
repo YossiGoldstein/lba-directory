@@ -54,6 +54,16 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
         website_url: business.website_url || "",
         facebook_url: business.facebook_url || "",
         instagram_url: business.instagram_url || "",
+        linkedin_url: business.linkedin_url || "",
+        youtube_url: business.youtube_url || "",
+        other_social_url: business.other_social_url || "",
+        uber_eats_url: business.uber_eats_url || "",
+        doordash_url: business.doordash_url || "",
+        grubhub_url: business.grubhub_url || "",
+        postmates_url: business.postmates_url || "",
+        instacart_url: business.instacart_url || "",
+        toast_url: business.toast_url || "",
+        k1_url: business.k1_url || "",
         opening_hours_text: business.opening_hours_text || "",
         logo_url: business.logo_url || "",
         gallery_images: business.gallery_images || [],
@@ -183,9 +193,10 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
         </DialogHeader>
 
         <Tabs defaultValue="basics" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="basics">Basics</TabsTrigger>
             <TabsTrigger value="contact">Contact</TabsTrigger>
+            <TabsTrigger value="links">Links</TabsTrigger>
             <TabsTrigger value="gallery">Gallery</TabsTrigger>
             <TabsTrigger value="status">Status</TabsTrigger>
           </TabsList>
@@ -347,6 +358,138 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
                 onChange={(e) => setFormData({ ...formData, opening_hours_text: e.target.value })}
                 rows={4}
               />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="links" className="space-y-6 mt-4">
+            {/* Social Media */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-900 text-lg border-b pb-2">Social Media</h3>
+              
+              <div className="space-y-2">
+                <Label htmlFor="facebook">Facebook</Label>
+                <Input
+                  id="facebook"
+                  value={formData.facebook_url || ""}
+                  onChange={(e) => setFormData({ ...formData, facebook_url: e.target.value })}
+                  placeholder="https://facebook.com/yourbusiness"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="instagram">Instagram</Label>
+                <Input
+                  id="instagram"
+                  value={formData.instagram_url || ""}
+                  onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })}
+                  placeholder="https://instagram.com/yourbusiness"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="linkedin">LinkedIn</Label>
+                <Input
+                  id="linkedin"
+                  value={formData.linkedin_url || ""}
+                  onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
+                  placeholder="https://linkedin.com/company/yourbusiness"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="youtube">YouTube</Label>
+                <Input
+                  id="youtube"
+                  value={formData.youtube_url || ""}
+                  onChange={(e) => setFormData({ ...formData, youtube_url: e.target.value })}
+                  placeholder="https://youtube.com/@yourbusiness"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="other_social">Other Social Media</Label>
+                <Input
+                  id="other_social"
+                  value={formData.other_social_url || ""}
+                  onChange={(e) => setFormData({ ...formData, other_social_url: e.target.value })}
+                  placeholder="https://..."
+                />
+              </div>
+            </div>
+
+            {/* Delivery & Ordering */}
+            <div className="space-y-4 pt-4 border-t">
+              <h3 className="font-semibold text-gray-900 text-lg border-b pb-2">Online Ordering & Delivery</h3>
+              
+              <div className="space-y-2">
+                <Label htmlFor="uber_eats">Uber Eats</Label>
+                <Input
+                  id="uber_eats"
+                  value={formData.uber_eats_url || ""}
+                  onChange={(e) => setFormData({ ...formData, uber_eats_url: e.target.value })}
+                  placeholder="https://ubereats.com/..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="doordash">DoorDash</Label>
+                <Input
+                  id="doordash"
+                  value={formData.doordash_url || ""}
+                  onChange={(e) => setFormData({ ...formData, doordash_url: e.target.value })}
+                  placeholder="https://doordash.com/..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="grubhub">Grubhub</Label>
+                <Input
+                  id="grubhub"
+                  value={formData.grubhub_url || ""}
+                  onChange={(e) => setFormData({ ...formData, grubhub_url: e.target.value })}
+                  placeholder="https://grubhub.com/..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="postmates">Postmates</Label>
+                <Input
+                  id="postmates"
+                  value={formData.postmates_url || ""}
+                  onChange={(e) => setFormData({ ...formData, postmates_url: e.target.value })}
+                  placeholder="https://postmates.com/..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="instacart">Instacart</Label>
+                <Input
+                  id="instacart"
+                  value={formData.instacart_url || ""}
+                  onChange={(e) => setFormData({ ...formData, instacart_url: e.target.value })}
+                  placeholder="https://instacart.com/..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="toast">Toast</Label>
+                <Input
+                  id="toast"
+                  value={formData.toast_url || ""}
+                  onChange={(e) => setFormData({ ...formData, toast_url: e.target.value })}
+                  placeholder="https://toasttab.com/..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="k1">K1</Label>
+                <Input
+                  id="k1"
+                  value={formData.k1_url || ""}
+                  onChange={(e) => setFormData({ ...formData, k1_url: e.target.value })}
+                  placeholder="https://..."
+                />
+              </div>
             </div>
           </TabsContent>
 
@@ -530,23 +673,7 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
               </p>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="facebook">Facebook URL</Label>
-              <Input
-                id="facebook"
-                value={formData.facebook_url || ""}
-                onChange={(e) => setFormData({ ...formData, facebook_url: e.target.value })}
-              />
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="instagram">Instagram URL</Label>
-              <Input
-                id="instagram"
-                value={formData.instagram_url || ""}
-                onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })}
-              />
-            </div>
           </TabsContent>
         </Tabs>
 
