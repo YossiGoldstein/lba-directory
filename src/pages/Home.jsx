@@ -328,7 +328,7 @@ export default function Home() {
               </div>
 
               {mobileMenuOpen && (
-              <div className="md:hidden py-4 bg-gray-900 backdrop-blur-md rounded-lg fixed left-4 right-4 top-20 z-[100] shadow-2xl max-w-md mx-auto">
+              <div className="md:hidden py-4 bg-[#003D5C] backdrop-blur-md rounded-lg fixed left-4 right-4 top-20 z-[100] shadow-2xl max-w-md mx-auto">
                 <nav className="flex flex-col gap-4 px-4">
                   <Link to={createPageUrl("Home")} className="text-white hover:text-green-400 font-medium">
                     Home
@@ -352,22 +352,22 @@ export default function Home() {
                     Add Business
                   </button>
                   {user ? (
-                    <div className="border-t border-gray-700 pt-4 mt-2 flex flex-col gap-3">
+                    <div className="border-t border-[#005580] pt-4 mt-2 flex flex-col gap-3">
                       <button 
                         onClick={() => window.location.href = createPageUrl(user.role === "admin" ? "AdminDashboard" : "UserDashboard")}
-                        className="w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors border border-gray-700"
+                        className="w-full bg-[#005580] hover:bg-[#004466] text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors border border-[#006699]"
                       >
                         Dashboard
                       </button>
                       <button 
                         onClick={handleLogout}
-                        className="w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors border border-gray-700"
+                        className="w-full bg-[#005580] hover:bg-[#004466] text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors border border-[#006699]"
                       >
                         Logout
                       </button>
                     </div>
                   ) : (
-                    <div className="flex flex-col gap-3 border-t border-gray-700 pt-4 mt-2">
+                    <div className="flex flex-col gap-3 border-t border-[#005580] pt-4 mt-2">
                       <button 
                         onClick={() => window.location.href = createPageUrl("SignIn")}
                         className="w-full bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors shadow-lg"
@@ -571,7 +571,7 @@ export default function Home() {
                     window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                   }
                 }}
-                className="bg-gradient-to-r from-[#0E8DAA] to-[#0C7B95] hover:from-[#0C7B95] hover:to-[#0E8DAA] text-white font-bold shadow-lg text-base"
+                className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white font-bold shadow-lg text-base"
               >
                 Add a business
                 <ArrowRight className="w-4 h-4 ml-2" />

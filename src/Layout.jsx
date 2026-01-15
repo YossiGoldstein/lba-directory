@@ -143,7 +143,7 @@ export default function Layout({ children, currentPageName }) {
               </div>
 
               {mobileMenuOpen && (
-              <div className="md:hidden py-4 border-t border-gray-800 bg-gray-900 absolute left-0 right-0 top-16 z-40 shadow-lg">
+              <div className="md:hidden py-4 border-t border-[#005580] bg-[#003D5C] absolute left-0 right-0 top-16 z-40 shadow-lg">
                 <nav className="flex flex-col gap-4 px-4">
                   <Link to={createPageUrl("Home")} className="text-white hover:text-green-400 font-medium text-lg">
                     Home
@@ -168,16 +168,16 @@ export default function Layout({ children, currentPageName }) {
                     Add Business
                   </button>
                   {user ? (
-                    <div className="border-t border-gray-700 pt-4 mt-2 flex flex-col gap-3">
-                      <Button variant="outline" asChild className="w-full bg-gray-800 text-white border-gray-700 hover:bg-gray-700">
+                    <div className="border-t border-[#005580] pt-4 mt-2 flex flex-col gap-3">
+                      <Button variant="outline" asChild className="w-full bg-[#005580] text-white border-[#006699] hover:bg-[#004466]">
                         <Link to={createPageUrl(user.role === "admin" ? "AdminDashboard" : "UserDashboard")}>Dashboard</Link>
                       </Button>
-                      <Button variant="outline" onClick={handleLogout} className="w-full bg-gray-800 text-white border-gray-700 hover:bg-gray-700">
+                      <Button variant="outline" onClick={handleLogout} className="w-full bg-[#005580] text-white border-[#006699] hover:bg-[#004466]">
                         Logout
                       </Button>
                     </div>
                   ) : (
-                    <div className="flex flex-col gap-3 border-t border-gray-700 pt-4 mt-2">
+                    <div className="flex flex-col gap-3 border-t border-[#005580] pt-4 mt-2">
                       <Button asChild className="w-full bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white font-medium shadow-lg">
                         <Link to={createPageUrl("SignIn")} className="text-white">Sign In</Link>
                       </Button>
