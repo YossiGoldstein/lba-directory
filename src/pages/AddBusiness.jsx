@@ -164,6 +164,16 @@ export default function AddBusiness() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // Normalize phone number to (XXX) XXX-XXXX format
+  const normalizePhoneNumber = (phone) => {
+    if (!phone) return "";
+    const cleaned = phone.replace(/\D/g, "");
+    if (cleaned.length === 10) {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+    }
+    return phone;
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
 
@@ -192,8 +202,8 @@ export default function AddBusiness() {
           city: formData.city,
           state: formData.state,
           zip_code: formData.zip_code,
-          phone: formData.phone,
-          whatsapp_number: formData.whatsapp_number,
+          phone: normalizePhoneNumber(formData.phone),
+          whatsapp_number: normalizePhoneNumber(formData.whatsapp_number),
           email: formData.email,
           website_url: formData.website_url,
           opening_hours_text: formData.use_structured_hours 
@@ -240,8 +250,8 @@ export default function AddBusiness() {
         city: formData.city,
         state: formData.state,
         zip_code: formData.zip_code,
-        phone: formData.phone,
-        whatsapp_number: formData.whatsapp_number,
+        phone: normalizePhoneNumber(formData.phone),
+        whatsapp_number: normalizePhoneNumber(formData.whatsapp_number),
         email: formData.email,
         website_url: formData.website_url,
         opening_hours_text: formData.use_structured_hours 
