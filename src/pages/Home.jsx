@@ -389,32 +389,32 @@ export default function Home() {
         </div>
 
         {/* Logo - Fixed positioning */}
-        <div className="absolute top-2 left-2 sm:top-4 sm:left-6 z-10">
+        <div className="absolute top-2 left-2 sm:top-4 sm:left-4 md:left-6 z-10">
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
             alt="LBA Directory"
-            className="h-10 sm:h-14 md:h-20 w-auto drop-shadow-2xl brightness-0 invert"
+            className="h-10 sm:h-12 md:h-16 lg:h-20 w-auto drop-shadow-2xl brightness-0 invert"
           />
         </div>
 
         {/* Main Content - Adjusted padding */}
-        <div className="relative z-10 flex-1 flex items-center justify-center pt-16 sm:pt-20 md:pt-0">
-          <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12 flex flex-col items-center">
-            <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold text-white drop-shadow-2xl mb-4 sm:mb-6 mt-2 sm:mt-0 text-center">
+        <div className="relative z-10 flex-1 flex items-center justify-center pt-16 sm:pt-20 md:pt-4 lg:pt-0">
+          <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-6 sm:pb-8 md:pb-10 lg:pb-12 flex flex-col items-center">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-extrabold text-white drop-shadow-2xl mb-3 sm:mb-4 md:mb-5 lg:mb-6 mt-2 sm:mt-0 text-center leading-tight">
               Lakewood Business Alliance
             </h1>
-            <p className="text-base sm:text-lg md:text-2xl text-white mb-10 font-light text-center">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-white mb-6 sm:mb-8 md:mb-10 font-light text-center">
               AI powered directory for easy searching, connecting, and following
             </p>
 
-            <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-10 px-2">
-              <div className="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-2xl overflow-hidden flex flex-col sm:flex-row items-stretch sm:items-center sm:gap-3 sm:p-3">
-                <div className="flex items-center flex-1 px-4 py-4 sm:px-0 sm:py-0">
-                  <Search className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 ml-0 sm:ml-4 flex-shrink-0" />
+            <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-10 px-2 w-full">
+              <div className="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-full shadow-2xl overflow-hidden flex flex-col sm:flex-row items-stretch sm:items-center sm:gap-2 md:gap-3 sm:p-2 md:p-3">
+                <div className="flex items-center flex-1 px-4 py-3 sm:px-0 sm:py-0">
+                  <Search className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-400 ml-0 sm:ml-3 md:ml-4 flex-shrink-0" />
                   <input
                     type="text"
                     placeholder="Search by keyword or sentence"
-                    className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 text-sm sm:text-lg px-2 py-0"
+                    className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 text-sm sm:text-base md:text-lg px-2 py-0"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -433,13 +433,13 @@ export default function Home() {
                       }
                     }}
                   >
-                    <Mic className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <Mic className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                   </button>
                 </div>
                 <Button
                   type="submit"
                   disabled={isSearching}
-                  className="bg-gradient-to-r from-[#10B981] to-[#059669] hover:from-[#059669] hover:to-[#047857] text-white px-6 sm:px-10 py-4 sm:py-6 sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto rounded-none sm:rounded-full"
+                  className="bg-gradient-to-r from-[#10B981] to-[#059669] hover:from-[#059669] hover:to-[#047857] text-white px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-6 sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto rounded-none sm:rounded-full"
                 >
                   {isSearching ? "Searching..." : "Search"}
                 </Button>
@@ -448,31 +448,31 @@ export default function Home() {
             </form>
 
             {/* Category Icons - Responsive: Grid on mobile, Single row on desktop */}
-            <div className="grid grid-cols-5 gap-3 sm:gap-4 justify-items-center md:flex md:justify-center md:items-center md:gap-6 lg:gap-8 px-2 md:px-4">
+            <div className="grid grid-cols-5 gap-2 sm:gap-3 md:gap-4 justify-items-center lg:flex lg:justify-center lg:items-center lg:gap-6 xl:gap-8 px-2 sm:px-4">
               {categoryIcons.map((category) => {
                 const IconComponent = category.icon;
                 return (
                   <Link
                     key={category.id}
                     to={createPageUrl(`CategoryListing?slug=${category.slug}`)}
-                    className="flex flex-col items-center gap-1 sm:gap-2 group"
+                    className="flex flex-col items-center gap-1 sm:gap-1.5 md:gap-2 group"
                   >
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border-2 border-cyan-400/60 bg-white/5 backdrop-blur-sm flex items-center justify-center hover:bg-cyan-400/20 hover:border-cyan-400 transition-all duration-300 group-hover:scale-110">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full border-2 border-cyan-400/60 bg-white/5 backdrop-blur-sm flex items-center justify-center hover:bg-cyan-400/20 hover:border-cyan-400 transition-all duration-300 group-hover:scale-110">
                       {category.imageUrl ? (
                         <img 
                           src={category.imageUrl} 
                           alt={category.name} 
-                          className="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 object-contain"
+                          className="w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 lg:w-11 lg:h-11 object-contain"
                           style={{
                             ...(category.whiteFilter ? { filter: 'brightness(0) invert(1)' } : {}),
                             ...(category.scale ? { transform: `scale(${category.scale})` } : {})
                           }}
                         />
                       ) : (
-                        <IconComponent className="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 text-white" strokeWidth={1.5} />
+                        <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 lg:w-11 lg:h-11 text-white" strokeWidth={1.5} />
                       )}
                     </div>
-                    <span className="text-white text-[10px] sm:text-xs md:text-sm font-medium text-center">{category.name}</span>
+                    <span className="text-white text-[9px] sm:text-[10px] md:text-xs lg:text-sm font-medium text-center leading-tight">{category.name}</span>
                   </Link>
                 );
               })}
@@ -492,18 +492,18 @@ export default function Home() {
       )}
 
       {/* Blue Banner */}
-      <section className="bg-gradient-to-r from-cyan-600 via-cyan-700 to-cyan-600 py-6 sm:py-8">
+      <section className="bg-gradient-to-r from-cyan-600 via-cyan-700 to-cyan-600 py-4 sm:py-6 md:py-8">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-white leading-tight">
+          <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-white leading-tight">
             Bringing all Lakewood's Business Information to one place
           </h2>
         </div>
       </section>
 
       {/* Shopper & Business Sections - Side by Side */}
-      <section className="bg-gradient-to-r from-[#003D5C] to-[#002D45] py-10 sm:py-12">
+      <section className="bg-gradient-to-r from-[#003D5C] to-[#002D45] py-8 sm:py-10 md:py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-10">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center mb-6 sm:mb-8 md:mb-10">
             Ready to save time and money?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -582,9 +582,9 @@ export default function Home() {
       </section>
 
       {/* Trusted by Community */}
-      <section className="py-12 sm:py-16 bg-gradient-to-r from-blue-50 to-cyan-50">
+      <section className="py-8 sm:py-12 md:py-16 bg-gradient-to-r from-blue-50 to-cyan-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-6 sm:mb-8">
             Trusted by your community
           </h2>
           
