@@ -59,6 +59,7 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
         gallery_images: business.gallery_images || [],
         tags: Array.isArray(business.tags) ? business.tags.join(", ") : "",
         status: business.status || "pending",
+        listing_tier: business.listing_tier || "free",
       });
     }
   }, [business]);
@@ -507,6 +508,26 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
                   <SelectItem value="rejected">Rejected</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="listing_tier">Listing Tier</Label>
+              <Select
+                value={formData.listing_tier || "free"}
+                onValueChange={(value) => setFormData({ ...formData, listing_tier: value })}
+              >
+                <SelectTrigger id="listing_tier">
+                  <SelectValue placeholder="Select tier" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="free">Free</SelectItem>
+                  <SelectItem value="pro">Pro</SelectItem>
+                  <SelectItem value="premium">Premium</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-500">
+                Admin can upgrade any business to premium without payment
+              </p>
             </div>
 
             <div className="space-y-2">

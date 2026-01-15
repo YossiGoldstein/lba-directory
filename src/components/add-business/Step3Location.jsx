@@ -119,6 +119,142 @@ export default function Step3Location({ data, onChange }) {
             />
           </div>
         </div>
+
+        {/* Social Media & Links */}
+        <div className="space-y-4 pt-6 border-t border-gray-200">
+          <h3 className="font-semibold text-gray-900">Social Media</h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="facebook_url">Facebook</Label>
+              <Input
+                id="facebook_url"
+                type="url"
+                value={data.facebook_url || ""}
+                onChange={(e) => onChange({ ...data, facebook_url: e.target.value })}
+                placeholder="https://facebook.com/yourbusiness"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="instagram_url">Instagram</Label>
+              <Input
+                id="instagram_url"
+                type="url"
+                value={data.instagram_url || ""}
+                onChange={(e) => onChange({ ...data, instagram_url: e.target.value })}
+                placeholder="https://instagram.com/yourbusiness"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="linkedin_url">LinkedIn</Label>
+              <Input
+                id="linkedin_url"
+                type="url"
+                value={data.linkedin_url || ""}
+                onChange={(e) => onChange({ ...data, linkedin_url: e.target.value })}
+                placeholder="https://linkedin.com/company/yourbusiness"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="youtube_url">YouTube</Label>
+              <Input
+                id="youtube_url"
+                type="url"
+                value={data.youtube_url || ""}
+                onChange={(e) => onChange({ ...data, youtube_url: e.target.value })}
+                placeholder="https://youtube.com/@yourbusiness"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Delivery & Ordering */}
+        <div className="space-y-4 pt-6 border-t border-gray-200">
+          <h3 className="font-semibold text-gray-900">Online Ordering & Delivery</h3>
+          <p className="text-sm text-gray-600">Add links to your ordering/delivery platforms</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="uber_eats_url">Uber Eats</Label>
+              <Input
+                id="uber_eats_url"
+                type="url"
+                value={data.uber_eats_url || ""}
+                onChange={(e) => onChange({ ...data, uber_eats_url: e.target.value })}
+                placeholder="https://ubereats.com/..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="doordash_url">DoorDash</Label>
+              <Input
+                id="doordash_url"
+                type="url"
+                value={data.doordash_url || ""}
+                onChange={(e) => onChange({ ...data, doordash_url: e.target.value })}
+                placeholder="https://doordash.com/..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="grubhub_url">Grubhub</Label>
+              <Input
+                id="grubhub_url"
+                type="url"
+                value={data.grubhub_url || ""}
+                onChange={(e) => onChange({ ...data, grubhub_url: e.target.value })}
+                placeholder="https://grubhub.com/..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="postmates_url">Postmates</Label>
+              <Input
+                id="postmates_url"
+                type="url"
+                value={data.postmates_url || ""}
+                onChange={(e) => onChange({ ...data, postmates_url: e.target.value })}
+                placeholder="https://postmates.com/..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="instacart_url">Instacart</Label>
+              <Input
+                id="instacart_url"
+                type="url"
+                value={data.instacart_url || ""}
+                onChange={(e) => onChange({ ...data, instacart_url: e.target.value })}
+                placeholder="https://instacart.com/..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="toast_url">Toast</Label>
+              <Input
+                id="toast_url"
+                type="url"
+                value={data.toast_url || ""}
+                onChange={(e) => onChange({ ...data, toast_url: e.target.value })}
+                placeholder="https://toasttab.com/..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="k1_url">K1</Label>
+              <Input
+                id="k1_url"
+                type="url"
+                value={data.k1_url || ""}
+                onChange={(e) => onChange({ ...data, k1_url: e.target.value })}
+                placeholder="https://..."
+              />
+            </div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
