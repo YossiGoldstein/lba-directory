@@ -439,7 +439,7 @@ export default function Home() {
                 <Button
                   type="submit"
                   disabled={isSearching}
-                  className="bg-gradient-to-r from-[#10B981] to-[#059669] hover:from-[#059669] hover:to-[#047857] text-white px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-6 sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto rounded-none sm:rounded-full"
+                  className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-6 sm:rounded-full font-semibold shadow-lg text-sm sm:text-base w-full sm:w-auto rounded-none sm:rounded-full"
                 >
                   {isSearching ? "Searching..." : "Search"}
                 </Button>
