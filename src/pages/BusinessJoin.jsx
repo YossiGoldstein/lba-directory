@@ -21,12 +21,12 @@ export default function BusinessJoin() {
   return (
     <div className="min-h-screen bg-blue-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-cyan-600 to-blue-700 text-white py-20">
+      <section className="bg-gradient-to-br from-cyan-600 to-blue-700 text-white py-12 sm:py-16 lg:py-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
             Grow your local business with the LBA Directory
           </h1>
-          <p className="text-xl md:text-2xl mb-4 text-cyan-50">
+          <p className="text-lg sm:text-xl md:text-2xl mb-3 sm:mb-4 text-cyan-50">
             Join thousands of businesses in the greater Lakewood area and register your business for free!
           </p>
           <p className="text-lg mb-8 text-cyan-100">
@@ -43,13 +43,13 @@ export default function BusinessJoin() {
       </section>
 
       {/* Why List With Us */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-8 sm:py-12 lg:py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-gray-900 mb-8 sm:mb-12 lg:mb-16">
             Why list your business with us?
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
             {/* Benefit 1 */}
             <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
               <div className="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center mb-4">
@@ -145,9 +145,9 @@ export default function BusinessJoin() {
       </section>
 
       {/* Ready to Join */}
-      <section className="py-16 bg-white">
+      <section className="py-8 sm:py-12 lg:py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">
             Ready to join?
           </h2>
           <p className="text-xl text-center text-gray-600 mb-12">
@@ -204,9 +204,9 @@ export default function BusinessJoin() {
       </section>
 
       {/* Final CTA */}
-      <section className="bg-gradient-to-r from-cyan-600 to-blue-700 py-16">
+      <section className="bg-gradient-to-r from-cyan-600 to-blue-700 py-12 sm:py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-6 sm:mb-8">
             Create an account or sign in and add your business
           </h2>
           <Button 

@@ -90,10 +90,10 @@ export default function Contact() {
   return (
     <div className="min-h-screen bg-blue-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-cyan-600 to-blue-700 text-white py-16">
+      <section className="bg-gradient-to-br from-cyan-600 to-blue-700 text-white py-12 sm:py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumbs */}
-          <nav className="flex items-center gap-2 text-sm text-cyan-100 mb-6">
+          <nav className="flex items-center gap-2 text-sm text-cyan-100 mb-4 sm:mb-6">
             <Link
               to={createPageUrl("Home")}
               className="hover:text-white transition-colors"
@@ -104,15 +104,15 @@ export default function Contact() {
             <span className="text-white font-medium">Contact Us</span>
           </nav>
 
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center">Get in Touch</h1>
-          <p className="text-xl text-cyan-50 text-center max-w-2xl mx-auto">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 text-center">Get in Touch</h1>
+          <p className="text-lg sm:text-xl text-cyan-50 text-center max-w-2xl mx-auto">
             We're here to help. Whether you have a question, feedback, or need assistance, feel free to reach out.
           </p>
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         {/* Success Message */}
         {isSubmitted && (
           <div className="mb-8 p-6 bg-green-50 border-2 border-green-200 rounded-lg">

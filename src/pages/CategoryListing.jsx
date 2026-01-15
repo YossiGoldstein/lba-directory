@@ -292,10 +292,10 @@ export default function CategoryListing() {
 
   return (
     <div className="min-h-screen bg-blue-50">
-      <div className="w-full py-8">
+      <div className="w-full py-4 sm:py-6 lg:py-8">
         <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 pb-0">
         {/* Breadcrumbs */}
-        <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+        <nav className="flex items-center gap-2 text-sm text-gray-600 mb-4 sm:mb-6">
           <Link
             to={createPageUrl("Home")}
             className="hover:text-cyan-600 transition-colors"
@@ -309,11 +309,11 @@ export default function CategoryListing() {
         </nav>
 
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">
             {currentCategory ? currentCategory.name : "All Businesses"}
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-base sm:text-lg text-gray-600">
             {currentCategory
               ? currentCategory.description || "Browse businesses in this category"
               : "Browse all listings in the directory"}
@@ -337,15 +337,15 @@ export default function CategoryListing() {
           <div className="flex flex-col lg:flex-row gap-0 lg:gap-6">
             {/* Business Results Column - Scrollable */}
             <div className="flex-1 min-w-0 px-0 lg:pr-6 overflow-y-auto lg:h-[calc(100vh-12rem)]">
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <div className="mb-4 sm:mb-6 px-4 sm:px-0">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                   {matchedBusinesses.length} Result{matchedBusinesses.length !== 1 ? 's' : ''} Found
                 </h3>
-                <p className="text-gray-600">Matching "{searchQuery}"</p>
+                <p className="text-sm sm:text-base text-gray-600">Matching "{searchQuery}"</p>
               </div>
 
               {matchedBusinesses.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 auto-rows-fr">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8 auto-rows-fr px-4 sm:px-0">
                   {matchedBusinesses.map((business) => (
                     <BusinessCard
                       key={business.id}
@@ -501,7 +501,7 @@ export default function CategoryListing() {
 
             {!businessesLoading && displayedBusinesses.length > 0 && (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 auto-rows-fr">
                   {displayedBusinesses.map((business) => (
                     <BusinessCard
                       key={business.id}

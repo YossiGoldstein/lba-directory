@@ -62,10 +62,10 @@ export default function FAQ() {
   return (
     <div className="min-h-screen bg-blue-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-cyan-600 to-blue-700 text-white py-16">
+      <section className="bg-gradient-to-br from-cyan-600 to-blue-700 text-white py-12 sm:py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumbs */}
-          <nav className="flex items-center gap-2 text-sm text-cyan-100 mb-6">
+          <nav className="flex items-center gap-2 text-sm text-cyan-100 mb-4 sm:mb-6">
             <Link
               to={createPageUrl("Home")}
               className="hover:text-white transition-colors"
@@ -76,12 +76,12 @@ export default function FAQ() {
             <span className="text-white font-medium">FAQ</span>
           </nav>
 
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Frequently Asked Questions</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Frequently Asked Questions</h1>
         </div>
       </section>
 
       {/* FAQ Content */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         <Accordion type="single" collapsible className="space-y-4">
           {faqs.map((faq) => (
               <AccordionItem
