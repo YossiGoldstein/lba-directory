@@ -8,18 +8,18 @@ export default function AboutUs() {
   return (
     <div className="min-h-screen bg-blue-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-cyan-600 to-blue-700 text-white py-16">
+      <section className="bg-gradient-to-br from-cyan-600 to-blue-700 text-white py-12 sm:py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">About Us</h1>
-          <p className="text-xl text-cyan-50">Your comprehensive local business and shopping online directory</p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">About Us</h1>
+          <p className="text-lg sm:text-xl text-cyan-50">Your comprehensive local business and shopping online directory</p>
         </div>
       </section>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         {/* Lakewood Shopping Today */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Lakewood Shopping Today</h2>
+        <section className="mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">Lakewood Shopping Today</h2>
           <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
             <p className="mb-4">
               Lakewood has experienced substantial growth in the past decade, expanding rapidly into Toms River, Jackson, Brick, Howell, and Manchester. Once, Lakewooders traveled out of town for certain stores and brands. Today, those stores and businesses have come here, and new businesses are opening every month.
@@ -31,8 +31,8 @@ export default function AboutUs() {
         </section>
 
         {/* The Challenge */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">The Challenge</h2>
+        <section className="mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">The Challenge</h2>
           
           <p className="text-lg text-gray-700 mb-6">
             With the thriving businesses in greater Lakewood comes challenges:
@@ -105,8 +105,8 @@ export default function AboutUs() {
         </section>
 
         {/* That's Where the LBA Directory Comes In */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+        <section className="mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">
             That's Where the LBA Directory Comes In
           </h2>
           <p className="text-gray-700 leading-relaxed mb-8">
@@ -115,9 +115,9 @@ export default function AboutUs() {
         </section>
 
         {/* What LBA Directory Offers */}
-        <section className="mb-16 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-8 border border-cyan-200">
+        <section className="mb-12 sm:mb-16 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-cyan-200">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
             <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-cyan-200">
               <Clock className="w-6 h-6 text-cyan-600 flex-shrink-0" />
               <span className="text-gray-700">Up-to-date store hours</span>
@@ -138,19 +138,19 @@ export default function AboutUs() {
               <span className="text-gray-700">Reviews and ratings</span>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-cyan-200 md:col-span-2">
+            <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-cyan-200 sm:col-span-2">
               <Info className="w-6 h-6 text-cyan-600 flex-shrink-0" />
               <span className="text-gray-700">Full business details</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 border-2 border-cyan-300 mb-6">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-cyan-600 rounded-full flex items-center justify-center flex-shrink-0">
-                <Sparkles className="w-6 h-6 text-white" />
+          <div className="bg-white rounded-xl p-4 sm:p-6 border-2 border-cyan-300 mb-6">
+            <div className="flex items-start gap-3 sm:gap-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-cyan-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
                   Advanced Smart Search
                 </h3>
                 <p className="text-gray-700 mb-4">
@@ -172,8 +172,8 @@ export default function AboutUs() {
         </section>
 
         {/* It's Rewarding */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">It's Rewarding</h2>
+        <section className="mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">It's Rewarding</h2>
           
           <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed mb-6">
             <p className="mb-6">
