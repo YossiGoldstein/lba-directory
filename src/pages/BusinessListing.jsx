@@ -12,7 +12,8 @@ import {
   Heart, 
   Share2,
   AlertCircle,
-  MapPin
+  MapPin,
+  MessageSquare
 } from "lucide-react";
 import ContactCard from "../components/business/ContactCard";
 import ReviewCard from "../components/business/ReviewCard";
@@ -183,7 +184,7 @@ export default function BusinessListing() {
 
   const handleToggleFavorite = async () => {
     if (!user) {
-      toast.error("Please log in to add favorites");
+      base44.auth.redirectToLogin(window.location.pathname + window.location.search);
       return;
     }
 
@@ -212,6 +213,18 @@ export default function BusinessListing() {
       toast.error("Failed to update favorites");
     } finally {
       setIsAddingFavorite(false);
+    }
+  };
+
+  const handleSubmitReview = () => {
+    if (!user) {
+      base44.auth.redirectToLogin(window.location.pathname + window.location.search);
+      return;
+    }
+    // Scroll to review form
+    const reviewSection = document.querySelector('#review-section');
+    if (reviewSection) {
+      reviewSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -353,21 +366,32 @@ export default function BusinessListing() {
                     </div>
                   )}
 
-                  {/* Favorite Button */}
-                  <Button 
-                  size="lg"
-                  variant="outline" 
-                  onClick={handleToggleFavorite}
-                  disabled={isAddingFavorite}
-                  className={`${
-                    isFavorite 
-                      ? 'bg-red-500 hover:bg-red-600 text-white border-red-500' 
-                      : 'bg-white/90 hover:bg-white border-2 border-white'
-                  } w-full md:w-auto transition-colors`}
-                  >
-                  <Heart className={`w-5 h-5 mr-2 ${isFavorite ? 'fill-white' : ''}`} />
-                  {isFavorite ? 'Saved' : 'Add to Favorites'}
-                  </Button>
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <Button 
+                    size="lg"
+                    variant="outline" 
+                    onClick={handleToggleFavorite}
+                    disabled={isAddingFavorite}
+                    className={`${
+                      isFavorite 
+                        ? 'bg-red-500 hover:bg-red-600 text-white border-red-500' 
+                        : 'bg-white/90 hover:bg-white border-2 border-white'
+                    } w-full sm:w-auto transition-colors`}
+                    >
+                    <Heart className={`w-5 h-5 mr-2 ${isFavorite ? 'fill-white' : ''}`} />
+                    {isFavorite ? 'Saved' : 'Add to Favorites'}
+                    </Button>
+
+                    <Button 
+                    size="lg"
+                    onClick={handleSubmitReview}
+                    className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white shadow-lg w-full sm:w-auto"
+                    >
+                    <MessageSquare className="w-5 h-5 mr-2" />
+                    Submit a Review
+                    </Button>
+                  </div>
                 </div>
                 </div>
                 </div>
@@ -486,7 +510,7 @@ export default function BusinessListing() {
         </div>
 
         {/* Reviews Section */}
-        <div className="mt-12 space-y-6">
+        <div id="review-section" className="mt-12 space-y-6">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Customer Reviews</h2>
 
