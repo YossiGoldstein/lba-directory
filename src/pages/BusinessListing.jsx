@@ -48,12 +48,14 @@ export default function BusinessListing() {
   const businessId = urlParams.get("id");
 
   const [user, setUser] = useState(null);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isAddingFavorite, setIsAddingFavorite] = useState(false);
 
   useEffect(() => {
     const loadUser = async () => {
+      setIsLoadingUser(true);
       try {
         const userData = await base44.auth.me();
         setUser(userData);
@@ -66,6 +68,8 @@ export default function BusinessListing() {
         }
       } catch (error) {
         setUser(null);
+      } finally {
+        setIsLoadingUser(false);
       }
     };
     loadUser();
@@ -372,7 +376,7 @@ export default function BusinessListing() {
                     size="lg"
                     variant="outline" 
                     onClick={handleToggleFavorite}
-                    disabled={isAddingFavorite}
+                    disabled={isAddingFavorite || isLoadingUser}
                     className={`${
                       isFavorite 
                         ? 'bg-red-500 hover:bg-red-600 text-white border-red-500' 
@@ -380,7 +384,7 @@ export default function BusinessListing() {
                     } w-full sm:w-auto transition-colors`}
                     >
                     <Heart className={`w-5 h-5 mr-2 ${isFavorite ? 'fill-white' : ''}`} />
-                    {isFavorite ? 'Saved' : 'Add to Favorites'}
+                    {isLoadingUser ? 'Loading...' : isFavorite ? 'Saved' : 'Add to Favorites'}
                     </Button>
 
                     <Button 
