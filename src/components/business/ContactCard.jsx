@@ -20,7 +20,7 @@ export default function ContactCard({ business }) {
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Primary Actions */}
-        {business.phone && (
+        {business.phone && business.phone.trim() && business.phone.replace(/\D/g, '').length >= 10 && (
           <Button 
             asChild 
             className="w-full bg-cyan-600 hover:bg-cyan-700"
@@ -63,7 +63,7 @@ export default function ContactCard({ business }) {
 
         {/* Contact Details */}
         <div className="space-y-3 pt-4 border-t">
-          {business.phone && (
+          {business.phone && business.phone.trim() && business.phone.replace(/\D/g, '').length >= 10 && (
             <div className="flex items-center gap-3 text-sm">
               <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
               <a href={`tel:${business.phone}`} className="text-gray-700 hover:text-cyan-600">
@@ -93,20 +93,6 @@ export default function ContactCard({ business }) {
               <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
               <a href={`mailto:${business.email}`} className="text-gray-700 hover:text-cyan-600">
                 {business.email}
-              </a>
-            </div>
-          )}
-
-          {business.website_url && (
-            <div className="flex items-center gap-3 text-sm">
-              <Globe className="w-4 h-4 text-gray-400 flex-shrink-0" />
-              <a 
-                href={business.website_url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-700 hover:text-cyan-600 break-all"
-              >
-                {business.website_url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
               </a>
             </div>
           )}
