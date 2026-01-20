@@ -4,6 +4,28 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function Step3Location({ data, onChange }) {
+  const formatPhoneNumber = (value) => {
+    // Remove all non-digit characters
+    const cleaned = value.replace(/\D/g, "");
+    
+    // Apply formatting
+    if (cleaned.length <= 3) {
+      return cleaned;
+    } else if (cleaned.length <= 6) {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3)}`;
+    } else if (cleaned.length <= 10) {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+    } else {
+      // Limit to 10 digits
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}`;
+    }
+  };
+
+  const handlePhoneChange = (e, fieldName) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    onChange({ ...data, [fieldName]: formatted });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -79,8 +101,8 @@ export default function Step3Location({ data, onChange }) {
                 id="phone"
                 type="tel"
                 value={data.phone || ""}
-                onChange={(e) => onChange({ ...data, phone: e.target.value })}
-                placeholder="+1 (732) 555-0123"
+                onChange={(e) => handlePhoneChange(e, "phone")}
+                placeholder="(732) 555-0123"
                 required
               />
             </div>
@@ -91,8 +113,8 @@ export default function Step3Location({ data, onChange }) {
                 id="whatsapp_number"
                 type="tel"
                 value={data.whatsapp_number || ""}
-                onChange={(e) => onChange({ ...data, whatsapp_number: e.target.value })}
-                placeholder="+1 (732) 555-0123"
+                onChange={(e) => handlePhoneChange(e, "whatsapp_number")}
+                placeholder="(732) 555-0123"
               />
             </div>
           </div>
