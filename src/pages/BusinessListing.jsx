@@ -276,9 +276,34 @@ export default function BusinessListing() {
           alt={business.business_name}
           className="w-full h-full object-cover"
         />
-        
+
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/85"></div>
+
+        {/* Get Directions Button */}
+        {(business.latitude && business.longitude) || business.address_line1 ? (
+          <div className="absolute top-4 right-4 z-10">
+            <Button
+              asChild
+              className="bg-white/95 hover:bg-white text-gray-900 font-semibold shadow-lg backdrop-blur-sm"
+            >
+              <a
+                href={
+                  business.latitude && business.longitude
+                    ? `https://www.google.com/maps/dir/?api=1&destination=${business.latitude},${business.longitude}`
+                    : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                        `${business.address_line1}, ${business.city}, ${business.state} ${business.zip_code}`
+                      )}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MapPin className="w-4 h-4 mr-2" />
+                Get Directions
+              </a>
+            </Button>
+          </div>
+        ) : null}
         
 
 
