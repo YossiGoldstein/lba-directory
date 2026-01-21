@@ -1,62 +1,18 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { toast } from "sonner";
-import { User, Mail, Lock, Phone } from "lucide-react";
 
 export default function UserRegister() {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    password: "",
-    confirmPassword: ""
-  });
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    // Get the next URL parameter if it exists
+    const nextUrl = new URLSearchParams(window.location.search).get("next");
     
-    console.log("Form submitted with data:", { email: formData.email, fullName: formData.fullName });
-    
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("הסיסמאות לא תואמות");
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      toast.error("הסיסמה חייבת להכיל לפחות 6 תווים");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      console.log("Attempting to invite user:", formData.email);
-      
-      // Invite the user using Base44's user invitation system
-      const result = await base44.users.inviteUser(formData.email, "user");
-      
-      console.log("Invitation result:", result);
-      
-      toast.success("ההרשמה הצליחה! בדוק את האימייל שלך לקבלת לינק להגדרת סיסמה והתחברות.");
-      
-      // Navigate to sign in page after a short delay
-      setTimeout(() => {
-        navigate(createPageUrl("SignIn"));
-      }, 3000);
-    } catch (error) {
-      console.error("Registration error:", error);
-      toast.error(error.message || "ההרשמה נכשלה. אנא נסה שוב או צור קשר עם התמיכה.");
-      setLoading(false);
-    }
-  };
+    // Redirect to Base44's built-in authentication system for registration
+    base44.auth.redirectToLogin(nextUrl || createPageUrl("Home"));
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-100 flex items-center justify-center p-4">
