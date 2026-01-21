@@ -24,8 +24,18 @@ export default function ReviewForm({ businessId, onReviewSubmitted }) {
     setIsSubmitting(true);
 
     try {
+      // Get customer from localStorage
+      const customerData = localStorage.getItem("lba_customer");
+      if (!customerData) {
+        toast.error("Please sign in to submit a review");
+        return;
+      }
+      
+      const customer = JSON.parse(customerData);
+      
       await base44.entities.Review.create({
         business_id: businessId,
+        user_id: customer.id,
         general_rating: generalRating,
         servicing_rating: servicingRating,
         pricing_rating: pricingRating,
