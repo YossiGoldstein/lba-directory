@@ -17,7 +17,6 @@ export default function SignIn() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="flex justify-center mb-8">
           <Link to={createPageUrl("Home")}>
             <img 
@@ -30,74 +29,14 @@ export default function SignIn() {
 
         <Card className="shadow-xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">מעביר אותך להתחברות...</CardTitle>
             <CardDescription className="text-center">
-              Enter your credentials to access your account
+              אנא המתן
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="your@email.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    required
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={formData.password}
-                    onChange={(e) => setFormData({...formData, password: e.target.value})}
-                    required
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between text-sm">
-                <Link to={createPageUrl("ForgotPassword")} className="text-cyan-600 hover:text-cyan-700">
-                  Forgot password?
-                </Link>
-              </div>
-
-              <Button 
-                type="submit" 
-                className="w-full bg-cyan-600 hover:bg-cyan-700"
-                disabled={loading}
-              >
-                {loading ? "Signing In..." : "Sign In"}
-              </Button>
-            </form>
-
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Don't have an account?</span>
-                </div>
-              </div>
-
-              <Button variant="outline" className="w-full mt-4" asChild>
-                <Link to={createPageUrl("UserRegister")}>Create Account</Link>
-              </Button>
-            </div>
+          <CardContent className="text-center py-8">
+            <div className="inline-block w-12 h-12 border-4 border-cyan-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-600">מעביר אותך למערכת ההתחברות...</p>
           </CardContent>
         </Card>
 
@@ -106,7 +45,7 @@ export default function SignIn() {
             to={createPageUrl("Home")} 
             className="text-sm text-cyan-600 hover:text-cyan-700"
           >
-            ← Back to Home
+            ← חזרה לעמוד הבית
           </Link>
         </div>
       </div>
