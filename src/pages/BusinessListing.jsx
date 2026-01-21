@@ -280,7 +280,7 @@ export default function BusinessListing() {
 
 
         {/* Business Info Overlay - Bottom */}
-        <div className="absolute bottom-0 left-0 right-0 pb-8">
+        <div className="absolute bottom-0 left-0 right-0 pb-4">
           <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col gap-4">
               <div className="flex items-start gap-4 md:gap-6">
