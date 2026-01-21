@@ -1,37 +1,18 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { toast } from "sonner";
-import { Mail, Lock } from "lucide-react";
 
 export default function SignIn() {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: ""
-  });
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      // Here you would implement your custom authentication logic
-      // For now, using Base44's auth system
-      toast.success("Successfully signed in!");
-      const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("Home");
-      navigate(nextUrl);
-    } catch (error) {
-      toast.error("Invalid email or password");
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    // Get the next URL parameter if it exists
+    const nextUrl = new URLSearchParams(window.location.search).get("next");
+    
+    // Redirect to Base44's built-in authentication system
+    base44.auth.redirectToLogin(nextUrl || createPageUrl("Home"));
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-100 flex items-center justify-center p-4">
