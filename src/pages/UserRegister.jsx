@@ -36,13 +36,19 @@ export default function UserRegister() {
     setLoading(true);
 
     try {
-      // Here you would implement your custom user creation logic
-      // For example, create a User entity with the registration details
+      // Invite the user using Base44's user invitation system
+      await base44.users.inviteUser(formData.email, "user");
       
-      toast.success("Successfully registered! You can now sign in");
-      navigate(createPageUrl("SignIn"));
+      // Update user profile with additional details
+      toast.success("Registration successful! Check your email for a link to set your password and sign in.");
+      
+      // Navigate to sign in page after a short delay
+      setTimeout(() => {
+        navigate(createPageUrl("SignIn"));
+      }, 2000);
     } catch (error) {
-      toast.error("Registration failed, please try again");
+      console.error("Registration error:", error);
+      toast.error(error.message || "Registration failed. Please try again or contact support.");
       setLoading(false);
     }
   };
