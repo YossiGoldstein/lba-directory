@@ -278,32 +278,7 @@ export default function BusinessListing() {
         />
 
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/85"></div>
-
-        {/* Get Directions Button */}
-        {(business.latitude && business.longitude) || business.address_line1 ? (
-          <div className="absolute top-4 right-4 z-10">
-            <Button
-              asChild
-              className="bg-white/95 hover:bg-white text-gray-900 font-semibold shadow-lg backdrop-blur-sm"
-            >
-              <a
-                href={
-                  business.latitude && business.longitude
-                    ? `https://www.google.com/maps/dir/?api=1&destination=${business.latitude},${business.longitude}`
-                    : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-                        `${business.address_line1}, ${business.city}, ${business.state} ${business.zip_code}`
-                      )}`
-                }
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <MapPin className="w-4 h-4 mr-2" />
-                Get Directions
-              </a>
-            </Button>
-          </div>
-        ) : null}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/90"></div>
         
 
 
@@ -412,6 +387,29 @@ export default function BusinessListing() {
                     {isLoadingUser ? 'Loading...' : isFavorite ? 'Saved' : 'Add to Favorites'}
                     </Button>
 
+                    {(business.latitude && business.longitude) || business.address_line1 ? (
+                      <Button
+                        size="lg"
+                        asChild
+                        className="bg-white/90 hover:bg-white text-gray-900 font-semibold border-2 border-white w-full sm:w-auto transition-colors"
+                      >
+                        <a
+                          href={
+                            business.latitude && business.longitude
+                              ? `https://www.google.com/maps/dir/?api=1&destination=${business.latitude},${business.longitude}`
+                              : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                                  `${business.address_line1}, ${business.city}, ${business.state} ${business.zip_code}`
+                                )}`
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <MapPin className="w-5 h-5 mr-2" />
+                          Get Directions
+                        </a>
+                      </Button>
+                    ) : null}
+
                     <Button 
                     size="lg"
                     variant="outline"
@@ -482,6 +480,48 @@ export default function BusinessListing() {
 
           {/* Left Column - Business Details */}
           <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
+            {/* Reviews Section */}
+            <div id="review-section" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Customer Reviews</h2>
+
+              {/* Review Form */}
+              {user ? (
+                <div className="mb-8">
+                  <ReviewForm 
+                    businessId={businessId} 
+                    onReviewSubmitted={refetchReviews}
+                  />
+                </div>
+              ) : (
+                <div className="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200 text-center">
+                  <p className="text-gray-700 mb-4">
+                    Log in or create a shopper account to write a review
+                  </p>
+                  <div className="flex gap-3 justify-center">
+                    <Button asChild variant="outline">
+                      <Link to={createPageUrl("Login")}>Login</Link>
+                    </Button>
+                    <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
+                      <Link to={createPageUrl("Register")}>Register</Link>
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Reviews List */}
+              {reviews.length > 0 ? (
+                <div className="space-y-4">
+                  {reviews.map((review) => (
+                    <ReviewCard key={review.id} review={review} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  No reviews yet. Be the first to share your experience!
+                </div>
+              )}
+            </div>
+
             {/* Description */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">About this business</h2>
@@ -537,50 +577,6 @@ export default function BusinessListing() {
             category={category}
             allCategories={allCategories}
           />
-        </div>
-
-        {/* Reviews Section */}
-        <div id="review-section" className="mt-12 space-y-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Customer Reviews</h2>
-
-            {/* Review Form */}
-            {user ? (
-              <div className="mb-8">
-                <ReviewForm 
-                  businessId={businessId} 
-                  onReviewSubmitted={refetchReviews}
-                />
-              </div>
-            ) : (
-              <div className="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200 text-center">
-                <p className="text-gray-700 mb-4">
-                  Log in or create a shopper account to write a review
-                </p>
-                <div className="flex gap-3 justify-center">
-                  <Button asChild variant="outline">
-                    <Link to={createPageUrl("Login")}>Login</Link>
-                  </Button>
-                  <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
-                    <Link to={createPageUrl("Register")}>Register</Link>
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Reviews List */}
-            {reviews.length > 0 ? (
-              <div className="space-y-4">
-                {reviews.map((review) => (
-                  <ReviewCard key={review.id} review={review} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                No reviews yet. Be the first to share your experience!
-              </div>
-            )}
-          </div>
         </div>
 
 
