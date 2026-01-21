@@ -23,32 +23,37 @@ export default function UserRegister() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    console.log("Form submitted with data:", { email: formData.email, fullName: formData.fullName });
+    
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
+      toast.error("הסיסמאות לא תואמות");
       return;
     }
 
     if (formData.password.length < 6) {
-      toast.error("Password must be at least 6 characters");
+      toast.error("הסיסמה חייבת להכיל לפחות 6 תווים");
       return;
     }
 
     setLoading(true);
 
     try {
-      // Invite the user using Base44's user invitation system
-      await base44.users.inviteUser(formData.email, "user");
+      console.log("Attempting to invite user:", formData.email);
       
-      // Update user profile with additional details
-      toast.success("Registration successful! Check your email for a link to set your password and sign in.");
+      // Invite the user using Base44's user invitation system
+      const result = await base44.users.inviteUser(formData.email, "user");
+      
+      console.log("Invitation result:", result);
+      
+      toast.success("ההרשמה הצליחה! בדוק את האימייל שלך לקבלת לינק להגדרת סיסמה והתחברות.");
       
       // Navigate to sign in page after a short delay
       setTimeout(() => {
         navigate(createPageUrl("SignIn"));
-      }, 2000);
+      }, 3000);
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error(error.message || "Registration failed. Please try again or contact support.");
+      toast.error(error.message || "ההרשמה נכשלה. אנא נסה שוב או צור קשר עם התמיכה.");
       setLoading(false);
     }
   };
