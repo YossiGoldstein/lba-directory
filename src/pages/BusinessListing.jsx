@@ -126,16 +126,16 @@ export default function BusinessListing() {
   } = useQuery({
     queryKey: ["reviews", businessId],
     queryFn: async () => {
-      const [allReviews, allUsers] = await Promise.all([
+      const [allReviews, allCustomers] = await Promise.all([
         base44.entities.Review.list(),
-        base44.entities.User.list()
+        base44.entities.Customer.list()
       ]);
       
       return allReviews
         .filter((r) => r.business_id === businessId && r.is_approved)
         .map((review) => ({
           ...review,
-          user: allUsers.find(u => u.id === review.user_id)
+          user: allCustomers.find(c => c.id === review.user_id) || { full_name: "Anonymous" }
         }))
         .sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },
