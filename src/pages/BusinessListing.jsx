@@ -222,14 +222,11 @@ export default function BusinessListing() {
 
   const handleSubmitReview = () => {
     if (!user) {
-      base44.auth.redirectToLogin(window.location.pathname + window.location.search);
+      window.location.href = createPageUrl("UserRegister") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
       return;
     }
-    // Scroll to review form
-    const reviewSection = document.querySelector('#review-section');
-    if (reviewSection) {
-      reviewSection.scrollIntoView({ behavior: 'smooth' });
-    }
+    // Open a modal or navigate to review page (for now, show toast)
+    toast.success("Review feature coming soon!");
   };
 
   // Loading state
@@ -344,33 +341,9 @@ export default function BusinessListing() {
                 </div>
                 </div>
 
-                {/* Bottom Row - Ratings and Action Buttons */}
+                {/* Bottom Row - Action Buttons */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 w-full">
-                  {/* Ratings Row */}
-                  {business.reviews_count > 0 && (
-                    <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
-                      <div className="flex items-center gap-2">
-                        <span className="text-white text-sm sm:text-base font-medium drop-shadow">General:</span>
-                        <div className="flex gap-0.5">
-                          {renderStars(business.general_rating || 0)}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-white text-sm sm:text-base font-medium drop-shadow">Servicing:</span>
-                        <div className="flex gap-0.5">
-                          {renderStars(business.servicing_rating || 0)}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-white text-sm sm:text-base font-medium drop-shadow">Pricing:</span>
-                        <div className="flex gap-0.5">
-                          {renderStars(business.pricing_rating || 0)}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Action Buttons - Always on the right */}
+                  {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto md:ml-auto">
                     <Button 
                     size="lg"
@@ -409,21 +382,53 @@ export default function BusinessListing() {
                         </a>
                       </Button>
                     ) : null}
+                    </div>
+                </div>
+                </div>
+                </div>
+                </div>
+      </div>
 
-                    <Button 
-                    size="lg"
-                    variant="outline"
-                    onClick={handleSubmitReview}
-                    className="bg-white/90 hover:bg-white border-2 border-white w-full sm:w-auto transition-colors"
-                    >
-                    <MessageSquare className="w-5 h-5 mr-2" />
-                    Submit a Review
-                    </Button>
+      {/* Ratings Bar - Below Hero */}
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            {/* Ratings Row */}
+            {business.reviews_count > 0 ? (
+              <div className="flex items-center gap-6 flex-wrap justify-center md:justify-start">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-700 text-sm font-medium">General:</span>
+                  <div className="flex gap-0.5">
+                    {renderStars(business.general_rating || 0)}
                   </div>
                 </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-700 text-sm font-medium">Servicing:</span>
+                  <div className="flex gap-0.5">
+                    {renderStars(business.servicing_rating || 0)}
+                  </div>
                 </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-700 text-sm font-medium">Pricing:</span>
+                  <div className="flex gap-0.5">
+                    {renderStars(business.pricing_rating || 0)}
+                  </div>
                 </div>
-                </div>
+              </div>
+            ) : (
+              <div className="text-gray-500 text-sm">No reviews yet</div>
+            )}
+
+            {/* Submit Review Button */}
+            <Button 
+              onClick={handleSubmitReview}
+              className="bg-cyan-600 hover:bg-cyan-700 text-white"
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Submit a Review
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* Main Content - Two Column Layout */}
@@ -480,48 +485,6 @@ export default function BusinessListing() {
 
           {/* Left Column - Business Details */}
           <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
-            {/* Reviews Section */}
-            <div id="review-section" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Customer Reviews</h2>
-
-              {/* Review Form */}
-              {user ? (
-                <div className="mb-8">
-                  <ReviewForm 
-                    businessId={businessId} 
-                    onReviewSubmitted={refetchReviews}
-                  />
-                </div>
-              ) : (
-                <div className="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200 text-center">
-                  <p className="text-gray-700 mb-4">
-                    Log in or create a shopper account to write a review
-                  </p>
-                  <div className="flex gap-3 justify-center">
-                    <Button asChild variant="outline">
-                      <Link to={createPageUrl("Login")}>Login</Link>
-                    </Button>
-                    <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
-                      <Link to={createPageUrl("Register")}>Register</Link>
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {/* Reviews List */}
-              {reviews.length > 0 ? (
-                <div className="space-y-4">
-                  {reviews.map((review) => (
-                    <ReviewCard key={review.id} review={review} />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  No reviews yet. Be the first to share your experience!
-                </div>
-              )}
-            </div>
-
             {/* Description */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">About this business</h2>
