@@ -220,13 +220,16 @@ export default function BusinessListing() {
     }
   };
 
+  const [showReviewForm, setShowReviewForm] = useState(false);
+
   const handleSubmitReview = () => {
-    if (!user) {
+    // Check if user is logged in via Customer session
+    const customerData = localStorage.getItem("lba_customer");
+    if (!customerData) {
       window.location.href = createPageUrl("UserRegister") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
       return;
     }
-    // Open a modal or navigate to review page (for now, show toast)
-    toast.success("Review feature coming soon!");
+    setShowReviewForm(!showReviewForm);
   };
 
   // Loading state
