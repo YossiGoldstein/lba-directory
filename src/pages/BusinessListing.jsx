@@ -431,11 +431,35 @@ export default function BusinessListing() {
               Submit a Review
             </Button>
           </div>
-        </div>
-      </div>
+          </div>
+          </div>
 
-      {/* Main Content - Two Column Layout */}
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Review Form Modal */}
+          {showReviewForm && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-gray-900">Submit Your Review</h3>
+              <button
+                onClick={() => setShowReviewForm(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            <ReviewForm
+              businessId={businessId}
+              onReviewSubmitted={() => {
+                setShowReviewForm(false);
+                refetchReviews();
+              }}
+            />
+          </div>
+          </div>
+          )}
+
+          {/* Main Content - Two Column Layout */}
+          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Right Column - Gallery & Map */}
           <div className="lg:col-span-1 space-y-6 order-1 lg:order-2">
