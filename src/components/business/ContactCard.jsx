@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Phone, Mail, Globe, MessageCircle, Facebook, Instagram, MapPin, ExternalLink } from "lucide-react";
+import { Phone, Mail, Globe, MessageCircle, Facebook, Instagram, MapPin, ExternalLink, Car, Package, UtensilsCrossed, ShoppingCart, Coffee } from "lucide-react";
 
 const formatPhoneNumber = (phone) => {
   if (!phone) return "";
@@ -175,8 +175,9 @@ export default function ContactCard({ business }) {
                   href={business.uber_eats_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 bg-black hover:bg-gray-800 text-white rounded text-xs font-medium transition-colors"
+                  className="px-3 py-1.5 bg-black hover:bg-gray-800 text-white rounded text-xs font-medium transition-colors flex items-center gap-1.5"
                 >
+                  <Car className="w-3.5 h-3.5" />
                   Uber Eats
                 </a>
               )}
@@ -185,8 +186,9 @@ export default function ContactCard({ business }) {
                   href={business.doordash_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-medium transition-colors"
+                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-medium transition-colors flex items-center gap-1.5"
                 >
+                  <Package className="w-3.5 h-3.5" />
                   DoorDash
                 </a>
               )}
@@ -195,8 +197,9 @@ export default function ContactCard({ business }) {
                   href={business.grubhub_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded text-xs font-medium transition-colors"
+                  className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded text-xs font-medium transition-colors flex items-center gap-1.5"
                 >
+                  <UtensilsCrossed className="w-3.5 h-3.5" />
                   Grubhub
                 </a>
               )}
@@ -205,8 +208,9 @@ export default function ContactCard({ business }) {
                   href={business.postmates_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 bg-black hover:bg-gray-800 text-white rounded text-xs font-medium transition-colors"
+                  className="px-3 py-1.5 bg-black hover:bg-gray-800 text-white rounded text-xs font-medium transition-colors flex items-center gap-1.5"
                 >
+                  <Package className="w-3.5 h-3.5" />
                   Postmates
                 </a>
               )}
@@ -215,8 +219,9 @@ export default function ContactCard({ business }) {
                   href={business.instacart_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-medium transition-colors"
+                  className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-medium transition-colors flex items-center gap-1.5"
                 >
+                  <ShoppingCart className="w-3.5 h-3.5" />
                   Instacart
                 </a>
               )}
@@ -225,8 +230,9 @@ export default function ContactCard({ business }) {
                   href={business.toast_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded text-xs font-medium transition-colors"
+                  className="px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded text-xs font-medium transition-colors flex items-center gap-1.5"
                 >
+                  <Coffee className="w-3.5 h-3.5" />
                   Toast
                 </a>
               )}
@@ -235,8 +241,9 @@ export default function ContactCard({ business }) {
                   href={business.k1_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-medium transition-colors"
+                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-medium transition-colors flex items-center gap-1.5"
                 >
+                  <Package className="w-3.5 h-3.5" />
                   K1
                 </a>
               )}
