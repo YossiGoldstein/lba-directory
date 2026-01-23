@@ -48,6 +48,7 @@ export default function BusinessListing() {
   const businessId = urlParams.get("id");
 
   const [user, setUser] = useState(null);
+  const [customer, setCustomer] = useState(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -57,6 +58,13 @@ export default function BusinessListing() {
     const loadUser = async () => {
       setIsLoadingUser(true);
       try {
+        // Check for customer session
+        const customerData = localStorage.getItem("lba_customer");
+        if (customerData) {
+          const parsedCustomer = JSON.parse(customerData);
+          setCustomer(parsedCustomer);
+        }
+
         const userData = await base44.auth.me();
         setUser(userData);
         
@@ -224,8 +232,7 @@ export default function BusinessListing() {
 
   const handleSubmitReview = () => {
     // Check if user is logged in via Customer session
-    const customerData = localStorage.getItem("lba_customer");
-    if (!customerData) {
+    if (!customer) {
       window.location.href = createPageUrl("UserRegister") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
       return;
     }
