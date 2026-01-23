@@ -464,8 +464,11 @@ export default function BusinessListing() {
           {/* Main Content - Two Column Layout */}
           <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Right Column - Gallery & Map */}
+          {/* Right Column - Contact, Gallery & Map */}
           <div className="lg:col-span-1 space-y-6 order-1 lg:order-2">
+            {/* Contact Card */}
+            <ContactCard business={business} />
+
             {/* Gallery */}
             {business.gallery_images && business.gallery_images.length > 1 && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
@@ -508,9 +511,6 @@ export default function BusinessListing() {
                 </div>
               </div>
             )}
-
-            {/* Contact Card */}
-            <ContactCard business={business} />
           </div>
 
           {/* Left Column - Business Details */}
