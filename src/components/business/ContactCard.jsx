@@ -14,7 +14,7 @@ const formatPhoneNumber = (phone) => {
 
 export default function ContactCard({ business }) {
   return (
-    <Card className="sticky top-6">
+    <Card>
       <CardContent className="space-y-4 pt-6">
         <h3 className="text-lg font-bold text-gray-900 mb-4">Contact Information</h3>
         {/* Address */}
