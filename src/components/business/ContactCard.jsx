@@ -16,7 +16,7 @@ export default function ContactCard({ business }) {
   return (
     <Card className="sticky top-6">
       <CardHeader>
-        <CardTitle className="text-lg">Contact Information</CardTitle>
+        <CardTitle className="text-lg font-bold">Contact Information</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Address */}
@@ -113,7 +113,7 @@ export default function ContactCard({ business }) {
         {/* Social Media */}
         {(business.facebook_url || business.instagram_url || business.linkedin_url || business.youtube_url) && (
           <div className="pt-4 border-t">
-            <p className="text-sm font-medium text-gray-700 mb-3">Social Media</p>
+            <h3 className="text-lg font-bold text-gray-900 mb-3">Social Media</h3>
             <div className="flex gap-2 flex-wrap">
               {business.facebook_url && (
                 <a 
