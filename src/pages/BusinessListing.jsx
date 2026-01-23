@@ -417,6 +417,9 @@ export default function BusinessListing() {
                     {renderStars(business.pricing_rating || 0)}
                   </div>
                 </div>
+                <span className="text-sm text-gray-600">
+                  ({business.reviews_count} {business.reviews_count === 1 ? 'review' : 'reviews'})
+                </span>
               </div>
             ) : (
               <div className="text-gray-500 text-sm">No reviews yet</div>
@@ -553,18 +556,6 @@ export default function BusinessListing() {
                     >
                       {tag}
                     </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Reviews Section */}
-            {reviews.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Customer Reviews</h2>
-                <div className="space-y-4">
-                  {reviews.map((review) => (
-                    <ReviewCard key={review.id} review={review} />
                   ))}
                 </div>
               </div>

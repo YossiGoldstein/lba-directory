@@ -133,8 +133,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
 
           {/* Ratings Row */}
           {business.reviews_count > 0 && (
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-gray-500 text-xs font-medium">Reviews:</span>
+            <div className="flex items-center gap-1.5 mb-2">
               <div className="flex gap-0.5">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
@@ -147,6 +146,9 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
                   />
                 ))}
               </div>
+              <span className="text-xs text-gray-600">
+                ({business.reviews_count})
+              </span>
             </div>
           )}
 
