@@ -3,12 +3,13 @@ import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { User, Heart, MessageSquare, Search, Sparkles, Edit, Star } from "lucide-react";
+import { User, Heart, MessageSquare, Search, Sparkles, Edit, Star, Bell } from "lucide-react";
 import ProfileTab from "../components/dashboard/ProfileTab";
 import FavoritesTab from "../components/dashboard/FavoritesTab";
 import MyReviewsTab from "../components/dashboard/MyReviewsTab";
 import RecentSearchesTab from "../components/dashboard/RecentSearchesTab";
 import AiActivityTab from "../components/dashboard/AiActivityTab";
+import NotificationsTab from "../components/dashboard/NotificationsTab";
 
 export default function UserDashboard() {
   const [user, setUser] = useState(null);
@@ -18,6 +19,7 @@ export default function UserDashboard() {
     favorites: 0,
     reviews: 0,
     searches: 0,
+    notifications: 0,
   });
 
   useEffect(() => {
@@ -44,16 +46,18 @@ export default function UserDashboard() {
         setUser(userData);
         
         // Load stats
-        const [favorites, reviews, searches] = await Promise.all([
+        const [favorites, reviews, searches, notifications] = await Promise.all([
           base44.entities.Favorite.list(),
           base44.entities.Review.list(),
           base44.entities.SearchHistory.list(),
+          base44.entities.Notification.list(),
         ]);
 
         setStats({
           favorites: favorites.filter(f => f.user_id === userData.id).length,
           reviews: reviews.filter(r => r.user_id === userData.id).length,
           searches: searches.filter(s => s.user_id === userData.id).length,
+          notifications: notifications.filter(n => n.customer_id === userData.id && !n.is_read).length,
         });
 
         setIsLoading(false);
@@ -70,21 +74,24 @@ export default function UserDashboard() {
   const refreshStats = async () => {
     if (!user) return;
     
-    const [favorites, reviews, searches] = await Promise.all([
+    const [favorites, reviews, searches, notifications] = await Promise.all([
       base44.entities.Favorite.list(),
       base44.entities.Review.list(),
       base44.entities.SearchHistory.list(),
+      base44.entities.Notification.list(),
     ]);
 
     setStats({
       favorites: favorites.filter(f => f.user_id === user.id).length,
       reviews: reviews.filter(r => r.user_id === user.id).length,
       searches: searches.filter(s => s.user_id === user.id).length,
+      notifications: notifications.filter(n => n.customer_id === user.id && !n.is_read).length,
     });
   };
 
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
+    { id: "notifications", label: "Notifications", icon: Bell, badge: stats.notifications > 0 ? stats.notifications : null },
     { id: "favorites", label: "Favorites", icon: Heart },
     { id: "reviews", label: "My Reviews", icon: MessageSquare },
     { id: "searches", label: "Recent Searches", icon: Search },
@@ -195,7 +202,7 @@ export default function UserDashboard() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
+                  className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap relative ${
                     activeTab === tab.id
                       ? "text-cyan-600 border-b-2 border-cyan-600 bg-cyan-50"
                       : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
@@ -203,6 +210,11 @@ export default function UserDashboard() {
                 >
                   <IconComponent className="w-5 h-5" />
                   {tab.label}
+                  {tab.badge && (
+                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {tab.badge}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -213,6 +225,9 @@ export default function UserDashboard() {
         <div className="min-h-[400px]">
           {activeTab === "profile" && (
             <ProfileTab user={user} onUserUpdate={refreshStats} />
+          )}
+          {activeTab === "notifications" && (
+            <NotificationsTab user={user} />
           )}
           {activeTab === "favorites" && (
             <FavoritesTab user={user} />
