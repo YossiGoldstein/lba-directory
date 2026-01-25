@@ -3,7 +3,8 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
-        const { deal_id } = await req.json();
+        const payload = await req.json();
+        const deal_id = payload.deal_id || payload.event?.entity_id;
 
         if (!deal_id) {
             return Response.json({ error: 'Missing deal_id' }, { status: 400 });
