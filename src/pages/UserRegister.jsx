@@ -55,20 +55,8 @@ export default function UserRegister() {
         is_active: true
       });
 
-      // Send welcome email
-      try {
-        await base44.functions.invoke('sendWelcomeEmail', {
-          email: formData.email,
-          fullName: formData.fullName,
-          password: formData.password
-        });
-      } catch (emailError) {
-        console.error("Failed to send welcome email:", emailError);
-        // Continue even if email fails
-      }
+      toast.success("Registration successful!");
 
-      toast.success("Registration successful! Check your email.");
-      
       setTimeout(() => {
         window.location.href = createPageUrl("RegistrationSuccess") + `?email=${encodeURIComponent(formData.email)}`;
       }, 1000);
