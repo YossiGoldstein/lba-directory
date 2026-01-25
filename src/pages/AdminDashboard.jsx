@@ -19,6 +19,7 @@ import {
 import BusinessesTab from "../components/admin/BusinessesTab";
 import PendingApprovalsTab from "../components/admin/PendingApprovalsTab";
 import UsersTab from "../components/admin/UsersTab";
+import CustomersTab from "../components/admin/CustomersTab";
 import ReviewsReportsTab from "../components/admin/ReviewsReportsTab";
 import DealsOverviewTab from "../components/admin/DealsOverviewTab";
 import CategoriesTab from "../components/admin/CategoriesTab";
@@ -32,6 +33,7 @@ export default function AdminDashboard() {
     totalBusinesses: 0,
     pendingBusinesses: 0,
     totalUsers: 0,
+    totalCustomers: 0,
     totalReviews: 0,
     activeDeals: 0,
     reports: 0
@@ -62,9 +64,10 @@ export default function AdminDashboard() {
 
   const loadStats = async () => {
     try {
-      const [businesses, users, reviews, deals] = await Promise.all([
+      const [businesses, users, customers, reviews, deals] = await Promise.all([
         base44.entities.Business.list(),
         base44.entities.User.list(),
+        base44.entities.Customer.list(),
         base44.entities.Review.list(),
         base44.entities.Deal.list()
       ]);
@@ -81,6 +84,7 @@ export default function AdminDashboard() {
         totalBusinesses: businesses.length,
         pendingBusinesses: businesses.filter(b => b.status === 'pending').length,
         totalUsers: users.length,
+        totalCustomers: customers.length,
         totalReviews: reviews.length,
         activeDeals: activeDealsCount,
         reports: 0 // Will implement reports entity
@@ -182,8 +186,8 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between mb-2">
                 <Users className="w-8 h-8 text-blue-600" />
               </div>
-              <p className="text-3xl font-bold text-gray-900">{stats.totalUsers}</p>
-              <p className="text-sm text-gray-600">Total Users</p>
+              <p className="text-3xl font-bold text-gray-900">{stats.totalCustomers}</p>
+              <p className="text-sm text-gray-600">Registered Customers</p>
             </CardContent>
           </Card>
 
@@ -228,7 +232,8 @@ export default function AdminDashboard() {
                 <Badge className="ml-2 bg-orange-500">{stats.pendingBusinesses}</Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsTrigger value="customers">Customers</TabsTrigger>
+            <TabsTrigger value="users">System Users</TabsTrigger>
             <TabsTrigger value="reviews">Reviews & Reports</TabsTrigger>
             <TabsTrigger value="deals">Deals</TabsTrigger>
             <TabsTrigger value="categories">Categories</TabsTrigger>
@@ -242,6 +247,10 @@ export default function AdminDashboard() {
 
           <TabsContent value="pending">
             <PendingApprovalsTab onUpdate={loadStats} />
+          </TabsContent>
+
+          <TabsContent value="customers">
+            <CustomersTab />
           </TabsContent>
 
           <TabsContent value="users">
