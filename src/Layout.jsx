@@ -15,6 +15,20 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     const loadUser = async () => {
       try {
+        // Check for customer session first
+        const customerData = localStorage.getItem("lba_customer");
+        if (customerData) {
+          const customer = JSON.parse(customerData);
+          setUser({
+            id: customer.id,
+            full_name: customer.full_name,
+            email: customer.email,
+            role: "user" // customers are regular users
+          });
+          return;
+        }
+
+        // Fallback to base44 auth
         const userData = await base44.auth.me();
         setUser(userData);
       } catch (error) {
@@ -55,6 +69,9 @@ export default function Layout({ children, currentPageName }) {
 
 
   const handleLogout = () => {
+    // Clear customer session
+    localStorage.removeItem("lba_customer");
+    // Also try base44 logout
     base44.auth.logout("/");
   };
 
