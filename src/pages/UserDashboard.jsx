@@ -23,7 +23,24 @@ export default function UserDashboard() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const userData = await base44.auth.me();
+        // Check for customer session first
+        const customerData = localStorage.getItem("lba_customer");
+        let userData;
+        
+        if (customerData) {
+          const customer = JSON.parse(customerData);
+          userData = {
+            id: customer.id,
+            full_name: customer.full_name,
+            email: customer.email,
+            phone: customer.phone,
+            role: "user"
+          };
+        } else {
+          // Fallback to base44 auth
+          userData = await base44.auth.me();
+        }
+        
         setUser(userData);
         
         // Load stats
@@ -43,7 +60,7 @@ export default function UserDashboard() {
       } catch (error) {
         console.error("Failed to load user:", error);
         // Redirect to login if not authenticated
-        base44.auth.redirectToLogin("/");
+        window.location.href = createPageUrl("SignIn");
       }
     };
 
