@@ -579,7 +579,8 @@ export default function Home() {
               <Button 
                 size="lg"
                 onClick={async () => {
-                  const isAuth = await base44.auth.isAuthenticated();
+                  const customerData = localStorage.getItem("lba_customer");
+                  const isAuth = customerData || await base44.auth.isAuthenticated();
                   if (isAuth) {
                     window.location.href = createPageUrl("AddBusiness");
                   } else {
