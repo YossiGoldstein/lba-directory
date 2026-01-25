@@ -22,6 +22,7 @@ import TermsOfUse from './pages/TermsOfUse';
 import UserDashboard from './pages/UserDashboard';
 import UserRegister from './pages/UserRegister';
 import Welcome from './pages/Welcome';
+import RegistrationSuccess from './pages/RegistrationSuccess';
 import __Layout from './Layout.jsx';
 
 
@@ -50,6 +51,7 @@ export const PAGES = {
     "UserDashboard": UserDashboard,
     "UserRegister": UserRegister,
     "Welcome": Welcome,
+    "RegistrationSuccess": RegistrationSuccess,
 }
 
 export const pagesConfig = {
