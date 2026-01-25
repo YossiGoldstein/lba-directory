@@ -55,6 +55,14 @@ export default function AddBusiness() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // Check for customer session first
+        const customerData = localStorage.getItem("lba_customer");
+        if (customerData) {
+          setIsCheckingAuth(false);
+          return;
+        }
+
+        // Fallback to base44 auth
         const isAuth = await base44.auth.isAuthenticated();
         if (!isAuth) {
           base44.auth.redirectToLogin(createPageUrl("AddBusiness"));
@@ -179,7 +187,19 @@ export default function AddBusiness() {
 
     try {
       // Get current user for email
-      const user = await base44.auth.me();
+      const customerData = localStorage.getItem("lba_customer");
+      let user;
+      
+      if (customerData) {
+        const customer = JSON.parse(customerData);
+        user = {
+          id: customer.id,
+          full_name: customer.full_name,
+          email: customer.email,
+        };
+      } else {
+        user = await base44.auth.me();
+      }
 
       // If paid tier, redirect to Stripe checkout
       if (formData.listing_tier === "pro" || formData.listing_tier === "premium") {
