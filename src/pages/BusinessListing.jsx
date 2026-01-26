@@ -470,55 +470,55 @@ export default function BusinessListing() {
 
           {/* Main Content - Two Column Layout */}
           <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Right Column - Contact, Gallery & Map */}
-          <div className="lg:col-span-1 space-y-6 order-1 lg:order-2">
-            {/* Contact Card */}
-            <ContactCard business={business} />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Right Column - Contact & Map (Gallery moved to end on mobile) */}
+              <div className="lg:col-span-1 space-y-6 order-1 lg:order-2">
+                {/* Contact Card */}
+                <ContactCard business={business} />
 
-            {/* Gallery */}
-            {business.gallery_images && business.gallery_images.length > 1 && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                <h3 className="text-lg font-bold text-gray-900 mb-3">Gallery</h3>
-                <div className="grid grid-cols-3 gap-2">
-                  {business.gallery_images.slice(1).map((img, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setSelectedImage(img)}
-                      className="aspect-square rounded-lg overflow-hidden hover:opacity-75 transition-opacity"
-                    >
-                      <img
-                        src={img}
-                        alt={`${business.business_name} - ${idx + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+                {/* Gallery - Desktop only */}
+                {business.gallery_images && business.gallery_images.length > 1 && (
+                  <div className="hidden lg:block bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                    <h3 className="text-lg font-bold text-gray-900 mb-3">Gallery</h3>
+                    <div className="grid grid-cols-3 gap-2">
+                      {business.gallery_images.slice(1).map((img, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setSelectedImage(img)}
+                          className="aspect-square rounded-lg overflow-hidden hover:opacity-75 transition-opacity"
+                        >
+                          <img
+                            src={img}
+                            alt={`${business.business_name} - ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-            {/* Map */}
-            {business.latitude && business.longitude && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div className="p-4 border-b border-gray-200">
-                  <h3 className="text-lg font-bold text-gray-900">Location</h3>
-                </div>
-                <div className="h-80">
-                  <MapContainer
-                    center={[business.latitude, business.longitude]}
-                    zoom={15}
-                    style={{ height: "100%", width: "100%" }}
-                  >
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    <Marker position={[business.latitude, business.longitude]}>
-                      <Popup>{business.business_name}</Popup>
-                    </Marker>
-                  </MapContainer>
-                </div>
+                {/* Map */}
+                {business.latitude && business.longitude && (
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="p-4 border-b border-gray-200">
+                      <h3 className="text-lg font-bold text-gray-900">Location</h3>
+                    </div>
+                    <div className="h-80">
+                      <MapContainer
+                        center={[business.latitude, business.longitude]}
+                        zoom={15}
+                        style={{ height: "100%", width: "100%" }}
+                      >
+                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                        <Marker position={[business.latitude, business.longitude]}>
+                          <Popup>{business.business_name}</Popup>
+                        </Marker>
+                      </MapContainer>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
           {/* Left Column - Business Details */}
           <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
@@ -569,6 +569,28 @@ export default function BusinessListing() {
             )}
           </div>
         </div>
+
+        {/* Gallery - Mobile only (after all content) */}
+        {business.gallery_images && business.gallery_images.length > 1 && (
+          <div className="lg:hidden bg-white rounded-lg shadow-sm border border-gray-200 p-4 mt-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-3">Gallery</h3>
+            <div className="grid grid-cols-3 gap-2">
+              {business.gallery_images.slice(1).map((img, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedImage(img)}
+                  className="aspect-square rounded-lg overflow-hidden hover:opacity-75 transition-opacity"
+                >
+                  <img
+                    src={img}
+                    alt={`${business.business_name} - ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Related Categories Section */}
         <div className="mt-6">

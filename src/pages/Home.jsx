@@ -85,36 +85,40 @@ export default function Home() {
       const shortDesc = (business.short_description || "").toLowerCase();
       const longDesc = (business.long_description || "").toLowerCase();
       const tags = business.tags ? business.tags.map(t => t.toLowerCase()).join(" ") : "";
-      
+
       // Get category name for this business
       const category = categories.find(c => c.id === business.category_id);
       const categoryName = category ? category.name.toLowerCase() : "";
-      
-      // Exact match in name
+
+      // All content combined
+      const allContent = `${name} ${slug} ${shortDesc} ${longDesc} ${tags} ${categoryName}`;
+
+      // Exact match in name - highest priority
       if (name === query || slug === query) return true;
-      
-      // Contains match in name
-      if (name.includes(query) || query.includes(name)) return true;
-      
-      // Search in descriptions
-      if (shortDesc.includes(query) || longDesc.includes(query)) return true;
-      
-      // Search in tags
-      if (tags.includes(query)) return true;
-      
-      // Search in category name
-      if (categoryName.includes(query)) return true;
-      
-      // Word match - if query has multiple words, check if most appear in business content
+
+      // Strong match: query is a complete word in the name
+      const nameWords = name.split(/\s+/);
+      if (nameWords.some(word => word === query)) return true;
+
+      // Contains match in name (but must be significant portion)
+      if (name.includes(query) && query.length >= 4) return true;
+
+      // Word-based matching for multi-word queries
       const queryWords = query.split(/\s+/).filter(w => w.length > 2);
-      const contentWords = `${name} ${shortDesc} ${longDesc} ${tags} ${categoryName}`.split(/\s+/);
       if (queryWords.length >= 2) {
-        const matchedWords = queryWords.filter(qw => 
-          contentWords.some(cw => cw.includes(qw) || qw.includes(cw))
+        // For multi-word queries, ALL words must appear in the business content
+        const allWordsMatch = queryWords.every(qw => 
+          allContent.includes(qw)
         );
-        if (matchedWords.length >= Math.ceil(queryWords.length * 0.7)) return true;
+        if (allWordsMatch) return true;
       }
-      
+
+      // Single word queries - must appear as standalone word or be significant
+      if (queryWords.length === 1 && query.length >= 4) {
+        const contentWords = allContent.split(/\s+/);
+        if (contentWords.some(cw => cw.includes(query) || query.includes(cw))) return true;
+      }
+
       return false;
     });
 
