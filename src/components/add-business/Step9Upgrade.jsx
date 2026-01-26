@@ -15,7 +15,7 @@ export default function Step9Upgrade({ data, onChange }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Free Plan */}
         <Card className={`cursor-pointer transition-all ${data.listing_tier === "free" ? "ring-2 ring-cyan-600 shadow-lg" : ""}`}
           onClick={() => onChange({ ...data, listing_tier: "free" })}>
@@ -60,7 +60,7 @@ export default function Step9Upgrade({ data, onChange }) {
               </div>
               {data.listing_tier === "pro" && <Badge className="bg-cyan-100 text-cyan-800">Selected</Badge>}
             </div>
-            <p className="text-3xl font-bold text-gray-900 mt-2">$99</p>
+            <p className="text-3xl font-bold text-gray-900 mt-2">$50</p>
             <p className="text-sm text-gray-500">per month</p>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -91,6 +91,51 @@ export default function Step9Upgrade({ data, onChange }) {
             </div>
           </CardContent>
         </Card>
+
+        {/* Premium Plan */}
+        <Card className={`cursor-pointer transition-all ${data.listing_tier === "premium" ? "ring-2 ring-cyan-600 shadow-lg" : "hover:shadow-lg"}`}
+          onClick={() => onChange({ ...data, listing_tier: "premium" })}>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CardTitle>Premium</CardTitle>
+                <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                </svg>
+              </div>
+              {data.listing_tier === "premium" && <Badge className="bg-cyan-100 text-cyan-800">Selected</Badge>}
+            </div>
+            <p className="text-3xl font-bold text-gray-900 mt-2">$100</p>
+            <p className="text-sm text-gray-500">per month</p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-3 mb-4">
+              <p className="text-sm font-semibold text-blue-900">⭐ Best visibility & features</p>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <span className="text-gray-700">All Pro plan benefits</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <TrendingUp className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                <span className="text-gray-700"><strong>Featured listing</strong> at top of results</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <span className="text-gray-700">Verified badge on listing</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <span className="text-gray-700">Priority customer support</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <span className="text-gray-700">Featured in home page carousel</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
@@ -99,7 +144,7 @@ export default function Step9Upgrade({ data, onChange }) {
           <div>
             <h4 className="font-semibold text-gray-900 mb-2">💡 Special Offer</h4>
             <p className="text-sm text-gray-700">
-              Upgrade to Pro and get your first month for just $49! After that, only $99/month.
+              Upgrade to Pro for $50/month or Premium for $100/month and get maximum visibility for your business!
             </p>
           </div>
         </div>
