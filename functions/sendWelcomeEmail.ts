@@ -71,12 +71,26 @@ Deno.serve(async (req) => {
 </html>
         `;
 
-        await base44.asServiceRole.integrations.Core.SendEmail({
-            to: email,
-            subject: "Welcome to LBA Directory - Your Account is Ready! 🎉",
-            body: emailBody,
-            from_name: "LBA Directory"
+        // Use service role to send email
+        const response = await fetch('https://api.base44.com/integrations/core/send-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${Deno.env.get('BASE44_SERVICE_ROLE_KEY')}`,
+                'X-App-Id': Deno.env.get('BASE44_APP_ID')
+            },
+            body: JSON.stringify({
+                to: email,
+                subject: "Welcome to LBA Directory - Your Account is Ready! 🎉",
+                body: emailBody,
+                from_name: "LBA Directory"
+            })
         });
+
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`Failed to send email: ${error}`);
+        }
 
         return Response.json({ 
             success: true,
