@@ -77,11 +77,36 @@ export default function Home() {
     setAgentResponse("");
     setMatchedBusinesses([]);
 
-    // Step 1: Smart direct search
     const query = searchQuery.toLowerCase().trim();
     const queryWords = query.split(/\s+/).filter(w => w.length > 2);
-    
-    const directMatches = allBusinesses.filter(business => {
+
+    // Detect if this is a natural language query that needs AI assistance
+    const needsAI = 
+      query.includes("looking for") ||
+      query.includes("where can i") ||
+      query.includes("open now") ||
+      query.includes("available now") ||
+      query.includes("best") ||
+      query.includes("recommend") ||
+      query.includes("suggest") ||
+      query.includes("need") ||
+      query.includes("want") ||
+      query.includes("find me") ||
+      query.includes("show me") ||
+      query.startsWith("where") ||
+      query.startsWith("when") ||
+      query.startsWith("how") ||
+      query.startsWith("why") ||
+      query.startsWith("what") ||
+      queryWords.length > 5; // Long queries are usually natural language
+
+    // If it's a natural language query, go directly to AI
+    if (needsAI) {
+      console.log("🤖 Natural language query detected - using AI assistant");
+      // Skip direct search, go to AI
+    } else {
+      // Step 1: Smart direct search for specific businesses/categories
+      const directMatches = allBusinesses.filter(business => {
       const name = (business.business_name || "").toLowerCase();
       const slug = (business.slug || "").toLowerCase();
       const shortDesc = (business.short_description || "").toLowerCase();
@@ -125,32 +150,33 @@ export default function Home() {
         }
       }
 
-      return false;
-    });
-
-    // If single exact match, navigate directly
-    if (directMatches.length === 1) {
-      const business = directMatches[0];
-      console.log("✅ Single exact match found, navigating to:", business.business_name);
-      window.location.href = createPageUrl(`BusinessListing?id=${business.id}`);
-      return;
-    }
-
-    // If we have direct matches, show them
-    if (directMatches.length > 0) {
-      console.log("✅ Found", directMatches.length, "direct matches");
-      setMatchedBusinesses(directMatches);
-      setAgentResponse(`Found ${directMatches.length} business${directMatches.length !== 1 ? 'es' : ''} matching "${searchQuery}"`);
-      setSearchResults({
-        response: `Found ${directMatches.length} business${directMatches.length !== 1 ? 'es' : ''} matching "${searchQuery}"`,
-        businesses: directMatches
+        return false;
       });
-      setIsSearching(false);
-      return;
+
+      // If single exact match, navigate directly
+      if (directMatches.length === 1) {
+        const business = directMatches[0];
+        console.log("✅ Single exact match found, navigating to:", business.business_name);
+        window.location.href = createPageUrl(`BusinessListing?id=${business.id}`);
+        return;
+      }
+
+      // If we have direct matches, show them
+      if (directMatches.length > 0) {
+        console.log("✅ Found", directMatches.length, "direct matches");
+        setMatchedBusinesses(directMatches);
+        setAgentResponse(`Found ${directMatches.length} business${directMatches.length !== 1 ? 'es' : ''} matching "${searchQuery}"`);
+        setSearchResults({
+          response: `Found ${directMatches.length} business${directMatches.length !== 1 ? 'es' : ''} matching "${searchQuery}"`,
+          businesses: directMatches
+        });
+        setIsSearching(false);
+        return;
+      }
     }
 
-    // Step 2: No direct matches - AI Assistant ALWAYS helps
-    console.log("⚠️ No direct matches - activating AI assistant");
+    // Step 2: No direct matches OR natural language query - AI Assistant helps
+    console.log(needsAI ? "🤖 Natural language query - using AI assistant" : "⚠️ No direct matches - activating AI assistant");
     let searchCompleted = false;
 
     try {
