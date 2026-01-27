@@ -137,8 +137,8 @@ export default function Home() {
       return;
     }
 
-    // If multiple clear matches, show them without AI
-    if (directMatches.length > 0 && directMatches.length <= 10) {
+    // If multiple clear matches, show them without AI (up to 50)
+    if (directMatches.length > 0 && directMatches.length <= 50) {
       console.log("✅ Found", directMatches.length, "direct matches");
       setMatchedBusinesses(directMatches);
       setAgentResponse(`Found ${directMatches.length} business${directMatches.length !== 1 ? 'es' : ''} matching "${searchQuery}"`);
