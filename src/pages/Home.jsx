@@ -180,6 +180,18 @@ export default function Home() {
     let searchCompleted = false;
 
     try {
+      // Find relevant businesses to provide context
+      const foodCategory = categories.find(c => c.slug === "food" || c.name.toLowerCase().includes("food"));
+      const relevantBusinesses = allBusinesses.filter(b => {
+        if (foodCategory && b.category_id === foodCategory.id) return true;
+        const category = categories.find(c => c.id === b.category_id);
+        return category && category.name.toLowerCase().includes("food");
+      }).slice(0, 50); // Limit to 50 most relevant
+
+      const contextMessage = relevantBusinesses.length > 0 
+        ? `${searchQuery}\n\nNote: We have ${relevantBusinesses.length} food businesses in the directory. Here are their names: ${relevantBusinesses.map(b => b.business_name).join(", ")}`
+        : searchQuery;
+
       const conv = await base44.agents.createConversation({
         agent_name: "DirectoryAssistant",
         metadata: {
@@ -217,13 +229,12 @@ export default function Home() {
         }
       );
 
-      // Send simple, direct query to agent
       await base44.agents.addMessage(conv, {
         role: "user",
-        content: searchQuery
+        content: contextMessage
       });
 
-      console.log("✅ Message sent to agent");
+      console.log("✅ Message sent to agent with context");
 
       setTimeout(() => {
         console.log("⏱️ Timeout reached, unsubscribing");
