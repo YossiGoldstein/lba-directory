@@ -77,7 +77,7 @@ export default function Home() {
     setAgentResponse("");
     setMatchedBusinesses([]);
 
-    // Step 1: Direct business lookup - search in name, description, tags, and category
+    // Step 1: Direct business lookup - comprehensive search
     const query = searchQuery.toLowerCase().trim();
     const directMatches = allBusinesses.filter(business => {
       const name = (business.business_name || "").toLowerCase();
@@ -100,8 +100,16 @@ export default function Home() {
       const nameWords = name.split(/\s+/);
       if (nameWords.some(word => word === query)) return true;
 
-      // Contains match in name (but must be significant portion)
-      if (name.includes(query) && query.length >= 4) return true;
+      // Contains match in name or description (must be significant)
+      if (query.length >= 3 && (name.includes(query) || shortDesc.includes(query) || longDesc.includes(query))) {
+        return true;
+      }
+
+      // Tag exact match
+      if (tags.includes(query)) return true;
+
+      // Category match
+      if (categoryName.includes(query)) return true;
 
       // Word-based matching for multi-word queries
       const queryWords = query.split(/\s+/).filter(w => w.length > 2);
@@ -113,10 +121,9 @@ export default function Home() {
         if (allWordsMatch) return true;
       }
 
-      // Single word queries - must appear as standalone word or be significant
-      if (queryWords.length === 1 && query.length >= 4) {
-        const contentWords = allContent.split(/\s+/);
-        if (contentWords.some(cw => cw.includes(query) || query.includes(cw))) return true;
+      // Single word queries - search in all content
+      if (queryWords.length === 1 && query.length >= 3) {
+        if (allContent.includes(query)) return true;
       }
 
       return false;

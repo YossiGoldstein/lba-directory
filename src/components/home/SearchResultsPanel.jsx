@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Search } from "lucide-react";
+import { Sparkles, Search, Map } from "lucide-react";
 import BusinessResultCard from "../chat/BusinessResultCard";
 import ReactMarkdown from "react-markdown";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { createPageUrl } from "@/utils";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+// Fix Leaflet markers
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+});
 
 export default function SearchResultsPanel({ 
   agentResponse, 
@@ -10,6 +22,10 @@ export default function SearchResultsPanel({
   onContinueInChat,
   isLoading 
 }) {
+  const [showMap, setShowMap] = useState(false);
+  
+  // Filter businesses with valid coordinates for map
+  const businessesWithCoords = businesses?.filter(b => b.latitude && b.longitude) || [];
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -45,9 +61,63 @@ export default function SearchResultsPanel({
             {/* Business Results */}
             {businesses && businesses.length > 0 ? (
               <>
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">
-                  {businesses.length} Business{businesses.length !== 1 ? 'es' : ''} Found
-                </h3>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    {businesses.length} Business{businesses.length !== 1 ? 'es' : ''} Found
+                  </h3>
+                  
+                  {businessesWithCoords.length > 0 && (
+                    <Button
+                      onClick={() => setShowMap(!showMap)}
+                      variant="outline"
+                      className="gap-2"
+                    >
+                      <Map className="w-4 h-4" />
+                      {showMap ? 'Hide Map' : 'Show Map'}
+                    </Button>
+                  )}
+                </div>
+
+                {/* Map View */}
+                {showMap && businessesWithCoords.length > 0 && (
+                  <div className="mb-8 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="h-96">
+                      <MapContainer
+                        center={[businessesWithCoords[0].latitude, businessesWithCoords[0].longitude]}
+                        zoom={12}
+                        style={{ height: "100%", width: "100%" }}
+                      >
+                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                        {businessesWithCoords.map((business) => (
+                          <Marker
+                            key={business.id}
+                            position={[business.latitude, business.longitude]}
+                          >
+                            <Popup>
+                              <div className="p-2">
+                                <h4 className="font-semibold text-gray-900 mb-1">
+                                  {business.business_name}
+                                </h4>
+                                {business.short_description && (
+                                  <p className="text-sm text-gray-600 mb-2">
+                                    {business.short_description.slice(0, 100)}...
+                                  </p>
+                                )}
+                                <a
+                                  href={createPageUrl(`BusinessListing?id=${business.id}`)}
+                                  className="text-cyan-600 text-sm font-medium hover:underline"
+                                >
+                                  View Details →
+                                </a>
+                              </div>
+                            </Popup>
+                          </Marker>
+                        ))}
+                      </MapContainer>
+                    </div>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {businesses.map((business) => (
                     <BusinessResultCard 
