@@ -22,10 +22,14 @@ export default function SearchResultsPanel({
   onContinueInChat,
   isLoading 
 }) {
-  const [showMap, setShowMap] = useState(false);
-  
   // Filter businesses with valid coordinates for map
   const businessesWithCoords = businesses?.filter(b => b.latitude && b.longitude) || [];
+  
+  // Default center: Lakewood, NJ
+  const defaultCenter = [40.0978, -74.2176];
+  const mapCenter = businessesWithCoords.length > 0 
+    ? [businessesWithCoords[0].latitude, businessesWithCoords[0].longitude]
+    : defaultCenter;
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -126,44 +130,42 @@ export default function SearchResultsPanel({
           </div>
 
           {/* Map Column - Fixed position on desktop */}
-          {businessesWithCoords.length > 0 && (
-            <div className="hidden lg:block w-[40%] max-w-[600px] flex-shrink-0">
-              <div className="sticky top-4 h-[calc(100vh-2rem)] rounded-xl overflow-hidden shadow-lg border border-gray-200">
-                <MapContainer
-                  center={[businessesWithCoords[0].latitude, businessesWithCoords[0].longitude]}
-                  zoom={12}
-                  style={{ height: "100%", width: "100%" }}
-                >
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  {businessesWithCoords.map((business) => (
-                    <Marker
-                      key={business.id}
-                      position={[business.latitude, business.longitude]}
-                    >
-                      <Popup>
-                        <div className="p-2">
-                          <h4 className="font-semibold text-gray-900 mb-1">
-                            {business.business_name}
-                          </h4>
-                          {business.short_description && (
-                            <p className="text-sm text-gray-600 mb-2">
-                              {business.short_description.slice(0, 100)}...
-                            </p>
-                          )}
-                          <a
-                            href={createPageUrl(`BusinessListing?id=${business.id}`)}
-                            className="text-cyan-600 text-sm font-medium hover:underline"
-                          >
-                            View Details →
-                          </a>
-                        </div>
-                      </Popup>
-                    </Marker>
-                  ))}
-                </MapContainer>
-              </div>
+          <div className="hidden lg:block w-[40%] max-w-[600px] flex-shrink-0">
+            <div className="sticky top-4 h-[calc(100vh-2rem)] rounded-xl overflow-hidden shadow-lg border border-gray-200">
+              <MapContainer
+                center={mapCenter}
+                zoom={businessesWithCoords.length > 0 ? 12 : 13}
+                style={{ height: "100%", width: "100%" }}
+              >
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                {businessesWithCoords.map((business) => (
+                  <Marker
+                    key={business.id}
+                    position={[business.latitude, business.longitude]}
+                  >
+                    <Popup>
+                      <div className="p-2">
+                        <h4 className="font-semibold text-gray-900 mb-1">
+                          {business.business_name}
+                        </h4>
+                        {business.short_description && (
+                          <p className="text-sm text-gray-600 mb-2">
+                            {business.short_description.slice(0, 100)}...
+                          </p>
+                        )}
+                        <a
+                          href={createPageUrl(`BusinessListing?id=${business.id}`)}
+                          className="text-cyan-600 text-sm font-medium hover:underline"
+                        >
+                          View Details →
+                        </a>
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
+              </MapContainer>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </section>
