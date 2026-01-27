@@ -77,8 +77,10 @@ export default function Home() {
     setAgentResponse("");
     setMatchedBusinesses([]);
 
-    // Step 1: Direct business lookup - comprehensive search
+    // Step 1: Smart business search
     const query = searchQuery.toLowerCase().trim();
+    const queryWords = query.split(/\s+/).filter(w => w.length > 2);
+    
     const directMatches = allBusinesses.filter(business => {
       const name = (business.business_name || "").toLowerCase();
       const slug = (business.slug || "").toLowerCase();
@@ -100,7 +102,7 @@ export default function Home() {
       const nameWords = name.split(/\s+/);
       if (nameWords.some(word => word === query)) return true;
 
-      // Contains match in name or description (must be significant)
+      // Contains match in name or description
       if (query.length >= 3 && (name.includes(query) || shortDesc.includes(query) || longDesc.includes(query))) {
         return true;
       }
@@ -111,19 +113,18 @@ export default function Home() {
       // Category match
       if (categoryName.includes(query)) return true;
 
-      // Word-based matching for multi-word queries
-      const queryWords = query.split(/\s+/).filter(w => w.length > 2);
-      if (queryWords.length >= 2) {
-        // For multi-word queries, ALL words must appear in the business content
-        const allWordsMatch = queryWords.every(qw => 
-          allContent.includes(qw)
-        );
-        if (allWordsMatch) return true;
-      }
-
-      // Single word queries - search in all content
-      if (queryWords.length === 1 && query.length >= 3) {
-        if (allContent.includes(query)) return true;
+      // Smart word matching for queries like "looking for food store"
+      if (queryWords.length > 0) {
+        // Check if any significant word appears in the content
+        const hasMatchingWords = queryWords.some(word => {
+          // Skip common words
+          if (['looking', 'for', 'find', 'search', 'need', 'want', 'show', 'me'].includes(word)) {
+            return false;
+          }
+          return allContent.includes(word);
+        });
+        
+        if (hasMatchingWords) return true;
       }
 
       return false;
@@ -137,8 +138,8 @@ export default function Home() {
       return;
     }
 
-    // If multiple clear matches, show them without AI (up to 50)
-    if (directMatches.length > 0 && directMatches.length <= 50) {
+    // If we have matches, show them
+    if (directMatches.length > 0) {
       console.log("✅ Found", directMatches.length, "direct matches");
       setMatchedBusinesses(directMatches);
       setAgentResponse(`Found ${directMatches.length} business${directMatches.length !== 1 ? 'es' : ''} matching "${searchQuery}"`);
@@ -150,8 +151,8 @@ export default function Home() {
       return;
     }
 
-    // Step 2: Fall back to AI if no clear matches
-    console.log("⚠️ No clear matches, using AI assistant");
+    // Step 2: No direct matches - use AI assistant
+    console.log("⚠️ No direct matches, using AI assistant");
     let searchCompleted = false;
 
     try {
