@@ -77,7 +77,7 @@ export default function Home() {
     setAgentResponse("");
     setMatchedBusinesses([]);
 
-    // Step 1: Smart business search
+    // Step 1: Smart direct search
     const query = searchQuery.toLowerCase().trim();
     const queryWords = query.split(/\s+/).filter(w => w.length > 2);
     
@@ -113,18 +113,16 @@ export default function Home() {
       // Category match
       if (categoryName.includes(query)) return true;
 
-      // Smart word matching for queries like "looking for food store"
+      // Smart word matching - skip common words
       if (queryWords.length > 0) {
-        // Check if any significant word appears in the content
-        const hasMatchingWords = queryWords.some(word => {
-          // Skip common words
-          if (['looking', 'for', 'find', 'search', 'need', 'want', 'show', 'me'].includes(word)) {
-            return false;
-          }
-          return allContent.includes(word);
-        });
+        const meaningfulWords = queryWords.filter(word => 
+          !['looking', 'for', 'find', 'search', 'need', 'want', 'show', 'me', 'the', 'a', 'an'].includes(word)
+        );
         
-        if (hasMatchingWords) return true;
+        if (meaningfulWords.length > 0) {
+          const hasMatchingWords = meaningfulWords.some(word => allContent.includes(word));
+          if (hasMatchingWords) return true;
+        }
       }
 
       return false;
@@ -138,7 +136,7 @@ export default function Home() {
       return;
     }
 
-    // If we have matches, show them
+    // If we have direct matches, show them
     if (directMatches.length > 0) {
       console.log("✅ Found", directMatches.length, "direct matches");
       setMatchedBusinesses(directMatches);
@@ -151,11 +149,28 @@ export default function Home() {
       return;
     }
 
-    // Step 2: No direct matches - use AI assistant
-    console.log("⚠️ No direct matches, using AI assistant");
+    // Step 2: No direct matches - AI Assistant ALWAYS helps
+    console.log("⚠️ No direct matches - activating AI assistant");
     let searchCompleted = false;
 
     try {
+      // Create AI conversation with full context
+      const businessList = allBusinesses.map(b => ({
+        name: b.business_name,
+        category: categories.find(c => c.id === b.category_id)?.name || '',
+        description: b.short_description || '',
+        tags: b.tags || []
+      }));
+
+      const categoryList = categories.map(c => c.name);
+
+      const contextPrompt = `User search query: "${searchQuery}"
+
+Available businesses in the directory: ${businessList.length} businesses
+Categories available: ${categoryList.join(', ')}
+
+Please help find the most relevant businesses or suggest alternatives. You MUST provide helpful results - never say "no matches found" without offering suggestions or alternatives.`;
+
       const conv = await base44.agents.createConversation({
         agent_name: "DirectoryAssistant",
         metadata: {
@@ -195,10 +210,10 @@ export default function Home() {
 
       await base44.agents.addMessage(conv, {
         role: "user",
-        content: searchQuery
+        content: contextPrompt
       });
 
-      console.log("✅ Message sent to agent");
+      console.log("✅ Message sent to agent with full context");
 
       setTimeout(() => {
         console.log("⏱️ Timeout reached, unsubscribing");
@@ -206,14 +221,22 @@ export default function Home() {
         if (!searchCompleted) {
           console.log("⚠️ Still searching after timeout");
           setIsSearching(false);
-          setAgentResponse("Search timed out. Please try again.");
+          setAgentResponse("The search took longer than expected. Please try rephrasing your search or browse our categories.");
+          setSearchResults({
+            response: "The search took longer than expected. Please try rephrasing your search or browse our categories.",
+            businesses: []
+          });
         }
       }, 30000);
 
     } catch (error) {
       console.error("❌ Search failed:", error);
       setIsSearching(false);
-      setAgentResponse("Sorry, I encountered an error while searching. Please try again.");
+      setAgentResponse("I'm having trouble processing your search. Please try again or browse our categories below.");
+      setSearchResults({
+        response: "I'm having trouble processing your search. Please try again or browse our categories below.",
+        businesses: []
+      });
     }
   };
 
