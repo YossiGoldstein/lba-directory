@@ -71,7 +71,7 @@ export default function SearchResultsPanel({
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8 auto-rows-fr">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8 auto-rows-fr">
                   {businesses.map((business) => (
                     <BusinessResultCard 
                       key={business.id} 
