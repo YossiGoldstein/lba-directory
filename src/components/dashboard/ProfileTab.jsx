@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, Mail, Phone, Globe } from "lucide-react";
+import { User, Mail, Phone } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ProfileTab({ user, onUserUpdate }) {
@@ -13,7 +12,6 @@ export default function ProfileTab({ user, onUserUpdate }) {
     full_name: user?.full_name || "",
     email: user?.email || "",
     phone: user?.phone || "",
-    preferred_language: user?.preferred_language || "he",
   });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -32,7 +30,6 @@ export default function ProfileTab({ user, onUserUpdate }) {
       // Update user via updateMe
       await base44.auth.updateMe({
         phone: formData.phone,
-        preferred_language: formData.preferred_language,
       });
 
       toast.success("Profile updated successfully!");
@@ -105,26 +102,6 @@ export default function ProfileTab({ user, onUserUpdate }) {
                 className="pl-10"
               />
             </div>
-          </div>
-
-          {/* Preferred Language */}
-          <div className="space-y-2">
-            <Label htmlFor="language">Preferred Language</Label>
-            <Select
-              value={formData.preferred_language}
-              onValueChange={(value) => setFormData({ ...formData, preferred_language: value })}
-            >
-              <SelectTrigger id="language">
-                <div className="flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-gray-400" />
-                  <SelectValue />
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="he">עברית (Hebrew)</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           {/* Save Button */}
