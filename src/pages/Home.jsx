@@ -180,23 +180,6 @@ export default function Home() {
     let searchCompleted = false;
 
     try {
-      // Create AI conversation with full context
-      const businessList = allBusinesses.map(b => ({
-        name: b.business_name,
-        category: categories.find(c => c.id === b.category_id)?.name || '',
-        description: b.short_description || '',
-        tags: b.tags || []
-      }));
-
-      const categoryList = categories.map(c => c.name);
-
-      const contextPrompt = `User search query: "${searchQuery}"
-
-Available businesses in the directory: ${businessList.length} businesses
-Categories available: ${categoryList.join(', ')}
-
-Please help find the most relevant businesses or suggest alternatives. You MUST provide helpful results - never say "no matches found" without offering suggestions or alternatives.`;
-
       const conv = await base44.agents.createConversation({
         agent_name: "DirectoryAssistant",
         metadata: {
@@ -234,12 +217,13 @@ Please help find the most relevant businesses or suggest alternatives. You MUST 
         }
       );
 
+      // Send simple, direct query to agent
       await base44.agents.addMessage(conv, {
         role: "user",
-        content: contextPrompt
+        content: searchQuery
       });
 
-      console.log("✅ Message sent to agent with full context");
+      console.log("✅ Message sent to agent");
 
       setTimeout(() => {
         console.log("⏱️ Timeout reached, unsubscribing");
