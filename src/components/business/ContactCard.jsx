@@ -169,18 +169,18 @@ export default function ContactCard({ business }) {
         {(business.uber_eats_url || business.postmates_url || business.toast_url || business.grubhub_url || business.instacart_url || business.doordash_url || business.k1_url) && (
           <div className="pt-4 border-t">
             <h3 className="text-lg font-bold text-gray-900 mb-3">Place an Order</h3>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2">
               {business.uber_eats_url && (
                 <a 
                   href={business.uber_eats_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
                 >
                   <img 
                     src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/ff4fb46cd_WhatsAppImage2026-01-27at20333PM5.jpeg"
                     alt="Uber Eats"
-                    className="w-12 h-12 object-contain"
+                    className="w-14 h-14 object-contain"
                   />
                 </a>
               )}
@@ -189,12 +189,12 @@ export default function ContactCard({ business }) {
                   href={business.doordash_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
                 >
                   <img 
                     src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/dfd802d8e_WhatsAppImage2026-01-27at20333PM4.jpg"
                     alt="DoorDash"
-                    className="w-12 h-12 object-contain"
+                    className="w-14 h-14 object-contain"
                   />
                 </a>
               )}
@@ -203,12 +203,12 @@ export default function ContactCard({ business }) {
                   href={business.toast_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
                 >
                   <img 
                     src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/d0602ba11_WhatsAppImage2026-01-27at20333PM3.jpeg"
                     alt="Toast"
-                    className="w-12 h-12 object-contain"
+                    className="w-14 h-14 object-contain"
                   />
                 </a>
               )}
@@ -217,12 +217,12 @@ export default function ContactCard({ business }) {
                   href={business.grubhub_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
                 >
                   <img 
                     src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/2ed93e6bf_WhatsAppImage2026-01-27at20333PM2.jpeg"
                     alt="Grubhub"
-                    className="w-12 h-12 object-contain"
+                    className="w-14 h-14 object-contain"
                   />
                 </a>
               )}
@@ -231,12 +231,12 @@ export default function ContactCard({ business }) {
                   href={business.postmates_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
                 >
                   <img 
                     src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/23d48c7ee_WhatsAppImage2026-01-27at20333PM1.jpeg"
                     alt="Postmates"
-                    className="w-12 h-12 object-contain"
+                    className="w-14 h-14 object-contain"
                   />
                 </a>
               )}
@@ -245,12 +245,12 @@ export default function ContactCard({ business }) {
                   href={business.instacart_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
                 >
                   <img 
                     src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/2f48bb371_WhatsAppImage2026-01-27at20333PM.jpg"
                     alt="Instacart"
-                    className="w-12 h-12 object-contain"
+                    className="w-14 h-14 object-contain"
                   />
                 </a>
               )}
@@ -259,9 +259,9 @@ export default function ContactCard({ business }) {
                   href={business.k1_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
                 >
-                  <Package className="w-12 h-12 text-blue-600" />
+                  <Package className="w-14 h-14 text-blue-600" />
                 </a>
               )}
             </div>
