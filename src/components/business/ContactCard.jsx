@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Phone, Mail, Globe, MessageCircle, Facebook, Instagram, MapPin, ExternalLink, Car, Package, UtensilsCrossed, ShoppingCart, Coffee } from "lucide-react";
+import { Phone, Mail, Globe, MessageCircle, Facebook, Instagram, MapPin, ExternalLink, Package } from "lucide-react";
 
 const formatPhoneNumber = (phone) => {
   if (!phone) return "";
