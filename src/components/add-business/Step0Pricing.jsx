@@ -60,6 +60,27 @@ export default function Step0Pricing({ formData, setFormData, onNext }) {
         "Monthly ad on TIG Solutions social media",
         "Discounted services from TIG Solutions"
       ]
+    },
+    {
+      id: "lba-sponsor",
+      name: "LBA Sponsor",
+      price: "$50",
+      period: "per month",
+      icon: Crown,
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      borderColor: "border-blue-300",
+      badge: "Sponsor",
+      features: [
+        "Everything in Pro",
+        "50% off premium membership",
+        "Verified badge",
+        "AI powered insights",
+        "Priority customer support",
+        "Monthly performance report",
+        "Monthly ad on TIG Solutions social media",
+        "Discounted services from TIG Solutions"
+      ]
     }
   ];
 
