@@ -16,11 +16,11 @@ export default function Step0Pricing({ formData, setFormData, onNext }) {
       bgColor: "bg-gray-50",
       borderColor: "border-gray-200",
       features: [
-        "Basic business listing",
-        "Contact information",
-        "Business hours",
-        "Up to 3 photos",
-        "Customer reviews"
+        "Basic business information",
+        "Limited gallery showcase",
+        "Business dashboard",
+        "Customer reviews",
+        "Listing stats"
       ]
     },
     {
@@ -35,12 +35,10 @@ export default function Step0Pricing({ formData, setFormData, onNext }) {
       badge: "Popular",
       features: [
         "Everything in Free",
-        "Featured placement in category",
-        "Up to 10 photos",
-        "Gallery showcase",
-        "Create deals & promotions",
-        "Social media links",
-        "Advanced analytics"
+        "Featured listing",
+        "Unlimited gallery showcase",
+        "Create ads and promotions",
+        "3 ads a year on TIG Solutions social media"
       ]
     },
     {
@@ -55,13 +53,12 @@ export default function Step0Pricing({ formData, setFormData, onNext }) {
       badge: "Best Value",
       features: [
         "Everything in Pro",
-        "Top priority placement",
-        "Unlimited photos",
         "Verified badge",
-        "AI-powered insights",
+        "AI powered insights",
         "Priority customer support",
-        "Homepage featured section",
-        "Monthly performance report"
+        "Monthly performance report",
+        "Monthly ad on TIG Solutions social media",
+        "Discounted services from TIG Solutions"
       ]
     }
   ];
