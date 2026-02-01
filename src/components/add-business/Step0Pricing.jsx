@@ -150,8 +150,10 @@ export default function Step0Pricing({ formData, setFormData, onNext }) {
       </div>
 
       <div className="text-center mt-8 text-sm text-gray-500">
-        <p>All plans include a 7-day free trial. Cancel anytime.</p>
-        <p className="mt-1">All plans require admin approval before going live.</p>
+        <p>All plans require admin approval before going live.</p>
+        <p className="mt-2">
+          <span className="font-semibold">LBA Sponsor?</span> Contact us for special pricing and benefits.
+        </p>
       </div>
     </div>
   );
