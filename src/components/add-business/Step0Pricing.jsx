@@ -99,7 +99,7 @@ export default function Step0Pricing({ formData, setFormData, onNext }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:grid-rows-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {plans.map((plan) => {
           const Icon = plan.icon;
           const isSelected = formData.listing_tier === plan.id;
@@ -152,6 +152,8 @@ export default function Step0Pricing({ formData, setFormData, onNext }) {
                           ? 'bg-purple-600 hover:bg-purple-700'
                           : plan.id === 'pro'
                           ? 'bg-cyan-600 hover:bg-cyan-700'
+                          : plan.id === 'lba-sponsor'
+                          ? 'bg-blue-600 hover:bg-blue-700'
                           : 'bg-gray-600 hover:bg-gray-700'
                         : 'bg-white text-gray-900 border-2 border-gray-300 hover:bg-gray-50'
                     }`}
@@ -172,9 +174,6 @@ export default function Step0Pricing({ formData, setFormData, onNext }) {
 
       <div className="text-center mt-8 text-sm text-gray-500">
         <p>All plans require admin approval before going live.</p>
-        <p className="mt-2">
-          <span className="font-semibold">LBA Sponsor?</span> Contact us for special pricing and benefits.
-        </p>
       </div>
     </div>
   );
