@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Search, Sparkles, ArrowLeft } from "lucide-react";
 import BusinessCard from "../components/category/BusinessCard";
 import BusinessMap from "../components/category/BusinessMap";
-import FiltersPanel from "../components/category/FiltersPanel";
+
 import ReactMarkdown from "react-markdown";
 
 export default function SearchResults() {
@@ -19,14 +19,7 @@ export default function SearchResults() {
   const [allBusinesses, setAllBusinesses] = useState([]);
   const [categories, setCategories] = useState([]);
   const [conversation, setConversation] = useState(null);
-  const [viewMode, setViewMode] = useState("grid");
-  const [filters, setFilters] = useState({
-    category: "all",
-    location: "all",
-    hasDeals: false,
-    sortBy: "relevance"
-  });
-  const [filteredBusinesses, setFilteredBusinesses] = useState([]);
+
 
   useEffect(() => {
     const loadData = async () => {
@@ -51,38 +44,7 @@ export default function SearchResults() {
     }
   }, [searchQuery, allBusinesses]);
 
-  useEffect(() => {
-    // Apply filters to matched businesses
-    let results = [...matchedBusinesses];
 
-    // Filter by category
-    if (filters.category !== "all") {
-      results = results.filter(b => {
-        const category = categories.find(c => c.id === b.category_id);
-        return category && category.slug === filters.category;
-      });
-    }
-
-    // Filter by deals
-    if (filters.hasDeals) {
-      results = results.filter(b => b.has_deals);
-    }
-
-    // Sort
-    switch (filters.sortBy) {
-      case "name_asc":
-        results.sort((a, b) => a.business_name.localeCompare(b.business_name));
-        break;
-      case "rating_desc":
-        results.sort((a, b) => (b.general_rating || 0) - (a.general_rating || 0));
-        break;
-      case "reviews_desc":
-        results.sort((a, b) => (b.reviews_count || 0) - (a.reviews_count || 0));
-        break;
-    }
-
-    setFilteredBusinesses(results);
-  }, [matchedBusinesses, filters, categories]);
 
   const performSearch = async () => {
     setIsSearching(true);
@@ -271,25 +233,9 @@ export default function SearchResults() {
 
       {/* Main Content */}
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Filters Sidebar */}
-          <div className="lg:col-span-1">
-            <FiltersPanel
-              categories={categories}
-              filters={filters}
-              onFiltersChange={setFilters}
-              onApply={() => {}}
-              onReset={() => setFilters({
-                category: "all",
-                location: "all",
-                hasDeals: false,
-                sortBy: "relevance"
-              })}
-            />
-          </div>
-
+        <div className="w-full">
           {/* Results Area */}
-          <div className="lg:col-span-3">
+          <div className="w-full">
             {isSearching ? (
               <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
                 <div className="flex flex-col items-center justify-center">
@@ -336,49 +282,75 @@ export default function SearchResults() {
                   </div>
                 )}
 
-                {/* View Toggle */}
-                <div className="flex items-center justify-between mb-6">
-                  <p className="text-lg font-semibold text-gray-900">
-                    {filteredBusinesses.length} Result{filteredBusinesses.length !== 1 ? 's' : ''}
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      variant={viewMode === "grid" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setViewMode("grid")}
-                    >
-                      Grid
-                    </Button>
-                    <Button
-                      variant={viewMode === "map" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setViewMode("map")}
-                    >
-                      Map
-                    </Button>
+                {/* Results Layout */}
+                <div className="flex flex-col lg:flex-row gap-6">
+                  {/* Results Column */}
+                  <div className="flex-1">
+                    <p className="text-lg font-semibold text-gray-900 mb-6">
+                      {matchedBusinesses.length} Result{matchedBusinesses.length !== 1 ? 's' : ''}
+                    </p>
+
+                    {matchedBusinesses.length > 0 ? (
+                      <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {matchedBusinesses.map((business) => (
+                            <BusinessCard key={business.id} business={business} />
+                          ))}
+                        </div>
+
+                        {/* Advanced Search Section */}
+                        <div className="mt-8 bg-white rounded-xl shadow-md border border-gray-200 p-6">
+                          <div className="flex items-center gap-2 mb-4">
+                            <Sparkles className="w-5 h-5 text-cyan-600" />
+                            <h2 className="text-lg font-semibold text-gray-900">
+                              Advance your current search
+                            </h2>
+                          </div>
+                          <form onSubmit={(e) => {
+                            e.preventDefault();
+                            if (searchQuery) performSearch();
+                          }} className="flex gap-3">
+                            <div className="flex-1 relative">
+                              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                              <input
+                                type="text"
+                                placeholder="Refine your search with AI..."
+                                className="w-full pl-10 h-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:border-transparent"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                              />
+                            </div>
+                            <Button 
+                              type="submit" 
+                              className="bg-cyan-600 hover:bg-cyan-700 h-12 px-8"
+                              disabled={isSearching}
+                            >
+                              {isSearching ? "Searching..." : "Search"}
+                            </Button>
+                          </form>
+                          <p className="text-xs text-gray-500 mt-3">
+                            Ex. Take out closed businesses, show only my favorites
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-12 bg-gray-50 rounded-lg">
+                        <Search className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                        <p className="text-gray-600 text-lg">No matches found</p>
+                        <p className="text-sm text-gray-500 mt-2">
+                          Try rephrasing your search query
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Map Column */}
+                  <div className="hidden lg:block w-[40%] max-w-[600px] flex-shrink-0">
+                    <div className="sticky top-4 h-[calc(100vh-2rem)] rounded-xl overflow-hidden shadow-lg border border-gray-200">
+                      <BusinessMap businesses={matchedBusinesses} />
+                    </div>
                   </div>
                 </div>
-
-                {/* Results */}
-                {viewMode === "grid" ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {filteredBusinesses.map((business) => (
-                      <BusinessCard key={business.id} business={business} />
-                    ))}
-                  </div>
-                ) : (
-                  <BusinessMap businesses={filteredBusinesses} />
-                )}
-
-                {filteredBusinesses.length === 0 && (
-                  <div className="text-center py-12 bg-gray-50 rounded-lg">
-                    <Search className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-600 text-lg">No matches found</p>
-                    <p className="text-sm text-gray-500 mt-2">
-                      Try adjusting your filters or search query
-                    </p>
-                  </div>
-                )}
               </>
             )}
           </div>
