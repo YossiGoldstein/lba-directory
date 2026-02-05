@@ -21,51 +21,39 @@ export default function SignIn() {
     setLoading(true);
 
     try {
-      // Try customer login first
+      // Find customer by email
       const customers = await base44.entities.Customer.list();
       const customer = customers.find(c => c.email === formData.email);
 
-      if (customer) {
-        // Simple password verification (in production, use proper hashing)
-        const passwordHash = btoa(formData.password);
-        if (customer.password_hash !== passwordHash) {
-          toast.error("Email or password is incorrect");
-          setLoading(false);
-          return;
-        }
-
-        if (!customer.is_active) {
-          toast.error("Account is not active");
-          setLoading(false);
-          return;
-        }
-
-        // Store customer session in localStorage
-        localStorage.setItem("lba_customer", JSON.stringify(customer));
-
-        toast.success("Signed in successfully!");
-        
-        const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("Home");
-        setTimeout(() => {
-          window.location.href = nextUrl;
-        }, 1000);
+      if (!customer) {
+        toast.error("Email or password is incorrect");
+        setLoading(false);
         return;
       }
 
-      // If not found as customer, try base44 auth
-      try {
-        await base44.auth.login(formData.email, formData.password);
-        toast.success("Signed in successfully!");
-        
-        const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("Home");
-        setTimeout(() => {
-          window.location.href = nextUrl;
-        }, 1000);
-      } catch (authError) {
-        console.error("Auth error:", authError);
+      // Simple password verification (in production, use proper hashing)
+      const passwordHash = btoa(formData.password);
+      if (customer.password_hash !== passwordHash) {
         toast.error("Email or password is incorrect");
         setLoading(false);
+        return;
       }
+
+      if (!customer.is_active) {
+        toast.error("Account is not active");
+        setLoading(false);
+        return;
+      }
+
+      // Store customer session in localStorage
+      localStorage.setItem("lba_customer", JSON.stringify(customer));
+
+      toast.success("Signed in successfully!");
+      
+      const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("Home");
+      setTimeout(() => {
+        window.location.href = nextUrl;
+      }, 1000);
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Login failed. Please try again.");
