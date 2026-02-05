@@ -65,6 +65,7 @@ import NotFound from './pages/NotFound';
 import Pricing from './pages/Pricing';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RegistrationSuccess from './pages/RegistrationSuccess';
+import SearchResults from './pages/SearchResults';
 import SignIn from './pages/SignIn';
 import SubmissionSuccess from './pages/SubmissionSuccess';
 import Success from './pages/Success';
@@ -72,7 +73,6 @@ import TermsOfUse from './pages/TermsOfUse';
 import UserDashboard from './pages/UserDashboard';
 import UserRegister from './pages/UserRegister';
 import Welcome from './pages/Welcome';
-import SearchResults from './pages/SearchResults';
 import __Layout from './Layout.jsx';
 
 
@@ -95,6 +95,7 @@ export const PAGES = {
     "Pricing": Pricing,
     "PrivacyPolicy": PrivacyPolicy,
     "RegistrationSuccess": RegistrationSuccess,
+    "SearchResults": SearchResults,
     "SignIn": SignIn,
     "SubmissionSuccess": SubmissionSuccess,
     "Success": Success,
@@ -102,7 +103,6 @@ export const PAGES = {
     "UserDashboard": UserDashboard,
     "UserRegister": UserRegister,
     "Welcome": Welcome,
-    "SearchResults": SearchResults,
 }
 
 export const pagesConfig = {

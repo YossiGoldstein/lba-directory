@@ -15,6 +15,7 @@ export default function SignIn() {
     password: ""
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,36 +29,11 @@ export default function SignIn() {
     console.log("🔐 Starting login for:", formData.email);
 
     try {
-      // Try to find customer first
-      console.log("📋 Fetching customers...");
+      // Find customer by email
       const customers = await base44.entities.Customer.list();
-      console.log("✅ Found customers:", customers.length);
-      
-      let customer = customers.find(c => c.email === formData.email);
-      console.log("🔍 Customer lookup result:", customer ? "Found" : "Not found");
-
-      // If not found as customer, check if they're a business owner
-      if (!customer) {
-        console.log("🏢 Checking businesses...");
-        const businesses = await base44.entities.Business.list();
-        const businessWithEmail = businesses.find(b => b.email === formData.email);
-        
-        if (businessWithEmail) {
-          console.log("✅ Found business owner");
-          // Create a customer-like object for business owners
-          customer = {
-            id: businessWithEmail.owner_id || businessWithEmail.id,
-            email: formData.email,
-            full_name: businessWithEmail.business_name,
-            password_hash: btoa(formData.password), // Accept any password for now
-            is_active: true,
-            role: "user"
-          };
-        }
-      }
+      const customer = customers.find(c => c.email === formData.email);
 
       if (!customer) {
-        console.log("❌ No account found with this email");
         toast.error("Email or password is incorrect");
         setLoading(false);
         return;
@@ -65,24 +41,19 @@ export default function SignIn() {
 
       // Simple password verification
       const passwordHash = btoa(formData.password);
-      console.log("🔑 Verifying password...");
       
       if (customer.password_hash !== passwordHash) {
-        console.log("❌ Password mismatch");
         toast.error("Email or password is incorrect");
         setLoading(false);
         return;
       }
 
       if (!customer.is_active) {
-        console.log("❌ Account is not active");
         toast.error("Account is not active");
         setLoading(false);
         return;
       }
 
-      console.log("✅ Login successful!");
-      
       // Store customer session in localStorage
       localStorage.setItem("lba_customer", JSON.stringify(customer));
 
@@ -93,8 +64,8 @@ export default function SignIn() {
         window.location.href = nextUrl;
       }, 1000);
     } catch (error) {
-      console.error("❌ Login error:", error);
-      toast.error("Login failed: " + error.message);
+      console.error("Login error:", error);
+      toast.error("Login failed. Please try again.");
       setLoading(false);
     }
   };
@@ -143,13 +114,20 @@ export default function SignIn() {
                   <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                   <Input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={(e) => setFormData({...formData, password: e.target.value})}
                     required
-                    className="pl-10"
+                    className="pl-10 pr-10"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
               </div>
 
