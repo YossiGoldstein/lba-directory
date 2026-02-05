@@ -18,14 +18,26 @@ export default function SignIn() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!formData.email || !formData.password) {
+      toast.error("Please enter email and password");
+      return;
+    }
+
     setLoading(true);
+    console.log("🔐 Starting login for:", formData.email);
 
     try {
       // Find customer by email
+      console.log("📋 Fetching customers...");
       const customers = await base44.entities.Customer.list();
+      console.log("✅ Found customers:", customers.length);
+      
       const customer = customers.find(c => c.email === formData.email);
+      console.log("🔍 Customer lookup result:", customer ? "Found" : "Not found");
 
       if (!customer) {
+        console.log("❌ No customer found with this email");
         toast.error("Email or password is incorrect");
         setLoading(false);
         return;
@@ -33,18 +45,24 @@ export default function SignIn() {
 
       // Simple password verification (in production, use proper hashing)
       const passwordHash = btoa(formData.password);
+      console.log("🔑 Verifying password...");
+      
       if (customer.password_hash !== passwordHash) {
+        console.log("❌ Password mismatch");
         toast.error("Email or password is incorrect");
         setLoading(false);
         return;
       }
 
       if (!customer.is_active) {
+        console.log("❌ Account is not active");
         toast.error("Account is not active");
         setLoading(false);
         return;
       }
 
+      console.log("✅ Login successful!");
+      
       // Store customer session in localStorage
       localStorage.setItem("lba_customer", JSON.stringify(customer));
 
@@ -55,8 +73,8 @@ export default function SignIn() {
         window.location.href = nextUrl;
       }, 1000);
     } catch (error) {
-      console.error("Login error:", error);
-      toast.error("Login failed. Please try again.");
+      console.error("❌ Login error:", error);
+      toast.error("Login failed: " + error.message);
       setLoading(false);
     }
   };
