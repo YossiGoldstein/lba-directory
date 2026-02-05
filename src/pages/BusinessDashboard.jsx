@@ -46,7 +46,13 @@ export default function BusinessDashboard() {
     queryFn: async () => {
       if (!user?.id) return [];
       const allBusinesses = await base44.entities.Business.list();
-      return allBusinesses.filter(b => b.created_by_id === user.id);
+      // Check for customer session
+      const customerData = localStorage.getItem("lba_customer");
+      if (customerData) {
+        const customer = JSON.parse(customerData);
+        return allBusinesses.filter(b => b.owner_id === customer.id);
+      }
+      return allBusinesses.filter(b => b.owner_id === user.id || b.created_by === user.email);
     },
     enabled: !!user?.id,
   });
@@ -308,8 +314,16 @@ export default function BusinessDashboard() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Businesses</h1>
-          <p className="text-gray-600">Manage all of your business listings from one place</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">My Businesses</h1>
+              <p className="text-gray-600">Manage all of your business listings from one place</p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-gray-600">Total Businesses</p>
+              <p className="text-3xl font-bold text-cyan-600">{businesses.length}</p>
+            </div>
+          </div>
         </div>
 
         <div className="mb-6">
@@ -346,14 +360,27 @@ export default function BusinessDashboard() {
                 </div>
               </CardHeader>
               <CardContent>
+                <div className="grid grid-cols-3 gap-2 mb-4 text-center">
+                  <div>
+                    <p className="text-lg font-bold text-gray-900">{business.views_count || 0}</p>
+                    <p className="text-xs text-gray-600">Views</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-gray-900">{business.clicks_to_phone || 0}</p>
+                    <p className="text-xs text-gray-600">Calls</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-gray-900">{business.reviews_count || 0}</p>
+                    <p className="text-xs text-gray-600">Reviews</p>
+                  </div>
+                </div>
                 <div className="flex flex-col gap-2">
                   <Button
                     onClick={() => navigate(createPageUrl("BusinessDashboard") + `?edit=${business.id}`)}
-                    variant="outline"
-                    className="w-full"
+                    className="w-full bg-cyan-600 hover:bg-cyan-700"
                   >
                     <Edit className="w-4 h-4 mr-2" />
-                    Edit Business
+                    Manage Business
                   </Button>
                   {business.status === "approved" && (
                     <Button
@@ -368,8 +395,12 @@ export default function BusinessDashboard() {
                     </Button>
                   )}
                 </div>
-                <div className="mt-4 text-xs text-gray-500">
-                  Created: {new Date(business.created_date).toLocaleDateString()}
+                <div className="mt-4 pt-4 border-t text-xs text-gray-500 flex items-center justify-between">
+                  <span>Created: {new Date(business.created_date).toLocaleDateString()}</span>
+                  <span className="font-semibold text-gray-700">
+                    {business.listing_tier === 'premium' ? '👑 Premium' : 
+                     business.listing_tier === 'pro' ? '⭐ Pro' : '🆓 Free'}
+                  </span>
                 </div>
               </CardContent>
             </Card>
