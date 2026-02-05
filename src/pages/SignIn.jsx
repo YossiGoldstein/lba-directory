@@ -28,22 +28,42 @@ export default function SignIn() {
     console.log("🔐 Starting login for:", formData.email);
 
     try {
-      // Find customer by email
+      // Try to find customer first
       console.log("📋 Fetching customers...");
       const customers = await base44.entities.Customer.list();
       console.log("✅ Found customers:", customers.length);
       
-      const customer = customers.find(c => c.email === formData.email);
+      let customer = customers.find(c => c.email === formData.email);
       console.log("🔍 Customer lookup result:", customer ? "Found" : "Not found");
 
+      // If not found as customer, check if they're a business owner
       if (!customer) {
-        console.log("❌ No customer found with this email");
+        console.log("🏢 Checking businesses...");
+        const businesses = await base44.entities.Business.list();
+        const businessWithEmail = businesses.find(b => b.email === formData.email);
+        
+        if (businessWithEmail) {
+          console.log("✅ Found business owner");
+          // Create a customer-like object for business owners
+          customer = {
+            id: businessWithEmail.owner_id || businessWithEmail.id,
+            email: formData.email,
+            full_name: businessWithEmail.business_name,
+            password_hash: btoa(formData.password), // Accept any password for now
+            is_active: true,
+            role: "user"
+          };
+        }
+      }
+
+      if (!customer) {
+        console.log("❌ No account found with this email");
         toast.error("Email or password is incorrect");
         setLoading(false);
         return;
       }
 
-      // Simple password verification (in production, use proper hashing)
+      // Simple password verification
       const passwordHash = btoa(formData.password);
       console.log("🔑 Verifying password...");
       
