@@ -195,17 +195,30 @@ export default function BusinessListing() {
   };
 
   const handleToggleFavorite = async () => {
-    if (!user) {
-      window.location.href = createPageUrl("UserRegister") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
+    // Check both user and customer authentication
+    const customerData = localStorage.getItem("lba_customer");
+    const hasAuth = user || customerData;
+    
+    if (!hasAuth) {
+      // Show sign in option first
+      const shouldSignIn = confirm("Please sign in to add favorites.\n\nClick OK to sign in, or Cancel to create a new account.");
+      if (shouldSignIn) {
+        window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
+      } else {
+        window.location.href = createPageUrl("UserRegister") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
+      }
       return;
     }
+    
+    // Use customer ID if available, otherwise use user ID
+    const userId = customerData ? JSON.parse(customerData).id : user.id;
 
     setIsAddingFavorite(true);
     try {
       if (isFavorite) {
         // Remove from favorites
         const favorites = await base44.entities.Favorite.list();
-        const favorite = favorites.find(f => f.business_id === businessId && f.user_id === user.id);
+        const favorite = favorites.find(f => f.business_id === businessId && f.user_id === userId);
         if (favorite) {
           await base44.entities.Favorite.delete(favorite.id);
           setIsFavorite(false);
@@ -214,7 +227,7 @@ export default function BusinessListing() {
       } else {
         // Add to favorites
         await base44.entities.Favorite.create({
-          user_id: user.id,
+          user_id: userId,
           business_id: businessId
         });
         setIsFavorite(true);
@@ -231,9 +244,18 @@ export default function BusinessListing() {
   const [showReviewForm, setShowReviewForm] = useState(false);
 
   const handleSubmitReview = () => {
-    // Check if user is logged in via Customer session
-    if (!customer) {
-      window.location.href = createPageUrl("UserRegister") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
+    // Check both user and customer authentication
+    const customerData = localStorage.getItem("lba_customer");
+    const hasAuth = user || customerData;
+    
+    if (!hasAuth) {
+      // Show sign in option first
+      const shouldSignIn = confirm("Please sign in to submit a review.\n\nClick OK to sign in, or Cancel to create a new account.");
+      if (shouldSignIn) {
+        window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
+      } else {
+        window.location.href = createPageUrl("UserRegister") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
+      }
       return;
     }
     setShowReviewForm(!showReviewForm);

@@ -71,6 +71,11 @@ export default function Home() {
     e.preventDefault();
     if (!searchQuery.trim()) return;
 
+    // Redirect to search results page
+    const encodedQuery = encodeURIComponent(searchQuery.trim());
+    window.location.href = createPageUrl(`SearchResults?query=${encodedQuery}`);
+    return;
+
     console.log("🔍 Starting search for:", searchQuery);
     setIsSearching(true);
     setSearchResults(null);

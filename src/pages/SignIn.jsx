@@ -26,7 +26,7 @@ export default function SignIn() {
       const customer = customers.find(c => c.email === formData.email);
 
       if (!customer) {
-        toast.error("המייל לא נמצא במערכת");
+        toast.error("Email or password is incorrect");
         setLoading(false);
         return;
       }
@@ -34,7 +34,7 @@ export default function SignIn() {
       // Simple password verification (in production, use proper hashing)
       const passwordHash = btoa(formData.password);
       if (customer.password_hash !== passwordHash) {
-        toast.error("סיסמה שגויה");
+        toast.error("Email or password is incorrect");
         setLoading(false);
         return;
       }
@@ -115,7 +115,7 @@ export default function SignIn() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center justify-end text-sm">
                 <Link to={createPageUrl("ForgotPassword")} className="text-cyan-600 hover:text-cyan-700">
                   Forgot password?
                 </Link>
