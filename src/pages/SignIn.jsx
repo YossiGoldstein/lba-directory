@@ -29,7 +29,45 @@ export default function SignIn() {
     console.log("🔐 Starting login for:", formData.email);
 
     try {
-      // Find customer by email
+      // Check if user is a business owner
+      const businesses = await base44.entities.Business.list();
+      const businessOwner = businesses.find(b => b.email === formData.email);
+
+      if (businessOwner) {
+        // Business owner login
+        const passwordHash = btoa(formData.password);
+        
+        if (!businessOwner.password_hash) {
+          toast.error("Please complete your registration first");
+          setLoading(false);
+          return;
+        }
+        
+        if (businessOwner.password_hash !== passwordHash) {
+          toast.error("Email or password is incorrect");
+          setLoading(false);
+          return;
+        }
+
+        // Store business owner session
+        localStorage.setItem("lba_customer", JSON.stringify({
+          id: businessOwner.id,
+          email: businessOwner.email,
+          full_name: businessOwner.business_name,
+          role: "business_owner",
+          is_active: true
+        }));
+
+        toast.success("Welcome back!");
+        
+        const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("BusinessDashboard");
+        setTimeout(() => {
+          window.location.href = nextUrl;
+        }, 1000);
+        return;
+      }
+
+      // Regular customer login
       const customers = await base44.entities.Customer.list();
       const customer = customers.find(c => c.email === formData.email);
 
@@ -39,7 +77,6 @@ export default function SignIn() {
         return;
       }
 
-      // Simple password verification
       const passwordHash = btoa(formData.password);
       
       if (customer.password_hash !== passwordHash) {
@@ -54,8 +91,11 @@ export default function SignIn() {
         return;
       }
 
-      // Store customer session in localStorage
-      localStorage.setItem("lba_customer", JSON.stringify(customer));
+      // Store customer session
+      localStorage.setItem("lba_customer", JSON.stringify({
+        ...customer,
+        role: "user"
+      }));
 
       toast.success("Signed in successfully!");
       

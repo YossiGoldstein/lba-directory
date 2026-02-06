@@ -130,7 +130,11 @@ export default function Layout({ children, currentPageName }) {
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-gray-700">Hello, {user.full_name}</span>
                     <Button variant="ghost" size="sm" asChild>
-                      <Link to={createPageUrl(user.role === "admin" ? "AdminDashboard" : "UserDashboard")}>
+                      <Link to={createPageUrl(
+                        user.role === "admin" ? "AdminDashboard" : 
+                        user.role === "business_owner" ? "BusinessDashboard" : 
+                        "UserDashboard"
+                      )}>
                         <LayoutDashboard className="w-4 h-4 mr-2" />
                         Dashboard
                       </Link>
@@ -189,7 +193,11 @@ export default function Layout({ children, currentPageName }) {
                   {user ? (
                     <div className="border-t border-[#005580] pt-4 mt-2 flex flex-col gap-3">
                       <Button variant="outline" asChild className="w-full bg-[#005580] text-white border-[#006699] hover:bg-[#004466]">
-                        <Link to={createPageUrl(user.role === "admin" ? "AdminDashboard" : "UserDashboard")}>Dashboard</Link>
+                        <Link to={createPageUrl(
+                          user.role === "admin" ? "AdminDashboard" : 
+                          user.role === "business_owner" ? "BusinessDashboard" : 
+                          "UserDashboard"
+                        )}>Dashboard</Link>
                       </Button>
                       <Button variant="outline" onClick={handleLogout} className="w-full bg-[#005580] text-white border-[#006699] hover:bg-[#004466]">
                         Logout
