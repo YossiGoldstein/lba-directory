@@ -23,12 +23,12 @@ export default function UserRegister() {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
-      toast.error("הסיסמאות לא תואמות");
+      toast.error("Passwords don't match");
       return;
     }
 
     if (formData.password.length < 6) {
-      toast.error("הסיסמה חייבת להכיל לפחות 6 תווים");
+      toast.error("Password must be at least 6 characters");
       return;
     }
 
@@ -38,7 +38,7 @@ export default function UserRegister() {
       // Check if email already exists
       const customers = await base44.entities.Customer.list();
       if (customers.some(c => c.email === formData.email)) {
-        toast.error("המייל כבר קיים במערכת");
+        toast.error("Email already exists");
         setLoading(false);
         return;
       }
@@ -73,7 +73,7 @@ export default function UserRegister() {
       }, 1000);
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error("ההרשמה נכשלה. אנא נסה שוב.");
+      toast.error("Registration failed. Please try again.");
       setLoading(false);
     }
   };
