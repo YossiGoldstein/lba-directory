@@ -42,20 +42,24 @@ export default function AdminDashboard() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const userData = await base44.auth.me();
-        
-        // Check if user is admin
-        if (!userData || userData.role !== 'admin') {
-          navigate(createPageUrl("Home"));
-          return;
+        // Check for customer/business session in localStorage
+        const customerData = localStorage.getItem("lba_customer");
+        if (customerData) {
+          const customer = JSON.parse(customerData);
+          
+          // Check if admin
+          if (customer.role === "admin") {
+            setUser(customer);
+            await loadStats();
+            setLoading(false);
+            return;
+          }
         }
         
-        setUser(userData);
-        await loadStats();
+        // Not admin, redirect to home
+        navigate(createPageUrl("Home"));
       } catch (error) {
         navigate(createPageUrl("Home"));
-      } finally {
-        setLoading(false);
       }
     };
 
