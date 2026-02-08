@@ -15,7 +15,7 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        // Check for customer session first
+        // Check for customer/business session in localStorage
         const customerData = localStorage.getItem("lba_customer");
         if (customerData) {
           const customer = JSON.parse(customerData);
@@ -23,14 +23,13 @@ export default function Layout({ children, currentPageName }) {
             id: customer.id,
             full_name: customer.full_name,
             email: customer.email,
-            role: "user" // customers are regular users
+            role: customer.role || "user"
           });
           return;
         }
 
-        // Fallback to base44 auth
-        const userData = await base44.auth.me();
-        setUser(userData);
+        // No session found
+        setUser(null);
       } catch (error) {
         setUser(null);
       }
@@ -71,8 +70,8 @@ export default function Layout({ children, currentPageName }) {
   const handleLogout = () => {
     // Clear customer session
     localStorage.removeItem("lba_customer");
-    // Also try base44 logout
-    base44.auth.logout("/");
+    // Reload to home page
+    window.location.href = createPageUrl("Home");
   };
 
   if (!showHeaderFooter) {
