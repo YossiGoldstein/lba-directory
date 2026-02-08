@@ -239,6 +239,7 @@ export default function AdminDashboard() {
             <TabsTrigger value="categories">Categories</TabsTrigger>
             <TabsTrigger value="ai">AI Moderation</TabsTrigger>
             <TabsTrigger value="geocode">Geocode</TabsTrigger>
+            <TabsTrigger value="password-setup">Password Setup</TabsTrigger>
           </TabsList>
 
           <TabsContent value="businesses">
@@ -283,8 +284,104 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="password-setup">
+            <Card>
+              <CardHeader>
+                <CardTitle>Send Password Setup Emails</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PasswordSetupTab />
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
+    </div>
+  );
+}
+
+function PasswordSetupTab() {
+  const [isSending, setIsSending] = useState(false);
+  const [result, setResult] = useState(null);
+
+  const handleSendEmails = async () => {
+    if (!confirm("This will send password setup emails to all approved businesses without passwords. Continue?")) {
+      return;
+    }
+
+    setIsSending(true);
+    setResult(null);
+    
+    try {
+      const response = await base44.functions.invoke('sendPasswordSetupEmails', {});
+      setResult(response.data);
+    } catch (error) {
+      setResult({ success: false, error: error.message });
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <p className="text-sm text-gray-700">
+          Send password setup emails to all approved business owners who haven't set their password yet.
+          The email includes a secure link to set their password and access their business dashboard.
+        </p>
+      </div>
+
+      <Button 
+        onClick={handleSendEmails} 
+        disabled={isSending}
+        className="bg-cyan-600 hover:bg-cyan-700"
+      >
+        {isSending ? 'Sending Emails...' : 'Send Password Setup Emails'}
+      </Button>
+
+      {result && (
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <h3 className="font-semibold text-gray-900 mb-3">Results:</h3>
+          {result.error ? (
+            <p className="text-red-600">Error: {result.error}</p>
+          ) : (
+            <>
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="bg-gray-50 p-3 rounded">
+                  <p className="text-sm text-gray-600">Total</p>
+                  <p className="text-2xl font-bold text-gray-900">{result.total}</p>
+                </div>
+                <div className="bg-green-50 p-3 rounded">
+                  <p className="text-sm text-gray-600">Sent Successfully</p>
+                  <p className="text-2xl font-bold text-green-600">{result.successCount}</p>
+                </div>
+                <div className="bg-red-50 p-3 rounded">
+                  <p className="text-sm text-gray-600">Failed</p>
+                  <p className="text-2xl font-bold text-red-600">{result.failCount}</p>
+                </div>
+              </div>
+
+              {result.results && result.results.length > 0 && (
+                <div className="max-h-96 overflow-y-auto">
+                  <h4 className="font-semibold text-gray-900 mb-2">Email Status:</h4>
+                  <div className="space-y-2">
+                    {result.results.map((item, idx) => (
+                      <div key={idx} className="text-sm border-b border-gray-100 pb-2">
+                        <p className="font-medium">{item.business}</p>
+                        <p className="text-gray-600">{item.email}</p>
+                        <p className={item.status === 'sent' ? 'text-green-600' : 'text-red-600'}>
+                          {item.status === 'sent' ? '✓ Email Sent' : '✗ Failed: ' + item.error}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
