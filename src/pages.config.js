@@ -54,6 +54,7 @@ import AdminEmailSettings from './pages/AdminEmailSettings';
 import BusinessDashboard from './pages/BusinessDashboard';
 import BusinessJoin from './pages/BusinessJoin';
 import BusinessListing from './pages/BusinessListing';
+import BusinessOwnerRegister from './pages/BusinessOwnerRegister';
 import CategoryListing from './pages/CategoryListing';
 import Contact from './pages/Contact';
 import Error from './pages/Error';
@@ -66,6 +67,7 @@ import Pricing from './pages/Pricing';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RegistrationSuccess from './pages/RegistrationSuccess';
 import SearchResults from './pages/SearchResults';
+import SetPassword from './pages/SetPassword';
 import SignIn from './pages/SignIn';
 import SubmissionSuccess from './pages/SubmissionSuccess';
 import Success from './pages/Success';
@@ -73,8 +75,6 @@ import TermsOfUse from './pages/TermsOfUse';
 import UserDashboard from './pages/UserDashboard';
 import UserRegister from './pages/UserRegister';
 import Welcome from './pages/Welcome';
-import BusinessOwnerRegister from './pages/BusinessOwnerRegister';
-import SetPassword from './pages/SetPassword';
 import __Layout from './Layout.jsx';
 
 
@@ -86,6 +86,7 @@ export const PAGES = {
     "BusinessDashboard": BusinessDashboard,
     "BusinessJoin": BusinessJoin,
     "BusinessListing": BusinessListing,
+    "BusinessOwnerRegister": BusinessOwnerRegister,
     "CategoryListing": CategoryListing,
     "Contact": Contact,
     "Error": Error,
@@ -98,6 +99,7 @@ export const PAGES = {
     "PrivacyPolicy": PrivacyPolicy,
     "RegistrationSuccess": RegistrationSuccess,
     "SearchResults": SearchResults,
+    "SetPassword": SetPassword,
     "SignIn": SignIn,
     "SubmissionSuccess": SubmissionSuccess,
     "Success": Success,
@@ -105,8 +107,6 @@ export const PAGES = {
     "UserDashboard": UserDashboard,
     "UserRegister": UserRegister,
     "Welcome": Welcome,
-    "BusinessOwnerRegister": BusinessOwnerRegister,
-    "SetPassword": SetPassword,
 }
 
 export const pagesConfig = {

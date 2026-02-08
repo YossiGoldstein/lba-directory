@@ -31,6 +31,33 @@ export default function SignIn() {
     console.log("🔐 Starting login for:", formData.email);
 
     try {
+      // Check if user is admin (Base44 User entity)
+      try {
+        const users = await base44.entities.User.list();
+        const adminUser = users.find(u => u.email === formData.email && u.role === 'admin');
+        
+        if (adminUser) {
+          // Admin login via Base44 authentication
+          localStorage.setItem("lba_customer", JSON.stringify({
+            id: adminUser.id,
+            email: adminUser.email,
+            full_name: adminUser.full_name,
+            role: "admin",
+            is_active: true
+          }));
+
+          toast.success("Welcome Admin!");
+          
+          const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("AdminDashboard");
+          setTimeout(() => {
+            window.location.href = nextUrl;
+          }, 1000);
+          return;
+        }
+      } catch (adminError) {
+        console.log("Not an admin user, checking business/customer");
+      }
+
       // Check if user is a business owner
       const businesses = await base44.entities.Business.list();
       const businessOwner = businesses.find(b => b.email === formData.email);
