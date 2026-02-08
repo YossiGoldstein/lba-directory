@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, ExternalLink, Edit, Eye, Trash2, Plus } from "lucide-react";
+import { Search, ExternalLink, Edit, Eye, Trash2, Plus, Mail } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
 import AdminEditBusinessModal from "./AdminEditBusinessModal";
@@ -87,6 +87,19 @@ export default function BusinessesTab({ onUpdate }) {
     }
   });
 
+  const sendPasswordEmailMutation = useMutation({
+    mutationFn: async (businessId) => {
+      const response = await base44.functions.invoke('sendPasswordSetupEmail', { businessId });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(`Password setup email sent to ${data.business}`);
+    },
+    onError: (error) => {
+      toast.error("Failed to send email: " + error.message);
+    }
+  });
+
   const handleEdit = (business) => {
     setEditingBusiness(business);
     setIsEditModalOpen(true);
@@ -105,6 +118,12 @@ export default function BusinessesTab({ onUpdate }) {
 
   const handleAddNew = () => {
     window.open(createPageUrl("AddBusiness"), "_blank");
+  };
+
+  const handleSendPasswordEmail = (business) => {
+    if (confirm(`Send password setup email to ${business.business_name} (${business.email})?`)) {
+      sendPasswordEmailMutation.mutate(business.id);
+    }
   };
 
   if (isLoading) {
@@ -219,6 +238,17 @@ export default function BusinessesTab({ onUpdate }) {
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
+                      {business.email && !business.password_hash && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleSendPasswordEmail(business)}
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          title="Send Password Setup Email"
+                        >
+                          <Mail className="w-4 h-4" />
+                        </Button>
+                      )}
                       <Button
                         size="sm"
                         variant="ghost"
