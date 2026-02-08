@@ -645,7 +645,7 @@ export default function Home() {
                   if (isAuth) {
                     window.location.href = createPageUrl("AddBusiness");
                   } else {
-                    window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
+                    window.location.href = createPageUrl("BusinessOwnerRegister");
                   }
                 }}
                 className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white font-bold shadow-lg text-base"

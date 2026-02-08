@@ -116,7 +116,7 @@ export default function Layout({ children, currentPageName }) {
                     if (isAuth) {
                       window.location.href = createPageUrl("AddBusiness");
                     } else {
-                      window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
+                      window.location.href = createPageUrl("BusinessOwnerRegister");
                     }
                   }} 
                   className="text-gray-700 hover:text-cyan-600 transition-colors font-medium text-lg"
@@ -183,7 +183,7 @@ export default function Layout({ children, currentPageName }) {
                       if (isAuth) {
                         window.location.href = createPageUrl("AddBusiness");
                       } else {
-                        window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
+                        window.location.href = createPageUrl("BusinessOwnerRegister");
                       }
                     }} 
                     className="text-white hover:text-green-400 font-medium text-lg text-left"

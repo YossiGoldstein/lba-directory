@@ -73,6 +73,7 @@ import TermsOfUse from './pages/TermsOfUse';
 import UserDashboard from './pages/UserDashboard';
 import UserRegister from './pages/UserRegister';
 import Welcome from './pages/Welcome';
+import BusinessOwnerRegister from './pages/BusinessOwnerRegister';
 import __Layout from './Layout.jsx';
 
 
@@ -103,6 +104,7 @@ export const PAGES = {
     "UserDashboard": UserDashboard,
     "UserRegister": UserRegister,
     "Welcome": Welcome,
+    "BusinessOwnerRegister": BusinessOwnerRegister,
 }
 
 export const pagesConfig = {
