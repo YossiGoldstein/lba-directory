@@ -29,24 +29,6 @@ export default function SignIn() {
     console.log("🔐 Starting login for:", formData.email);
 
     try {
-      // First try Base44 auth (for admin users)
-      try {
-        const loginResult = await base44.auth.login(formData.email, formData.password);
-        
-        if (loginResult && loginResult.user) {
-          toast.success("Welcome back!");
-          const nextUrl = new URLSearchParams(window.location.search).get("next") || 
-                         (loginResult.user.role === "admin" ? createPageUrl("AdminDashboard") : createPageUrl("Home"));
-          setTimeout(() => {
-            window.location.href = nextUrl;
-          }, 500);
-          return;
-        }
-      } catch (authError) {
-        // Base44 auth failed, continue to custom auth
-        console.log("Base44 auth failed, trying custom auth:", authError.message);
-      }
-
       // Check if user is a business owner
       const businesses = await base44.entities.Business.list();
       const businessOwner = businesses.find(b => b.email === formData.email);
