@@ -238,13 +238,13 @@ export default function BusinessesTab({ onUpdate }) {
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
-                      {business.email && !business.password_hash && (
+                      {business.email && (
                         <Button
                           size="sm"
                           variant="ghost"
                           onClick={() => handleSendPasswordEmail(business)}
                           className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                          title="Send Password Setup Email"
+                          title={business.password_hash ? "Send Password Reset Email" : "Send Password Setup Email"}
                         >
                           <Mail className="w-4 h-4" />
                         </Button>
