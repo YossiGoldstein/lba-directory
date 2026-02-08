@@ -74,6 +74,7 @@ import UserDashboard from './pages/UserDashboard';
 import UserRegister from './pages/UserRegister';
 import Welcome from './pages/Welcome';
 import BusinessOwnerRegister from './pages/BusinessOwnerRegister';
+import SetPassword from './pages/SetPassword';
 import __Layout from './Layout.jsx';
 
 
@@ -105,6 +106,7 @@ export const PAGES = {
     "UserRegister": UserRegister,
     "Welcome": Welcome,
     "BusinessOwnerRegister": BusinessOwnerRegister,
+    "SetPassword": SetPassword,
 }
 
 export const pagesConfig = {
