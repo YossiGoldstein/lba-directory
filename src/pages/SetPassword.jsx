@@ -36,37 +36,20 @@ export default function SetPassword() {
       setEmail(emailParam);
 
       try {
-        // Try to find business first
         const businesses = await base44.entities.Business.list();
         const foundBusiness = businesses.find(b => b.email === emailParam);
 
-        if (foundBusiness) {
-          setBusiness(foundBusiness);
+        if (!foundBusiness) {
+          toast.error("Business not found");
           setLoading(false);
           return;
         }
 
-        // If not a business, try to find customer
-        const customers = await base44.entities.Customer.list();
-        const foundCustomer = customers.find(c => c.email === emailParam);
-
-        if (foundCustomer) {
-          // Store customer data in a format compatible with the form
-          setBusiness({
-            id: foundCustomer.id,
-            business_name: foundCustomer.full_name,
-            email: foundCustomer.email,
-            isCustomer: true
-          });
-          setLoading(false);
-          return;
-        }
-
-        toast.error("Account not found");
+        setBusiness(foundBusiness);
         setLoading(false);
       } catch (error) {
-        console.error("Failed to load account:", error);
-        toast.error("Failed to load account details");
+        console.error("Failed to load business:", error);
+        toast.error("Failed to load business details");
         setLoading(false);
       }
     };
@@ -92,20 +75,12 @@ export default function SetPassword() {
     try {
       const passwordHash = btoa(formData.password);
 
-      if (business.isCustomer) {
-        // Update customer password
-        await base44.entities.Customer.update(business.id, {
-          password_hash: passwordHash
-        });
-      } else {
-        // Update business password
-        await base44.entities.Business.update(business.id, {
-          password_hash: passwordHash
-        });
-      }
+      await base44.entities.Business.update(business.id, {
+        password_hash: passwordHash
+      });
 
       setSuccess(true);
-      toast.success("Password set successfully!");
+      toast.success(business.password_hash ? "Password reset successfully!" : "Password set successfully!");
 
       setTimeout(() => {
         window.location.href = createPageUrl("SignIn");
@@ -149,8 +124,10 @@ export default function SetPassword() {
         <Card className="max-w-md">
           <CardContent className="pt-6 text-center">
             <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Password Set Successfully!</h2>
-            <p className="text-gray-600 mb-4">You can now sign in with your email and password</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              {business?.password_hash ? "Password Reset Successfully!" : "Password Set Successfully!"}
+            </h2>
+            <p className="text-gray-600 mb-4">You can now sign in with your email and new password</p>
             <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
               <Link to={createPageUrl("SignIn")}>Go to Sign In</Link>
             </Button>
@@ -176,17 +153,19 @@ export default function SetPassword() {
         <Card className="shadow-xl">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">
-              {business.isCustomer ? "Reset Your Password" : "Set Your Password"}
+              {business.password_hash ? "Reset Your Password" : "Set Your Password"}
             </CardTitle>
             <CardDescription className="text-center">
-              {business.isCustomer ? "Create a new password for your account" : `Create a password for ${business.business_name}`}
+              {business.password_hash 
+                ? `Create a new password for ${business.business_name}` 
+                : `Create a password for ${business.business_name}`}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                 <p className="text-sm text-gray-700">
-                  <strong>{business.isCustomer ? "Name" : "Business"}:</strong> {business.business_name}
+                  <strong>Business:</strong> {business.business_name}
                 </p>
                 <p className="text-sm text-gray-700">
                   <strong>Email:</strong> {business.email}
@@ -245,7 +224,9 @@ export default function SetPassword() {
                 className="w-full bg-cyan-600 hover:bg-cyan-700"
                 disabled={saving}
               >
-                {saving ? "Setting Password..." : "Set Password"}
+                {saving 
+                  ? (business.password_hash ? "Resetting Password..." : "Setting Password...") 
+                  : (business.password_hash ? "Reset Password" : "Set Password")}
               </Button>
             </form>
           </CardContent>
