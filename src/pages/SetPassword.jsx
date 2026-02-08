@@ -36,20 +36,37 @@ export default function SetPassword() {
       setEmail(emailParam);
 
       try {
+        // Try to find business first
         const businesses = await base44.entities.Business.list();
         const foundBusiness = businesses.find(b => b.email === emailParam);
 
-        if (!foundBusiness) {
-          toast.error("Business not found");
+        if (foundBusiness) {
+          setBusiness(foundBusiness);
           setLoading(false);
           return;
         }
 
-        setBusiness(foundBusiness);
+        // If not a business, try to find customer
+        const customers = await base44.entities.Customer.list();
+        const foundCustomer = customers.find(c => c.email === emailParam);
+
+        if (foundCustomer) {
+          // Store customer data in a format compatible with the form
+          setBusiness({
+            id: foundCustomer.id,
+            business_name: foundCustomer.full_name,
+            email: foundCustomer.email,
+            isCustomer: true
+          });
+          setLoading(false);
+          return;
+        }
+
+        toast.error("Account not found");
         setLoading(false);
       } catch (error) {
-        console.error("Failed to load business:", error);
-        toast.error("Failed to load business details");
+        console.error("Failed to load account:", error);
+        toast.error("Failed to load account details");
         setLoading(false);
       }
     };
@@ -75,9 +92,17 @@ export default function SetPassword() {
     try {
       const passwordHash = btoa(formData.password);
 
-      await base44.entities.Business.update(business.id, {
-        password_hash: passwordHash
-      });
+      if (business.isCustomer) {
+        // Update customer password
+        await base44.entities.Customer.update(business.id, {
+          password_hash: passwordHash
+        });
+      } else {
+        // Update business password
+        await base44.entities.Business.update(business.id, {
+          password_hash: passwordHash
+        });
+      }
 
       setSuccess(true);
       toast.success("Password set successfully!");
@@ -150,16 +175,18 @@ export default function SetPassword() {
 
         <Card className="shadow-xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Set Your Password</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">
+              {business.isCustomer ? "Reset Your Password" : "Set Your Password"}
+            </CardTitle>
             <CardDescription className="text-center">
-              Create a password for {business.business_name}
+              {business.isCustomer ? "Create a new password for your account" : `Create a password for ${business.business_name}`}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                 <p className="text-sm text-gray-700">
-                  <strong>Business:</strong> {business.business_name}
+                  <strong>{business.isCustomer ? "Name" : "Business"}:</strong> {business.business_name}
                 </p>
                 <p className="text-sm text-gray-700">
                   <strong>Email:</strong> {business.email}
