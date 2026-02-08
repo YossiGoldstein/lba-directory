@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
 
     // Get the app's published URL from environment or construct it
     const appUrl = Deno.env.get("BASE44_APP_URL") || "https://lbadirectory.com";
-    const setPasswordUrl = `${appUrl}/#/SetPassword?email=${encodeURIComponent(business.email)}`;
+    const setPasswordUrl = `${appUrl}#/SetPassword?email=${encodeURIComponent(business.email)}`;
     
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: business.email,
