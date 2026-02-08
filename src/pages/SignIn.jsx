@@ -25,6 +25,8 @@ export default function SignIn() {
       return;
     }
 
+    if (loading) return; // Prevent double submission
+
     setLoading(true);
     console.log("🔐 Starting login for:", formData.email);
 
