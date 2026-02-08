@@ -11,7 +11,7 @@ import { Lock, Eye, EyeOff, CheckCircle } from "lucide-react";
 
 export default function SetPassword() {
   const [email, setEmail] = useState("");
-  const [business, setBusiness] = useState(null);
+  const [accountInfo, setAccountInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -23,7 +23,7 @@ export default function SetPassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
-    const loadBusiness = async () => {
+    const loadAccountInfo = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const emailParam = urlParams.get("email");
       
@@ -36,25 +36,25 @@ export default function SetPassword() {
       setEmail(emailParam);
 
       try {
-        const businesses = await base44.entities.Business.list();
-        const foundBusiness = businesses.find(b => b.email === emailParam);
+        const response = await base44.functions.invoke('getPasswordResetInfo', {
+          email: emailParam
+        });
 
-        if (!foundBusiness) {
-          toast.error("Business not found");
+        if (response.data.success) {
+          setAccountInfo(response.data.data);
           setLoading(false);
-          return;
+        } else {
+          toast.error("Account not found");
+          setLoading(false);
         }
-
-        setBusiness(foundBusiness);
-        setLoading(false);
       } catch (error) {
-        console.error("Failed to load business:", error);
-        toast.error("Failed to load business details");
+        console.error("Failed to load account info:", error);
+        toast.error("Failed to load account details");
         setLoading(false);
       }
     };
 
-    loadBusiness();
+    loadAccountInfo();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -73,18 +73,22 @@ export default function SetPassword() {
     setSaving(true);
 
     try {
-      const passwordHash = btoa(formData.password);
-
-      await base44.entities.Business.update(business.id, {
-        password_hash: passwordHash
+      const response = await base44.functions.invoke('updatePassword', {
+        email: email,
+        password: formData.password
       });
 
-      setSuccess(true);
-      toast.success(business.password_hash ? "Password reset successfully!" : "Password set successfully!");
+      if (response.data.success) {
+        setSuccess(true);
+        toast.success(accountInfo.hasPassword ? "Password reset successfully!" : "Password set successfully!");
 
-      setTimeout(() => {
-        window.location.href = createPageUrl("SignIn");
-      }, 2000);
+        setTimeout(() => {
+          window.location.href = createPageUrl("SignIn");
+        }, 2000);
+      } else {
+        toast.error(response.data.error || "Failed to update password");
+        setSaving(false);
+      }
     } catch (error) {
       console.error("Failed to set password:", error);
       toast.error("Failed to set password. Please try again.");
@@ -103,12 +107,12 @@ export default function SetPassword() {
     );
   }
 
-  if (!business) {
+  if (!accountInfo) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-100 flex items-center justify-center p-4">
         <Card className="max-w-md">
           <CardContent className="pt-6 text-center">
-            <p className="text-gray-600 mb-4">Business not found or invalid link</p>
+            <p className="text-gray-600 mb-4">Account not found or invalid link</p>
             <Button asChild>
               <Link to={createPageUrl("Home")}>Go to Home</Link>
             </Button>
@@ -125,7 +129,7 @@ export default function SetPassword() {
           <CardContent className="pt-6 text-center">
             <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {business?.password_hash ? "Password Reset Successfully!" : "Password Set Successfully!"}
+              {accountInfo?.hasPassword ? "Password Reset Successfully!" : "Password Set Successfully!"}
             </h2>
             <p className="text-gray-600 mb-4">You can now sign in with your email and new password</p>
             <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
@@ -153,22 +157,22 @@ export default function SetPassword() {
         <Card className="shadow-xl">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">
-              {business.password_hash ? "Reset Your Password" : "Set Your Password"}
+              {accountInfo.hasPassword ? "Reset Your Password" : "Set Your Password"}
             </CardTitle>
             <CardDescription className="text-center">
-              {business.password_hash 
-                ? `Create a new password for ${business.business_name}` 
-                : `Create a password for ${business.business_name}`}
+              {accountInfo.hasPassword 
+                ? `Create a new password for ${accountInfo.name}` 
+                : `Create a password for ${accountInfo.name}`}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                 <p className="text-sm text-gray-700">
-                  <strong>Business:</strong> {business.business_name}
+                  <strong>Account:</strong> {accountInfo.name}
                 </p>
                 <p className="text-sm text-gray-700">
-                  <strong>Email:</strong> {business.email}
+                  <strong>Email:</strong> {accountInfo.email}
                 </p>
               </div>
 
@@ -225,8 +229,8 @@ export default function SetPassword() {
                 disabled={saving}
               >
                 {saving 
-                  ? (business.password_hash ? "Resetting Password..." : "Setting Password...") 
-                  : (business.password_hash ? "Reset Password" : "Set Password")}
+                  ? (accountInfo.hasPassword ? "Resetting Password..." : "Setting Password...") 
+                  : (accountInfo.hasPassword ? "Reset Password" : "Set Password")}
               </Button>
             </form>
           </CardContent>
