@@ -31,20 +31,20 @@ export default function SignIn() {
     try {
       // First try Base44 auth (for admin users)
       try {
-        await base44.auth.login(formData.email, formData.password);
-        const user = await base44.auth.me();
+        const loginResult = await base44.auth.login(formData.email, formData.password);
         
-        if (user) {
+        if (loginResult && loginResult.user) {
           toast.success("Welcome back!");
-          const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("AdminDashboard");
+          const nextUrl = new URLSearchParams(window.location.search).get("next") || 
+                         (loginResult.user.role === "admin" ? createPageUrl("AdminDashboard") : createPageUrl("Home"));
           setTimeout(() => {
             window.location.href = nextUrl;
-          }, 1000);
+          }, 500);
           return;
         }
       } catch (authError) {
         // Base44 auth failed, continue to custom auth
-        console.log("Base44 auth failed, trying custom auth");
+        console.log("Base44 auth failed, trying custom auth:", authError.message);
       }
 
       // Check if user is a business owner
