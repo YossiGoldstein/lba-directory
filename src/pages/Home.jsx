@@ -42,9 +42,9 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const loadUser = async () => {
+    const loadUser = () => {
       try {
-        // Check for customer session first
+        // Check for customer/business session in localStorage
         const customerData = localStorage.getItem("lba_customer");
         if (customerData) {
           const customer = JSON.parse(customerData);
@@ -52,14 +52,13 @@ export default function Home() {
             id: customer.id,
             full_name: customer.full_name,
             email: customer.email,
-            role: "user"
+            role: customer.role || "user"
           });
           return;
         }
 
-        // Fallback to base44 auth
-        const userData = await base44.auth.me();
-        setUser(userData);
+        // No session found
+        setUser(null);
       } catch (error) {
         setUser(null);
       }
@@ -639,10 +638,9 @@ export default function Home() {
               </ul>
               <Button 
                 size="lg"
-                onClick={async () => {
+                onClick={() => {
                   const customerData = localStorage.getItem("lba_customer");
-                  const isAuth = customerData || await base44.auth.isAuthenticated();
-                  if (isAuth) {
+                  if (customerData) {
                     window.location.href = createPageUrl("AddBusiness");
                   } else {
                     window.location.href = createPageUrl("BusinessOwnerRegister");

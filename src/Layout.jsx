@@ -109,10 +109,9 @@ export default function Layout({ children, currentPageName }) {
                   FAQ
                 </Link>
                 <button 
-                  onClick={async () => {
+                  onClick={() => {
                     const customerData = localStorage.getItem("lba_customer");
-                    const isAuth = customerData || await base44.auth.isAuthenticated();
-                    if (isAuth) {
+                    if (customerData) {
                       window.location.href = createPageUrl("AddBusiness");
                     } else {
                       window.location.href = createPageUrl("BusinessOwnerRegister");
@@ -265,13 +264,12 @@ export default function Layout({ children, currentPageName }) {
                   </li>
                   <li>
                   <button 
-                    onClick={async () => {
+                    onClick={() => {
                       const customerData = localStorage.getItem("lba_customer");
-                      const isAuth = customerData || await base44.auth.isAuthenticated();
-                      if (isAuth) {
+                      if (customerData) {
                         window.location.href = createPageUrl("AddBusiness");
                       } else {
-                        window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
+                        window.location.href = createPageUrl("BusinessOwnerRegister");
                       }
                     }}
                     className="text-sm hover:text-cyan-400 transition-colors text-left"
