@@ -28,12 +28,24 @@ export default function BusinessDashboard() {
   const editBusinessId = urlParams.get("edit");
 
   useEffect(() => {
-    const loadUser = async () => {
+    const loadUser = () => {
       try {
-        const userData = await base44.auth.me();
-        setUser(userData);
+        // Check for customer/business session in localStorage
+        const customerData = localStorage.getItem("lba_customer");
+        if (customerData) {
+          const customer = JSON.parse(customerData);
+          setUser({
+            id: customer.id,
+            full_name: customer.full_name,
+            email: customer.email,
+            role: customer.role || "user"
+          });
+        } else {
+          // No session found, redirect to login
+          window.location.href = createPageUrl("SignIn");
+        }
       } catch (error) {
-        base44.auth.redirectToLogin("/");
+        window.location.href = createPageUrl("SignIn");
       } finally {
         setUserLoading(false);
       }

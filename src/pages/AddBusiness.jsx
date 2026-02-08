@@ -53,24 +53,19 @@ export default function AddBusiness() {
 
   // Check authentication
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuth = () => {
       try {
-        // Check for customer session first
+        // Check for customer/business session
         const customerData = localStorage.getItem("lba_customer");
         if (customerData) {
           setIsCheckingAuth(false);
           return;
         }
 
-        // Fallback to base44 auth
-        const isAuth = await base44.auth.isAuthenticated();
-        if (!isAuth) {
-          base44.auth.redirectToLogin(createPageUrl("AddBusiness"));
-        } else {
-          setIsCheckingAuth(false);
-        }
+        // No session found, redirect to login
+        window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
       } catch (error) {
-        base44.auth.redirectToLogin(createPageUrl("AddBusiness"));
+        window.location.href = createPageUrl("SignIn");
       }
     };
     checkAuth();
@@ -188,18 +183,18 @@ export default function AddBusiness() {
     try {
       // Get current user for email
       const customerData = localStorage.getItem("lba_customer");
-      let user;
-      
-      if (customerData) {
-        const customer = JSON.parse(customerData);
-        user = {
-          id: customer.id,
-          full_name: customer.full_name,
-          email: customer.email,
-        };
-      } else {
-        user = await base44.auth.me();
+      if (!customerData) {
+        toast.error("Session expired. Please sign in again.");
+        window.location.href = createPageUrl("SignIn");
+        return;
       }
+      
+      const customer = JSON.parse(customerData);
+      const user = {
+        id: customer.id,
+        full_name: customer.full_name,
+        email: customer.email,
+      };
 
       // If paid tier, redirect to Stripe checkout
       if (formData.listing_tier === "pro" || formData.listing_tier === "premium") {
