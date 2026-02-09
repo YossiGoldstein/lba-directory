@@ -259,14 +259,14 @@ export default function BusinessDashboard() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center justify-center gap-1.5 px-3 py-3 text-xs sm:text-sm font-medium border-b-2 transition-colors flex-1 min-w-[25%] sm:min-w-0 ${
+                    className={`flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors flex-1 min-w-[33.333%] sm:min-w-0 ${
                       activeTab === tab.id
                         ? "border-cyan-600 text-cyan-600 bg-cyan-50"
                         : "border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     }`}
                   >
                     <Icon className="w-5 h-5 flex-shrink-0" />
-                    <span className="truncate">{tab.label}</span>
+                    <span>{tab.label}</span>
                   </button>
                 );
               })}
