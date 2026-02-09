@@ -156,7 +156,7 @@ export default function BusinessDashboard() {
 
   if (userLoading || businessesLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center">
           <div className="inline-block w-12 h-12 border-4 border-cyan-600 border-t-transparent rounded-full animate-spin mb-4"></div>
           <p className="text-gray-600">Loading...</p>
@@ -236,11 +236,12 @@ export default function BusinessDashboard() {
   if (editBusinessId && selectedBusiness) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           <Button
             onClick={() => navigate(createPageUrl("BusinessDashboard"))}
             variant="ghost"
             className="mb-4"
+            size="sm"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to My Businesses
@@ -248,22 +249,23 @@ export default function BusinessDashboard() {
 
           <BusinessHeader business={selectedBusiness} category={category} />
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-            <div className="flex overflow-x-auto">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6">
+            <div className="flex overflow-x-auto scrollbar-hide">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                    className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                       activeTab === tab.id
                         ? "border-cyan-600 text-cyan-600"
                         : "border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
-                    {tab.label}
+                    <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
                   </button>
                 );
               })}
@@ -319,22 +321,22 @@ export default function BusinessDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">My Businesses</h1>
-              <p className="text-gray-600">Manage all of your business listings from one place</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">My Businesses</h1>
+              <p className="text-sm sm:text-base text-gray-600">Manage all of your business listings from one place</p>
             </div>
-            <div className="text-right">
+            <div className="text-left sm:text-right">
               <p className="text-sm text-gray-600">Total Businesses</p>
-              <p className="text-3xl font-bold text-cyan-600">{businesses.length}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-cyan-600">{businesses.length}</p>
             </div>
           </div>
         </div>
 
-        <div className="mb-6">
-          <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
+        <div className="mb-4 sm:mb-6">
+          <Button asChild className="bg-cyan-600 hover:bg-cyan-700 w-full sm:w-auto">
             <Link to={createPageUrl("AddBusiness")}>
               <Plus className="w-4 h-4 mr-2" />
               Add New Business
@@ -342,7 +344,7 @@ export default function BusinessDashboard() {
           </Button>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
           {businesses.map((business) => (
             <Card key={business.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
@@ -369,15 +371,15 @@ export default function BusinessDashboard() {
               <CardContent>
                 <div className="grid grid-cols-3 gap-2 mb-4 text-center">
                   <div>
-                    <p className="text-lg font-bold text-gray-900">{business.views_count || 0}</p>
+                    <p className="text-base sm:text-lg font-bold text-gray-900">{business.views_count || 0}</p>
                     <p className="text-xs text-gray-600">Views</p>
                   </div>
                   <div>
-                    <p className="text-lg font-bold text-gray-900">{business.clicks_to_phone || 0}</p>
+                    <p className="text-base sm:text-lg font-bold text-gray-900">{business.clicks_to_phone || 0}</p>
                     <p className="text-xs text-gray-600">Calls</p>
                   </div>
                   <div>
-                    <p className="text-lg font-bold text-gray-900">{business.reviews_count || 0}</p>
+                    <p className="text-base sm:text-lg font-bold text-gray-900">{business.reviews_count || 0}</p>
                     <p className="text-xs text-gray-600">Reviews</p>
                   </div>
                 </div>
@@ -385,6 +387,7 @@ export default function BusinessDashboard() {
                   <Button
                     onClick={() => navigate(createPageUrl("BusinessDashboard") + `?edit=${business.id}`)}
                     className="w-full bg-cyan-600 hover:bg-cyan-700"
+                    size="sm"
                   >
                     <Edit className="w-4 h-4 mr-2" />
                     Manage Business
@@ -394,6 +397,7 @@ export default function BusinessDashboard() {
                       asChild
                       variant="outline"
                       className="w-full"
+                      size="sm"
                     >
                       <Link to={createPageUrl("BusinessListing") + `?id=${business.id}`}>
                         <Eye className="w-4 h-4 mr-2" />
