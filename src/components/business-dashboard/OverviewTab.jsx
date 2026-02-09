@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Star, MessageSquare, Eye, Heart, Sparkles, TrendingUp, Crown, Zap } from "lucide-react";
 import { format } from "date-fns";
 
-export default function OverviewTab({ business, deals }) {
+export default function OverviewTab({ business, deals = [] }) {
   // Fetch reviews for this business
   const { data: reviews = [] } = useQuery({
     queryKey: ["businessReviews", business.id],
