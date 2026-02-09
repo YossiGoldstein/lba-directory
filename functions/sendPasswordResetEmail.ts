@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
     if (customer) {
       // Customer password reset
       const appUrl = Deno.env.get("BASE44_APP_URL") || "https://lbadirectory.com";
-      const resetUrl = `${appUrl}/#/SetPassword?email=${encodeURIComponent(email)}`;
+      const resetUrl = `${appUrl}/SetPassword?email=${encodeURIComponent(email)}&t=${Date.now()}`;
       
       await base44.asServiceRole.integrations.Core.SendEmail({
         to: email,
