@@ -39,17 +39,39 @@ export default function SetPassword() {
       setEmail(emailParam);
 
       try {
-        const response = await base44.functions.invoke('getPasswordResetInfo', {
-          email: emailParam
-        });
+        // Try to find business owner
+        const businesses = await base44.entities.Business.list();
+        const business = businesses.find(b => b.email === emailParam);
 
-        if (response.data.success) {
-          setAccountInfo(response.data.data);
+        if (business) {
+          setAccountInfo({
+            name: business.business_name,
+            email: business.email,
+            hasPassword: !!business.password_hash,
+            type: "business"
+          });
           setLoading(false);
-        } else {
-          toast.error("Account not found");
-          setLoading(false);
+          return;
         }
+
+        // Try to find customer
+        const customers = await base44.entities.Customer.list();
+        const customer = customers.find(c => c.email === emailParam);
+
+        if (customer) {
+          setAccountInfo({
+            name: customer.full_name,
+            email: customer.email,
+            hasPassword: !!customer.password_hash,
+            type: "customer"
+          });
+          setLoading(false);
+          return;
+        }
+
+        // Not found
+        toast.error("Account not found");
+        setLoading(false);
       } catch (error) {
         console.error("Failed to load account info:", error);
         toast.error("Failed to load account details");
