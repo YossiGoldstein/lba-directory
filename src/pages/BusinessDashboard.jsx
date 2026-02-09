@@ -54,19 +54,14 @@ export default function BusinessDashboard() {
   }, []);
 
   const { data: businesses = [], isLoading: businessesLoading, refetch: refetchBusinesses } = useQuery({
-    queryKey: ["my-businesses", user?.id],
+    queryKey: ["my-businesses", user?.email],
     queryFn: async () => {
-      if (!user?.id) return [];
+      if (!user?.email) return [];
       const allBusinesses = await base44.entities.Business.list();
-      // Check for customer session
-      const customerData = localStorage.getItem("lba_customer");
-      if (customerData) {
-        const customer = JSON.parse(customerData);
-        return allBusinesses.filter(b => b.owner_id === customer.id);
-      }
-      return allBusinesses.filter(b => b.owner_id === user.id || b.created_by === user.email);
+      // For business owners who login with their business email
+      return allBusinesses.filter(b => b.email === user.email || b.owner_id === user.id || b.created_by === user.email);
     },
-    enabled: !!user?.id,
+    enabled: !!user?.email,
   });
 
   const { data: categories = [] } = useQuery({
