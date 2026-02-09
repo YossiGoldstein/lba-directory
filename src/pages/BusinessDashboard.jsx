@@ -16,6 +16,7 @@ import OpeningHoursTab from "../components/business-dashboard/OpeningHoursTab";
 import DealsTab from "../components/business-dashboard/DealsTab";
 import ReviewsTab from "../components/business-dashboard/ReviewsTab";
 import AiAssistantTab from "../components/business-dashboard/AiAssistantTab";
+import UpgradeTab from "../components/business-dashboard/UpgradeTab";
 
 export default function BusinessDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -263,7 +264,7 @@ export default function BusinessDashboard() {
                         : "border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     }`}
                   >
-                    <Icon className="w-4 h-4 flex-shrink-0" />
+                    <Icon className="w-5 h-5 flex-shrink-0" />
                     <span className="truncate">{tab.label}</span>
                   </button>
                 );
