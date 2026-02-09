@@ -249,23 +249,22 @@ export default function BusinessDashboard() {
 
           <BusinessHeader business={selectedBusiness} category={category} />
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6">
-            <div className="flex overflow-x-auto scrollbar-hide">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6 overflow-hidden">
+            <div className="flex overflow-x-auto overflow-y-hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                    className={`flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
                       activeTab === tab.id
                         ? "border-cyan-600 text-cyan-600"
                         : "border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
                     }`}
                   >
-                    <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">{tab.label}</span>
-                    <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
+                    <Icon className="w-4 h-4" />
+                    {tab.label}
                   </button>
                 );
               })}
