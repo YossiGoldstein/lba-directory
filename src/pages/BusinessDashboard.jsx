@@ -249,22 +249,22 @@ export default function BusinessDashboard() {
 
           <BusinessHeader business={selectedBusiness} category={category} />
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6 overflow-hidden">
-            <div className="flex overflow-x-auto overflow-y-hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 sm:mb-6">
+            <div className="flex flex-wrap">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
+                    className={`flex items-center justify-center gap-1.5 px-3 py-3 text-xs sm:text-sm font-medium border-b-2 transition-colors flex-1 min-w-[25%] sm:min-w-0 ${
                       activeTab === tab.id
-                        ? "border-cyan-600 text-cyan-600"
-                        : "border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
+                        ? "border-cyan-600 text-cyan-600 bg-cyan-50"
+                        : "border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
-                    {tab.label}
+                    <Icon className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">{tab.label}</span>
                   </button>
                 );
               })}
