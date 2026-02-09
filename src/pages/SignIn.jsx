@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function SignIn() {
@@ -141,6 +142,7 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-100 flex items-center justify-center p-4">
+      <Toaster />
       <div className="w-full max-w-md">
         <div className="flex justify-center mb-8">
           <Link to={createPageUrl("Home")}>
