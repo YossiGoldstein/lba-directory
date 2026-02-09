@@ -24,7 +24,10 @@ export default function SetPassword() {
 
   useEffect(() => {
     const loadAccountInfo = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
+      // Extract query params from hash URL
+      const hash = window.location.hash;
+      const queryString = hash.includes('?') ? hash.split('?')[1] : '';
+      const urlParams = new URLSearchParams(queryString);
       const emailParam = urlParams.get("email");
       
       if (!emailParam) {
