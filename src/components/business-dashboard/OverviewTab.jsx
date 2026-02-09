@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Star, MessageSquare, Eye, Heart, Sparkles, TrendingUp, Crown, Zap } from "lucide-react";
 import { format } from "date-fns";
 
@@ -55,63 +56,69 @@ export default function OverviewTab({ business, deals = [] }) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Business Details Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Business Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Business Name</p>
-              <p className="font-semibold">{business.business_name}</p>
+      {/* Business Details Accordion */}
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="business-info" className="bg-white rounded-lg border">
+          <AccordionTrigger className="px-4 sm:px-6 py-4 hover:no-underline">
+            <div className="flex items-center gap-2">
+              <h3 className="text-base sm:text-lg font-semibold">Business Information</h3>
             </div>
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Email</p>
-              <p className="font-semibold">{business.email}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Phone</p>
-              <p className="font-semibold">{business.phone}</p>
-            </div>
-            {business.website_url && (
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Website</p>
-                <a href={business.website_url} target="_blank" rel="noopener noreferrer" className="font-semibold text-cyan-600 hover:underline break-all">
-                  {business.website_url}
-                </a>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 sm:px-6 pb-4">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Business Name</p>
+                  <p className="font-semibold text-sm sm:text-base">{business.business_name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Email</p>
+                  <p className="font-semibold text-sm sm:text-base break-all">{business.email}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Phone</p>
+                  <p className="font-semibold text-sm sm:text-base">{business.phone}</p>
+                </div>
+                {business.website_url && (
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Website</p>
+                    <a href={business.website_url} target="_blank" rel="noopener noreferrer" className="font-semibold text-sm sm:text-base text-cyan-600 hover:underline break-all">
+                      {business.website_url}
+                    </a>
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Address</p>
+                  <p className="font-semibold text-sm sm:text-base">
+                    {business.address_line1}
+                    {business.address_line2 && `, ${business.address_line2}`}
+                    <br />
+                    {business.city}, {business.state} {business.zip_code}
+                  </p>
+                </div>
+                {business.opening_hours_text && (
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Hours</p>
+                    <p className="font-semibold text-sm sm:text-base whitespace-pre-line">{business.opening_hours_text}</p>
+                  </div>
+                )}
               </div>
-            )}
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Address</p>
-              <p className="font-semibold">
-                {business.address_line1}
-                {business.address_line2 && `, ${business.address_line2}`}
-                <br />
-                {business.city}, {business.state} {business.zip_code}
-              </p>
+              {business.short_description && (
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Short Description</p>
+                  <p className="text-gray-700 text-sm sm:text-base">{business.short_description}</p>
+                </div>
+              )}
+              {business.long_description && (
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Full Description</p>
+                  <p className="text-gray-700 text-sm sm:text-base whitespace-pre-line">{business.long_description}</p>
+                </div>
+              )}
             </div>
-            {business.opening_hours_text && (
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Hours</p>
-                <p className="font-semibold whitespace-pre-line">{business.opening_hours_text}</p>
-              </div>
-            )}
-          </div>
-          {business.short_description && (
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Short Description</p>
-              <p className="text-gray-700">{business.short_description}</p>
-            </div>
-          )}
-          {business.long_description && (
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Full Description</p>
-              <p className="text-gray-700 whitespace-pre-line">{business.long_description}</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
@@ -198,30 +205,27 @@ export default function OverviewTab({ business, deals = [] }) {
       {activeDeals.length > 0 && (
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5" />
-                Active Deals
-              </CardTitle>
-
-            </div>
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
+              Active Deals
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {activeDeals.map(deal => (
-                <div key={deal.id} className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-start justify-between">
+                <div key={deal.id} className="p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex flex-col sm:flex-row items-start justify-between gap-2">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900">{deal.title}</h4>
+                      <h4 className="font-semibold text-gray-900 text-sm sm:text-base">{deal.title}</h4>
                       {deal.description && (
-                        <p className="text-sm text-gray-600 mt-1">{deal.description}</p>
+                        <p className="text-xs sm:text-sm text-gray-600 mt-1">{deal.description}</p>
                       )}
                       <p className="text-xs text-gray-500 mt-2">
                         Valid until {format(new Date(deal.end_date), "MMM d, yyyy")}
                       </p>
                     </div>
                     {deal.badge_text && (
-                      <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full">
+                      <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full whitespace-nowrap">
                         {deal.badge_text}
                       </span>
                     )}
@@ -236,38 +240,35 @@ export default function OverviewTab({ business, deals = [] }) {
       {/* Recent Reviews */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5" />
-              Recent Reviews
-            </CardTitle>
-
-          </div>
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
+            Recent Reviews
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {reviews.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {reviews.map(review => (
-                <div key={review.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="flex items-center gap-2 mb-2">
+                <div key={review.id} className="p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
                     <div className="flex gap-1">
-                      {renderStars(review.rating)}
+                      {renderStars(review.general_rating || review.rating)}
                     </div>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-xs sm:text-sm text-gray-600">
                       {format(new Date(review.created_date), "MMM d, yyyy")}
                     </span>
                   </div>
                   {review.title && (
-                    <h4 className="font-semibold text-gray-900 mb-1">{review.title}</h4>
+                    <h4 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">{review.title}</h4>
                   )}
-                  <p className="text-gray-700 text-sm line-clamp-2">{review.body}</p>
+                  <p className="text-gray-700 text-xs sm:text-sm line-clamp-3">{review.body || "Great service!"}</p>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-500">
-              <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <p>No reviews yet</p>
+            <div className="text-center py-6 sm:py-8 text-gray-500">
+              <MessageSquare className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-3" />
+              <p className="text-sm sm:text-base">No reviews yet</p>
             </div>
           )}
         </CardContent>
