@@ -102,6 +102,7 @@ export default function BusinessDashboard() {
     { id: "deals", label: "Deals", icon: Tag },
     { id: "reviews", label: "Reviews", icon: Star },
     { id: "ai", label: "AI Assistant", icon: Sparkles },
+    { id: "upgrade", label: "Upgrade", icon: Building2 },
   ];
 
   const handleApplyToDescription = async (newDescription) => {
@@ -286,6 +287,7 @@ export default function BusinessDashboard() {
                 onApplyToTags={handleApplyToTags}
               />
             )}
+            {activeTab === "upgrade" && <UpgradeTab business={selectedBusiness} />}
           </div>
         </div>
       </div>
