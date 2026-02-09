@@ -151,7 +151,10 @@ export default function AdminDashboard() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => base44.auth.logout()}
+                onClick={() => {
+                  localStorage.removeItem("lba_customer");
+                  window.location.href = createPageUrl("Home");
+                }}
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
