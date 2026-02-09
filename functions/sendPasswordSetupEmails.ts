@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
 
     for (const business of businessesWithoutPassword) {
       try {
-        const setPasswordUrl = `${new URL(req.url).origin}/SetPassword?email=${encodeURIComponent(business.email)}`;
+        const setPasswordUrl = `${new URL(req.url).origin}/#SetPassword?email=${encodeURIComponent(business.email)}`;
         
         await base44.asServiceRole.integrations.Core.SendEmail({
           to: business.email,
