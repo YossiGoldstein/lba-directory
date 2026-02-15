@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { fixImageUrl } from "@/lib/imageUtils";
+import { fixImageUrl } from "../lib/imageUtils";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Phone, CheckCircle, Star } from "lucide-react";
 
