@@ -15,6 +15,9 @@ Deno.serve(async (req) => {
     let updatedCount = 0;
     const errors = [];
     
+    console.log(`Total businesses to process: ${businesses.length}`);
+    console.log(`First business sample:`, JSON.stringify(businesses[0], null, 2).substring(0, 500));
+    
     for (const business of businesses) {
       try {
         let needsUpdate = false;
