@@ -29,8 +29,15 @@ export default function FavoritesTab({ user }) {
     },
   });
 
-  // Get favorited businesses
-  const favoriteBusinesses = favorites
+  // Get favorited businesses - deduplicate by business_id
+  const uniqueFavorites = favorites.reduce((acc, fav) => {
+    if (!acc.find(f => f.business_id === fav.business_id)) {
+      acc.push(fav);
+    }
+    return acc;
+  }, []);
+  
+  const favoriteBusinesses = uniqueFavorites
     .map(fav => allBusinesses.find(b => b.id === fav.business_id))
     .filter(Boolean);
 

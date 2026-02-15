@@ -225,13 +225,23 @@ export default function BusinessListing() {
           toast.success("Removed from favorites");
         }
       } else {
-        // Add to favorites
-        await base44.entities.Favorite.create({
-          user_id: userId,
-          business_id: businessId
-        });
-        setIsFavorite(true);
-        toast.success("Added to favorites!");
+        // Check if already exists (prevent duplicates)
+        const favorites = await base44.entities.Favorite.list();
+        const existing = favorites.find(f => f.business_id === businessId && f.user_id === userId);
+        
+        if (existing) {
+          // Already favorited, just update UI state
+          setIsFavorite(true);
+          toast.info("Already in favorites");
+        } else {
+          // Add to favorites
+          await base44.entities.Favorite.create({
+            user_id: userId,
+            business_id: businessId
+          });
+          setIsFavorite(true);
+          toast.success("Added to favorites!");
+        }
       }
     } catch (error) {
       console.error("Failed to toggle favorite:", error);
