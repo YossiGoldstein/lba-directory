@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { createPageUrl, fixImageUrl } from "@/utils";
+import { createPageUrl } from "@/utils";
+import { fixImageUrl } from "@/lib/imageUtils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +44,7 @@ export default function BusinessResultCard({ business, hasActiveDeals }) {
       {business.gallery_images && business.gallery_images.length > 0 && (
         <div className="relative w-full h-32 bg-gray-100 overflow-hidden">
           <img
-            src={business.gallery_images[0]}
+            src={fixImageUrl(business.gallery_images[0])}
             alt={business.business_name}
             className="w-full h-full object-cover"
           />

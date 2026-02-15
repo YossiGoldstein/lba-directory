@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { createPageUrl, fixImageUrl } from "@/utils";
+import { createPageUrl } from "@/utils";
+import { fixImageUrl } from "@/lib/imageUtils";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Phone, CheckCircle, Star } from "lucide-react";
 
@@ -49,7 +50,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
   const businessStatus = getBusinessStatus();
 
   const coverImage = business.gallery_images && business.gallery_images.length > 0 
-    ? business.gallery_images[0] 
+    ? fixImageUrl(business.gallery_images[0])
     : "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=300&fit=crop";
 
   const isPaid = business.listing_tier === "pro" || business.listing_tier === "premium";
@@ -106,7 +107,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
             <div className="w-12 h-12 rounded-full border-[3px] border-white shadow-lg overflow-hidden bg-white flex items-center justify-center">
               {business.logo_url ? (
                 <img
-                  src={business.logo_url}
+                  src={fixImageUrl(business.logo_url)}
                   alt={business.business_name}
                   className="w-full h-full object-cover"
                 />

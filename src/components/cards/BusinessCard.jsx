@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { createPageUrl, fixImageUrl } from "@/utils";
+import { createPageUrl } from "@/utils";
+import { fixImageUrl } from "@/lib/imageUtils";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Phone, Star, ExternalLink, CheckCircle } from "lucide-react";
@@ -13,7 +14,7 @@ export default function BusinessCard({ business }) {
         <div className="relative h-48 bg-gray-200 overflow-hidden">
           {business.cover_image_url ? (
             <img 
-              src={business.cover_image_url} 
+              src={fixImageUrl(business.cover_image_url)}
               alt={business.name}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
@@ -42,7 +43,7 @@ export default function BusinessCard({ business }) {
           <div className="flex items-start gap-3 mb-3">
             {business.logo_url && (
               <img 
-                src={business.logo_url} 
+                src={fixImageUrl(business.logo_url)}
                 alt={business.name}
                 className="w-12 h-12 rounded-lg object-cover border border-gray-200"
               />
