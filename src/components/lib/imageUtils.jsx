@@ -5,10 +5,12 @@
  * @returns {string} - The corrected image URL
  */
 export function fixImageUrl(url) {
-  if (!url) return url;
+  if (!url || typeof url !== 'string') return url;
   
-  // If it's not a string, return as-is
-  if (typeof url !== 'string') return url;
+  // If already a valid Supabase storage URL, return as-is
+  if (url.startsWith('https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/')) {
+    return url;
+  }
   
   // Handle Base44 file API URLs - convert to storage URLs
   if (url.includes('/api/apps/') && url.includes('/files/public/')) {
@@ -19,13 +21,12 @@ export function fixImageUrl(url) {
     }
   }
   
-  // Extract the path from Supabase storage URLs
+  // Extract the path from other Supabase storage URLs
   const storagePathMatch = url.match(/\/storage\/v1\/object\/public\/(.+)$/);
   if (storagePathMatch) {
-    // Reconstruct with the canonical storage domain
     return `https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/${storagePathMatch[1]}`;
   }
   
-  // Return original if external URL
+  // Return original URL (external URLs)
   return url;
 }
