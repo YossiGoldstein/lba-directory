@@ -23,24 +23,30 @@ Deno.serve(async (req) => {
         // Access data from business object
         const data = business.data || business;
         
-        console.log(`Checking business: ${data.business_name}, logo: ${data.logo_url?.substring(0, 50)}`);
-        
-        // Fix logo_url
-        if (data.logo_url && data.logo_url.includes('base44.app/api/apps/')) {
-          const newUrl = data.logo_url
-            .replace('https://base44.app/api/apps/', 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/')
-            .replace('/files/public/', '/');
-          updates.logo_url = newUrl;
-          needsUpdate = true;
+        // Fix logo_url - check both with and without https
+        if (data.logo_url && (data.logo_url.includes('base44.app/api/apps/') || data.logo_url.includes('http://base44.app/api/apps/'))) {
+          let newUrl = data.logo_url;
+          if (newUrl.includes('://base44.app/api/apps/')) {
+            newUrl = newUrl
+              .replace('https://base44.app/api/apps/', 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/')
+              .replace('http://base44.app/api/apps/', 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/')
+              .replace('/files/public/', '/');
+            updates.logo_url = newUrl;
+            needsUpdate = true;
+            console.log(`Fixing logo: ${data.logo_url} -> ${newUrl}`);
+          }
         }
         
         // Fix gallery_images
         if (data.gallery_images && Array.isArray(data.gallery_images)) {
           const fixedGallery = data.gallery_images.map(url => {
-            if (url && url.includes('base44.app/api/apps/')) {
-              return url
+            if (url && (url.includes('base44.app/api/apps/') || url.includes('http://base44.app/api/apps/'))) {
+              const newUrl = url
                 .replace('https://base44.app/api/apps/', 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/')
+                .replace('http://base44.app/api/apps/', 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/')
                 .replace('/files/public/', '/');
+              console.log(`Fixing gallery: ${url} -> ${newUrl}`);
+              return newUrl;
             }
             return url;
           });
