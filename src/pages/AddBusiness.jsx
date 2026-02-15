@@ -232,8 +232,7 @@ export default function AddBusiness() {
         // Create checkout session
         const response = await base44.functions.invoke('createCheckoutSession', {
           listing_tier: formData.listing_tier,
-          business_data: businessData,
-        listing_tier: formData.listing_tier
+          business_data: businessData
         });
 
         if (response.data?.url) {
