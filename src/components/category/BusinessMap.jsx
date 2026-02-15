@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { fixImageUrl } from "@/components/lib/imageUtils";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -54,7 +55,7 @@ export default function BusinessMap({ businesses }) {
           <Marker
             key={business.id}
             position={[business.latitude, business.longitude]}
-            icon={createCustomIcon(business.logo_url, business.business_name)}
+            icon={createCustomIcon(fixImageUrl(business.logo_url), business.business_name)}
           >
             <Popup>
               <div className="text-sm">
