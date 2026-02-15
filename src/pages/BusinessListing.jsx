@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { createPageUrl, fixImageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -310,7 +310,7 @@ export default function BusinessListing() {
         {/* Cover Image */}
         <img
           src={business.gallery_images && business.gallery_images.length > 0 
-            ? business.gallery_images[0] 
+            ? fixImageUrl(business.gallery_images[0])
             : "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&h=800&fit=crop"}
           alt={business.business_name}
           className="w-full h-full object-cover"
@@ -330,7 +330,7 @@ export default function BusinessListing() {
                 {business.logo_url && (
                   <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-white flex-shrink-0">
                     <img
-                      src={business.logo_url}
+                      src={fixImageUrl(business.logo_url)}
                       alt={business.business_name}
                       className="w-full h-full object-cover"
                     />
@@ -516,11 +516,11 @@ export default function BusinessListing() {
                       {business.gallery_images.slice(1).map((img, idx) => (
                         <button
                           key={idx}
-                          onClick={() => setSelectedImage(img)}
+                          onClick={() => setSelectedImage(fixImageUrl(img))}
                           className="aspect-square rounded-lg overflow-hidden hover:opacity-75 transition-opacity"
                         >
                           <img
-                            src={img}
+                            src={fixImageUrl(img)}
                             alt={`${business.business_name} - ${idx + 1}`}
                             className="w-full h-full object-cover"
                           />
@@ -610,11 +610,11 @@ export default function BusinessListing() {
               {business.gallery_images.slice(1).map((img, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setSelectedImage(img)}
+                  onClick={() => setSelectedImage(fixImageUrl(img))}
                   className="aspect-square rounded-lg overflow-hidden hover:opacity-75 transition-opacity"
                 >
                   <img
-                    src={img}
+                    src={fixImageUrl(img)}
                     alt={`${business.business_name} - ${idx + 1}`}
                     className="w-full h-full object-cover"
                   />
