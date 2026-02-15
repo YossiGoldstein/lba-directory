@@ -10,18 +10,22 @@ export function fixImageUrl(url) {
   // If it's not a string, return as-is
   if (typeof url !== 'string') return url;
   
-  // If it's an external URL (not Base44 storage), return as-is
-  if (url.startsWith('http') && !url.includes('supabase.co/storage')) {
-    return url;
+  // Handle Base44 file API URLs - convert to storage URLs
+  if (url.includes('/api/apps/') && url.includes('/files/public/')) {
+    const match = url.match(/\/files\/public\/([^/]+)\/(.+)$/);
+    if (match) {
+      const [, appId, fileName] = match;
+      return `https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/${appId}/${fileName}`;
+    }
   }
   
-  // Extract the path from Base44 storage URLs
+  // Extract the path from Supabase storage URLs
   const storagePathMatch = url.match(/\/storage\/v1\/object\/public\/(.+)$/);
   if (storagePathMatch) {
     // Reconstruct with the canonical storage domain
     return `https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/${storagePathMatch[1]}`;
   }
   
-  // Return original if no match
+  // Return original if external URL
   return url;
 }
