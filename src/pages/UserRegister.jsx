@@ -19,6 +19,21 @@ export default function UserRegister() {
   });
   const [loading, setLoading] = useState(false);
 
+  // Redirect if already logged in
+  React.useEffect(() => {
+    const checkAuth = () => {
+      const customerData = localStorage.getItem("lba_customer");
+      if (customerData) {
+        const customer = JSON.parse(customerData);
+        const dashboardUrl = customer.role === "admin" ? "AdminDashboard" :
+                            customer.role === "business_owner" ? "BusinessDashboard" :
+                            "UserDashboard";
+        window.location.href = createPageUrl(dashboardUrl);
+      }
+    };
+    checkAuth();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     

@@ -650,16 +650,29 @@ Respond with exact business names from the list above.`;
                   <Link to={createPageUrl("AboutUs")} className="hover:underline">Learn More...</Link>
                 </li>
               </ul>
-              <Button 
-                size="lg"
-                className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white font-bold shadow-lg text-base"
-                asChild
-              >
-                <Link to={createPageUrl("UserRegister")}>
-                  Create a free account
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
+              {user ? (
+                <Button 
+                  size="lg"
+                  className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white font-bold shadow-lg text-base"
+                  asChild
+                >
+                  <Link to={createPageUrl(user.role === "admin" ? "AdminDashboard" : "UserDashboard")}>
+                    Go to Dashboard
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Link>
+                </Button>
+              ) : (
+                <Button 
+                  size="lg"
+                  className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white font-bold shadow-lg text-base"
+                  asChild
+                >
+                  <Link to={createPageUrl("UserRegister")}>
+                    Create a free account
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Link>
+                </Button>
+              )}
             </div>
 
             {/* For Business Owners */}

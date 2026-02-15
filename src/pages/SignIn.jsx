@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
@@ -17,6 +17,21 @@ export default function SignIn() {
   });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    const checkAuth = () => {
+      const customerData = localStorage.getItem("lba_customer");
+      if (customerData) {
+        const customer = JSON.parse(customerData);
+        const dashboardUrl = customer.role === "admin" ? "AdminDashboard" :
+                            customer.role === "business_owner" ? "BusinessDashboard" :
+                            "UserDashboard";
+        window.location.href = createPageUrl(dashboardUrl);
+      }
+    };
+    checkAuth();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
