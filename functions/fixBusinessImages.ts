@@ -23,6 +23,8 @@ Deno.serve(async (req) => {
         // Access data from business object
         const data = business.data || business;
         
+        console.log(`Checking business: ${data.business_name}, logo: ${data.logo_url?.substring(0, 50)}`);
+        
         // Fix logo_url
         if (data.logo_url && data.logo_url.includes('base44.app/api/apps/')) {
           const newUrl = data.logo_url
