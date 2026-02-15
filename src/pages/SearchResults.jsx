@@ -118,16 +118,29 @@ export default function SearchResults() {
     // AI Search
     let searchCompleted = false;
     try {
-      const foodCategory = categories.find(c => c.slug === "food" || c.name.toLowerCase().includes("food"));
-      const relevantBusinesses = allBusinesses.filter(b => {
-        if (foodCategory && b.category_id === foodCategory.id) return true;
-        const category = categories.find(c => c.id === b.category_id);
-        return category && category.name.toLowerCase().includes("food");
-      }).slice(0, 50);
+      // Provide ALL approved businesses to the AI, organized by category
+      const businessesByCategory = categories.reduce((acc, cat) => {
+        const bizInCat = allBusinesses.filter(b => b.category_id === cat.id);
+        if (bizInCat.length > 0) {
+          acc[cat.name] = bizInCat.map(b => ({
+            name: b.business_name,
+            city: b.city || "Lakewood",
+            desc: b.short_description || ""
+          }));
+        }
+        return acc;
+      }, {});
 
-      const contextMessage = relevantBusinesses.length > 0 
-        ? `${searchQuery}\n\nNote: We have ${relevantBusinesses.length} food businesses in the directory. Here are their names: ${relevantBusinesses.map(b => b.business_name).join(", ")}`
-        : searchQuery;
+      const contextMessage = `User search query: "${searchQuery}"
+
+Available businesses in the directory organized by category:
+
+${Object.entries(businessesByCategory).map(([catName, businesses]) => 
+  `${catName} (${businesses.length}):
+${businesses.slice(0, 10).map(b => `- ${b.name} (${b.city})${b.desc ? `: ${b.desc.substring(0, 80)}` : ''}`).join('\n')}${businesses.length > 10 ? `\n... and ${businesses.length - 10} more` : ''}`
+).join('\n\n')}
+
+Please search through ALL categories and return the most relevant businesses for the user's query. Include business names in your response so they can be matched.`;
 
       const conv = await base44.agents.createConversation({
         agent_name: "DirectoryAssistant",
