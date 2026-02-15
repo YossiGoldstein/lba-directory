@@ -115,32 +115,83 @@ export default function SearchResults() {
       }
     }
 
-    // AI Search
+    // AI Search with full context
     let searchCompleted = false;
     try {
-      // Provide ALL approved businesses to the AI, organized by category
-      const businessesByCategory = categories.reduce((acc, cat) => {
-        const bizInCat = allBusinesses.filter(b => b.category_id === cat.id);
-        if (bizInCat.length > 0) {
-          acc[cat.name] = bizInCat.map(b => ({
-            name: b.business_name,
-            city: b.city || "Lakewood",
-            desc: b.short_description || ""
-          }));
-        }
-        return acc;
-      }, {});
+      // Get current time in EST
+      const now = new Date();
+      const estTime = now.toLocaleString('en-US', { 
+        timeZone: 'America/New_York',
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+      const dayOfWeek = now.toLocaleString('en-US', { timeZone: 'America/New_York', weekday: 'long' });
+      const currentHour = parseInt(now.toLocaleString('en-US', { timeZone: 'America/New_York', hour: '2-digit', hour12: false }));
+      const currentMinute = parseInt(now.toLocaleString('en-US', { timeZone: 'America/New_York', minute: '2-digit' }));
 
-      const contextMessage = `User search query: "${searchQuery}"
+      // Build comprehensive business data
+      const businessData = allBusinesses.map(b => {
+        const category = categories.find(c => c.id === b.category_id);
+        return {
+          name: b.business_name,
+          category: category?.name || 'Other',
+          city: b.city || 'Lakewood',
+          address: `${b.address_line1 || ''}${b.address_line2 ? ', ' + b.address_line2 : ''}, ${b.city || ''}, ${b.state || 'NJ'} ${b.zip_code || ''}`.trim(),
+          phone: b.phone || '',
+          shortDesc: b.short_description || '',
+          longDesc: b.long_description || '',
+          tags: b.tags ? b.tags.join(', ') : '',
+          hours: b.opening_hours_text || b.opening_hours_json ? 
+            (b.opening_hours_text || JSON.stringify(b.opening_hours_json)) : 'Hours not specified',
+          rating: b.general_rating || 0,
+          reviewCount: b.reviews_count || 0
+        };
+      });
 
-Available businesses in the directory organized by category:
+      // Group by category for better context
+      const byCategory = {};
+      businessData.forEach(b => {
+        if (!byCategory[b.category]) byCategory[b.category] = [];
+        byCategory[b.category].push(b);
+      });
 
-${Object.entries(businessesByCategory).map(([catName, businesses]) => 
-  `${catName} (${businesses.length}):
-${businesses.slice(0, 10).map(b => `- ${b.name} (${b.city})${b.desc ? `: ${b.desc.substring(0, 80)}` : ''}`).join('\n')}${businesses.length > 10 ? `\n... and ${businesses.length - 10} more` : ''}`
+      const contextMessage = `CURRENT DATE & TIME (America/New_York timezone):
+${estTime}
+Day: ${dayOfWeek}
+
+USER SEARCH QUERY: "${searchQuery}"
+
+INSTRUCTIONS:
+- If user asks for "open now", filter businesses based on the current time above
+- Only recommend businesses that exist in the database below
+- Always mention business names explicitly so they can be matched
+- Provide structured, clear results with addresses and phone numbers
+
+AVAILABLE BUSINESSES IN DIRECTORY (${allBusinesses.length} total):
+
+${Object.entries(byCategory).map(([catName, businesses]) => 
+  `=== ${catName} (${businesses.length}) ===
+${businesses.slice(0, 15).map(b => 
+`• ${b.name}
+  ${b.city} | ${b.phone || 'No phone'}
+  ${b.shortDesc}
+  Hours: ${b.hours}
+  Tags: ${b.tags || 'none'}
+  Rating: ${b.rating > 0 ? `${b.rating}/5 (${b.reviewCount} reviews)` : 'No reviews yet'}`
+).join('\n\n')}${businesses.length > 15 ? `\n\n... and ${businesses.length - 15} more in this category` : ''}`
 ).join('\n\n')}
 
-Please search through ALL categories and return the most relevant businesses for the user's query. Include business names in your response so they can be matched.`;
+RESPOND WITH:
+- Exact business names from the list above
+- Whether each is open now (if relevant to query)
+- Full address and phone
+- Brief helpful description
+- Only real businesses from this database`;
 
       const conv = await base44.agents.createConversation({
         agent_name: "DirectoryAssistant",

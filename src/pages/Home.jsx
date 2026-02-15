@@ -184,17 +184,64 @@ export default function Home() {
     let searchCompleted = false;
 
     try {
-      // Find relevant businesses to provide context
-      const foodCategory = categories.find(c => c.slug === "food" || c.name.toLowerCase().includes("food"));
-      const relevantBusinesses = allBusinesses.filter(b => {
-        if (foodCategory && b.category_id === foodCategory.id) return true;
-        const category = categories.find(c => c.id === b.category_id);
-        return category && category.name.toLowerCase().includes("food");
-      }).slice(0, 50); // Limit to 50 most relevant
+      // Get current time in EST
+      const now = new Date();
+      const estTime = now.toLocaleString('en-US', { 
+        timeZone: 'America/New_York',
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+      const dayOfWeek = now.toLocaleString('en-US', { timeZone: 'America/New_York', weekday: 'long' });
 
-      const contextMessage = relevantBusinesses.length > 0 
-        ? `${searchQuery}\n\nNote: We have ${relevantBusinesses.length} food businesses in the directory. Here are their names: ${relevantBusinesses.map(b => b.business_name).join(", ")}`
-        : searchQuery;
+      // Build comprehensive business data
+      const businessData = allBusinesses.map(b => {
+        const category = categories.find(c => c.id === b.category_id);
+        return {
+          name: b.business_name,
+          category: category?.name || 'Other',
+          city: b.city || 'Lakewood',
+          address: `${b.address_line1 || ''}${b.address_line2 ? ', ' + b.address_line2 : ''}, ${b.city || ''}, ${b.state || 'NJ'} ${b.zip_code || ''}`.trim(),
+          phone: b.phone || '',
+          shortDesc: b.short_description || '',
+          hours: b.opening_hours_text || b.opening_hours_json ? 
+            (b.opening_hours_text || JSON.stringify(b.opening_hours_json)) : 'Hours not specified',
+          tags: b.tags ? b.tags.join(', ') : '',
+          rating: b.general_rating || 0,
+          reviewCount: b.reviews_count || 0
+        };
+      });
+
+      // Group by category
+      const byCategory = {};
+      businessData.forEach(b => {
+        if (!byCategory[b.category]) byCategory[b.category] = [];
+        byCategory[b.category].push(b);
+      });
+
+      const contextMessage = `CURRENT DATE & TIME (America/New_York timezone):
+${estTime}
+Day: ${dayOfWeek}
+
+USER SEARCH QUERY: "${searchQuery}"
+
+AVAILABLE BUSINESSES (${allBusinesses.length} total):
+
+${Object.entries(byCategory).map(([catName, businesses]) => 
+  `=== ${catName} (${businesses.length}) ===
+${businesses.slice(0, 10).map(b => 
+`• ${b.name} | ${b.city} | ${b.phone || 'No phone'}
+  ${b.shortDesc}
+  Hours: ${b.hours}
+  Tags: ${b.tags || 'none'}`
+).join('\n')}${businesses.length > 10 ? `\n... and ${businesses.length - 10} more` : ''}`
+).join('\n\n')}
+
+Respond with exact business names from the list above.`;
 
       const conv = await base44.agents.createConversation({
         agent_name: "DirectoryAssistant",
