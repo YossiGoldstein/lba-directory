@@ -20,9 +20,12 @@ Deno.serve(async (req) => {
         let needsUpdate = false;
         const updates = {};
         
+        // Access data from business object
+        const data = business.data || business;
+        
         // Fix logo_url
-        if (business.logo_url && business.logo_url.includes('base44.app/api/apps/')) {
-          const newUrl = business.logo_url
+        if (data.logo_url && data.logo_url.includes('base44.app/api/apps/')) {
+          const newUrl = data.logo_url
             .replace('https://base44.app/api/apps/', 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/')
             .replace('/files/public/', '/');
           updates.logo_url = newUrl;
@@ -30,8 +33,8 @@ Deno.serve(async (req) => {
         }
         
         // Fix gallery_images
-        if (business.gallery_images && Array.isArray(business.gallery_images)) {
-          const fixedGallery = business.gallery_images.map(url => {
+        if (data.gallery_images && Array.isArray(data.gallery_images)) {
+          const fixedGallery = data.gallery_images.map(url => {
             if (url && url.includes('base44.app/api/apps/')) {
               return url
                 .replace('https://base44.app/api/apps/', 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/')
@@ -41,7 +44,7 @@ Deno.serve(async (req) => {
           });
           
           // Check if any URL was changed
-          if (JSON.stringify(fixedGallery) !== JSON.stringify(business.gallery_images)) {
+          if (JSON.stringify(fixedGallery) !== JSON.stringify(data.gallery_images)) {
             updates.gallery_images = fixedGallery;
             needsUpdate = true;
           }
@@ -51,15 +54,16 @@ Deno.serve(async (req) => {
         if (needsUpdate) {
           await base44.asServiceRole.entities.Business.update(business.id, updates);
           updatedCount++;
-          console.log(`Updated business: ${business.business_name}`);
+          console.log(`Updated business: ${data.business_name}`);
         }
       } catch (error) {
+        const data = business.data || business;
         errors.push({
           businessId: business.id,
-          businessName: business.business_name,
+          businessName: data.business_name,
           error: error.message
         });
-        console.error(`Error updating business ${business.business_name}:`, error);
+        console.error(`Error updating business ${data.business_name}:`, error);
       }
     }
     
