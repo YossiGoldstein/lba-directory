@@ -5,6 +5,7 @@ import BusinessResultCard from "../chat/BusinessResultCard";
 import ReactMarkdown from "react-markdown";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { createPageUrl } from "@/utils";
+import { fixImageUrl } from "@/components/lib/imageUtils";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
