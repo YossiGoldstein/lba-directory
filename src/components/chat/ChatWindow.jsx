@@ -18,6 +18,7 @@ export default function ChatWindow({
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [businesses, setBusinesses] = useState([]);
+  const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -46,6 +47,7 @@ export default function ChatWindow({
         });
         
         setConversation(conv);
+        setError(null);
 
         // Send initial context message
         if (pageContext) {
@@ -70,6 +72,7 @@ export default function ChatWindow({
         }
       } catch (error) {
         console.error("Failed to create conversation:", error);
+        setError("Sorry, the chat assistant is temporarily unavailable. Please try refreshing the page.");
       }
     };
 
@@ -167,7 +170,19 @@ export default function ChatWindow({
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-        {messages.length === 0 && (
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+            <p className="text-red-800 text-sm">{error}</p>
+            <Button 
+              onClick={() => window.location.reload()} 
+              className="mt-3 bg-red-600 hover:bg-red-700"
+              size="sm"
+            >
+              Refresh Page
+            </Button>
+          </div>
+        )}
+        {!error && messages.length === 0 && (
           <div className="text-center text-gray-500 mt-8">
             <div className="mb-4 flex justify-center">
               <svg className="w-20 h-20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -288,13 +303,13 @@ export default function ChatWindow({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Type what you're looking for"
-            disabled={isLoading || !conversation}
+            placeholder={error ? "Chat unavailable - please refresh" : "Type what you're looking for"}
+            disabled={isLoading || !!error}
             className="flex-1"
           />
           <Button
             onClick={handleSend}
-            disabled={isLoading || !conversation || !inputValue.trim()}
+            disabled={isLoading || !!error || !inputValue.trim()}
             className="bg-cyan-600 hover:bg-cyan-700"
           >
             {isLoading ? (
