@@ -190,10 +190,8 @@ export default function Layout({ children, currentPageName }) {
                     <div className="border-t border-[#005580] pt-4 mt-2 flex flex-col gap-3">
                       <Button variant="outline" asChild className="w-full bg-[#005580] text-white border-[#006699] hover:bg-[#004466]">
                         <Link to={createPageUrl(
-                          user.role === "admin" ? "AdminDashboard" : 
-                          user.role === "business_owner" ? "BusinessDashboard" : 
-                          "UserDashboard"
-                        )}>Dashboard</Link>
+                            user.role === "admin" ? "AdminDashboard" : "UserDashboard"
+                          )}>Dashboard</Link>
                       </Button>
                       <Button variant="outline" onClick={handleLogout} className="w-full bg-[#005580] text-white border-[#006699] hover:bg-[#004466]">
                         Logout
