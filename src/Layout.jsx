@@ -128,11 +128,9 @@ export default function Layout({ children, currentPageName }) {
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-gray-700">Hello, {user.full_name}</span>
                     <Button variant="ghost" size="sm" asChild>
-                      <Link to={createPageUrl(
-                        user.role === "admin" ? "AdminDashboard" : 
-                        user.role === "business_owner" ? "BusinessDashboard" : 
-                        "UserDashboard"
-                      )}>
+                        <Link to={createPageUrl(
+                          user.role === "admin" ? "AdminDashboard" : "UserDashboard"
+                        )}>
                         <LayoutDashboard className="w-4 h-4 mr-2" />
                         Dashboard
                       </Link>
