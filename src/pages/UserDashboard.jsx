@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { User, Heart, MessageSquare, Search, Sparkles, Edit, Star, Bell } from "lucide-react";
+import { User, Heart, MessageSquare, Search, Sparkles, Edit, Star, Bell, Building2, Plus } from "lucide-react";
 import ProfileTab from "../components/dashboard/ProfileTab";
 import FavoritesTab from "../components/dashboard/FavoritesTab";
 import MyReviewsTab from "../components/dashboard/MyReviewsTab";
@@ -15,6 +16,7 @@ export default function UserDashboard() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("profile");
+  const [myBusinesses, setMyBusinesses] = useState([]);
   const [stats, setStats] = useState({
     favorites: 0,
     reviews: 0,
@@ -45,13 +47,21 @@ export default function UserDashboard() {
         
         setUser(userData);
         
-        // Load stats
-        const [favorites, reviews, searches, notifications] = await Promise.all([
+        // Load stats + businesses
+        const [favorites, reviews, searches, notifications, allBusinesses] = await Promise.all([
           base44.entities.Favorite.list(),
           base44.entities.Review.list(),
           base44.entities.SearchHistory.list(),
           base44.entities.Notification.list(),
+          base44.entities.Business.list(),
         ]);
+
+        const userBusinesses = allBusinesses.filter(b => 
+          b.owner_id === userData.id || 
+          b.email === userData.email || 
+          b.created_by === userData.email
+        );
+        setMyBusinesses(userBusinesses);
 
         setStats({
           favorites: favorites.filter(f => f.user_id === userData.id).length,
@@ -91,6 +101,7 @@ export default function UserDashboard() {
 
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
+    { id: "businesses", label: "My Businesses", icon: Building2 },
     { id: "notifications", label: "Notifications", icon: Bell, badge: stats.notifications > 0 ? stats.notifications : null },
     { id: "favorites", label: "Favorites", icon: Heart },
     { id: "reviews", label: "My Reviews", icon: MessageSquare },
@@ -225,6 +236,71 @@ export default function UserDashboard() {
         <div className="min-h-[400px]">
           {activeTab === "profile" && (
             <ProfileTab user={user} onUserUpdate={refreshStats} />
+          )}
+          {activeTab === "businesses" && (
+            <div>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-gray-900">My Businesses</h2>
+                <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
+                  <Link to={createPageUrl("AddBusiness")}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Business
+                  </Link>
+                </Button>
+              </div>
+              {myBusinesses.length === 0 ? (
+                <Card>
+                  <CardContent className="p-8 text-center">
+                    <Building2 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500 mb-4">You haven't listed any businesses yet.</p>
+                    <Button asChild className="bg-cyan-600 hover:bg-cyan-700">
+                      <Link to={createPageUrl("AddBusiness")}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Your Business
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {myBusinesses.map(business => (
+                    <Card key={business.id} className="hover:shadow-lg transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-3 mb-3">
+                          {business.logo_url ? (
+                            <img src={business.logo_url} alt={business.business_name} className="w-12 h-12 rounded-lg object-cover" />
+                          ) : (
+                            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                              <Building2 className="w-6 h-6 text-gray-400" />
+                            </div>
+                          )}
+                          <div>
+                            <p className="font-semibold text-gray-900">{business.business_name}</p>
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              business.status === 'approved' ? 'bg-green-100 text-green-700' :
+                              business.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-red-100 text-red-700'
+                            }`}>
+                              {business.status}
+                            </span>
+                          </div>
+                        </div>
+                        <Button
+                          asChild
+                          className="w-full bg-cyan-600 hover:bg-cyan-700"
+                          size="sm"
+                        >
+                          <Link to={createPageUrl("BusinessDashboard") + `?edit=${business.id}`}>
+                            <Edit className="w-4 h-4 mr-2" />
+                            Manage
+                          </Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
           )}
           {activeTab === "notifications" && (
             <NotificationsTab user={user} />
