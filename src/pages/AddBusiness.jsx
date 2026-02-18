@@ -254,6 +254,7 @@ export default function AddBusiness() {
 
       // Prepare business data
       const businessData = {
+        owner_id: customer.id,
         business_name: formData.business_name,
         category_id: formData.category_id,
         short_description: formData.short_description,

@@ -38,11 +38,9 @@ export default function BusinessOwnerRegister() {
 
     try {
       // Check if email already exists
-      const businesses = await base44.entities.Business.list();
       const customers = await base44.entities.Customer.list();
       
-      if (businesses.some(b => b.email === formData.email) || 
-          customers.some(c => c.email === formData.email)) {
+      if (customers.some(c => c.email === formData.email)) {
         toast.error("This email is already registered");
         setLoading(false);
         return;
@@ -51,23 +49,20 @@ export default function BusinessOwnerRegister() {
       // Hash password
       const passwordHash = btoa(formData.password);
 
-      // Create business owner account
-      const newBusiness = await base44.entities.Business.create({
-        business_name: formData.businessName,
+      // Create customer account (owner_id will link to businesses)
+      const newCustomer = await base44.entities.Customer.create({
+        full_name: formData.businessName,
         email: formData.email,
         phone: formData.phone || "",
         password_hash: passwordHash,
-        category_id: "", // Will be set later in Add Business flow
-        status: "pending",
-        listing_tier: "free",
-        payment_status: "unpaid"
+        is_active: true
       });
 
       // Store session
       localStorage.setItem("lba_customer", JSON.stringify({
-        id: newBusiness.id,
-        email: newBusiness.email,
-        full_name: newBusiness.business_name,
+        id: newCustomer.id,
+        email: newCustomer.email,
+        full_name: newCustomer.full_name,
         role: "business_owner",
         is_active: true
       }));

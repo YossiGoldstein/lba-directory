@@ -74,80 +74,65 @@ export default function SignIn() {
         console.log("Not an admin user, checking business/customer");
       }
 
-      // Check if user is a business owner
-      const businesses = await base44.entities.Business.list();
-      const businessOwner = businesses.find(b => b.email === formData.email);
+      // Check Customer entity first
+      const customers = await base44.entities.Customer.list();
+      const customer = customers.find(c => c.email === formData.email);
 
-      if (businessOwner) {
-        // Business owner login
+      if (customer) {
         const passwordHash = btoa(formData.password);
         
-        if (!businessOwner.password_hash) {
-          toast.error("Please complete your registration first");
-          setLoading(false);
-          return;
-        }
-        
-        if (businessOwner.password_hash !== passwordHash) {
+        if (customer.password_hash !== passwordHash) {
           toast.error("Email or password is incorrect");
           setLoading(false);
           return;
         }
 
-        // Store business owner session
+        if (!customer.is_active) {
+          toast.error("Account is not active");
+          setLoading(false);
+          return;
+        }
+
         localStorage.setItem("lba_customer", JSON.stringify({
-          id: businessOwner.id,
-          email: businessOwner.email,
-          full_name: businessOwner.business_name,
+          ...customer,
+          role: "user"
+        }));
+
+        toast.success("Welcome back!");
+        const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("UserDashboard");
+        setTimeout(() => { window.location.href = nextUrl; }, 1000);
+        return;
+      }
+
+      // Legacy fallback: business owner registered via old flow (Business entity as login)
+      const businesses = await base44.entities.Business.list();
+      const legacyOwner = businesses.find(b => b.email === formData.email && b.password_hash);
+
+      if (legacyOwner) {
+        const passwordHash = btoa(formData.password);
+        
+        if (legacyOwner.password_hash !== passwordHash) {
+          toast.error("Email or password is incorrect");
+          setLoading(false);
+          return;
+        }
+
+        localStorage.setItem("lba_customer", JSON.stringify({
+          id: legacyOwner.id,
+          email: legacyOwner.email,
+          full_name: legacyOwner.business_name,
           role: "business_owner",
           is_active: true
         }));
 
         toast.success("Welcome back!");
-        
-        const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("BusinessDashboard");
-        setTimeout(() => {
-          window.location.href = nextUrl;
-        }, 1000);
+        const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("UserDashboard");
+        setTimeout(() => { window.location.href = nextUrl; }, 1000);
         return;
       }
 
-      // Regular customer login
-      const customers = await base44.entities.Customer.list();
-      const customer = customers.find(c => c.email === formData.email);
-
-      if (!customer) {
-        toast.error("Email or password is incorrect");
-        setLoading(false);
-        return;
-      }
-
-      const passwordHash = btoa(formData.password);
-      
-      if (customer.password_hash !== passwordHash) {
-        toast.error("Email or password is incorrect");
-        setLoading(false);
-        return;
-      }
-
-      if (!customer.is_active) {
-        toast.error("Account is not active");
-        setLoading(false);
-        return;
-      }
-
-      // Store customer session
-      localStorage.setItem("lba_customer", JSON.stringify({
-        ...customer,
-        role: "user"
-      }));
-
-      toast.success("Signed in successfully!");
-      
-      const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("Home");
-      setTimeout(() => {
-        window.location.href = nextUrl;
-      }, 1000);
+      toast.error("Email or password is incorrect");
+      setLoading(false);
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Login failed. Please try again.");
