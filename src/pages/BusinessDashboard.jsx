@@ -59,8 +59,12 @@ export default function BusinessDashboard() {
     queryFn: async () => {
       if (!user?.email) return [];
       const allBusinesses = await base44.entities.Business.list();
-      // For business owners who login with their business email
-      return allBusinesses.filter(b => b.email === user.email || b.owner_id === user.id || b.created_by === user.email);
+      // Match by owner_id (new flow), email (legacy flow), or created_by
+      return allBusinesses.filter(b => 
+        b.owner_id === user.id || 
+        b.email === user.email || 
+        b.created_by === user.email
+      );
     },
     enabled: !!user?.email,
   });

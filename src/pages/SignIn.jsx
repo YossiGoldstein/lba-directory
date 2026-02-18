@@ -24,9 +24,7 @@ export default function SignIn() {
       const customerData = localStorage.getItem("lba_customer");
       if (customerData) {
         const customer = JSON.parse(customerData);
-        const dashboardUrl = customer.role === "admin" ? "AdminDashboard" :
-                            customer.role === "business_owner" ? "BusinessDashboard" :
-                            "UserDashboard";
+        const dashboardUrl = customer.role === "admin" ? "AdminDashboard" : "UserDashboard";
         window.location.href = createPageUrl(dashboardUrl);
       }
     };
