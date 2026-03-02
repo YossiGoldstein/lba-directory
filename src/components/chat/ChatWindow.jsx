@@ -17,6 +17,7 @@ export default function ChatWindow({
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
   const [businesses, setBusinesses] = useState([]);
   const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
