@@ -118,13 +118,16 @@ export default function ChatWindow({
     setInputValue("");
     setIsLoading(true);
 
+    // Optimistically add user message to UI
+    setMessages(prev => [...prev, { role: "user", content: userMessage }]);
+
     try {
       await base44.agents.addMessage(conversation, {
         role: "user",
         content: userMessage
       });
-    } catch (error) {
-      console.error("Failed to send message:", error);
+    } catch (err) {
+      console.error("Failed to send message:", err);
       setIsLoading(false);
     }
   };
