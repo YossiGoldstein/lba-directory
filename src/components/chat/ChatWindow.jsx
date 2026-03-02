@@ -230,11 +230,6 @@ export default function ChatWindow({
         )}
 
         {messages.map((message, idx) => {
-          // Skip system/context messages
-          if (message.content?.startsWith("[System:") || message.content?.startsWith("Context:")) {
-            return null;
-          }
-
           return (
             <div
               key={idx}
@@ -248,7 +243,8 @@ export default function ChatWindow({
                 }`}
               >
                 {message.role === "user" ? (
-                  <p className="text-sm">{message.content}</p>
+                  // Strip the appended time context before displaying
+                  <p className="text-sm">{message.content.replace(/\n\n\[Current time in New York:.*\]$/, '')}</p>
                 ) : (
                   <>
                     <ReactMarkdown
