@@ -56,10 +56,9 @@ export default function FavoritesTab({ user }) {
   });
 
   const handleRemoveFavorite = (businessId) => {
-    const favorite = favorites.find(f => f.business_id === businessId);
-    if (favorite) {
-      removeFavoriteMutation.mutate(favorite.id);
-    }
+    // Remove all matching favorites (handles legacy duplicates too)
+    const matching = favorites.filter(f => f.business_id === businessId);
+    matching.forEach(fav => removeFavoriteMutation.mutate(fav.id));
   };
 
   const handleAskAI = () => {
