@@ -126,10 +126,18 @@ export default function ChatWindow({
     // Optimistically add user message to UI
     setMessages(prev => [...prev, { role: "user", content: userMessage }]);
 
+    // Append current time context to the message so the AI knows "now"
+    const now = new Date().toLocaleString('en-US', {
+      timeZone: 'America/New_York',
+      weekday: 'long', month: 'long', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', hour12: true
+    });
+    const messageWithContext = `${userMessage}\n\n[Current time in New York: ${now}]`;
+
     try {
       await base44.agents.addMessage(conversation, {
         role: "user",
-        content: userMessage
+        content: messageWithContext
       });
     } catch (err) {
       console.error("Failed to send message:", err);
