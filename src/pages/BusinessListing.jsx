@@ -202,13 +202,7 @@ export default function BusinessListing() {
     const hasAuth = user || customerData;
     
     if (!hasAuth) {
-      // Show sign in option first
-      const shouldSignIn = confirm("Please sign in to add favorites.\n\nClick OK to sign in, or Cancel to create a new account.");
-      if (shouldSignIn) {
-        window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
-      } else {
-        window.location.href = createPageUrl("UserRegister") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
-      }
+      window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
       return;
     }
     
