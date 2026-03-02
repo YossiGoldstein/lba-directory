@@ -212,7 +212,7 @@ export default function ChatWindow({
 
         {messages.map((message, idx) => {
           // Skip system/context messages
-          if (message.content?.startsWith("Context:")) {
+          if (message.content?.startsWith("[System:") || message.content?.startsWith("Context:")) {
             return null;
           }
 
