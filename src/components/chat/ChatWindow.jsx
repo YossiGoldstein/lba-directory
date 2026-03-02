@@ -323,7 +323,7 @@ export default function ChatWindow({
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder={error ? "Chat unavailable - please refresh" : "Type what you're looking for"}
-            disabled={isLoading || !!error}
+            disabled={isLoading || isInitializing || !!error}
             className="flex-1"
           />
           <Button
