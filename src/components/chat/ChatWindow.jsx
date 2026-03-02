@@ -81,8 +81,13 @@ export default function ChatWindow({
     const unsubscribe = base44.agents.subscribeToConversation(
       conversation.id,
       (data) => {
-        setMessages(data.messages || []);
-        setIsLoading(false);
+        const msgs = data.messages || [];
+        setMessages(msgs);
+        // Turn off loading once we get an assistant response
+        const lastMsg = msgs[msgs.length - 1];
+        if (lastMsg && lastMsg.role === "assistant" && lastMsg.content) {
+          setIsLoading(false);
+        }
       }
     );
 
