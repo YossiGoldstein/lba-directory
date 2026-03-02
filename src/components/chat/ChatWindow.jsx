@@ -70,6 +70,8 @@ export default function ChatWindow({
       } catch (err) {
         console.error("Failed to create conversation:", err);
         setError("Sorry, the chat assistant is temporarily unavailable. Please try refreshing the page.");
+      } finally {
+        setIsInitializing(false);
       }
     };
 
