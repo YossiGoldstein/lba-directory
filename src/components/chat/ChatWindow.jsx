@@ -32,9 +32,27 @@ export default function ChatWindow({
   useEffect(() => {
     const initConversation = async () => {
       try {
-        // Fetch businesses for context
-        const bizList = await base44.entities.Business.list();
-        setBusinesses(bizList.filter(b => b.status === "approved"));
+        // Fetch businesses for context (don't block on this)
+        base44.entities.Business.list().then(bizList => {
+          setBusinesses(bizList.filter(b => b.status === "approved"));
+        }).catch(() => {});
+
+        // Build page context string for the system
+        let contextNote = "";
+        if (pageContext) {
+          const now = new Date().toLocaleString('en-US', {
+            timeZone: 'America/New_York',
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+            hour: '2-digit', minute: '2-digit', hour12: true
+          });
+          if (pageContext.page === "Home") {
+            contextNote = `[System: User is on the homepage. Current time (America/New_York): ${now}]`;
+          } else if (pageContext.page === "CategoryListing" && pageContext.categoryName) {
+            contextNote = `[System: User is browsing the ${pageContext.categoryName} category. Current time (America/New_York): ${now}]`;
+          } else if (pageContext.page === "BusinessListing" && pageContext.businessName) {
+            contextNote = `[System: User is viewing ${pageContext.businessName}. Current time (America/New_York): ${now}]`;
+          }
+        }
 
         // Create conversation
         const conv = await base44.agents.createConversation({
@@ -42,42 +60,20 @@ export default function ChatWindow({
           metadata: {
             name: "Directory Search",
             description: "Help finding local businesses",
-            page_context: pageContext
+            context_note: contextNote
           }
         });
         
         setConversation(conv);
         setError(null);
-
-        // Send initial context message
-        if (pageContext) {
-          let contextMessage = "Context: ";
-          if (pageContext.page === "Home") {
-            contextMessage += "User is on the homepage browsing the directory.";
-          } else if (pageContext.page === "CategoryListing" && pageContext.categoryName) {
-            contextMessage += `User is browsing the ${pageContext.categoryName} category.`;
-          } else if (pageContext.page === "BusinessListing" && pageContext.businessName) {
-            contextMessage += `User is viewing ${pageContext.businessName}.`;
-          }
-
-          await base44.agents.addMessage(conv, {
-            role: "user",
-            content: contextMessage
-          });
-        }
-
-        // Set initial messages
-        if (conv.messages && conv.messages.length > 0) {
-          setMessages(conv.messages);
-        }
-      } catch (error) {
-        console.error("Failed to create conversation:", error);
+      } catch (err) {
+        console.error("Failed to create conversation:", err);
         setError("Sorry, the chat assistant is temporarily unavailable. Please try refreshing the page.");
       }
     };
 
     initConversation();
-  }, [pageContext]);
+  }, []);
 
   useEffect(() => {
     if (!conversation) return;
