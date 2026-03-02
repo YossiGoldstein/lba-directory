@@ -84,9 +84,11 @@ export default function ChatWindow({
     const unsubscribe = base44.agents.subscribeToConversation(
       conversation.id,
       (data) => {
-        const msgs = data.messages || [];
+        const msgs = (data.messages || []).filter(
+          m => !m.content?.startsWith("[System:") && !m.content?.startsWith("Context:")
+        );
         setMessages(msgs);
-        // Turn off loading once we get an assistant response
+        // Turn off loading once we get a non-empty assistant response
         const lastMsg = msgs[msgs.length - 1];
         if (lastMsg && lastMsg.role === "assistant" && lastMsg.content) {
           setIsLoading(false);
