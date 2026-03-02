@@ -70,8 +70,8 @@ export default function BusinessListing() {
         setUser(userData);
         
         // Check if business is already in favorites (use customer ID from localStorage)
-        const customerData = localStorage.getItem("lba_customer");
-        const userId = customerData ? JSON.parse(customerData).id : userData?.id;
+        const storedCustomer = localStorage.getItem("lba_customer");
+        const userId = storedCustomer ? JSON.parse(storedCustomer).id : userData?.id;
         if (userId && businessId) {
           const favorites = await base44.entities.Favorite.filter({ user_id: userId, business_id: businessId });
           setIsFavorite(favorites.length > 0);
