@@ -328,7 +328,7 @@ export default function ChatWindow({
           />
           <Button
             onClick={handleSend}
-            disabled={isLoading || !!error || !inputValue.trim()}
+            disabled={isLoading || isInitializing || !!error || !inputValue.trim()}
             className="bg-cyan-600 hover:bg-cyan-700"
           >
             {isLoading ? (
