@@ -69,11 +69,12 @@ export default function BusinessListing() {
         const userData = await base44.auth.me();
         setUser(userData);
         
-        // Check if business is already in favorites
-        if (userData && businessId) {
-          const favorites = await base44.entities.Favorite.list();
-          const isFav = favorites.some(f => f.business_id === businessId && f.user_id === userData.id);
-          setIsFavorite(isFav);
+        // Check if business is already in favorites (use customer ID from localStorage)
+        const customerData = localStorage.getItem("lba_customer");
+        const userId = customerData ? JSON.parse(customerData).id : userData?.id;
+        if (userId && businessId) {
+          const favorites = await base44.entities.Favorite.filter({ user_id: userId, business_id: businessId });
+          setIsFavorite(favorites.length > 0);
         }
       } catch (error) {
         setUser(null);
