@@ -217,33 +217,22 @@ export default function BusinessListing() {
 
     setIsAddingFavorite(true);
     try {
-      if (isFavorite) {
-        // Remove from favorites
-        const favorites = await base44.entities.Favorite.list();
-        const favorite = favorites.find(f => f.business_id === businessId && f.user_id === userId);
-        if (favorite) {
-          await base44.entities.Favorite.delete(favorite.id);
-          setIsFavorite(false);
-          toast.success("Removed from favorites");
-        }
+      // Always fetch current state from DB to ensure accuracy
+      const existing = await base44.entities.Favorite.filter({ user_id: userId, business_id: businessId });
+      
+      if (existing.length > 0) {
+        // Remove all matching favorites (handles any legacy duplicates too)
+        await Promise.all(existing.map(f => base44.entities.Favorite.delete(f.id)));
+        setIsFavorite(false);
+        toast.success("Removed from favorites");
       } else {
-        // Check if already exists (prevent duplicates)
-        const favorites = await base44.entities.Favorite.list();
-        const existing = favorites.find(f => f.business_id === businessId && f.user_id === userId);
-        
-        if (existing) {
-          // Already favorited, just update UI state
-          setIsFavorite(true);
-          toast.info("Already in favorites");
-        } else {
-          // Add to favorites
-          await base44.entities.Favorite.create({
-            user_id: userId,
-            business_id: businessId
-          });
-          setIsFavorite(true);
-          toast.success("Added to favorites!");
-        }
+        // Add to favorites (no duplicate possible since we checked)
+        await base44.entities.Favorite.create({
+          user_id: userId,
+          business_id: businessId
+        });
+        setIsFavorite(true);
+        toast.success("Added to favorites!");
       }
     } catch (error) {
       console.error("Failed to toggle favorite:", error);
