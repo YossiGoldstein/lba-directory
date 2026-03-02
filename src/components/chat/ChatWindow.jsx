@@ -199,7 +199,13 @@ export default function ChatWindow({
             </Button>
           </div>
         )}
-        {!error && messages.length === 0 && (
+        {isInitializing && !error && (
+          <div className="text-center text-gray-400 mt-8">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3 text-cyan-500" />
+            <p className="text-sm">Loading assistant...</p>
+          </div>
+        )}
+        {!error && !isInitializing && messages.length === 0 && (
           <div className="text-center text-gray-500 mt-8">
             <div className="mb-4 flex justify-center">
               <svg className="w-20 h-20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
