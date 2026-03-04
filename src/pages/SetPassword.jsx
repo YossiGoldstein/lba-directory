@@ -24,51 +24,92 @@ export default function SetPassword() {
 
   useEffect(() => {
     const loadAccountInfo = async () => {
-      // Extract query params from regular URL
       const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get("token");
+      const bid = urlParams.get("bid");
+      // Legacy support: email param
       const emailParam = urlParams.get("email");
-      
-      if (!emailParam) {
-        toast.error("Invalid link");
-        setLoading(false);
-        return;
-      }
-
-      setEmail(emailParam);
 
       try {
-        // Try to find business owner
-        const businesses = await base44.entities.Business.list();
-        const business = businesses.find(b => b.email === emailParam);
+        // --- Token-based flow ---
+        if (token && bid) {
+          let decoded;
+          try {
+            decoded = atob(token.replace(/-/g, '+').replace(/_/g, '/'));
+          } catch {
+            toast.error("Invalid or malformed claim link.");
+            setLoading(false);
+            return;
+          }
 
-        if (business) {
+          const parts = decoded.split(':');
+          if (parts.length < 3) {
+            toast.error("Invalid claim link.");
+            setLoading(false);
+            return;
+          }
+
+          const tokenExpiry = parseInt(parts[2], 10);
+          if (Date.now() > tokenExpiry) {
+            toast.error("This claim link has expired. Please request a new one from admin.");
+            setLoading(false);
+            return;
+          }
+
+          const tokenBusinessId = parts[0];
+          const tokenEmail = parts[1];
+
+          if (tokenBusinessId !== bid) {
+            toast.error("Invalid claim link.");
+            setLoading(false);
+            return;
+          }
+
+          setEmail(tokenEmail);
+
+          const businesses = await base44.entities.Business.list();
+          const business = businesses.find(b => b.id === bid);
+
+          if (!business) {
+            toast.error("Business not found.");
+            setLoading(false);
+            return;
+          }
+
           setAccountInfo({
             name: business.business_name,
             email: business.email,
             hasPassword: !!business.password_hash,
-            type: "business"
+            type: "business",
+            businessId: business.id
           });
           setLoading(false);
           return;
         }
 
-        // Try to find customer
-        const customers = await base44.entities.Customer.list();
-        const customer = customers.find(c => c.email === emailParam);
-
-        if (customer) {
-          setAccountInfo({
-            name: customer.full_name,
-            email: customer.email,
-            hasPassword: !!customer.password_hash,
-            type: "customer"
-          });
+        // --- Legacy email-only flow ---
+        if (emailParam) {
+          setEmail(emailParam);
+          const businesses = await base44.entities.Business.list();
+          const business = businesses.find(b => b.email === emailParam);
+          if (business) {
+            setAccountInfo({ name: business.business_name, email: business.email, hasPassword: !!business.password_hash, type: "business", businessId: business.id });
+            setLoading(false);
+            return;
+          }
+          const customers = await base44.entities.Customer.list();
+          const customer = customers.find(c => c.email === emailParam);
+          if (customer) {
+            setAccountInfo({ name: customer.full_name, email: customer.email, hasPassword: !!customer.password_hash, type: "customer" });
+            setLoading(false);
+            return;
+          }
+          toast.error("Account not found");
           setLoading(false);
           return;
         }
 
-        // Not found
-        toast.error("Account not found");
+        toast.error("Invalid link");
         setLoading(false);
       } catch (error) {
         console.error("Failed to load account info:", error);
