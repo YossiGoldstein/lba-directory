@@ -13,29 +13,23 @@ export default function Layout({ children, currentPageName }) {
   const location = useLocation();
 
   useEffect(() => {
-    const loadUser = async () => {
+    const customerData = localStorage.getItem("lba_customer");
+    if (customerData) {
       try {
-        // Check for customer/business session in localStorage
-        const customerData = localStorage.getItem("lba_customer");
-        if (customerData) {
-          const customer = JSON.parse(customerData);
-          setUser({
-            id: customer.id,
-            full_name: customer.full_name,
-            email: customer.email,
-            role: customer.role || "user"
-          });
-          return;
-        }
-
-        // No session found
-        setUser(null);
+        const customer = JSON.parse(customerData);
+        setUser({
+          id: customer.id,
+          full_name: customer.full_name,
+          email: customer.email,
+          role: customer.role || "user"
+        });
       } catch (error) {
         setUser(null);
       }
-    };
-    loadUser();
-  }, []);
+    } else {
+      setUser(null);
+    }
+  }, [location.pathname]);
 
   // Scroll to top on page navigation
   useEffect(() => {
