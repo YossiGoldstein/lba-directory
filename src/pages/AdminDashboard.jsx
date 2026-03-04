@@ -68,9 +68,8 @@ export default function AdminDashboard() {
 
   const loadStats = async () => {
     try {
-      const [businesses, users, customers, reviews, deals] = await Promise.all([
+      const [businesses, customers, reviews, deals] = await Promise.all([
         base44.entities.Business.list(),
-        base44.entities.User.list(),
         base44.entities.Customer.list(),
         base44.entities.Review.list(),
         base44.entities.Deal.list()
@@ -87,11 +86,11 @@ export default function AdminDashboard() {
       setStats({
         totalBusinesses: businesses.length,
         pendingBusinesses: businesses.filter(b => b.status === 'pending').length,
-        totalUsers: users.length,
+        totalUsers: 0,
         totalCustomers: customers.length,
         totalReviews: reviews.length,
         activeDeals: activeDealsCount,
-        reports: 0 // Will implement reports entity
+        reports: 0
       });
     } catch (error) {
       console.error("Failed to load stats:", error);
