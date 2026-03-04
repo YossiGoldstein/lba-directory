@@ -303,6 +303,17 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="migrate-images">
+            <Card>
+              <CardHeader>
+                <CardTitle>Migrate WordPress Images</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <MigrateImagesTab />
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
     </div>
