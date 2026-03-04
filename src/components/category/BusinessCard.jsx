@@ -17,34 +17,27 @@ const formatPhoneNumber = (phone) => {
 export default function BusinessCard({ business, categoryName, hasActiveDeals }) {
   // Check business status
   const getBusinessStatus = () => {
-    // By appointment only
     if (business.by_appointment_only) {
       return { type: 'appointment', label: 'By Appointment' };
     }
-    
-    // No hours set
-    if (!business.opening_hours_json) {
-      return null;
-    }
-    
-    // Check if currently open
+    if (!business.opening_hours_json) return null;
+
     const now = new Date();
+    const nyTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
     const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const currentDay = dayNames[now.getDay()];
+    const currentDay = dayNames[nyTime.getDay()];
     const hours = business.opening_hours_json[currentDay];
-    
-    if (!hours || hours.closed) {
-      return { type: 'closed', label: 'Closed' };
-    }
-    
-    const currentTime = now.getHours() * 60 + now.getMinutes();
+
+    if (!hours || hours.closed) return { type: 'closed', label: 'Closed' };
+
+    const currentTime = nyTime.getHours() * 60 + nyTime.getMinutes();
     const [openHour, openMin] = hours.open.split(':').map(Number);
     const [closeHour, closeMin] = hours.close.split(':').map(Number);
     const openTime = openHour * 60 + openMin;
     const closeTime = closeHour * 60 + closeMin;
-    
+
     const isOpen = currentTime >= openTime && currentTime <= closeTime;
-    return { type: isOpen ? 'open' : 'closed', label: isOpen ? 'Open' : 'Closed' };
+    return { type: isOpen ? 'open' : 'closed', label: isOpen ? 'Open Now' : 'Closed' };
   };
 
   const businessStatus = getBusinessStatus();
