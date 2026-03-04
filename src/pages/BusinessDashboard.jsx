@@ -244,13 +244,13 @@ export default function BusinessDashboard() {
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           <Button
-            onClick={() => navigate(createPageUrl("BusinessDashboard"))}
+            onClick={() => navigate(createPageUrl("UserDashboard"))}
             variant="ghost"
             className="mb-4"
             size="sm"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to My Businesses
+            Back to Dashboard
           </Button>
 
           <BusinessHeader business={selectedBusiness} category={category} />
