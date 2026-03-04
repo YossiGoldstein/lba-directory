@@ -47,11 +47,10 @@ export default function SignIn() {
     try {
       // Check if user is admin (Base44 User entity)
       try {
-        const users = await base44.entities.User.list();
-        const adminUser = users.find(u => u.email === formData.email && u.role === 'admin');
+        const users = await base44.entities.User.filter({ email: formData.email, role: 'admin' });
+        const adminUser = users[0];
         
         if (adminUser) {
-          // Admin login via Base44 authentication
           localStorage.setItem("lba_customer", JSON.stringify({
             id: adminUser.id,
             email: adminUser.email,
@@ -72,9 +71,9 @@ export default function SignIn() {
         console.log("Not an admin user, checking business/customer");
       }
 
-      // Check Customer entity first
-      const customers = await base44.entities.Customer.list();
-      const customer = customers.find(c => c.email === formData.email);
+      // Check Customer entity
+      const customers = await base44.entities.Customer.filter({ email: formData.email });
+      const customer = customers[0];
 
       if (customer) {
         const passwordHash = btoa(formData.password);
