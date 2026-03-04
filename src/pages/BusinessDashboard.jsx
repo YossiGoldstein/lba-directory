@@ -223,13 +223,10 @@ export default function BusinessDashboard() {
               </div>
 
               <Button
-                onClick={() => {
-                  window.history.replaceState({}, '', createPageUrl("BusinessDashboard"));
-                  window.location.reload();
-                }}
+                onClick={() => { window.location.href = createPageUrl("UserDashboard"); }}
                 className="bg-cyan-600 hover:bg-cyan-700"
               >
-                Go to My Businesses
+                Go to My Dashboard
               </Button>
             </CardContent>
           </Card>
