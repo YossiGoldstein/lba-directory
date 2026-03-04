@@ -74,10 +74,10 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
             {businessStatus && (
               <div className={`backdrop-blur-sm text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md ${
                 businessStatus.type === 'open' 
-                  ? 'bg-green-500/90 text-white' 
+                  ? 'bg-green-500 text-white' 
                   : businessStatus.type === 'appointment'
-                  ? 'bg-blue-500/90 text-white'
-                  : 'bg-gray-500/90 text-white'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-red-500 text-white'
               }`}>
                 {businessStatus.label}
               </div>
