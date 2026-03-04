@@ -405,6 +405,122 @@ function PasswordSetupTab() {
   );
 }
 
+function MigrateImagesTab() {
+  const [isRunning, setIsRunning] = useState(false);
+  const [result, setResult] = useState(null);
+
+  const handleRun = async (dryRun) => {
+    if (!dryRun && !confirm("This will download all WordPress images and re-upload them to storage, updating all database URLs. Continue?")) return;
+    setIsRunning(true);
+    setResult(null);
+    try {
+      const response = await base44.functions.invoke('migrateWordPressImages', { dry_run: dryRun });
+      setResult(response.data);
+    } catch (error) {
+      setResult({ success: false, error: error.message });
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
+  const report = result?.report;
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <p className="text-sm text-gray-700 font-medium mb-1">⚠️ What this does:</p>
+        <p className="text-sm text-gray-600">Downloads broken WordPress image URLs from the old server, uploads them to Supabase Storage, and updates all business records automatically. No manual re-upload needed.</p>
+      </div>
+
+      <div className="flex gap-3">
+        <Button variant="outline" onClick={() => handleRun(true)} disabled={isRunning}>
+          {isRunning ? 'Running...' : '🔍 Dry Run (Preview Only)'}
+        </Button>
+        <Button className="bg-orange-600 hover:bg-orange-700" onClick={() => handleRun(false)} disabled={isRunning}>
+          {isRunning ? 'Migrating...' : '🚀 Run Migration'}
+        </Button>
+      </div>
+
+      {result && (
+        <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-4">
+          {result.error ? (
+            <p className="text-red-600">Error: {result.error}</p>
+          ) : report ? (
+            <>
+              {report.dry_run && <p className="text-amber-600 font-medium">⚠️ DRY RUN — no changes were made</p>}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div className="bg-gray-50 p-3 rounded text-center">
+                  <p className="text-2xl font-bold">{report.total_businesses}</p>
+                  <p className="text-xs text-gray-500">Total Businesses</p>
+                </div>
+                <div className="bg-amber-50 p-3 rounded text-center">
+                  <p className="text-2xl font-bold text-amber-600">{report.businesses_with_wp_images}</p>
+                  <p className="text-xs text-gray-500">With WP Images</p>
+                </div>
+                <div className="bg-green-50 p-3 rounded text-center">
+                  <p className="text-2xl font-bold text-green-600">{report.images_migrated}</p>
+                  <p className="text-xs text-gray-500">Images Migrated</p>
+                </div>
+                <div className="bg-red-50 p-3 rounded text-center">
+                  <p className="text-2xl font-bold text-red-600">{report.images_failed}</p>
+                  <p className="text-xs text-gray-500">Failed</p>
+                </div>
+                <div className="bg-blue-50 p-3 rounded text-center">
+                  <p className="text-2xl font-bold text-blue-600">{report.images_skipped_already_migrated}</p>
+                  <p className="text-xs text-gray-500">Already Migrated</p>
+                </div>
+                <div className="bg-purple-50 p-3 rounded text-center">
+                  <p className="text-2xl font-bold text-purple-600">{report.businesses_updated}</p>
+                  <p className="text-xs text-gray-500">Businesses Updated</p>
+                </div>
+              </div>
+
+              {report.details?.length > 0 && (
+                <div className="max-h-96 overflow-y-auto border border-gray-100 rounded-lg">
+                  <table className="w-full text-xs">
+                    <thead className="bg-gray-50 sticky top-0">
+                      <tr>
+                        <th className="text-left p-2 font-semibold">Business</th>
+                        <th className="text-left p-2 font-semibold">Type</th>
+                        <th className="text-left p-2 font-semibold">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {report.details.flatMap((biz) => {
+                        const rows = [];
+                        if (biz.logo) rows.push({ name: biz.name, type: 'Logo', ...biz.logo });
+                        biz.gallery.forEach((g, i) => rows.push({ name: biz.name, type: `Gallery ${i+1}`, ...g }));
+                        return rows;
+                      }).map((row, idx) => (
+                        <tr key={idx} className="border-t border-gray-100">
+                          <td className="p-2 font-medium">{row.name}</td>
+                          <td className="p-2 text-gray-500">{row.type}</td>
+                          <td className={`p-2 font-medium ${row.status === 'migrated' ? 'text-green-600' : row.status === 'failed' ? 'text-red-600' : 'text-amber-600'}`}>
+                            {row.status === 'migrated' ? '✅ Migrated' : row.status === 'failed' ? `❌ ${row.reason}` : '🔍 Would migrate'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {report.errors?.length > 0 && (
+                <div className="bg-red-50 border border-red-200 rounded p-3">
+                  <p className="text-sm font-semibold text-red-700 mb-2">DB Update Errors:</p>
+                  {report.errors.map((e, i) => (
+                    <p key={i} className="text-xs text-red-600">{e.business}: {e.error}</p>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : null}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function GeocodeTab({ onUpdate }) {
   const [isRunning, setIsRunning] = useState(false);
   const [result, setResult] = useState(null);
