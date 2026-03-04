@@ -4,28 +4,109 @@ import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
-import WizardProgress from "../components/add-business/WizardProgress";
-import Step0Pricing from "../components/add-business/Step0Pricing";
-import Step1Basics from "../components/add-business/Step1Basics";
-import Step2Category from "../components/add-business/Step2Category";
-import Step3Location from "../components/add-business/Step3Location";
-import Step4Hours from "../components/add-business/Step4Hours";
-import Step5Gallery from "../components/add-business/Step5Gallery";
-import Step6Deals from "../components/add-business/Step6Deals";
-import Step7Optimization from "../components/add-business/Step7Optimization";
-import Step8Review from "../components/add-business/Step8Review";
-import Step9Upgrade from "../components/add-business/Step9Upgrade";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CheckCircle, Upload, X, Image as ImageIcon, Building2, Sparkles, Loader2, Info, Check, Zap, Crown } from "lucide-react";
 import { toast } from "sonner";
 
-const TOTAL_STEPS = 10;
+// ── Plan data ──────────────────────────────────────────────────────────────
+const PLANS = [
+  {
+    id: "free", name: "Free", price: "$0", period: "forever",
+    icon: Zap, color: "text-gray-600", bgColor: "bg-gray-50", borderColor: "border-gray-200",
+    features: ["Basic business information", "Limited gallery showcase", "Business dashboard", "Customer reviews", "Listing stats"]
+  },
+  {
+    id: "pro", name: "Pro", price: "$50", period: "per month", badge: "Popular",
+    icon: Sparkles, color: "text-cyan-600", bgColor: "bg-cyan-50", borderColor: "border-cyan-300",
+    features: ["Everything in Free", "Featured listing", "Unlimited gallery showcase", "Create ads and promotions", "3 ads a year on TIG Solutions social media"]
+  },
+  {
+    id: "premium", name: "Premium", price: "$100", period: "per month", badge: "Best Value",
+    icon: Crown, color: "text-purple-600", bgColor: "bg-purple-50", borderColor: "border-purple-300",
+    features: ["Everything in Pro", "Verified badge", "AI powered insights", "Priority customer support", "Monthly performance report", "Monthly ad on TIG Solutions social media", "Discounted services from TIG Solutions"]
+  },
+  {
+    id: "lba-sponsor", name: "LBA Sponsor", price: "$50", period: "per month", badge: "Sponsor",
+    icon: Crown, color: "text-blue-600", bgColor: "bg-blue-50", borderColor: "border-blue-300",
+    features: ["Everything in Pro", "50% off premium membership", "Verified badge", "AI powered insights", "Priority customer support", "Monthly performance report", "Monthly ad on TIG Solutions social media", "Discounted services from TIG Solutions"]
+  }
+];
 
+// ── Helpers ────────────────────────────────────────────────────────────────
+const formatPhone = (value) => {
+  const c = value.replace(/\D/g, "");
+  if (c.length <= 3) return c;
+  if (c.length <= 6) return `(${c.slice(0,3)}) ${c.slice(3)}`;
+  return `(${c.slice(0,3)}) ${c.slice(3,6)}-${c.slice(6,10)}`;
+};
+
+const generateTextFromStructured = (hours) => {
+  if (!hours) return "";
+  return Object.entries(hours).map(([day, times]) => {
+    const label = day.replace("_", " ");
+    const cap = label.charAt(0).toUpperCase() + label.slice(1);
+    return times.closed ? `${cap}: Closed` : `${cap}: ${times.open} - ${times.close}`;
+  }).join("\n");
+};
+
+// ── Default hours ──────────────────────────────────────────────────────────
+const DEFAULT_HOURS = {
+  sunday:       { open: "09:00", close: "17:00", closed: false },
+  monday:       { open: "09:00", close: "17:00", closed: false },
+  tuesday:      { open: "09:00", close: "17:00", closed: false },
+  wednesday:    { open: "09:00", close: "17:00", closed: false },
+  thursday:     { open: "09:00", close: "17:00", closed: false },
+  friday:       { open: "09:00", close: "14:00", closed: false },
+  saturday:     { open: "", close: "", closed: true },
+  motzei_shabbos: { open: "21:00", close: "23:00", closed: false },
+};
+
+const DAYS = [
+  { key: "sunday", label: "Sunday" },
+  { key: "monday", label: "Monday" },
+  { key: "tuesday", label: "Tuesday" },
+  { key: "wednesday", label: "Wednesday" },
+  { key: "thursday", label: "Thursday" },
+  { key: "friday", label: "Friday" },
+  { key: "saturday", label: "Saturday (Shabbos)" },
+  { key: "motzei_shabbos", label: "Motzei Shabbos" },
+];
+
+// ── Section wrapper ────────────────────────────────────────────────────────
+function Section({ number, title, children }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-3">
+          <span className="w-7 h-7 rounded-full bg-cyan-600 text-white text-sm flex items-center justify-center font-bold flex-shrink-0">
+            {number}
+          </span>
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">{children}</CardContent>
+    </Card>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════
 export default function AddBusiness() {
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const [formData, setFormData] = useState({
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
+  const [isGeneratingTags, setIsGeneratingTags] = useState(false);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [isUploadingGallery, setIsUploadingGallery] = useState(false);
+  const [hoursMode, setHoursMode] = useState("hours");
+
+  const [form, setForm] = useState({
     listing_tier: "free",
     business_name: "",
     category_id: "",
@@ -42,450 +123,260 @@ export default function AddBusiness() {
     whatsapp_number: "",
     email: "",
     website_url: "",
-    opening_hours_text: "",
-    opening_hours_json: null,
-    use_structured_hours: true,
+    facebook_url: "",
+    instagram_url: "",
+    opening_hours_json: DEFAULT_HOURS,
+    by_appointment_only: false,
     logo_url: "",
     cover_image_url: "",
     gallery_images: [],
-    deals: [],
+    // AI helpers
+    ai_business_type: "",
+    ai_services: "",
+    ai_unique_points: "",
+    ai_target_audience: "general_community",
+    ai_medium_version: "",
   });
 
-  // Check authentication
-  useEffect(() => {
-    const checkAuth = () => {
-      try {
-        // Check for customer/business session
-        const customerData = localStorage.getItem("lba_customer");
-        if (customerData) {
-          setIsCheckingAuth(false);
-          return;
-        }
+  const set = (patch) => setForm(prev => ({ ...prev, ...patch }));
 
-        // No session found, redirect to login
-        window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
-      } catch (error) {
-        window.location.href = createPageUrl("SignIn");
-      }
-    };
-    checkAuth();
+  // Auth check
+  useEffect(() => {
+    const customerData = localStorage.getItem("lba_customer");
+    if (!customerData) {
+      window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
+    } else {
+      setIsCheckingAuth(false);
+    }
   }, []);
 
-  // Fetch categories for display
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
-    queryFn: async () => {
-      const cats = await base44.entities.Category.list();
-      return cats.filter(c => c.is_active);
-    },
+    queryFn: async () => (await base44.entities.Category.list()).filter(c => c.is_active),
   });
 
-  // Update category name when category_id changes
+  // Sync category name
   useEffect(() => {
-    if (formData.category_id && categories.length > 0) {
-      const cat = categories.find(c => c.id === formData.category_id);
-      if (cat && cat.name !== formData.category_name) {
-        setFormData(prev => ({ ...prev, category_name: cat.name }));
-      }
+    if (form.category_id && categories.length > 0) {
+      const cat = categories.find(c => c.id === form.category_id);
+      if (cat && cat.name !== form.category_name) set({ category_name: cat.name });
     }
-  }, [formData.category_id, categories]);
+  }, [form.category_id, categories]);
 
-  // Auto-save to localStorage
-  useEffect(() => {
-    localStorage.setItem("addBusinessFormData", JSON.stringify(formData));
-  }, [formData]);
+  // ── AI description ────────────────────────────────────────────────────
+  const handleGenerateDesc = async () => {
+    if (!form.business_name?.trim()) { toast.error("Please enter a business name first"); return; }
+    if (!form.ai_business_type?.trim()) { toast.error("Please specify the business type"); return; }
+    if (!form.ai_services?.trim()) { toast.error("Please describe your services/products"); return; }
 
-  // Load saved data on mount
-  useEffect(() => {
-    const saved = localStorage.getItem("addBusinessFormData");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setFormData(parsed);
-      } catch (error) {
-        console.error("Failed to load saved data:", error);
-      }
-    }
-  }, []);
-
-  const handleNext = () => {
-    // Validation
-    if (currentStep === 0) {
-      if (!formData.listing_tier) {
-        toast.error("Please select a listing plan");
-        return;
-      }
-    }
-
-    if (currentStep === 1) {
-      if (!formData.business_name.trim()) {
-        toast.error("Please enter a business name");
-        return;
-      }
-    }
-
-    if (currentStep === 2) {
-      if (!formData.category_id) {
-        toast.error("Please select a category");
-        return;
-      }
-    }
-
-    if (currentStep === 3) {
-      if (!formData.city.trim()) {
-        toast.error("City is required");
-        return;
-      }
-      if (!formData.phone.trim()) {
-        toast.error("Phone number is required");
-        return;
-      }
-      // Validate phone format
-      if (!/^[\d\s\-\(\)]+$/.test(formData.phone)) {
-        toast.error("Please enter a valid phone number");
-        return;
-      }
-    }
-
-    if (currentStep === 5) {
-      if (!formData.logo_url) {
-        toast.error("Please upload a business logo before proceeding");
-        return;
-      }
-      if (!formData.cover_image_url) {
-        toast.error("Please upload a cover image before proceeding");
-        return;
-      }
-    }
-
-    setCurrentStep(prev => Math.min(prev + 1, TOTAL_STEPS - 1));
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleBack = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 0));
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  // Normalize phone number to (XXX) XXX-XXXX format
-  const normalizePhoneNumber = (phone) => {
-    if (!phone) return "";
-    const cleaned = phone.replace(/\D/g, "");
-    if (cleaned.length === 10) {
-      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
-    }
-    return phone;
-  };
-
-  const handleSubmit = async () => {
-    setIsSubmitting(true);
-
+    setIsGeneratingDesc(true);
     try {
-      // Get current user for email
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `Generate a professional business description.
+Business: ${form.business_name}
+Type: ${form.ai_business_type}
+Services: ${form.ai_services}
+Unique: ${form.ai_unique_points || "Not specified"}
+Audience: ${form.ai_target_audience.replace("_", " ")}
+City: ${form.city || "Lakewood"}
+Write in modest, professional tone for Lakewood Haredi community.
+Return JSON: { short_version, medium_version, long_version }`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            short_version: { type: "string" },
+            medium_version: { type: "string" },
+            long_version: { type: "string" }
+          }
+        }
+      });
+      set({
+        short_description: response.short_version || form.short_description,
+        long_description: response.long_version || form.long_description,
+        ai_medium_version: response.medium_version || "",
+      });
+      toast.success("AI descriptions generated!");
+    } catch (e) {
+      toast.error("Failed to generate description");
+    } finally {
+      setIsGeneratingDesc(false);
+    }
+  };
+
+  // ── AI tags ───────────────────────────────────────────────────────────
+  const handleGenerateTags = async () => {
+    if (!form.business_name || !form.category_id) {
+      toast.error("Enter business name and category first");
+      return;
+    }
+    setIsGeneratingTags(true);
+    try {
+      const selectedCat = categories.find(c => c.id === form.category_id);
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `Suggest 3-7 comma-separated tags for "${form.business_name}" (${selectedCat?.name}). Appropriate for Lakewood Haredi community. Return only the tags.`
+      });
+      set({ tags: response.trim() });
+      toast.success("Tags suggested!");
+    } catch (e) {
+      toast.error("Failed to suggest tags");
+    } finally {
+      setIsGeneratingTags(false);
+    }
+  };
+
+  // ── Image uploads ─────────────────────────────────────────────────────
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    setIsUploadingLogo(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      set({ logo_url: file_url });
+      toast.success("Logo uploaded!");
+    } catch { toast.error("Logo upload failed"); }
+    finally { setIsUploadingLogo(false); e.target.value = ""; }
+  };
+
+  const handleCoverUpload = async (e) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    setIsUploadingCover(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      set({ cover_image_url: file_url });
+      toast.success("Cover image uploaded!");
+    } catch { toast.error("Cover upload failed"); }
+    finally { setIsUploadingCover(false); e.target.value = ""; }
+  };
+
+  const handleGalleryUpload = async (e) => {
+    const files = Array.from(e.target.files || []); if (!files.length) return;
+    setIsUploadingGallery(true);
+    try {
+      const urls = await Promise.all(files.map(async f => (await base44.integrations.Core.UploadFile({ file: f })).file_url));
+      set({ gallery_images: [...form.gallery_images, ...urls] });
+      toast.success(`${urls.length} image(s) uploaded!`);
+    } catch { toast.error("Gallery upload failed"); }
+    finally { setIsUploadingGallery(false); e.target.value = ""; }
+  };
+
+  // ── Hours ─────────────────────────────────────────────────────────────
+  const handleHourChange = (day, field, value) => {
+    const updated = { ...form.opening_hours_json, [day]: { ...form.opening_hours_json[day], [field]: value } };
+    set({ opening_hours_json: updated });
+  };
+
+  // ── Submit ────────────────────────────────────────────────────────────
+  const handleSubmit = async () => {
+    if (!form.business_name.trim()) { toast.error("Business name is required"); return; }
+    if (!form.category_id) { toast.error("Please select a category"); return; }
+    if (!form.city.trim()) { toast.error("City is required"); return; }
+    if (!form.phone.trim()) { toast.error("Phone number is required"); return; }
+
+    setIsSubmitting(true);
+    try {
       const customerData = localStorage.getItem("lba_customer");
-      if (!customerData) {
-        toast.error("Session expired. Please sign in again.");
-        window.location.href = createPageUrl("SignIn");
-        return;
-      }
-      
+      if (!customerData) { window.location.href = createPageUrl("SignIn"); return; }
       const customer = JSON.parse(customerData);
-      const user = {
-        id: customer.id,
-        full_name: customer.full_name,
-        email: customer.email,
-      };
 
-      // If paid tier, redirect to Stripe checkout
-      if (formData.listing_tier === "pro" || formData.listing_tier === "premium") {
-        // Check if running in iframe
-        if (window.self !== window.top) {
-          toast.error("Payment checkout must be completed from the published app, not in preview mode.");
-          setIsSubmitting(false);
-          return;
-        }
+      const tagsArray = form.tags.split(",").map(t => t.trim()).filter(Boolean);
 
-        // Prepare business data for checkout
-        const businessData = {
-          business_name: formData.business_name,
-          category_id: formData.category_id,
-          short_description: formData.short_description,
-          long_description: formData.long_description,
-          tags: formData.tags.split(",").map(t => t.trim()).filter(t => t.length > 0),
-          address_line1: formData.address_line1,
-          address_line2: formData.address_line2,
-          city: formData.city,
-          state: formData.state,
-          zip_code: formData.zip_code,
-          phone: normalizePhoneNumber(formData.phone),
-          whatsapp_number: normalizePhoneNumber(formData.whatsapp_number),
-          email: formData.email,
-          website_url: formData.website_url,
-          opening_hours_text: formData.use_structured_hours 
-            ? generateTextFromStructured(formData.opening_hours_json)
-            : formData.opening_hours_text,
-          opening_hours_json: formData.use_structured_hours ? formData.opening_hours_json : null,
-          logo_url: formData.logo_url,
-          gallery_images: formData.gallery_images,
-        };
-
-        // Create checkout session
-        const response = await base44.functions.invoke('createCheckoutSession', {
-          listing_tier: formData.listing_tier,
-          business_data: businessData
-        });
-
-        if (response.data?.url) {
-          // Redirect to Stripe Checkout
-          window.location.href = response.data.url;
-          return;
-        } else {
-          throw new Error("Failed to create checkout session");
-        }
-      }
-
-      // Free tier - create business immediately
-
-      // Process tags
-      const tagsArray = formData.tags
-        .split(",")
-        .map(t => t.trim())
-        .filter(t => t.length > 0);
-
-      // Prepare business data
       const businessData = {
         owner_id: customer.id,
-        business_name: formData.business_name,
-        category_id: formData.category_id,
-        short_description: formData.short_description,
-        long_description: formData.long_description,
+        business_name: form.business_name,
+        category_id: form.category_id,
+        short_description: form.short_description,
+        long_description: form.long_description,
         tags: tagsArray,
-        address_line1: formData.address_line1,
-        address_line2: formData.address_line2,
-        city: formData.city,
-        state: formData.state,
-        zip_code: formData.zip_code,
-        phone: normalizePhoneNumber(formData.phone),
-        whatsapp_number: normalizePhoneNumber(formData.whatsapp_number),
-        email: formData.email,
-        website_url: formData.website_url,
-        opening_hours_text: formData.use_structured_hours 
-          ? generateTextFromStructured(formData.opening_hours_json)
-          : formData.opening_hours_text,
-        opening_hours_json: formData.use_structured_hours ? formData.opening_hours_json : null,
-        logo_url: formData.logo_url,
-        gallery_images: formData.gallery_images,
-        listing_tier: "free",
+        address_line1: form.address_line1,
+        address_line2: form.address_line2,
+        city: form.city,
+        state: form.state,
+        zip_code: form.zip_code,
+        phone: form.phone,
+        whatsapp_number: form.whatsapp_number,
+        email: form.email,
+        website_url: form.website_url,
+        facebook_url: form.facebook_url,
+        instagram_url: form.instagram_url,
+        opening_hours_text: form.by_appointment_only ? "By Appointment Only" : generateTextFromStructured(form.opening_hours_json),
+        opening_hours_json: form.by_appointment_only ? null : form.opening_hours_json,
+        by_appointment_only: form.by_appointment_only,
+        logo_url: form.logo_url,
+        gallery_images: form.cover_image_url
+          ? [form.cover_image_url, ...form.gallery_images]
+          : form.gallery_images,
+        listing_tier: form.listing_tier === "lba-sponsor" ? "pro" : form.listing_tier,
+        is_lba_sponsor: form.listing_tier === "lba-sponsor",
         listing_rank: 1,
-        payment_status: "paid",
+        payment_status: form.listing_tier === "free" ? "paid" : "unpaid",
         status: "pending",
       };
 
-      // Create business
+      // Paid tiers → Stripe checkout
+      if (form.listing_tier !== "free") {
+        if (window.self !== window.top) {
+          toast.error("Payment checkout must be completed from the published app.");
+          setIsSubmitting(false);
+          return;
+        }
+        const response = await base44.functions.invoke('createCheckoutSession', {
+          listing_tier: form.listing_tier,
+          business_data: businessData
+        });
+        if (response.data?.url) {
+          window.location.href = response.data.url;
+          return;
+        }
+        throw new Error("Failed to create checkout session");
+      }
+
+      // Free tier → create immediately
       const createdBusiness = await base44.entities.Business.create(businessData);
 
-      // Create deals if any
-      if (formData.deals && formData.deals.length > 0) {
-        const dealPromises = formData.deals.map(deal =>
-          base44.entities.Deal.create({
-            business_id: createdBusiness.id,
-            title: deal.title,
-            description: deal.description,
-            badge_text: deal.badge_text,
-            start_date: deal.start_date,
-            end_date: deal.end_date,
-            is_active: true,
-          })
-        );
-        await Promise.all(dealPromises);
-      }
-
-      // Get the full dashboard URL
-      const dashboardUrl = `${window.location.origin}${createPageUrl("BusinessDashboard")}`;
-
-      // Send confirmation email to business email
+      // Send emails
+      const dashboardUrl = `${window.location.origin}${createPageUrl("UserDashboard")}`;
       try {
         await base44.integrations.Core.SendEmail({
-          to: formData.email || user.email,
+          to: form.email || customer.email,
           subject: "✅ Your Submission Was Received - LBA Directory",
-          body: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2 style="color: #0891b2;">Hello ${user.full_name}! 👋</h2>
-
-              <p>Thank you for submitting to <strong>LBA Directory</strong>!</p>
-
-              <p>We have successfully received your submission:</p>
-
-              <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="margin-top: 0; color: #0891b2;">📋 Submission Details:</h3>
-                <p><strong>Business Name:</strong> ${formData.business_name}</p>
-                <p><strong>Category:</strong> ${formData.category_name}</p>
-                <p><strong>Phone:</strong> ${formData.phone}</p>
-                <p><strong>Address:</strong> ${formData.address_line1}, ${formData.city}</p>
-              </div>
-
-              <p><strong>⏳ What Happens Next?</strong></p>
-              <p>Our team will review your business details within <strong>1-2 business days</strong>. Once approved, your business will be live on the directory!</p>
-
-              <p>We'll send you an email as soon as your business is approved.</p>
-
-              <div style="background: #ecfccb; border: 2px solid #84cc16; padding: 20px; border-radius: 8px; margin: 25px 0;">
-                <h3 style="margin-top: 0; color: #365314;">✏️ Manage Your Business</h3>
-                <p style="margin-bottom: 15px;">You can update and modify your business details anytime through our dashboard.</p>
-
-                <p style="margin-bottom: 10px;"><strong>What can you do in the dashboard?</strong></p>
-                <ul style="margin: 10px 0; padding-left: 20px;">
-                  <li>✅ Update business details (address, phone, hours)</li>
-                  <li>✅ Add and edit images</li>
-                  <li>✅ Create and update deals and coupons</li>
-                  <li>✅ View reviews and respond to customers</li>
-                  <li>✅ Use AI assistant to improve your description</li>
-                </ul>
-
-                <div style="text-align: center; margin-top: 20px;">
-                  <a href="${dashboardUrl}" 
-                     style="display: inline-block; background: #0891b2; color: white; padding: 12px 30px; 
-                             text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                    My Dashboard
-                  </a>
-                </div>
-              </div>
-
-              <div style="background: #fef3c7; border: 2px solid #f59e0b; padding: 20px; border-radius: 8px; margin: 25px 0;">
-                <h3 style="margin-top: 0; color: #92400e;">🚀 Want to Promote Your Business?</h3>
-                <p>We offer additional services:</p>
-                <ul style="margin: 10px 0; padding-left: 20px;">
-                  <li>🎨 Logo Design</li>
-                  <li>💻 Website Building</li>
-                  <li>🎥 Promotional Videos</li>
-                  <li>📊 Marketing Consulting</li>
-                </ul>
-                <p><strong>Contact us!</strong></p>
-              </div>
-
-              <p style="font-size: 14px; color: #6b7280; margin-top: 20px;">
-                💡 <strong>Tip:</strong> You can access the dashboard anytime by logging into the website.
-              </p>
-
-              <p>If you have any questions, we're here to help!</p>
-
-              <p style="margin-top: 30px;">Best regards,<br><strong>LBA Directory Team</strong></p>
-
-              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-
-              <div style="text-align: center; font-size: 12px; color: #6b7280;">
-                <p>📞 <strong>Contact:</strong> office@lbadirectory.com | 732-600-1260</p>
-                <p style="margin-bottom: 0;">LBA Directory - Lakewood's Business Directory</p>
-              </div>
+          body: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+            <h2 style="color:#0891b2;">Hello ${customer.full_name}! 👋</h2>
+            <p>Thank you for submitting <strong>${form.business_name}</strong> to LBA Directory!</p>
+            <p>Our team will review your details within 1–2 business days. Once approved, your business will be live!</p>
+            <div style="text-align:center;margin:20px 0;">
+              <a href="${dashboardUrl}" style="background:#0891b2;color:white;padding:12px 30px;text-decoration:none;border-radius:8px;font-weight:bold;">My Dashboard</a>
             </div>
-          `
+            <p>Best regards,<br><strong>LBA Directory Team</strong></p>
+          </div>`
         });
-      } catch (emailError) {
-        console.error("Failed to send confirmation email:", emailError);
-      }
+      } catch {}
 
-      // Notify admin
       try {
         await base44.integrations.Core.SendEmail({
           to: "office@lbadirectory.com",
           subject: "🔔 New Business Submission - LBA Directory",
-          body: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2 style="color: #0891b2;">New Business Submission</h2>
-              
-              <p>A new business has been submitted to the directory and is <strong>pending approval</strong>.</p>
-              
-              <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <h3 style="margin-top: 0; color: #0891b2;">📋 Business Details:</h3>
-                <p><strong>Business Name:</strong> ${formData.business_name}</p>
-                <p><strong>Owner:</strong> ${user.full_name} (${user.email})</p>
-                <p><strong>Category:</strong> ${formData.category_name}</p>
-                <p><strong>Phone:</strong> ${formData.phone}</p>
-                <p><strong>Address:</strong> ${formData.address_line1}, ${formData.city}, ${formData.state} ${formData.zip_code}</p>
-                ${formData.website_url ? `<p><strong>Website:</strong> ${formData.website_url}</p>` : ''}
-                <p><strong>Tier:</strong> ${formData.listing_tier || 'free'}</p>
-              </div>
-              
-              <div style="text-align: center; margin: 20px 0;">
-                <a href="${window.location.origin}${createPageUrl("AdminDashboard")}" 
-                   style="display: inline-block; background: #0891b2; color: white; padding: 12px 30px; 
-                           text-decoration: none; border-radius: 8px; font-weight: bold;">
-                  Review in Admin Dashboard
-                </a>
-              </div>
-              
-              <p style="font-size: 12px; color: #6b7280; text-align: center;">
-                LBA Directory - Admin Notification
-              </p>
-            </div>
-          `
+          body: `<div style="font-family:Arial,sans-serif;">
+            <h2>New Business Submission</h2>
+            <p><strong>Name:</strong> ${form.business_name}</p>
+            <p><strong>Owner:</strong> ${customer.full_name} (${customer.email})</p>
+            <p><strong>Category:</strong> ${form.category_name}</p>
+            <p><strong>Phone:</strong> ${form.phone}</p>
+            <p><strong>City:</strong> ${form.city}</p>
+            <p><strong>Tier:</strong> ${form.listing_tier}</p>
+          </div>`
         });
-      } catch (adminEmailError) {
-        console.error("Failed to send admin notification email:", adminEmailError);
-      }
+      } catch {}
 
-      // Clear saved data
-      localStorage.removeItem("addBusinessFormData");
-
-      // Show success message
       toast.success("🎉 Business submitted successfully!");
-
-      // Redirect to success page
       setTimeout(() => {
-        navigate(createPageUrl("SubmissionSuccess") + `?businessName=${encodeURIComponent(formData.business_name)}`);
-      }, 1500);
-
+        navigate(createPageUrl("SubmissionSuccess") + `?businessName=${encodeURIComponent(form.business_name)}`);
+      }, 1200);
     } catch (error) {
-      console.error("Failed to submit business:", error);
+      console.error(error);
       toast.error("Submission failed. Please try again.");
       setIsSubmitting(false);
     }
   };
 
-  const generateTextFromStructured = (hours) => {
-    if (!hours) return "";
-    
-    return Object.entries(hours)
-      .map(([day, times]) => {
-        const dayName = day.replace("_", " ");
-        const capitalizedDay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
-        
-        if (times.closed) {
-          return `${capitalizedDay}: Closed`;
-        }
-        return `${capitalizedDay}: ${times.open} - ${times.close}`;
-      })
-      .join("\n");
-  };
-
-  const renderStep = () => {
-    switch (currentStep) {
-      case 0:
-        return <Step0Pricing formData={formData} setFormData={setFormData} onNext={handleNext} />;
-      case 1:
-        return <Step1Basics data={formData} onChange={setFormData} />;
-      case 2:
-        return <Step2Category data={formData} onChange={setFormData} />;
-      case 3:
-        return <Step3Location data={formData} onChange={setFormData} />;
-      case 4:
-        return <Step4Hours data={formData} onChange={setFormData} />;
-      case 5:
-        return <Step5Gallery data={formData} onChange={setFormData} />;
-      case 6:
-        return <Step6Deals data={formData} onChange={setFormData} />;
-      case 7:
-        return <Step7Optimization data={formData} onChange={setFormData} />;
-      case 8:
-        return <Step8Review data={formData} />;
-      case 9:
-        return <Step9Upgrade data={formData} onChange={setFormData} />;
-      default:
-        return null;
-    }
-  };
-
-  // Loading state while checking authentication
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen bg-blue-50 flex items-center justify-center">
@@ -498,54 +389,326 @@ export default function AddBusiness() {
   }
 
   return (
-    <div className="min-h-screen bg-blue-50">
-      <WizardProgress currentStep={currentStep} totalSteps={TOTAL_STEPS} />
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          {renderStep()}
+    <div className="min-h-screen bg-blue-50 py-10">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900">Add Your Business</h1>
+          <p className="text-gray-600 mt-1">Fill in the details below and submit for approval</p>
         </div>
 
-        <div className="flex items-center justify-between">
-          <Button
-            onClick={handleBack}
-            variant="outline"
-            disabled={currentStep === 0}
-            className="gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Button>
+        {/* ── 1. Basic Info ── */}
+        <Section number="1" title="Basic Information">
+          <div className="space-y-2">
+            <Label>Business Name *</Label>
+            <Input value={form.business_name} onChange={e => set({ business_name: e.target.value })} placeholder="Enter your business name" />
+          </div>
+          
+          {/* AI description helper */}
+          <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4 space-y-3">
+            <div className="flex items-center gap-2">
+              <Info className="w-4 h-4 text-cyan-600 flex-shrink-0" />
+              <p className="text-sm font-medium text-cyan-900">Generate Description with AI (optional)</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label className="text-xs">Business type *</Label>
+                <Input value={form.ai_business_type} onChange={e => set({ ai_business_type: e.target.value })} placeholder="e.g., Restaurant, Phone Repair..." />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Target audience</Label>
+                <Select value={form.ai_target_audience} onValueChange={v => set({ ai_target_audience: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="women">Women</SelectItem>
+                    <SelectItem value="men">Men</SelectItem>
+                    <SelectItem value="families">Families</SelectItem>
+                    <SelectItem value="children">Children</SelectItem>
+                    <SelectItem value="general_community">General Community</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Services / Products *</Label>
+              <Textarea value={form.ai_services} onChange={e => set({ ai_services: e.target.value })} placeholder="Describe what you offer" rows={2} />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">What makes you unique? (optional)</Label>
+              <Input value={form.ai_unique_points} onChange={e => set({ ai_unique_points: e.target.value })} placeholder="e.g., Family-owned, same-day service..." />
+            </div>
+            <Button onClick={handleGenerateDesc} variant="outline" size="sm" disabled={isGeneratingDesc} className="gap-2">
+              {isGeneratingDesc ? <><Loader2 className="w-4 h-4 animate-spin" />Generating...</> : <><Sparkles className="w-4 h-4" />Generate Description</>}
+            </Button>
+          </div>
 
-          {currentStep < TOTAL_STEPS - 1 ? (
-            <Button
-              onClick={handleNext}
-              className="bg-cyan-600 hover:bg-cyan-700 gap-2"
-            >
-              Next
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          ) : (
-            <Button
-              onClick={handleSubmit}
-              className="bg-green-600 hover:bg-green-700 gap-2"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                "Submitting..."
-              ) : (
-                <>
-                  <CheckCircle className="w-4 h-4" />
-                  Submit for Approval
-                </>
-              )}
-            </Button>
+          <div className="space-y-2">
+            <Label>Short Description</Label>
+            <Textarea value={form.short_description} onChange={e => set({ short_description: e.target.value })} placeholder="1–2 sentences for search results" rows={2} />
+          </div>
+          <div className="space-y-2">
+            <Label>Full Description</Label>
+            <Textarea value={form.long_description} onChange={e => set({ long_description: e.target.value })} placeholder="Detailed description for your business page" rows={5} />
+          </div>
+          {form.ai_medium_version && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p className="text-xs font-medium text-blue-900 mb-1">Alternative (medium) version:</p>
+              <p className="text-sm text-blue-800 mb-2">{form.ai_medium_version}</p>
+              <Button size="sm" variant="outline" onClick={() => set({ long_description: form.ai_medium_version })}>Use This Version</Button>
+            </div>
           )}
-        </div>
+        </Section>
 
-        <p className="text-center text-sm text-gray-500 mt-4">
-          Progress is saved automatically
-        </p>
+        {/* ── 2. Category ── */}
+        <Section number="2" title="Category & Tags">
+          <div className="space-y-2">
+            <Label>Category *</Label>
+            <Select value={form.category_id} onValueChange={v => set({ category_id: v })}>
+              <SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger>
+              <SelectContent>
+                {categories.map(cat => (
+                  <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label>Tags (comma separated)</Label>
+              <Button onClick={handleGenerateTags} variant="outline" size="sm" disabled={isGeneratingTags || !form.business_name || !form.category_id} className="gap-1">
+                {isGeneratingTags ? <><Loader2 className="w-3 h-3 animate-spin" />Suggesting...</> : <><Sparkles className="w-3 h-3" />AI Suggest</>}
+              </Button>
+            </div>
+            <Textarea value={form.tags} onChange={e => set({ tags: e.target.value })} placeholder="kosher, delivery, parking, catering" rows={2} />
+          </div>
+        </Section>
+
+        {/* ── 3. Address & Contact ── */}
+        <Section number="3" title="Address & Contact">
+          <div className="space-y-2">
+            <Label>Street Address</Label>
+            <Input value={form.address_line1} onChange={e => set({ address_line1: e.target.value })} placeholder="123 Main Street" />
+          </div>
+          <div className="space-y-2">
+            <Label>Suite / Apt</Label>
+            <Input value={form.address_line2} onChange={e => set({ address_line2: e.target.value })} placeholder="Suite 200" />
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="space-y-2">
+              <Label>City *</Label>
+              <Input value={form.city} onChange={e => set({ city: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label>State</Label>
+              <Input value={form.state} onChange={e => set({ state: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label>ZIP</Label>
+              <Input value={form.zip_code} onChange={e => set({ zip_code: e.target.value })} placeholder="08701" />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label>Phone *</Label>
+              <Input type="tel" value={form.phone} onChange={e => set({ phone: formatPhone(e.target.value) })} placeholder="(732) 555-0123" />
+            </div>
+            <div className="space-y-2">
+              <Label>WhatsApp</Label>
+              <Input type="tel" value={form.whatsapp_number} onChange={e => set({ whatsapp_number: formatPhone(e.target.value) })} placeholder="(732) 555-0123" />
+            </div>
+            <div className="space-y-2">
+              <Label>Email</Label>
+              <Input type="email" value={form.email} onChange={e => set({ email: e.target.value })} placeholder="info@business.com" />
+            </div>
+            <div className="space-y-2">
+              <Label>Website</Label>
+              <Input type="url" value={form.website_url} onChange={e => set({ website_url: e.target.value })} placeholder="https://business.com" />
+            </div>
+            <div className="space-y-2">
+              <Label>Facebook</Label>
+              <Input type="url" value={form.facebook_url} onChange={e => set({ facebook_url: e.target.value })} placeholder="https://facebook.com/..." />
+            </div>
+            <div className="space-y-2">
+              <Label>Instagram</Label>
+              <Input type="url" value={form.instagram_url} onChange={e => set({ instagram_url: e.target.value })} placeholder="https://instagram.com/..." />
+            </div>
+          </div>
+        </Section>
+
+        {/* ── 4. Hours ── */}
+        <Section number="4" title="Hours of Operation">
+          <div className="flex items-center gap-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="radio" checked={hoursMode === "hours"} onChange={() => { setHoursMode("hours"); set({ by_appointment_only: false }); }} className="w-4 h-4" />
+              <span className="font-medium">Set Opening Hours</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="radio" checked={hoursMode === "appointment"} onChange={() => { setHoursMode("appointment"); set({ by_appointment_only: true }); }} className="w-4 h-4" />
+              <span className="font-medium">By Appointment Only</span>
+            </label>
+          </div>
+
+          {hoursMode === "hours" && (
+            <div className="space-y-3">
+              {DAYS.map(({ key, label }) => (
+                <div key={key} className="flex items-center gap-3 flex-wrap">
+                  <div className="w-36 font-medium text-gray-800 text-sm">{label}</div>
+                  {key === "saturday" ? (
+                    <span className="text-gray-500 italic text-sm">Closed (Shabbos)</span>
+                  ) : (
+                    <>
+                      <label className="flex items-center gap-1 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={form.opening_hours_json?.[key]?.closed || false}
+                          onChange={e => handleHourChange(key, "closed", e.target.checked)}
+                        />
+                        Closed
+                      </label>
+                      {!form.opening_hours_json?.[key]?.closed && (
+                        <>
+                          <Input type="time" value={form.opening_hours_json?.[key]?.open || ""} onChange={e => handleHourChange(key, "open", e.target.value)} className="w-28" />
+                          <span className="text-gray-500 text-sm">to</span>
+                          <Input type="time" value={form.opening_hours_json?.[key]?.close || ""} onChange={e => handleHourChange(key, "close", e.target.value)} className="w-28" />
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {hoursMode === "appointment" && (
+            <div className="p-4 bg-cyan-50 border border-cyan-200 rounded-lg text-center">
+              <p className="text-gray-700 font-medium">Your business will be marked as "By Appointment Only"</p>
+            </div>
+          )}
+        </Section>
+
+        {/* ── 5. Images ── */}
+        <Section number="5" title="Images">
+          {/* Logo */}
+          <div>
+            <Label className="mb-2 block">Business Logo</Label>
+            {!form.logo_url ? (
+              <div className="border-2 border-dashed border-cyan-300 rounded-lg p-6 text-center bg-cyan-50">
+                <input type="file" id="logo-upload" accept="image/*" onChange={handleLogoUpload} className="hidden" disabled={isUploadingLogo} />
+                <label htmlFor="logo-upload" className={`cursor-pointer ${isUploadingLogo ? "opacity-50 pointer-events-none" : ""}`}>
+                  <Building2 className="w-10 h-10 text-cyan-400 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-gray-700">{isUploadingLogo ? "Uploading..." : "Upload Logo"}</p>
+                </label>
+              </div>
+            ) : (
+              <div className="relative inline-block">
+                <img src={form.logo_url} alt="Logo" className="w-28 h-28 rounded-lg object-cover border-2 border-cyan-400" />
+                <button onClick={() => set({ logo_url: "" })} className="absolute -top-2 -right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center" type="button">
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Cover */}
+          <div>
+            <Label className="mb-2 block">Cover Image</Label>
+            {!form.cover_image_url ? (
+              <div className="border-2 border-dashed border-cyan-300 rounded-lg p-6 text-center bg-cyan-50">
+                <input type="file" id="cover-upload" accept="image/*" onChange={handleCoverUpload} className="hidden" disabled={isUploadingCover} />
+                <label htmlFor="cover-upload" className={`cursor-pointer ${isUploadingCover ? "opacity-50 pointer-events-none" : ""}`}>
+                  <ImageIcon className="w-10 h-10 text-cyan-400 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-gray-700">{isUploadingCover ? "Uploading..." : "Upload Cover Image"}</p>
+                </label>
+              </div>
+            ) : (
+              <div className="relative inline-block">
+                <img src={form.cover_image_url} alt="Cover" className="w-full max-w-sm h-40 rounded-lg object-cover border-2 border-cyan-400" />
+                <button onClick={() => set({ cover_image_url: "" })} className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center" type="button">
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Gallery */}
+          <div>
+            <Label className="mb-2 block">Additional Photos ({form.gallery_images.length})</Label>
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+              <input type="file" id="gallery-upload" multiple accept="image/*" onChange={handleGalleryUpload} className="hidden" disabled={isUploadingGallery} />
+              <label htmlFor="gallery-upload" className={`cursor-pointer ${isUploadingGallery ? "opacity-50 pointer-events-none" : ""}`}>
+                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-600">{isUploadingGallery ? "Uploading..." : "Add gallery images"}</p>
+              </label>
+            </div>
+            {form.gallery_images.length > 0 && (
+              <div className="grid grid-cols-3 md:grid-cols-4 gap-3 mt-3">
+                {form.gallery_images.map((url, idx) => (
+                  <div key={idx} className="relative group aspect-square">
+                    <img src={url} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover rounded-lg" />
+                    <button onClick={() => set({ gallery_images: form.gallery_images.filter((_, i) => i !== idx) })} type="button"
+                      className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </Section>
+
+        {/* ── 6. Plan ── */}
+        <Section number="6" title="Choose Your Listing Plan">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {PLANS.map(plan => {
+              const Icon = plan.icon;
+              const isSelected = form.listing_tier === plan.id;
+              return (
+                <div
+                  key={plan.id}
+                  onClick={() => set({ listing_tier: plan.id })}
+                  className={`relative border-2 rounded-xl p-5 cursor-pointer transition-all ${plan.borderColor} ${isSelected ? "ring-2 ring-offset-2 ring-cyan-500 shadow-md" : "hover:shadow-sm"}`}
+                >
+                  {plan.badge && (
+                    <Badge className={`absolute -top-3 left-4 ${plan.color} ${plan.bgColor}`}>{plan.badge}</Badge>
+                  )}
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`w-10 h-10 rounded-full ${plan.bgColor} flex items-center justify-center`}>
+                      <Icon className={`w-5 h-5 ${plan.color}`} />
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900">{plan.name}</p>
+                      <p className="text-sm text-gray-500"><span className="text-xl font-bold text-gray-900">{plan.price}</span> /{plan.period}</p>
+                    </div>
+                    {isSelected && <CheckCircle className="w-5 h-5 text-cyan-600 ml-auto" />}
+                  </div>
+                  <ul className="space-y-1">
+                    {plan.features.map((f, i) => (
+                      <li key={i} className="flex items-start gap-1.5 text-sm text-gray-700">
+                        <Check className={`w-4 h-4 ${plan.color} flex-shrink-0 mt-0.5`} />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-xs text-center text-gray-500">All plans require admin approval before going live.</p>
+        </Section>
+
+        {/* ── Submit ── */}
+        <div className="pb-10">
+          <Button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="w-full bg-green-600 hover:bg-green-700 text-white text-lg py-6 gap-2 rounded-xl shadow-lg"
+          >
+            {isSubmitting ? (
+              <><Loader2 className="w-5 h-5 animate-spin" />Submitting...</>
+            ) : (
+              <><CheckCircle className="w-5 h-5" />Submit Business for Approval</>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );
