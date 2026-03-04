@@ -247,6 +247,7 @@ export default function AdminDashboard() {
             <TabsTrigger value="ai">AI Moderation</TabsTrigger>
             <TabsTrigger value="geocode">Geocode</TabsTrigger>
             <TabsTrigger value="password-setup">Password Setup</TabsTrigger>
+            <TabsTrigger value="migrate-images">Migrate Images</TabsTrigger>
           </TabsList>
 
           <TabsContent value="businesses">
