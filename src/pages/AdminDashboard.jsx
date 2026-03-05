@@ -230,24 +230,33 @@ export default function AdminDashboard() {
 
         {/* Admin Tabs */}
         <Tabs defaultValue="businesses" className="space-y-4">
-          <TabsList className="bg-white border border-gray-200 h-auto flex flex-wrap gap-1 p-1">
-            <TabsTrigger value="businesses">Businesses</TabsTrigger>
-            <TabsTrigger value="pending">
-              Pending Approvals
-              {stats.pendingBusinesses > 0 && (
-                <Badge className="ml-2 bg-orange-500">{stats.pendingBusinesses}</Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="customers">Customers</TabsTrigger>
-            <TabsTrigger value="users">System Users</TabsTrigger>
-            <TabsTrigger value="reviews">Reviews & Reports</TabsTrigger>
-            <TabsTrigger value="deals">Deals</TabsTrigger>
-            <TabsTrigger value="categories">Categories</TabsTrigger>
-            <TabsTrigger value="ai">AI Moderation</TabsTrigger>
-            <TabsTrigger value="geocode">Geocode</TabsTrigger>
-            <TabsTrigger value="password-setup">Password Setup</TabsTrigger>
-            <TabsTrigger value="migrate-images">Migrate Images</TabsTrigger>
-          </TabsList>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {[
+              { value: "businesses", label: "Businesses" },
+              { value: "pending", label: "Pending Approvals", badge: stats.pendingBusinesses },
+              { value: "customers", label: "Customers" },
+              { value: "users", label: "System Users" },
+              { value: "reviews", label: "Reviews & Reports" },
+              { value: "deals", label: "Deals" },
+              { value: "categories", label: "Categories" },
+              { value: "ai", label: "AI Moderation" },
+              { value: "geocode", label: "Geocode" },
+              { value: "password-setup", label: "Password Setup" },
+              { value: "migrate-images", label: "Migrate Images" },
+            ].map(tab => (
+              <TabsList key={tab.value} className="bg-transparent p-0 h-auto">
+                <TabsTrigger 
+                  value={tab.value}
+                  className="border border-gray-200 bg-white rounded-lg px-4 py-3 text-sm font-medium shadow-sm data-[state=active]:bg-cyan-600 data-[state=active]:text-white data-[state=active]:border-cyan-600 hover:bg-gray-50 flex items-center gap-1"
+                >
+                  {tab.label}
+                  {tab.badge > 0 && (
+                    <Badge className="ml-1 bg-orange-500 text-white text-xs">{tab.badge}</Badge>
+                  )}
+                </TabsTrigger>
+              </TabsList>
+            ))}
+          </div>
 
           <TabsContent value="businesses">
             <BusinessesTab onUpdate={loadStats} />
