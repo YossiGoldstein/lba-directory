@@ -569,8 +569,8 @@ Respond with exact business names from the list above.`;
 
             </form>
 
-            {/* Category Icons - Responsive: Grid on mobile, Single row on desktop */}
-            <div className="grid grid-cols-5 gap-2 sm:gap-3 md:gap-4 justify-items-center lg:flex lg:justify-center lg:items-center lg:gap-6 xl:gap-8 px-2 sm:px-4">
+            {/* Category Icons - Responsive: Grid on mobile/tablet, Single row on desktop */}
+            <div className="grid grid-cols-5 gap-2 sm:gap-3 md:gap-4 justify-items-center xl:flex xl:justify-center xl:items-center xl:gap-6 px-2 sm:px-4">
               {categoryIcons.map((category) => {
                 const IconComponent = category.icon;
                 return (
