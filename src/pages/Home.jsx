@@ -511,7 +511,7 @@ Respond with exact business names from the list above.`;
         </div>
 
         {/* Logo - Fixed positioning */}
-        <div className="absolute top-2 left-2 sm:top-4 sm:left-4 md:left-6 z-10" style={{top: '16px'}}>
+        <div className="absolute top-2 left-2 sm:top-4 sm:left-4 md:left-6 z-10">
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
             alt="LBA Directory"
