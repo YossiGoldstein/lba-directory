@@ -230,24 +230,26 @@ export default function AdminDashboard() {
 
         {/* Admin Tabs */}
         <Tabs defaultValue="businesses" className="space-y-4">
-          <TabsList className="bg-white border border-gray-200">
-            <TabsTrigger value="businesses">Businesses</TabsTrigger>
-            <TabsTrigger value="pending">
-              Pending Approvals
-              {stats.pendingBusinesses > 0 && (
-                <Badge className="ml-2 bg-orange-500">{stats.pendingBusinesses}</Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="customers">Customers</TabsTrigger>
-            <TabsTrigger value="users">System Users</TabsTrigger>
-            <TabsTrigger value="reviews">Reviews & Reports</TabsTrigger>
-            <TabsTrigger value="deals">Deals</TabsTrigger>
-            <TabsTrigger value="categories">Categories</TabsTrigger>
-            <TabsTrigger value="ai">AI Moderation</TabsTrigger>
-            <TabsTrigger value="geocode">Geocode</TabsTrigger>
-            <TabsTrigger value="password-setup">Password Setup</TabsTrigger>
-            <TabsTrigger value="migrate-images">Migrate Images</TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto pb-1">
+            <TabsList className="bg-white border border-gray-200 flex w-max min-w-full">
+              <TabsTrigger value="businesses" className="whitespace-nowrap">Businesses</TabsTrigger>
+              <TabsTrigger value="pending" className="whitespace-nowrap">
+                Pending Approvals
+                {stats.pendingBusinesses > 0 && (
+                  <Badge className="ml-2 bg-orange-500">{stats.pendingBusinesses}</Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="customers" className="whitespace-nowrap">Customers</TabsTrigger>
+              <TabsTrigger value="users" className="whitespace-nowrap">System Users</TabsTrigger>
+              <TabsTrigger value="reviews" className="whitespace-nowrap">Reviews & Reports</TabsTrigger>
+              <TabsTrigger value="deals" className="whitespace-nowrap">Deals</TabsTrigger>
+              <TabsTrigger value="categories" className="whitespace-nowrap">Categories</TabsTrigger>
+              <TabsTrigger value="ai" className="whitespace-nowrap">AI Moderation</TabsTrigger>
+              <TabsTrigger value="geocode" className="whitespace-nowrap">Geocode</TabsTrigger>
+              <TabsTrigger value="password-setup" className="whitespace-nowrap">Password Setup</TabsTrigger>
+              <TabsTrigger value="migrate-images" className="whitespace-nowrap">Migrate Images</TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="businesses">
             <BusinessesTab onUpdate={loadStats} />
