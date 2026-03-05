@@ -552,6 +552,9 @@ Respond with exact business names from the list above.`;
                       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                       const recognition = new SpeechRecognition();
                       recognition.lang = 'en-US';
+                      recognition.continuous = false;
+                      recognition.interimResults = false;
+                      recognition.maxAlternatives = 1;
                       recognition.onstart = () => setIsListening(true);
                       recognition.onend = () => setIsListening(false);
                       recognition.onerror = (e) => {
@@ -559,7 +562,8 @@ Respond with exact business names from the list above.`;
                         if (e.error === 'not-allowed') alert('Microphone access was denied. Please allow microphone access in your browser settings.');
                       };
                       recognition.onresult = (event) => {
-                        setSearchQuery(event.results[0][0].transcript);
+                        const transcript = event.results[0][0].transcript;
+                        setSearchQuery(transcript);
                       };
                       recognition.start();
                     }}
