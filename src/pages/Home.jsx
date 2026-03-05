@@ -542,18 +542,27 @@ Respond with exact business names from the list above.`;
                   />
                   <button
                     type="button"
-                    className="p-2 text-gray-400 hover:text-cyan-600 transition-colors"
+                    className={`p-2 transition-colors ${isListening ? 'text-red-500 animate-pulse' : 'text-gray-400 hover:text-cyan-600'}`}
                     onClick={() => {
-                      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                        const recognition = new SpeechRecognition();
-                        recognition.lang = 'en-US';
-                        recognition.onresult = (event) => {
-                          setSearchQuery(event.results[0][0].transcript);
-                        };
-                        recognition.start();
+                      if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+                        alert('Voice search is not supported in your browser. Please use Chrome or Edge.');
+                        return;
                       }
+                      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                      const recognition = new SpeechRecognition();
+                      recognition.lang = 'en-US';
+                      recognition.onstart = () => setIsListening(true);
+                      recognition.onend = () => setIsListening(false);
+                      recognition.onerror = (e) => {
+                        setIsListening(false);
+                        if (e.error === 'not-allowed') alert('Microphone access was denied. Please allow microphone access in your browser settings.');
+                      };
+                      recognition.onresult = (event) => {
+                        setSearchQuery(event.results[0][0].transcript);
+                      };
+                      recognition.start();
                     }}
+                    title="Search by voice"
                   >
                     <Mic className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                   </button>
