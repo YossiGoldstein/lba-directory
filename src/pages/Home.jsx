@@ -22,6 +22,7 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isListening, setIsListening] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
