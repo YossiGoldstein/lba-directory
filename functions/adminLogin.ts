@@ -19,9 +19,12 @@ Deno.serve(async (req) => {
     }
 
     // If admin has a password set, verify it
+    // Support both plain text and btoa-encoded passwords
     if (adminUser.password_hash) {
       const passwordHash = btoa(password || "");
-      if (adminUser.password_hash !== passwordHash) {
+      const plainMatch = adminUser.password_hash === (password || "");
+      const btaoMatch = adminUser.password_hash === passwordHash;
+      if (!plainMatch && !btaoMatch) {
         return Response.json({ isAdmin: false, error: 'Invalid password' });
       }
     }
