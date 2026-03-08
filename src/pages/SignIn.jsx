@@ -47,7 +47,7 @@ export default function SignIn() {
     try {
       // Check if user is admin via backend function
       try {
-        const adminRes = await base44.functions.invoke('adminLogin', { email: formData.email, password: formData.password });
+        const adminRes = await base44.functions.invoke('adminLogin', { email: formData.email.toLowerCase().trim(), password: formData.password });
         if (adminRes.data?.isAdmin) {
           const adminUser = adminRes.data.user;
           localStorage.setItem("lba_customer", JSON.stringify({
