@@ -210,7 +210,6 @@ export default function UsersTab() {
         </div>
       </CardContent>
     </Card>
-
     <Dialog open={!!passwordModal} onOpenChange={() => setPasswordModal(null)}>
       <DialogContent>
         <DialogHeader>
