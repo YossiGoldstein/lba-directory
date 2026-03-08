@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, Mail, Phone, Calendar, CheckCircle, XCircle, Trash2 } from "lucide-react";
+import { Search, Mail, Phone, Calendar, CheckCircle, XCircle, Trash2, Key, Eye, EyeOff, X } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
