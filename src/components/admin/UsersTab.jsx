@@ -210,5 +210,27 @@ export default function UsersTab() {
         </div>
       </CardContent>
     </Card>
+
+    <Dialog open={!!passwordModal} onOpenChange={() => setPasswordModal(null)}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Set Password for {passwordModal?.userName}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3 py-2">
+          <Label>New Password</Label>
+          <Input
+            type="password"
+            placeholder="Enter new password..."
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSetPassword()}
+          />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setPasswordModal(null)}>Cancel</Button>
+          <Button onClick={handleSetPassword}>Set Password</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
