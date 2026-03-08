@@ -14,6 +14,8 @@ import { toast } from "sonner";
 export default function UsersTab() {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
+  const [passwordModal, setPasswordModal] = useState(null); // { userId, userName }
+  const [newPassword, setNewPassword] = useState("");
 
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["admin-users"],
