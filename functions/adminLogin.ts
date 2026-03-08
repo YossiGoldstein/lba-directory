@@ -10,7 +10,8 @@ Deno.serve(async (req) => {
     }
 
     const base44 = createClientFromRequest(req);
-    const users = await base44.asServiceRole.entities.User.filter({ email: email });
+    const normalizedEmail = email.toLowerCase().trim();
+    const users = await base44.asServiceRole.entities.User.filter({ email: normalizedEmail });
     const adminUser = users.find(u => u.role === 'admin' || u.role === 'owner');
 
     if (!adminUser) {
