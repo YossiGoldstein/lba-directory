@@ -231,5 +231,6 @@ export default function UsersTab() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
+    </>
   );
 }
