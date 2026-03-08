@@ -223,5 +223,44 @@ export default function CustomersTab() {
         </div>
       </CardContent>
     </Card>
+
+    {/* Password Modal */}
+    {passwordModal && (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold">Set Password</h3>
+            <button onClick={() => setPasswordModal(null)} className="text-gray-400 hover:text-gray-600">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <p className="text-sm text-gray-600 mb-4">
+            Setting password for: <strong>{passwordModal.customer.full_name}</strong> ({passwordModal.customer.email})
+          </p>
+          <div className="relative mb-4">
+            <input
+              type={showNewPassword ? "text" : "password"}
+              placeholder="New password (min 6 chars)"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 text-sm outline-none focus:border-cyan-500"
+            />
+            <button
+              type="button"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+              className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+            >
+              {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="outline" className="flex-1" onClick={() => setPasswordModal(null)}>Cancel</Button>
+            <Button className="flex-1 bg-cyan-600 hover:bg-cyan-700" onClick={handleSetPassword} disabled={savingPassword}>
+              {savingPassword ? "Saving..." : "Save Password"}
+            </Button>
+          </div>
+        </div>
+      </div>
+    )}
   );
 }
