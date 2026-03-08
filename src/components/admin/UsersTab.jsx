@@ -91,6 +91,17 @@ export default function UsersTab() {
     }
   };
 
+  const handleSetPassword = async () => {
+    if (!newPassword || newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+    await base44.entities.User.update(passwordModal.userId, { password_hash: btoa(newPassword) });
+    toast.success(`Password set for ${passwordModal.userName}`);
+    setPasswordModal(null);
+    setNewPassword("");
+  };
+
   if (isLoading) {
     return (
       <Card>
