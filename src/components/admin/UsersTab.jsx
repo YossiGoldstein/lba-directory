@@ -147,6 +147,7 @@ export default function UsersTab() {
                 <th className="text-left py-3 px-4 font-semibold text-gray-700">Reviews</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-700">Joined</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-700">Actions</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-700">Password</th>
               </tr>
             </thead>
             <tbody>
