@@ -2,13 +2,12 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 
 Deno.serve(async (req) => {
   try {
-    const { email } = await req.json();
+    const body = await req.json();
+    const { email, password } = body;
 
     if (!email) {
       return Response.json({ error: 'Email is required' }, { status: 400 });
     }
-
-    const { password } = await req.json().catch(() => ({}));
 
     const base44 = createClientFromRequest(req);
     const users = await base44.asServiceRole.entities.User.list();
