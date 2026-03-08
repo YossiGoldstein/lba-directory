@@ -45,12 +45,11 @@ export default function SignIn() {
     console.log("🔐 Starting login for:", formData.email);
 
     try {
-      // Check if user is admin (Base44 User entity)
+      // Check if user is admin via backend function
       try {
-        const users = await base44.entities.User.list();
-        const adminUser = users.find(u => u.email === formData.email && u.role === 'admin');
-        
-        if (adminUser) {
+        const adminRes = await base44.functions.invoke('adminLogin', { email: formData.email });
+        if (adminRes.data?.isAdmin) {
+          const adminUser = adminRes.data.user;
           localStorage.setItem("lba_customer", JSON.stringify({
             id: adminUser.id,
             email: adminUser.email,
