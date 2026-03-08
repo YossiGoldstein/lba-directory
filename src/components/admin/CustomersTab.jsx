@@ -61,6 +61,25 @@ export default function CustomersTab() {
     }
   };
 
+  const handleSetPassword = async () => {
+    if (!newPassword || newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+    setSavingPassword(true);
+    try {
+      const passwordHash = btoa(newPassword);
+      await base44.entities.Customer.update(passwordModal.customer.id, { password_hash: passwordHash });
+      toast.success("Password updated successfully");
+      setPasswordModal(null);
+      setNewPassword("");
+    } catch (error) {
+      toast.error("Failed to update password");
+    } finally {
+      setSavingPassword(false);
+    }
+  };
+
   const filteredCustomers = customers.filter(customer => {
     const query = searchQuery.toLowerCase();
     return (
