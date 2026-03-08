@@ -178,27 +178,36 @@ export default function CustomersTab() {
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleToggleStatus(customer)}
-                        title={customer.is_active ? "Deactivate" : "Activate"}
-                      >
-                        {customer.is_active ? (
-                          <XCircle className="w-4 h-4" />
-                        ) : (
-                          <CheckCircle className="w-4 h-4" />
-                        )}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleDeleteCustomer(customer)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                     <Button
+                       size="sm"
+                       variant="ghost"
+                       onClick={() => handleToggleStatus(customer)}
+                       title={customer.is_active ? "Deactivate" : "Activate"}
+                     >
+                       {customer.is_active ? (
+                         <XCircle className="w-4 h-4" />
+                       ) : (
+                         <CheckCircle className="w-4 h-4" />
+                       )}
+                     </Button>
+                     <Button
+                       size="sm"
+                       variant="ghost"
+                       onClick={() => { setPasswordModal({ customer }); setNewPassword(""); }}
+                       className="text-cyan-600 hover:text-cyan-700 hover:bg-cyan-50"
+                       title="Set Password"
+                     >
+                       <Key className="w-4 h-4" />
+                     </Button>
+                     <Button
+                       size="sm"
+                       variant="ghost"
+                       onClick={() => handleDeleteCustomer(customer)}
+                       className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                       title="Delete"
+                     >
+                       <Trash2 className="w-4 h-4" />
+                     </Button>
                     </div>
                   </td>
                 </tr>
