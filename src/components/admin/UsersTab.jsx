@@ -115,6 +115,7 @@ export default function UsersTab() {
 
   return (
     <>
+      <Card>
       <CardHeader>
         <CardTitle>User Management</CardTitle>
       </CardHeader>
