@@ -172,18 +172,30 @@ export default function UsersTab() {
                     {new Date(user.created_date).toLocaleDateString()}
                   </td>
                   <td className="py-3 px-4">
-                    <Select
-                      value={user.role}
-                      onValueChange={(newRole) => handleRoleChange(user.id, user.email, newRole)}
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="user">User</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                      </SelectContent>
-                    </Select>
+                   <Select
+                     value={user.role}
+                     onValueChange={(newRole) => handleRoleChange(user.id, user.email, newRole)}
+                   >
+                     <SelectTrigger className="w-32">
+                       <SelectValue />
+                     </SelectTrigger>
+                     <SelectContent>
+                       <SelectItem value="user">User</SelectItem>
+                       <SelectItem value="admin">Admin</SelectItem>
+                     </SelectContent>
+                   </Select>
+                  </td>
+                  <td className="py-3 px-4">
+                   {user.role === 'admin' && (
+                     <Button
+                       size="sm"
+                       variant="outline"
+                       onClick={() => { setPasswordModal({ userId: user.id, userName: user.full_name }); setNewPassword(""); }}
+                     >
+                       <KeyRound className="w-3 h-3 mr-1" />
+                       Set Password
+                     </Button>
+                   )}
                   </td>
                 </tr>
               ))}
