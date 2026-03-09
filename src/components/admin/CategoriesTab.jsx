@@ -237,10 +237,12 @@ export default function CategoriesTab() {
               {categories.map((category) => (
                 <tr key={category.id} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="py-3 px-4">
-                    <div className="flex items-center gap-2">
-                      {category.icon_name && <span>{category.icon_name}</span>}
-                      <span className="font-medium text-gray-900">{category.name}</span>
-                    </div>
+                   <div className="flex items-center gap-2">
+                     {category.icon_name && /\p{Emoji}/u.test(category.icon_name) && (
+                       <span>{category.icon_name}</span>
+                     )}
+                     <span className="font-medium text-gray-900">{category.name}</span>
+                   </div>
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-600">
                     {category.slug}
