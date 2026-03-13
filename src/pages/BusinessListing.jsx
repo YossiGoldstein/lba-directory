@@ -300,7 +300,7 @@ export default function BusinessListing() {
         <img
           src={business.gallery_images && business.gallery_images.length > 0 
             ? fixImageUrl(business.gallery_images[0])
-            : "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/e987b639a_generated_image.png"}
+            : "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/d2e6f56ab_generated_image.png"}
           alt={business.business_name}
           className="w-full h-full object-cover"
         />
