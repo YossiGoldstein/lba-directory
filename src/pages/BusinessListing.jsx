@@ -197,6 +197,9 @@ export default function BusinessListing() {
   };
 
   const handleToggleFavorite = async () => {
+    // Prevent double-clicks
+    if (isAddingFavorite) return;
+    
     // Check both user and customer authentication
     const customerData = localStorage.getItem("lba_customer");
     const hasAuth = user || customerData;
@@ -231,6 +234,13 @@ export default function BusinessListing() {
     } catch (error) {
       console.error("Failed to toggle favorite:", error);
       toast.error("Failed to update favorites");
+      // Refresh state from DB on error
+      try {
+        const existing = await base44.entities.Favorite.filter({ user_id: userId, business_id: businessId });
+        setIsFavorite(existing.length > 0);
+      } catch (refreshError) {
+        console.error("Failed to refresh favorite state:", refreshError);
+      }
     } finally {
       setIsAddingFavorite(false);
     }
