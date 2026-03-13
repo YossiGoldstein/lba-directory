@@ -42,9 +42,11 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
 
   const businessStatus = getBusinessStatus();
 
+  const defaultPlaceholder = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/e987b639a_generated_image.png";
+  
   const coverImage = business.gallery_images && business.gallery_images.length > 0 
     ? fixImageUrl(business.gallery_images[0])
-    : "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=300&fit=crop";
+    : defaultPlaceholder;
 
   const isPaid = business.listing_tier === "pro" || business.listing_tier === "premium";
   const isFeatured = business.is_featured || business.listing_tier === "premium";
