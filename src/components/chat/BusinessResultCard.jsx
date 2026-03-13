@@ -40,14 +40,15 @@ export default function BusinessResultCard({ business, hasActiveDeals }) {
 
   return (
     <Card className="hover:shadow-md transition-shadow overflow-hidden">
-      {/* Cover Image with Icons - if available */}
-      {business.gallery_images && business.gallery_images.length > 0 && (
-        <div className="relative w-full h-32 bg-gray-100 overflow-hidden">
-          <img
-            src={fixImageUrl(business.gallery_images[0])}
-            alt={business.business_name}
-            className="w-full h-full object-cover"
-          />
+      {/* Cover Image with Icons - always show */}
+      <div className="relative w-full h-32 bg-gray-100 overflow-hidden">
+        <img
+          src={business.gallery_images && business.gallery_images.length > 0 
+            ? fixImageUrl(business.gallery_images[0])
+            : "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/e987b639a_generated_image.png"}
+          alt={business.business_name}
+          className="w-full h-full object-cover"
+        />
           
           {/* Status Badges */}
           <div className="absolute inset-0 pointer-events-none">
@@ -79,8 +80,7 @@ export default function BusinessResultCard({ business, hasActiveDeals }) {
               )}
             </div>
           </div>
-        </div>
-      )}
+      </div>
       
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-2">
