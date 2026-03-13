@@ -71,15 +71,25 @@ export default function CategoryListing() {
     });
   }, [allBusinesses, categories, slug]);
 
-  // Get sorted businesses (featured and sponsors first, then by rating)
+  // Get sorted businesses (by listing_rank first, then featured/sponsors, then rating)
   const sortedBusinesses = React.useMemo(() => {
     return [...categoryBusinesses]
       .sort((a, b) => {
+        // First: Sort by listing_rank (higher rank = better placement)
+        const rankA = a.listing_rank || 1;
+        const rankB = b.listing_rank || 1;
+        if (rankA !== rankB) return rankB - rankA;
+        
+        // Second: Featured businesses
         if (a.is_featured && !b.is_featured) return -1;
         if (!a.is_featured && b.is_featured) return 1;
+        
+        // Third: LBA Sponsors
         if (a.is_lba_sponsor && !b.is_lba_sponsor) return -1;
         if (!a.is_lba_sponsor && b.is_lba_sponsor) return 1;
-        return (b.average_rating || 0) - (a.average_rating || 0);
+        
+        // Fourth: Rating
+        return (b.average_rating || b.general_rating || 0) - (a.average_rating || a.general_rating || 0);
       });
   }, [categoryBusinesses]);
 
