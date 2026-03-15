@@ -25,19 +25,7 @@ export default function RelatedBusinesses({ businesses, categoryName }) {
               <CardContent className="p-0">
                 {/* Image */}
                 <div className="h-40 bg-gray-100 relative overflow-hidden">
-                  {business.logo_url ? (
-                    <img
-                      src={business.logo_url}
-                      alt={business.business_name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan-100 to-blue-100">
-                      <span className="text-4xl font-bold text-cyan-600">
-                        {business.business_name.charAt(0)}
-                      </span>
-                    </div>
-                  )}
+                  <BusinessImage business={business} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
 
                 {/* Content */}

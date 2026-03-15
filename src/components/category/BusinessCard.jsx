@@ -43,12 +43,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
 
   const businessStatus = getBusinessStatus();
 
-  const defaultPlaceholder = "https://media.base44.com/images/public/69160f6f331f1b03b4ecdf77/3512c92fb_generated_image.png";
-  
-  const firstImage = business.gallery_images && business.gallery_images.length > 0 
-    ? business.gallery_images.find(img => img && img.trim() !== '')
-    : null;
-  const coverImage = firstImage ? fixImageUrl(firstImage) : defaultPlaceholder;
+
 
   const isPaid = business.listing_tier === "pro" || business.listing_tier === "premium";
   const isFeatured = business.is_featured || business.listing_tier === "premium";
