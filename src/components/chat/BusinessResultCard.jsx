@@ -45,7 +45,7 @@ export default function BusinessResultCard({ business, hasActiveDeals }) {
         <img
           src={(() => {
             const img = business.gallery_images && business.gallery_images.find(i => i && i.trim() !== '');
-            return img ? fixImageUrl(img) : "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/ab196d9c6_generated_image.png";
+            return img ? fixImageUrl(img) : "https://media.base44.com/images/public/69160f6f331f1b03b4ecdf77/3512c92fb_generated_image.png";
           })()}
           alt={business.business_name}
           className="w-full h-full object-cover"

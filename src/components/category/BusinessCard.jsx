@@ -42,7 +42,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
 
   const businessStatus = getBusinessStatus();
 
-  const defaultPlaceholder = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/ab196d9c6_generated_image.png";
+  const defaultPlaceholder = "https://media.base44.com/images/public/69160f6f331f1b03b4ecdf77/3512c92fb_generated_image.png";
   
   const firstImage = business.gallery_images && business.gallery_images.length > 0 
     ? business.gallery_images.find(img => img && img.trim() !== '')
