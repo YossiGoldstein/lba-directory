@@ -54,12 +54,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300 overflow-hidden h-full flex flex-col">
         {/* Wide Cover Image - Banner Style */}
         <div className="relative w-full h-24 sm:h-28 bg-gray-100">
-          <img
-            src={coverImage}
-            alt={business.business_name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            onError={(e) => { e.target.src = defaultPlaceholder; }}
-          />
+          <BusinessImage business={business} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
           
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
