@@ -43,14 +43,7 @@ export default function BusinessResultCard({ business, hasActiveDeals }) {
     <Card className="hover:shadow-md transition-shadow overflow-hidden">
       {/* Cover Image with Icons - always show */}
       <div className="relative w-full h-32 bg-gray-100 overflow-hidden">
-        <img
-          src={(() => {
-            const img = business.gallery_images && business.gallery_images.find(i => i && i.trim() !== '');
-            return img ? fixImageUrl(img) : "https://media.base44.com/images/public/69160f6f331f1b03b4ecdf77/3512c92fb_generated_image.png";
-          })()}
-          alt={business.business_name}
-          className="w-full h-full object-cover"
-        />
+        <BusinessImage business={business} className="w-full h-full object-cover" />
           
           {/* Status Badges */}
           <div className="absolute inset-0 pointer-events-none">

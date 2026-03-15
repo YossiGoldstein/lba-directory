@@ -298,14 +298,7 @@ export default function BusinessListing() {
       {/* Hero Section with Cover Image */}
       <div className="relative w-full h-[60vh] min-h-[400px] bg-gray-900">
         {/* Cover Image */}
-        <img
-          src={(() => {
-            const img = business.gallery_images && business.gallery_images.find(i => i && i.trim() !== '');
-            return img ? fixImageUrl(img) : "https://media.base44.com/images/public/69160f6f331f1b03b4ecdf77/3512c92fb_generated_image.png";
-          })()}
-          alt={business.business_name}
-          className="w-full h-full object-cover"
-        />
+        <BusinessImage business={business} className="w-full h-full object-cover" />
 
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/90"></div>
