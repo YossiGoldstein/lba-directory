@@ -62,6 +62,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
             src={coverImage}
             alt={business.business_name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            onError={(e) => { e.target.src = defaultPlaceholder; }}
           />
           
           {/* Gradient Overlay */}
@@ -106,6 +107,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
                   src={fixImageUrl(business.logo_url)}
                   alt={business.business_name}
                   className="w-full h-full object-cover"
+                  onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling && (e.target.nextSibling.style.display = 'flex'); }}
                 />
               ) : (
                 <span className="text-2xl font-bold text-cyan-600">
