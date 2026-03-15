@@ -298,9 +298,10 @@ export default function BusinessListing() {
       <div className="relative w-full h-[60vh] min-h-[400px] bg-gray-900">
         {/* Cover Image */}
         <img
-          src={business.gallery_images && business.gallery_images.length > 0 
-            ? fixImageUrl(business.gallery_images[0])
-            : "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/ab196d9c6_generated_image.png"}
+          src={(() => {
+            const img = business.gallery_images && business.gallery_images.find(i => i && i.trim() !== '');
+            return img ? fixImageUrl(img) : "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/ab196d9c6_generated_image.png";
+          })()}
           alt={business.business_name}
           className="w-full h-full object-cover"
         />
