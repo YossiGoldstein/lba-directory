@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { fixImageUrl } from "@/components/lib/imageUtils";
+import BusinessImage from "@/components/lib/BusinessImage";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Phone, CheckCircle, Star } from "lucide-react";
 

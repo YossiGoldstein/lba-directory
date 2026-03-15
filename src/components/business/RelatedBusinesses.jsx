@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Card, CardContent } from "@/components/ui/card";
+import BusinessImage from "@/components/lib/BusinessImage";
 import { Star, MapPin, ArrowRight } from "lucide-react";
 
 export default function RelatedBusinesses({ businesses, categoryName }) {
