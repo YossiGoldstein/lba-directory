@@ -11,6 +11,11 @@ export function fixImageUrl(url) {
   if (url.startsWith('https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/')) {
     return url;
   }
+
+  // Handle media.base44.com URLs - return as-is (valid CDN)
+  if (url.startsWith('https://media.base44.com/')) {
+    return url;
+  }
   
   // Handle Base44 file API URLs - convert to storage URLs
   if (url.includes('/api/apps/') && url.includes('/files/public/')) {
