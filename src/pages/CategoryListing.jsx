@@ -16,11 +16,6 @@ export default function CategoryListing() {
   const slug = urlParams.get("slug") || "all";
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState(null);
-  const [agentResponse, setAgentResponse] = useState("");
-  const [matchedBusinesses, setMatchedBusinesses] = useState([]);
-  const [conversation, setConversation] = useState(null);
   const [displayLimit, setDisplayLimit] = useState(6);
 
   // Fetch categories
