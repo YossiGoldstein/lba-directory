@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { fixImageUrl } from "@/components/lib/imageUtils";
@@ -15,33 +15,40 @@ const formatPhoneNumber = (phone) => {
   return phone;
 };
 
+const computeBusinessStatus = (business) => {
+  if (business.by_appointment_only) {
+    return { type: 'appointment', label: 'By Appointment' };
+  }
+  if (!business.opening_hours_json) return null;
+
+  const now = new Date();
+  const nyTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const currentDay = dayNames[nyTime.getDay()];
+  const hours = business.opening_hours_json[currentDay];
+
+  if (!hours || hours.closed) return { type: 'closed', label: 'Closed' };
+
+  const currentTime = nyTime.getHours() * 60 + nyTime.getMinutes();
+  const [openHour, openMin] = (hours.open || '00:00').split(':').map(Number);
+  const [closeHour, closeMin] = (hours.close || '00:00').split(':').map(Number);
+  const openTime = openHour * 60 + openMin;
+  const closeTime = closeHour * 60 + closeMin;
+
+  const isOpen = currentTime >= openTime && currentTime <= closeTime;
+  return { type: isOpen ? 'open' : 'closed', label: isOpen ? 'Open Now' : 'Closed' };
+};
+
 export default function BusinessCard({ business, categoryName, hasActiveDeals }) {
-  // Check business status
-  const getBusinessStatus = () => {
-    if (business.by_appointment_only) {
-      return { type: 'appointment', label: 'By Appointment' };
-    }
-    if (!business.opening_hours_json) return null;
+  const [businessStatus, setBusinessStatus] = useState(() => computeBusinessStatus(business));
 
-    const now = new Date();
-    const nyTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
-    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const currentDay = dayNames[nyTime.getDay()];
-    const hours = business.opening_hours_json[currentDay];
-
-    if (!hours || hours.closed) return { type: 'closed', label: 'Closed' };
-
-    const currentTime = nyTime.getHours() * 60 + nyTime.getMinutes();
-    const [openHour, openMin] = hours.open.split(':').map(Number);
-    const [closeHour, closeMin] = hours.close.split(':').map(Number);
-    const openTime = openHour * 60 + openMin;
-    const closeTime = closeHour * 60 + closeMin;
-
-    const isOpen = currentTime >= openTime && currentTime <= closeTime;
-    return { type: isOpen ? 'open' : 'closed', label: isOpen ? 'Open Now' : 'Closed' };
-  };
-
-  const businessStatus = getBusinessStatus();
+  useEffect(() => {
+    // Refresh status every minute
+    const interval = setInterval(() => {
+      setBusinessStatus(computeBusinessStatus(business));
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [business]);
 
 
 
