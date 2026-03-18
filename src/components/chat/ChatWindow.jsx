@@ -36,24 +36,9 @@ export default function ChatWindow({
         // Fetch businesses for context (don't block on this)
         base44.entities.Business.list().then(bizList => {
           setBusinesses(bizList.filter(b => b.status === "approved"));
-        }).catch(() => {});
-
-        // Build page context string for the system
-        let contextNote = "";
-        if (pageContext) {
-          const now = new Date().toLocaleString('en-US', {
-            timeZone: 'America/New_York',
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-            hour: '2-digit', minute: '2-digit', hour12: true
-          });
-          if (pageContext.page === "Home") {
-            contextNote = `[System: User is on the homepage. Current time (America/New_York): ${now}]`;
-          } else if (pageContext.page === "CategoryListing" && pageContext.categoryName) {
-            contextNote = `[System: User is browsing the ${pageContext.categoryName} category. Current time (America/New_York): ${now}]`;
-          } else if (pageContext.page === "BusinessListing" && pageContext.businessName) {
-            contextNote = `[System: User is viewing ${pageContext.businessName}. Current time (America/New_York): ${now}]`;
-          }
-        }
+        }).catch(err => {
+          console.error("Failed to load businesses:", err);
+        });
 
         // Create conversation
         const conv = await base44.agents.createConversation({
