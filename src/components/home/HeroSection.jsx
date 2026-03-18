@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Search, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
