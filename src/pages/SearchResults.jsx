@@ -380,8 +380,13 @@ RESPOND WITH:
                                 type="text"
                                 placeholder="Refine your search with AI..."
                                 className="w-full pl-10 h-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:border-transparent"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                defaultValue={searchQuery}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    window.location.href = createPageUrl(`SearchResults?query=${encodeURIComponent(e.target.value.trim())}`);
+                                  }
+                                }}
                               />
                             </div>
                             <Button 
