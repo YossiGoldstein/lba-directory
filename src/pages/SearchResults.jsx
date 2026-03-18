@@ -395,9 +395,8 @@ RESPOND WITH:
                             <Button 
                               type="submit" 
                               className="bg-cyan-600 hover:bg-cyan-700 h-12 px-8"
-                              disabled={isSearching}
                             >
-                              {isSearching ? "Searching..." : "Search"}
+                              Search
                             </Button>
                           </form>
                           <p className="text-xs text-gray-500 mt-3">
