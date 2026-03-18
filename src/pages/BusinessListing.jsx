@@ -434,7 +434,7 @@ export default function BusinessListing() {
                       <Button
                         size="lg"
                         asChild
-                        className="bg-white/90 hover:bg-white text-gray-900 font-semibold border-2 border-white w-full sm:w-auto transition-colors"
+                        className="bg-white/90 hover:bg-white text-gray-900 font-semibold border-2 border-white transition-colors text-sm"
                       >
                         <a
                           href={
