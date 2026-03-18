@@ -24,6 +24,8 @@ import { toast } from "sonner";
 
 export default function AdminEditBusinessModal({ business, isOpen, onClose, onSave }) {
   const [formData, setFormData] = useState({});
+  const [deals, setDeals] = useState([]);
+  const [newDeal, setNewDeal] = useState({ title: "", description: "", badge_text: "", start_date: "", end_date: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
@@ -34,6 +36,16 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
       const cats = await base44.entities.Category.list();
       return cats.filter((c) => c.is_active);
     },
+  });
+
+  const { data: businessDeals = [] } = useQuery({
+    queryKey: ["deals", business?.id],
+    queryFn: async () => {
+      if (!business?.id) return [];
+      const allDeals = await base44.entities.Deal.list();
+      return allDeals.filter((d) => d.business_id === business.id);
+    },
+    enabled: !!business?.id,
   });
 
   useEffect(() => {
