@@ -125,7 +125,7 @@ export default function ChatWindow({
       hour: '2-digit', minute: '2-digit', hour12: true
     });
     
-    const messageWithContext = `${userMessage}\n\n[Current time in New York: ${now}]`;
+    const messageWithContext = `${userMessage}\n\nContext: Current time in New York is ${now}. Use the Business tool to search for matching businesses based on the user's query.`;
 
     try {
       await base44.agents.addMessage(conversation, {
