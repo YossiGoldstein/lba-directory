@@ -248,6 +248,29 @@ export default function BusinessListing() {
   };
 
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showClaimModal, setShowClaimModal] = useState(false);
+  const [claimLoading, setClaimLoading] = useState(false);
+  const [claimSent, setClaimSent] = useState(false);
+
+  const handleClaimBusiness = async () => {
+    const isAuth = await base44.auth.isAuthenticated();
+    if (!isAuth) {
+      window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
+      return;
+    }
+    setShowClaimModal(true);
+  };
+
+  const handleSendClaimEmail = async () => {
+    setClaimLoading(true);
+    const response = await base44.functions.invoke("sendClaimEmail", { businessId });
+    if (response.data?.success) {
+      setClaimSent(true);
+    } else {
+      toast.error(response.data?.error || "Failed to send claim email.");
+    }
+    setClaimLoading(false);
+  };
 
   const handleSubmitReview = () => {
     // Check both user and customer authentication
