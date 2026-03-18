@@ -117,6 +117,8 @@ Please search the business database using your tools and return the best matchin
     return businesses.slice(0, 20);
   };
 
+  // Remove unused categories variable warning
+
   const handleContinueInChat = () => {
     const chatButton = document.querySelector('[aria-label="Open chat assistant"]');
     if (chatButton) {
