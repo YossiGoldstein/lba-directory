@@ -13,22 +13,27 @@ Deno.serve(async (req) => {
     const allBusinesses = await base44.asServiceRole.entities.Business.list();
     const approved = allBusinesses.filter(b => b.status === 'approved');
     
-    // Search in name, description, tags, AI tags
-    const searchLower = query.toLowerCase();
+    // Extract meaningful keywords from query (remove common stop words)
+    const stopWords = new Set(['im', 'i', 'a', 'an', 'the', 'to', 'for', 'and', 'or', 'is', 'are', 'am', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'can', 'in', 'on', 'at', 'by', 'with', 'from', 'of', 'as', 'about', 'into', 'through', 'during', 'looking', 'buy', 'find', 'search', 'need', 'want', 'get', 'help', 'show', 'me', 'you', 'he', 'she', 'it', 'we', 'they', 'what', 'where', 'when', 'why', 'how']);
+    const keywords = query.toLowerCase()
+      .split(/\s+/)
+      .filter(word => word.length > 0 && !stopWords.has(word));
+    
+    // If no meaningful keywords, return empty
+    if (keywords.length === 0) {
+      return Response.json({ businesses: [] });
+    }
+    
+    // Search in name, description, tags, AI tags for any keyword
     const results = approved.filter(b => {
       const name = (b.business_name || '').toLowerCase();
       const desc = (b.short_description || '').toLowerCase();
       const longDesc = (b.long_description || '').toLowerCase();
       const tags = (b.tags || []).map(t => t.toLowerCase()).join(' ');
       const aiTags = (b.ai_tags || []).map(t => t.toLowerCase()).join(' ');
+      const allText = `${name} ${desc} ${longDesc} ${tags} ${aiTags}`;
       
-      return (
-        name.includes(searchLower) ||
-        desc.includes(searchLower) ||
-        longDesc.includes(searchLower) ||
-        tags.includes(searchLower) ||
-        aiTags.includes(searchLower)
-      );
+      return keywords.some(keyword => allText.includes(keyword));
     });
 
     // Sort by VIP, rank, featured
