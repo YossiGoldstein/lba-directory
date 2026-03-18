@@ -273,13 +273,20 @@ export default function BusinessListing() {
 
   const handleSendClaimEmail = async () => {
     setClaimLoading(true);
-    const response = await base44.functions.invoke("sendClaimEmail", { businessId });
-    if (response.data?.success) {
-      setClaimSent(true);
-    } else {
-      toast.error(response.data?.error || "Failed to send claim email.");
+    try {
+      const response = await base44.functions.invoke("sendClaimEmail", { businessId });
+      if (response.data?.success) {
+        setClaimSent(true);
+        toast.success("Claim email sent successfully!");
+      } else {
+        toast.error(response.data?.error || "Failed to send claim email.");
+      }
+    } catch (error) {
+      console.error("Claim error:", error);
+      toast.error(error.message || "Failed to send claim email");
+    } finally {
+      setClaimLoading(false);
     }
-    setClaimLoading(false);
   };
 
   const handleSubmitReview = () => {
