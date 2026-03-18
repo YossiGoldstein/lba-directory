@@ -304,7 +304,7 @@ export default function ChatWindow({
 
                     {/* Extract and show business cards if businesses are mentioned */}
                     {(() => {
-                       const businessIds = extractBusinessesFromMessage(message.content);
+                       const businessIds = extractBusinessesFromMessage(message);
                        if (businessIds.length > 0) {
                          return (
                            <div className="mt-3 space-y-2">
