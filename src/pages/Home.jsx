@@ -208,7 +208,7 @@ export default function Home() {
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
             alt="LBA Directory"
-            className="h-10 sm:h-12 md:h-14 lg:h-20 w-auto drop-shadow-2xl brightness-0 invert"
+            className="h-10 sm:h-12 md:h-12 lg:h-20 w-auto drop-shadow-2xl brightness-0 invert"
           />
         </div>
 
