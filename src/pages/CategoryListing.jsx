@@ -256,7 +256,7 @@ export default function CategoryListing() {
             </div>
           </div>
           </div>
-          )}
+        </div>
       </div>
     </div>
   );
