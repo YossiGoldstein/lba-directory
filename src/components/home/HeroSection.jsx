@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 export default function HeroSection() {
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("all");
-  const navigate = useNavigate();
 
   const handleSearch = (e) => {
     e.preventDefault();
