@@ -66,7 +66,7 @@ export default function CategoryListing() {
   }, [allBusinesses, categories, slug]);
 
   // Get sorted businesses (VIP first, then by listing_rank, then featured/sponsors, then rating)
-  const sortedBusinesses = React.useMemo(() => {
+  const sortedBusinesses = useMemo(() => {
     return [...categoryBusinesses]
       .sort((a, b) => {
         // First: VIP listings always on top
