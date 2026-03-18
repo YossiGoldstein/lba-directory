@@ -70,7 +70,7 @@ export default function ChatWindow({
   }, []);
 
   useEffect(() => {
-    if (!conversation) return;
+    if (!conversation || conversation.isSearchMode) return;
 
     const unsubscribe = base44.agents.subscribeToConversation(
       conversation.id,
