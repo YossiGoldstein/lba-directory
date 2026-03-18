@@ -43,6 +43,8 @@ export default function Home() {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
+    window.location.href = createPageUrl(`SearchResults?query=${encodeURIComponent(searchQuery.trim())}`);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("lba_customer");
