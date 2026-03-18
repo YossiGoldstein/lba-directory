@@ -61,9 +61,16 @@ export default function ChatWindow({
           metadata: {
             name: "Directory Search",
             description: "Help finding local businesses",
-            context_note: contextNote
           }
         });
+
+        // Send context as first system message so the AI has immediate context
+        if (contextNote) {
+          await base44.agents.addMessage(conv, {
+            role: "user",
+            content: contextNote
+          });
+        }
         
         setConversation(conv);
         setError(null);
