@@ -133,13 +133,18 @@ export default function ChatWindow({
     // Optimistically add user message to UI
     setMessages(prev => [...prev, { role: "user", content: userMessage }]);
 
-    // Append current time context to the message so the AI knows "now"
+    // Append current time context and business list to the message
     const now = new Date().toLocaleString('en-US', {
       timeZone: 'America/New_York',
       weekday: 'long', month: 'long', day: 'numeric',
       hour: '2-digit', minute: '2-digit', hour12: true
     });
-    const messageWithContext = `${userMessage}\n\n[Current time in New York: ${now}]`;
+    
+    const businessContext = businesses.length > 0 
+      ? `\n\n[Available businesses in directory: ${businesses.map(b => b.business_name).join(", ")}]`
+      : "";
+    
+    const messageWithContext = `${userMessage}\n\n[Current time in New York: ${now}]${businessContext}`;
 
     try {
       await base44.agents.addMessage(conversation, {
