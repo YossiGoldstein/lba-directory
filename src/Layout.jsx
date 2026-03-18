@@ -108,7 +108,7 @@ export default function Layout({ children, currentPageName }) {
                     if (customerData) {
                       window.location.href = createPageUrl("AddBusiness");
                     } else {
-                      window.location.href = createPageUrl("BusinessOwnerRegister");
+                      window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                     }
                   }} 
                   className="text-gray-700 hover:text-cyan-600 transition-colors font-medium text-lg"
@@ -165,13 +165,12 @@ export default function Layout({ children, currentPageName }) {
                     FAQ
                   </Link>
                   <button 
-                    onClick={async () => {
+                    onClick={() => {
                       const customerData = localStorage.getItem("lba_customer");
-                      const isAuth = customerData || await base44.auth.isAuthenticated();
-                      if (isAuth) {
+                      if (customerData) {
                         window.location.href = createPageUrl("AddBusiness");
                       } else {
-                        window.location.href = createPageUrl("BusinessOwnerRegister");
+                        window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                       }
                     }} 
                     className="text-white hover:text-green-400 font-medium text-lg text-left"
@@ -257,7 +256,7 @@ export default function Layout({ children, currentPageName }) {
                       if (customerData) {
                         window.location.href = createPageUrl("AddBusiness");
                       } else {
-                        window.location.href = createPageUrl("BusinessOwnerRegister");
+                        window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                       }
                     }}
                     className="text-sm hover:text-cyan-400 transition-colors text-left"
