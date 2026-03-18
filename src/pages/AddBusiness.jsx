@@ -439,11 +439,13 @@ Return JSON: { short_version, medium_version, long_version }`,
         <Section number="2" title="Category & Tags">
           <div className="space-y-2">
             <Label>Category *</Label>
-            <Select value={form.category_id} onValueChange={v => set({ category_id: v })}>
+            <Select value={form.category_id || ""} onValueChange={v => set({ category_id: v })}>
               <SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger>
               <SelectContent>
                 {categories.map(cat => (
-                  <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                  <SelectItem key={`cat-${cat.id}`} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
