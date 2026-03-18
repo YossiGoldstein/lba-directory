@@ -33,6 +33,15 @@ export default function ChatWindow({
   useEffect(() => {
     const initConversation = async () => {
       try {
+        // Check if user is authenticated
+        const isAuthenticated = await base44.auth.isAuthenticated();
+        
+        if (!isAuthenticated) {
+          setError("Please sign in to use the chat assistant. You can browse without signing in.");
+          setIsInitializing(false);
+          return;
+        }
+
         // Fetch businesses for context (don't block on this)
         base44.entities.Business.list().then(bizList => {
           setBusinesses(bizList.filter(b => b.status === "approved"));
