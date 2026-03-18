@@ -247,9 +247,9 @@ export default function CategoryListing() {
             )}
           </div>
 
-          {/* Map Column - Fixed position */}
-          <div className="hidden lg:block w-[40%] max-w-[600px] flex-shrink-0">
-            <div className="sticky top-4 h-[calc(100vh-2rem)] rounded-xl overflow-hidden shadow-lg border border-gray-200">
+          {/* Map Column - visible on tablet and desktop */}
+          <div className="hidden md:block lg:block w-full md:h-[400px] lg:w-[40%] lg:max-w-[600px] flex-shrink-0 mt-4 lg:mt-0 px-4 lg:px-0">
+            <div className="lg:sticky lg:top-4 h-[400px] lg:h-[calc(100vh-2rem)] rounded-xl overflow-hidden shadow-lg border border-gray-200">
               <BusinessMap businesses={businessesToMap} />
             </div>
           </div>
