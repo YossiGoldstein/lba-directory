@@ -125,7 +125,37 @@ export default function ChatWindow({
     // Optimistically add user message to UI
     setMessages(prev => [...prev, { role: "user", content: userMessage }]);
 
-    // Append current time context to the message so the AI knows "now"
+    // Search mode (unauthenticated users)
+    if (conversation.isSearchMode) {
+      try {
+        const response = await base44.functions.invoke('searchBusinesses', { query: userMessage });
+        const data = response.data;
+        const found = data.businesses || [];
+        
+        let replyText = "";
+        if (found.length === 0) {
+          replyText = `I couldn't find any businesses matching "${userMessage}". Try a different search term.`;
+        } else {
+          replyText = `I found ${found.length} result${found.length > 1 ? 's' : ''} for "${userMessage}":`;
+        }
+
+        setBusinesses(prev => {
+          const ids = prev.map(b => b.id);
+          const newOnes = found.filter(b => !ids.includes(b.id));
+          return [...prev, ...newOnes];
+        });
+
+        setMessages(prev => [...prev, { role: "assistant", content: replyText, _businessIds: found.map(b => b.id) }]);
+      } catch (err) {
+        console.error("Search failed:", err);
+        setMessages(prev => [...prev, { role: "assistant", content: "Sorry, I couldn't complete the search. Please try again." }]);
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
+    // Agent conversation mode (authenticated users)
     const now = new Date().toLocaleString('en-US', {
       timeZone: 'America/New_York',
       weekday: 'long', month: 'long', day: 'numeric',
