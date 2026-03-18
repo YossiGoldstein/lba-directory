@@ -48,14 +48,7 @@ export default function ChatWindow({
           setConversation(conv);
           setError(null);
         } else {
-          // User is not logged in - use simple search mode
-          // Load businesses for search
-          base44.asServiceRole.entities.Business.list().then(bizList => {
-            setBusinesses(bizList.filter(b => b.status === "approved"));
-          }).catch(err => {
-            console.error("Failed to load businesses:", err);
-          });
-          // Set a flag to use search mode
+          // User is not logged in - use simple search mode (no pre-loading needed)
           setConversation({ id: "search-mode", isSearchMode: true });
         }
       } catch (err) {
