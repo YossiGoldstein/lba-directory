@@ -357,7 +357,7 @@ export default function BusinessListing() {
                 {/* Business Details */}
                 <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-3">
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white drop-shadow-lg break-words">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold text-white drop-shadow-lg break-words">
                     {business.business_name}
                   </h1>
                   {business.listing_tier === 'premium' && (
