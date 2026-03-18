@@ -83,7 +83,7 @@ export default function Home() {
             <div className="flex items-center justify-between h-16 py-4">
               <div className="w-48"></div>
 
-              <nav className="hidden md:flex items-center gap-8">
+              <nav className="hidden lg:flex items-center gap-8">
                 <Link to={createPageUrl("Home")} className="text-white hover:text-cyan-400 transition-colors font-medium text-lg">
                   Home
                 </Link>
