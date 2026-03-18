@@ -422,9 +422,9 @@ export default function BusinessListing() {
                     {/* Claim Business Button - only if not yet claimed */}
                     {!business.owner_id && (
                       <Button
-                        size="lg"
+                        size="sm"
                         onClick={handleClaimBusiness}
-                        className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:opacity-90 text-white font-semibold w-full sm:w-auto"
+                        className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:opacity-90 text-white font-semibold text-sm"
                       >
                         🏢 Claim This Business
                       </Button>
