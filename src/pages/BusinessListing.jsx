@@ -408,7 +408,7 @@ export default function BusinessListing() {
                     size="lg"
                     variant="outline" 
                     onClick={handleToggleFavorite}
-                    disabled={isAddingFavorite || isLoadingUser}
+                    disabled={isAddingFavorite || isLoadingUser || isLoadingFavorite}
                     className={`${
                       isFavorite 
                         ? 'bg-red-500 hover:bg-red-600 text-white border-red-500' 
