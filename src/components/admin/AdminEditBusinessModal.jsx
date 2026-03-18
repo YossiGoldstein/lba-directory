@@ -203,6 +203,42 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
     toast.success("Cover image updated!");
   };
 
+  const handleAddDeal = async () => {
+    if (!newDeal.title?.trim() || !newDeal.start_date || !newDeal.end_date) {
+      toast.error("Title, start date, and end date are required");
+      return;
+    }
+
+    try {
+      await base44.entities.Deal.create({
+        business_id: business.id,
+        title: newDeal.title,
+        description: newDeal.description,
+        badge_text: newDeal.badge_text,
+        start_date: newDeal.start_date,
+        end_date: newDeal.end_date,
+        is_active: true,
+      });
+      setDeals([...deals, { ...newDeal, business_id: business.id, is_active: true }]);
+      setNewDeal({ title: "", description: "", badge_text: "", start_date: "", end_date: "" });
+      toast.success("Deal added successfully!");
+    } catch (error) {
+      console.error("Failed to add deal:", error);
+      toast.error("Failed to add deal");
+    }
+  };
+
+  const handleDeleteDeal = async (dealId) => {
+    try {
+      await base44.entities.Deal.delete(dealId);
+      setDeals(deals.filter(d => d.id !== dealId));
+      toast.success("Deal deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete deal:", error);
+      toast.error("Failed to delete deal");
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
