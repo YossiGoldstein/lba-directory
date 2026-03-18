@@ -28,71 +28,23 @@ export default function SearchResults() {
       const allBusinesses = await base44.entities.Business.list();
       const approved = allBusinesses.filter(b => b.status === "approved");
 
-      const businessList = approved.map(b => ({
-        id: b.id,
-        name: b.business_name,
-        category_id: b.category_id,
-        short_description: b.short_description || "",
-        long_description: b.long_description || "",
-        tags: (b.tags || []).join(", "),
-        ai_tags: (b.ai_tags || []).join(", "),
-        city: b.city || "",
-        opening_hours_text: b.opening_hours_text || "",
-        opening_hours_json: b.opening_hours_json || null,
-        by_appointment_only: b.by_appointment_only || false,
-      }));
-
-      const now = new Date();
-      const estTime = now.toLocaleString('en-US', {
-        timeZone: 'America/New_York',
-        weekday: 'long',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
+      const query = searchQuery.toLowerCase();
+      const matched = approved.filter(b => {
+        const name = (b.business_name || "").toLowerCase();
+        const desc = (b.short_description || "").toLowerCase();
+        const longDesc = (b.long_description || "").toLowerCase();
+        const tags = ((b.tags || []).join(" ") || "").toLowerCase();
+        const aiTags = ((b.ai_tags || []).join(" ") || "").toLowerCase();
+        
+        return name.includes(query) || desc.includes(query) || longDesc.includes(query) || 
+               tags.includes(query) || aiTags.includes(query);
       });
 
-      const prompt = `You are a smart business directory search engine for LBA Directory in Lakewood, NJ.
+      const message = matched.length > 0 
+        ? `Found ${matched.length} business${matched.length !== 1 ? 'es' : ''} matching "${searchQuery}"`
+        : `No businesses found for "${searchQuery}"`;
 
-Current time: ${estTime}
-
-User query: "${searchQuery}"
-
-Here is the full list of businesses in the directory (JSON):
-${JSON.stringify(businessList, null, 2)}
-
-Your job:
-1. Find ALL businesses that match the user's query. Be generous — match by category, description, tags, or name.
-2. If the user asks for "open now", check opening_hours_json or opening_hours_text against the current time/day. Include businesses that appear to be open.
-3. Return a short, friendly response explaining what you found (2-3 sentences max).
-4. Return the matching business IDs.
-
-Respond ONLY with valid JSON in this exact format:
-{
-  "message": "short friendly message about results",
-  "business_ids": ["id1", "id2", ...]
-}`;
-
-      const sushiSpot = allBusinesses.find(b => b.business_name?.toLowerCase().includes("that sushi"));
-      console.log("🍣 That Sushi Spot details:", sushiSpot);
-      
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            message: { type: "string" },
-            business_ids: { type: "array", items: { type: "string" } }
-          }
-        }
-      });
-
-      console.log("🤖 LLM Response IDs:", result.business_ids);
-      
-      const ids = result.business_ids || [];
-      const matched = approved.filter(b => ids.includes(b.id));
-      console.log("✅ Matched:", matched.length, matched.map(b => b.business_name));
-
-      setAiResponse(result.message || "");
+      setAiResponse(message);
       setMatchedBusinesses(matched);
     } catch (error) {
       console.error("Search failed:", error);
