@@ -9,20 +9,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Query is required' }, { status: 400 });
     }
 
-    // Get all categories and businesses
+    // Get approved businesses
     const allBusinesses = await base44.asServiceRole.entities.Business.list();
-    const allCategories = await base44.asServiceRole.entities.Category.list();
-    
-    // Build category name map for quick lookup
-    const categoryMap = {};
-    allCategories.forEach(cat => {
-      categoryMap[cat.id] = cat.name.toLowerCase();
-    });
-    
-    // Filter approved businesses only
     const approved = allBusinesses.filter(b => b.status === 'approved');
     
-    // Search in name, description, tags, AND categories
+    // Search in name, description, tags, AI tags
     const searchLower = query.toLowerCase();
     const results = approved.filter(b => {
       const name = (b.business_name || '').toLowerCase();
@@ -31,18 +22,12 @@ Deno.serve(async (req) => {
       const tags = (b.tags || []).map(t => t.toLowerCase()).join(' ');
       const aiTags = (b.ai_tags || []).map(t => t.toLowerCase()).join(' ');
       
-      // Check primary category and subcategories
-      const primaryCat = categoryMap[b.category_id] || '';
-      const subCats = (b.subcategory_ids || []).map(id => categoryMap[id] || '').join(' ');
-      const allCats = (primaryCat + ' ' + subCats).toLowerCase();
-      
       return (
         name.includes(searchLower) ||
         desc.includes(searchLower) ||
         longDesc.includes(searchLower) ||
         tags.includes(searchLower) ||
-        aiTags.includes(searchLower) ||
-        allCats.includes(searchLower)
+        aiTags.includes(searchLower)
       );
     });
 
