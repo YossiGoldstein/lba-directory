@@ -98,13 +98,17 @@ export default function ChatWindow({
     return () => unsubscribe();
   }, [conversation]);
 
-  const extractBusinessesFromMessage = (content) => {
-    // Try to extract business IDs or names from the message
+  const extractBusinessesFromMessage = (message) => {
+    // Check if message has explicit business IDs (search mode)
+    if (message._businessIds && message._businessIds.length > 0) {
+      return message._businessIds;
+    }
+
+    // For agent mode, extract from content
     const businessIds = [];
-    const lines = content.split('\n');
+    const lines = (message.content || '').split('\n');
     
     lines.forEach(line => {
-      // Look for patterns that might indicate a business reference
       businesses.forEach(business => {
         if (line.includes(business.business_name) || line.includes(business.id)) {
           businessIds.push(business.id);
