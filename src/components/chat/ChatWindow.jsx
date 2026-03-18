@@ -31,44 +31,42 @@ export default function ChatWindow({
   }, [messages]);
 
   useEffect(() => {
-    const initConversation = async () => {
+    const initChat = async () => {
       try {
-        // Check if user is authenticated
+        // Check if user is authenticated for conversation mode
         const isAuthenticated = await base44.auth.isAuthenticated();
         
-        if (!isAuthenticated) {
-          setError("Please sign in to use the chat assistant. You can browse without signing in.");
-          setIsInitializing(false);
-          return;
+        if (isAuthenticated) {
+          // User is logged in - use agent conversation
+          const conv = await base44.agents.createConversation({
+            agent_name: "DirectoryAssistant",
+            metadata: {
+              name: "Directory Search",
+              description: "Help finding local businesses",
+            }
+          });
+          setConversation(conv);
+          setError(null);
+        } else {
+          // User is not logged in - use simple search mode
+          // Load businesses for search
+          base44.asServiceRole.entities.Business.list().then(bizList => {
+            setBusinesses(bizList.filter(b => b.status === "approved"));
+          }).catch(err => {
+            console.error("Failed to load businesses:", err);
+          });
+          // Set a flag to use search mode
+          setConversation({ id: "search-mode", isSearchMode: true });
         }
-
-        // Fetch businesses for context (don't block on this)
-        base44.entities.Business.list().then(bizList => {
-          setBusinesses(bizList.filter(b => b.status === "approved"));
-        }).catch(err => {
-          console.error("Failed to load businesses:", err);
-        });
-
-        // Create conversation
-        const conv = await base44.agents.createConversation({
-          agent_name: "DirectoryAssistant",
-          metadata: {
-            name: "Directory Search",
-            description: "Help finding local businesses",
-          }
-        });
-        
-        setConversation(conv);
-        setError(null);
       } catch (err) {
-        console.error("Failed to create conversation:", err);
+        console.error("Failed to init chat:", err);
         setError("Sorry, the chat assistant is temporarily unavailable. Please try refreshing the page.");
       } finally {
         setIsInitializing(false);
       }
     };
 
-    initConversation();
+    initChat();
   }, []);
 
   useEffect(() => {
