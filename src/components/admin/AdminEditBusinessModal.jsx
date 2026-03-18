@@ -86,6 +86,12 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
     }
   }, [business]);
 
+  useEffect(() => {
+    if (businessDeals.length > 0) {
+      setDeals(businessDeals);
+    }
+  }, [businessDeals]);
+
   const handleSave = async () => {
     if (!formData.business_name?.trim()) {
       toast.error("Business name is required");
