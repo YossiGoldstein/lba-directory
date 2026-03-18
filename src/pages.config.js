@@ -67,6 +67,7 @@ import Pricing from './pages/Pricing';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RegistrationSuccess from './pages/RegistrationSuccess';
 import SearchResults from './pages/SearchResults.jsx';
+
 import SetPassword from './pages/SetPassword';
 import SignIn from './pages/SignIn';
 import SubmissionSuccess from './pages/SubmissionSuccess';
