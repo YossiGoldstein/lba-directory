@@ -109,20 +109,6 @@ export default function CategoryListing() {
     });
   };
 
-  const extractBusinessesFromResponse = (responseText) => {
-    const businesses = [];
-    const responseLines = responseText.toLowerCase();
-
-    allBusinesses.forEach(business => {
-      const businessName = (business.business_name || "").toLowerCase();
-      if (businessName && responseLines.includes(businessName)) {
-        businesses.push(business);
-      }
-    });
-
-    return businesses.slice(0, 12);
-  };
-
   const handleSearch = (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
