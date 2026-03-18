@@ -143,7 +143,7 @@ export default function Home() {
               </div>
 
               {mobileMenuOpen && (
-              <div className="md:hidden py-4 bg-[#003D5C] backdrop-blur-md rounded-lg fixed left-4 right-4 top-20 z-[100] shadow-2xl max-w-md mx-auto">
+              <div className="lg:hidden py-4 bg-[#003D5C] backdrop-blur-md rounded-lg fixed left-4 right-4 top-20 z-[100] shadow-2xl max-w-md mx-auto">
                 <nav className="flex flex-col gap-4 px-4">
                   <Link to={createPageUrl("Home")} className="text-white hover:text-green-400 font-medium">
                     Home
