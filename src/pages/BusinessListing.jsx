@@ -530,9 +530,9 @@ export default function BusinessListing() {
 
           {/* Main Content - Two Column Layout */}
           <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Right Column - Contact & Map (Gallery moved to end on mobile) */}
-              <div className="lg:col-span-1 space-y-6 order-1 lg:order-2">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Right Column - Contact & Map */}
+              <div className="lg:col-span-1 space-y-4 order-1 lg:order-2">
                 {/* Contact Card */}
                 <ContactCard business={business} />
 
