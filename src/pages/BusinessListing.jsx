@@ -56,27 +56,20 @@ export default function BusinessListing() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isAddingFavorite, setIsAddingFavorite] = useState(false);
 
+  // Get userId from localStorage (customer session)
+  const storedCustomerData = localStorage.getItem("lba_customer");
+  const currentUserId = storedCustomerData ? JSON.parse(storedCustomerData).id : null;
+
   useEffect(() => {
     const loadUser = async () => {
       setIsLoadingUser(true);
       try {
-        // Check for customer session
         const customerData = localStorage.getItem("lba_customer");
         if (customerData) {
-          const parsedCustomer = JSON.parse(customerData);
-          setCustomer(parsedCustomer);
+          setCustomer(JSON.parse(customerData));
         }
-
         const userData = await base44.auth.me();
         setUser(userData);
-        
-        // Check if business is already in favorites (use customer ID from localStorage)
-        const storedCustomer = localStorage.getItem("lba_customer");
-        const userId = storedCustomer ? JSON.parse(storedCustomer).id : userData?.id;
-        if (userId && businessId) {
-          const favorites = await base44.entities.Favorite.filter({ user_id: userId, business_id: businessId });
-          setIsFavorite(favorites.length > 0);
-        }
       } catch (error) {
         setUser(null);
       } finally {
@@ -84,7 +77,24 @@ export default function BusinessListing() {
       }
     };
     loadUser();
-  }, [businessId]);
+  }, []);
+
+  // Fetch favorite state from DB on load
+  const { data: favoriteRecord, isLoading: isLoadingFavorite } = useQuery({
+    queryKey: ["favorite", currentUserId, businessId],
+    queryFn: async () => {
+      const results = await base44.entities.Favorite.filter({ user_id: currentUserId, business_id: businessId });
+      return results;
+    },
+    enabled: !!currentUserId && !!businessId,
+    staleTime: 0,
+  });
+
+  useEffect(() => {
+    if (favoriteRecord !== undefined) {
+      setIsFavorite(favoriteRecord.length > 0);
+    }
+  }, [favoriteRecord]);
 
   // Fetch business
   const { data: business, isLoading: businessLoading } = useQuery({
