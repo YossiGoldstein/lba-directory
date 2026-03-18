@@ -329,7 +329,7 @@ export default function BusinessListing() {
   return (
     <div className="min-h-screen bg-blue-50">
       {/* Hero Section with Cover Image */}
-      <div className="relative w-full h-[60vh] min-h-[400px] bg-gray-900">
+      <div className="relative w-full h-auto min-h-[400px] md:min-h-[480px] bg-gray-900">
         {/* Cover Image */}
         <BusinessImage business={business} className="w-full h-full object-cover" />
 
