@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Send, Loader2, Minimize2, Headphones } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import BusinessResultCard from "./BusinessResultCard";
+import BusinessSearchResultCard from "./BusinessSearchResultCard";
 
 export default function ChatWindow({ 
   onClose, 
