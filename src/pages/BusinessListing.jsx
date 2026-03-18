@@ -263,8 +263,9 @@ export default function BusinessListing() {
   const [claimSent, setClaimSent] = useState(false);
 
   const handleClaimBusiness = async () => {
-    const isAuth = await base44.auth.isAuthenticated();
-    if (!isAuth) {
+    // Check if user has authentication (either Base44 user or customer localStorage)
+    const customerData = localStorage.getItem("lba_customer");
+    if (!customerData) {
       window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
       return;
     }
