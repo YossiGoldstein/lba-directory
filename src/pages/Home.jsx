@@ -17,24 +17,6 @@ export default function Home() {
   const [isListening, setIsListening] = useState(false);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [bizList, catList] = await Promise.all([
-          base44.entities.Business.list(),
-          base44.entities.Category.list()
-        ]);
-        const approved = bizList.filter(b => b.status === "approved");
-        console.log("✅ Loaded businesses:", approved.length);
-        setAllBusinesses(approved);
-        setCategories(catList.filter(c => c.is_active));
-      } catch (error) {
-        console.error("❌ Failed to load data:", error);
-      }
-    };
-    loadData();
-  }, []);
-
-  useEffect(() => {
     const loadUser = () => {
       try {
         // Check for customer/business session in localStorage
