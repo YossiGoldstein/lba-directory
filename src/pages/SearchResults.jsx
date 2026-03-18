@@ -72,6 +72,8 @@ Respond ONLY with valid JSON in this exact format:
   "business_ids": ["id1", "id2", ...]
 }`;
 
+      console.log("📊 Businesses sent to LLM:", businessList.map(b => b.name));
+      
       const result = await base44.integrations.Core.InvokeLLM({
         prompt,
         response_json_schema: {
@@ -83,8 +85,12 @@ Respond ONLY with valid JSON in this exact format:
         }
       });
 
+      console.log("🤖 LLM Response:", result);
+      
       const ids = result.business_ids || [];
       const matched = approved.filter(b => ids.includes(b.id));
+      console.log("✅ Matched business IDs:", ids);
+      console.log("✅ Matched businesses:", matched.map(b => b.business_name));
 
       setAiResponse(result.message || "");
       setMatchedBusinesses(matched);
