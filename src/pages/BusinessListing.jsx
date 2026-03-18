@@ -409,6 +409,17 @@ export default function BusinessListing() {
                     {isLoadingUser ? 'Loading...' : isFavorite ? 'Saved' : 'Add to Favorites'}
                     </Button>
 
+                    {/* Claim Business Button - only if not yet claimed */}
+                    {!business.owner_id && (
+                      <Button
+                        size="lg"
+                        onClick={handleClaimBusiness}
+                        className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:opacity-90 text-white font-semibold w-full sm:w-auto"
+                      >
+                        🏢 Claim This Business
+                      </Button>
+                    )}
+
                     {(business.latitude && business.longitude) || business.address_line1 ? (
                       <Button
                         size="lg"
