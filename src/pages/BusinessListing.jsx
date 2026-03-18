@@ -581,7 +581,7 @@ export default function BusinessListing() {
               </div>
 
           {/* Left Column - Business Details */}
-          <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
+          <div className="lg:col-span-2 space-y-4 order-2 lg:order-1">
             {/* Description */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">About this business</h2>
