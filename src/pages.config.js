@@ -56,6 +56,7 @@ import BusinessJoin from './pages/BusinessJoin';
 import BusinessListing from './pages/BusinessListing';
 import BusinessOwnerRegister from './pages/BusinessOwnerRegister';
 import CategoryListing from './pages/CategoryListing';
+import ClaimBusiness from './pages/ClaimBusiness';
 import Contact from './pages/Contact';
 import Error from './pages/Error';
 import FAQ from './pages/FAQ';
@@ -66,8 +67,6 @@ import NotFound from './pages/NotFound';
 import Pricing from './pages/Pricing';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RegistrationSuccess from './pages/RegistrationSuccess';
-import SearchResults from './pages/SearchResults.jsx';
-
 import SetPassword from './pages/SetPassword';
 import SignIn from './pages/SignIn';
 import SubmissionSuccess from './pages/SubmissionSuccess';
@@ -76,6 +75,7 @@ import TermsOfUse from './pages/TermsOfUse';
 import UserDashboard from './pages/UserDashboard';
 import UserRegister from './pages/UserRegister';
 import Welcome from './pages/Welcome';
+import SearchResults from './pages/SearchResults';
 import __Layout from './Layout.jsx';
 
 
@@ -89,6 +89,7 @@ export const PAGES = {
     "BusinessListing": BusinessListing,
     "BusinessOwnerRegister": BusinessOwnerRegister,
     "CategoryListing": CategoryListing,
+    "ClaimBusiness": ClaimBusiness,
     "Contact": Contact,
     "Error": Error,
     "FAQ": FAQ,
@@ -99,7 +100,6 @@ export const PAGES = {
     "Pricing": Pricing,
     "PrivacyPolicy": PrivacyPolicy,
     "RegistrationSuccess": RegistrationSuccess,
-    "SearchResults": SearchResults,
     "SetPassword": SetPassword,
     "SignIn": SignIn,
     "SubmissionSuccess": SubmissionSuccess,
@@ -108,6 +108,7 @@ export const PAGES = {
     "UserDashboard": UserDashboard,
     "UserRegister": UserRegister,
     "Welcome": Welcome,
+    "SearchResults": SearchResults,
 }
 
 export const pagesConfig = {
