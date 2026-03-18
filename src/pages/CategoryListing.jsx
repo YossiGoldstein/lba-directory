@@ -115,70 +115,7 @@ export default function CategoryListing() {
     window.location.href = createPageUrl(`SearchResults?query=${encodeURIComponent(searchQuery.trim())}`);
   };
 
-  const handleRelatedCategoryClick = async (category) => {
-    setIsSearching(true);
-    setSearchResults(null);
-    setAgentResponse("");
-    setMatchedBusinesses([]);
-
-    try {
-      const conv = await base44.agents.createConversation({
-        agent_name: "DirectoryAssistant",
-        metadata: {
-          name: `Related Category: ${category.name}`,
-          description: "Browse related category",
-          context: "related_category_click",
-          original_category: currentCategory?.name,
-          clicked_category: category.name
-        }
-      });
-
-      setConversation(conv);
-
-      await base44.agents.addMessage(conv, {
-        role: "user",
-        content: `User is on the "${currentCategory?.name || 'All'}" category page and clicked a related category: ${category.name}\n\nShow businesses from this related category.`
-      });
-
-      const unsubscribe = base44.agents.subscribeToConversation(
-        conv.id,
-        (data) => {
-          const messages = data.messages || [];
-          const lastMessage = messages[messages.length - 1];
-          
-          if (lastMessage && lastMessage.role === "assistant") {
-            setAgentResponse(lastMessage.content);
-            const extractedBusinesses = extractBusinessesFromResponse(lastMessage.content);
-            setMatchedBusinesses(extractedBusinesses);
-            setSearchResults({
-              response: lastMessage.content,
-              businesses: extractedBusinesses
-            });
-            setIsSearching(false);
-          }
-        }
-      );
-
-      setTimeout(() => {
-        unsubscribe();
-      }, 30000);
-
-    } catch (error) {
-      console.error("Related category search failed:", error);
-      setIsSearching(false);
-      setAgentResponse("Sorry, I encountered an error. Please try again.");
-    }
-  };
-
-  const handleContinueInChat = () => {
-    const chatButton = document.querySelector('[aria-label="Open chat assistant"]');
-    if (chatButton) {
-      chatButton.click();
-    }
-  };
-
-  // Determine which businesses to show on map
-  const businessesToMap = searchResults ? matchedBusinesses : displayedBusinesses;
+  const businessesToMap = displayedBusinesses;
 
   return (
     <div className="min-h-screen bg-blue-50">
