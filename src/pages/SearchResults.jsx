@@ -17,32 +17,21 @@ export default function SearchResults() {
   const [agentResponse, setAgentResponse] = useState("");
   const [matchedBusinesses, setMatchedBusinesses] = useState([]);
   const [allBusinesses, setAllBusinesses] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [conversation, setConversation] = useState(null);
-
 
   useEffect(() => {
     const loadData = async () => {
-      try {
-        const [bizList, catList] = await Promise.all([
-          base44.entities.Business.list(),
-          base44.entities.Category.list()
-        ]);
-        const approved = bizList.filter(b => b.status === "approved");
-        setAllBusinesses(approved);
-        setCategories(catList.filter(c => c.is_active));
-      } catch (error) {
-        console.error("Failed to load data:", error);
-      }
+      const bizList = await base44.entities.Business.list();
+      setAllBusinesses(bizList.filter(b => b.status === "approved"));
     };
     loadData();
   }, []);
 
   useEffect(() => {
-    if (searchQuery && allBusinesses.length > 0) {
+    if (searchQuery) {
       performSearch();
     }
-  }, [searchQuery, allBusinesses]);
+  }, [searchQuery]);
 
 
 
