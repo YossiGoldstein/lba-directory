@@ -610,16 +610,6 @@ Respond with exact business names from the list above.`;
         </div>
       </section>
 
-      {/* Search Results */}
-      {(isSearching || searchResults) && (
-        <SearchResultsPanel
-          agentResponse={agentResponse}
-          businesses={matchedBusinesses}
-          onContinueInChat={handleContinueInChat}
-          isLoading={isSearching}
-        />
-      )}
-
       {/* Blue Banner */}
       <section className="bg-gradient-to-r from-cyan-600 via-cyan-700 to-cyan-600 py-4 sm:py-6 md:py-8">
         <div className="max-w-7xl mx-auto px-4 text-center">
