@@ -48,77 +48,9 @@ export default function SearchResults() {
 
   const performSearch = async () => {
     setIsSearching(true);
-    const query = searchQuery.toLowerCase().trim();
-    const queryWords = query.split(/\s+/).filter(w => w.length > 2);
-
-    // Detect if this is a natural language query
-    const needsAI = 
-      query.includes("looking for") ||
-      query.includes("where can i") ||
-      query.includes("open now") ||
-      query.includes("available now") ||
-      query.includes("best") ||
-      query.includes("recommend") ||
-      query.includes("suggest") ||
-      query.includes("need") ||
-      query.includes("want") ||
-      query.includes("find me") ||
-      query.includes("show me") ||
-      query.startsWith("where") ||
-      query.startsWith("when") ||
-      query.startsWith("how") ||
-      query.startsWith("why") ||
-      query.startsWith("what") ||
-      queryWords.length > 5;
-
-    if (!needsAI) {
-      // Direct search
-      const directMatches = allBusinesses.filter(business => {
-        const name = (business.business_name || "").toLowerCase();
-        const slug = (business.slug || "").toLowerCase();
-        const shortDesc = (business.short_description || "").toLowerCase();
-        const longDesc = (business.long_description || "").toLowerCase();
-        const tags = business.tags ? business.tags.map(t => t.toLowerCase()).join(" ") : "";
-
-        const category = categories.find(c => c.id === business.category_id);
-        const categoryName = category ? category.name.toLowerCase() : "";
-
-        const allContent = `${name} ${slug} ${shortDesc} ${longDesc} ${tags} ${categoryName}`;
-
-        if (name === query || slug === query) return true;
-        const nameWords = name.split(/\s+/);
-        if (nameWords.some(word => word === query)) return true;
-        if (query.length >= 3 && (name.includes(query) || shortDesc.includes(query) || longDesc.includes(query))) {
-          return true;
-        }
-        if (tags.includes(query)) return true;
-        if (categoryName.includes(query)) return true;
-
-        if (queryWords.length > 0) {
-          const meaningfulWords = queryWords.filter(word => 
-            !['looking', 'for', 'find', 'search', 'need', 'want', 'show', 'me', 'the', 'a', 'an'].includes(word)
-          );
-          if (meaningfulWords.length > 0) {
-            const hasMatchingWords = meaningfulWords.some(word => allContent.includes(word));
-            if (hasMatchingWords) return true;
-          }
-        }
-
-        return false;
-      });
-
-      if (directMatches.length > 0) {
-        setMatchedBusinesses(directMatches);
-        setAgentResponse(`Found ${directMatches.length} business${directMatches.length !== 1 ? 'es' : ''} matching "${searchQuery}"`);
-        setIsSearching(false);
-        return;
-      }
-    }
-
-    // AI Search with full context
     let searchCompleted = false;
+
     try {
-      // Get current time in EST
       const now = new Date();
       const estTime = now.toLocaleString('en-US', { 
         timeZone: 'America/New_York',
@@ -130,115 +62,45 @@ export default function SearchResults() {
         minute: '2-digit',
         hour12: true
       });
-      const dayOfWeek = now.toLocaleString('en-US', { timeZone: 'America/New_York', weekday: 'long' });
-      const currentHour = parseInt(now.toLocaleString('en-US', { timeZone: 'America/New_York', hour: '2-digit', hour12: false }));
-      const currentMinute = parseInt(now.toLocaleString('en-US', { timeZone: 'America/New_York', minute: '2-digit' }));
 
-      // Build comprehensive business data
-      const businessData = allBusinesses.map(b => {
-        const category = categories.find(c => c.id === b.category_id);
-        return {
-          name: b.business_name,
-          category: category?.name || 'Other',
-          city: b.city || 'Lakewood',
-          address: `${b.address_line1 || ''}${b.address_line2 ? ', ' + b.address_line2 : ''}, ${b.city || ''}, ${b.state || 'NJ'} ${b.zip_code || ''}`.trim(),
-          phone: b.phone || '',
-          shortDesc: b.short_description || '',
-          longDesc: b.long_description || '',
-          tags: b.tags ? b.tags.join(', ') : '',
-          hours: b.opening_hours_text || b.opening_hours_json ? 
-            (b.opening_hours_text || JSON.stringify(b.opening_hours_json)) : 'Hours not specified',
-          rating: b.general_rating || 0,
-          reviewCount: b.reviews_count || 0
-        };
-      });
-
-      // Group by category for better context
-      const byCategory = {};
-      businessData.forEach(b => {
-        if (!byCategory[b.category]) byCategory[b.category] = [];
-        byCategory[b.category].push(b);
-      });
-
-      const contextMessage = `CURRENT DATE & TIME (America/New_York timezone):
-${estTime}
-Day: ${dayOfWeek}
+      const contextMessage = `CURRENT DATE & TIME (America/New_York): ${estTime}
 
 USER SEARCH QUERY: "${searchQuery}"
 
-INSTRUCTIONS:
-- If user asks for "open now", filter businesses based on the current time above
-- Only recommend businesses that exist in the database below
-- Always mention business names explicitly so they can be matched
-- Provide structured, clear results with addresses and phone numbers
-
-AVAILABLE BUSINESSES IN DIRECTORY (${allBusinesses.length} total):
-
-${Object.entries(byCategory).map(([catName, businesses]) => 
-  `=== ${catName} (${businesses.length}) ===
-${businesses.slice(0, 15).map(b => 
-`• ${b.name}
-  ${b.city} | ${b.phone || 'No phone'}
-  ${b.shortDesc}
-  Hours: ${b.hours}
-  Tags: ${b.tags || 'none'}
-  Rating: ${b.rating > 0 ? `${b.rating}/5 (${b.reviewCount} reviews)` : 'No reviews yet'}`
-).join('\n\n')}${businesses.length > 15 ? `\n\n... and ${businesses.length - 15} more in this category` : ''}`
-).join('\n\n')}
-
-RESPOND WITH:
-- Exact business names from the list above
-- Whether each is open now (if relevant to query)
-- Full address and phone
-- Brief helpful description
-- Only real businesses from this database`;
+Please search the business database using your tools and return the best matching results. Always mention exact business names in your response.`;
 
       const conv = await base44.agents.createConversation({
         agent_name: "DirectoryAssistant",
-        metadata: {
-          name: "Search Results",
-          description: "Search from search results page",
-          context: "search_results"
-        }
+        metadata: { name: "Search Results", context: "search_results" }
       });
 
       setConversation(conv);
 
-      const unsubscribe = base44.agents.subscribeToConversation(
-        conv.id,
-        (data) => {
-          const messages = data.messages || [];
-          const lastMessage = messages[messages.length - 1];
-          
-          if (lastMessage && lastMessage.role === "assistant" && lastMessage.content) {
-            searchCompleted = true;
-            setAgentResponse(lastMessage.content);
-            const extractedBusinesses = extractBusinessesFromResponse(lastMessage.content);
-            setMatchedBusinesses(extractedBusinesses);
-            setIsSearching(false);
-          }
+      const unsubscribe = base44.agents.subscribeToConversation(conv.id, (data) => {
+        const messages = data.messages || [];
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage && lastMessage.role === "assistant" && lastMessage.content) {
+          searchCompleted = true;
+          setAgentResponse(lastMessage.content);
+          setMatchedBusinesses(extractBusinessesFromResponse(lastMessage.content));
+          setIsSearching(false);
         }
-      );
-
-      await base44.agents.addMessage(conv, {
-        role: "user",
-        content: contextMessage
       });
+
+      await base44.agents.addMessage(conv, { role: "user", content: contextMessage });
 
       setTimeout(() => {
         unsubscribe();
         if (!searchCompleted) {
           setIsSearching(false);
-          setAgentResponse("The search took longer than expected. Please try rephrasing your search or browse our categories.");
-          setMatchedBusinesses([]);
+          setAgentResponse("The search took longer than expected. Please try rephrasing your search.");
         }
-      }, 30000);
+      }, 45000);
 
     } catch (error) {
       console.error("Search failed:", error);
       setIsSearching(false);
-      setAgentResponse("I'm having trouble processing your search. Please try again or browse our categories below.");
-      setMatchedBusinesses([]);
+      setAgentResponse("I'm having trouble processing your search. Please try again.");
     }
   };
 
