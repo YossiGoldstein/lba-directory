@@ -221,10 +221,10 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
       });
       setDeals([...deals, { ...newDeal, business_id: business.id, is_active: true }]);
       setNewDeal({ title: "", description: "", badge_text: "", start_date: "", end_date: "" });
-      toast.success("Deal added successfully!");
+      toast.success("Sale added successfully!");
     } catch (error) {
-      console.error("Failed to add deal:", error);
-      toast.error("Failed to add deal");
+      console.error("Failed to add sale:", error);
+      toast.error("Failed to add sale");
     }
   };
 
@@ -232,10 +232,10 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
     try {
       await base44.entities.Deal.delete(dealId);
       setDeals(deals.filter(d => d.id !== dealId));
-      toast.success("Deal deleted successfully!");
+      toast.success("Sale deleted successfully!");
     } catch (error) {
-      console.error("Failed to delete deal:", error);
-      toast.error("Failed to delete deal");
+      console.error("Failed to delete sale:", error);
+      toast.error("Failed to delete sale");
     }
   };
 
@@ -252,7 +252,7 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
             <TabsTrigger value="contact">Contact</TabsTrigger>
             <TabsTrigger value="links">Links</TabsTrigger>
             <TabsTrigger value="gallery">Gallery</TabsTrigger>
-            <TabsTrigger value="deals">Deals</TabsTrigger>
+            <TabsTrigger value="deals">Sales</TabsTrigger>
             <TabsTrigger value="status">Status</TabsTrigger>
           </TabsList>
 
@@ -692,10 +692,10 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
 
           <TabsContent value="deals" className="space-y-4 mt-4">
             <div className="space-y-4 border-b pb-4">
-              <h3 className="font-semibold">Add New Deal/Sale</h3>
+              <h3 className="font-semibold">Add New Sale</h3>
               
               <div className="space-y-2">
-                <Label htmlFor="deal_title">Deal Title *</Label>
+                <Label htmlFor="deal_title">Sale Title *</Label>
                 <Input
                   id="deal_title"
                   value={newDeal.title}
@@ -749,14 +749,14 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
 
               <Button onClick={handleAddDeal} className="bg-cyan-600 hover:bg-cyan-700 w-full">
                 <Plus className="w-4 h-4 mr-2" />
-                Add Deal
+                Add Sale
               </Button>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Active Deals</h3>
+              <h3 className="font-semibold mb-4">Active Sales</h3>
               {deals.length === 0 ? (
-                <p className="text-gray-500 text-sm">No deals yet</p>
+                <p className="text-gray-500 text-sm">No sales yet</p>
               ) : (
                 <div className="space-y-3">
                   {deals.map((deal) => (
