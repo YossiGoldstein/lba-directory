@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ChevronRight, Sparkles, TrendingUp } from "lucide-react";
+import { Search, ChevronRight, Sparkles } from "lucide-react";
 import BusinessCard from "../components/category/BusinessCard";
 import RelatedCategories from "../components/category/RelatedCategories";
 import BusinessMap from "../components/category/BusinessMap";
-import ReactMarkdown from "react-markdown";
 
 export default function CategoryListing() {
   const urlParams = new URLSearchParams(window.location.search);
