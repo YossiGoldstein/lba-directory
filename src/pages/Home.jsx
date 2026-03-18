@@ -107,7 +107,7 @@ export default function Home() {
                 </button>
               </nav>
 
-              <div className="hidden md:flex items-center gap-4">
+              <div className="hidden lg:flex items-center gap-4">
                 {user ? (
                   <div className="flex items-center gap-3">
                     <span className="text-lg text-white">Hello, {user.full_name}</span>
