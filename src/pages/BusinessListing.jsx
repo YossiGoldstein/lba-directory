@@ -654,6 +654,45 @@ export default function BusinessListing() {
 
       </div>
 
+      {/* Claim Business Modal */}
+      {showClaimModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
+            {claimSent ? (
+              <>
+                <div className="text-5xl mb-4">📧</div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">Check Your Email!</h3>
+                <p className="text-gray-600 mb-6">
+                  We sent a claim link to <strong>{user?.email}</strong>.<br />
+                  Click the link in the email to claim <strong>{business.business_name}</strong>.
+                </p>
+                <p className="text-sm text-gray-400 mb-6">The link expires in 24 hours.</p>
+                <Button onClick={() => { setShowClaimModal(false); setClaimSent(false); }} className="w-full">Close</Button>
+              </>
+            ) : (
+              <>
+                <div className="text-5xl mb-4">🏢</div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">Claim This Business</h3>
+                <p className="text-gray-600 mb-6">
+                  Are you the owner of <strong>{business.business_name}</strong>?<br />
+                  We'll send a verification link to your email.
+                </p>
+                <div className="flex flex-col gap-3">
+                  <Button
+                    onClick={handleSendClaimEmail}
+                    disabled={claimLoading}
+                    className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:opacity-90 text-white w-full font-semibold"
+                  >
+                    {claimLoading ? "Sending..." : "Send Claim Email"}
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowClaimModal(false)} className="w-full">Cancel</Button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Image Lightbox */}
       {selectedImage && (
         <div
