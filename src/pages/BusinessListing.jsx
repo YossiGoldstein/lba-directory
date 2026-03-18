@@ -401,9 +401,9 @@ export default function BusinessListing() {
                 </div>
 
                 {/* Bottom Row - Action Buttons */}
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 w-full">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 w-full">
                   {/* Action Buttons */}
-                  <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto md:ml-auto">
+                  <div className="flex flex-wrap gap-2 w-full md:w-auto md:ml-auto">
                     <Button 
                     size="lg"
                     variant="outline" 
