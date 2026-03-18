@@ -148,9 +148,9 @@ export default function CategoryListing() {
         </div>
 
         {/* Default View - Businesses */}
-        <div className="flex gap-0 lg:gap-6">
-            {/* Listings Column - Takes more space for wide cards */}
-            <div className="flex-1 min-w-0 px-0 lg:pr-6 overflow-y-auto lg:h-[calc(100vh-12rem)]">
+        <div className="flex flex-col lg:flex-row gap-0 lg:gap-6">
+            {/* Listings Column */}
+            <div className="flex-1 min-w-0 px-0 lg:pr-6 lg:overflow-y-auto lg:h-[calc(100vh-12rem)]">
             {/* Info Block */}
             {categoryBusinesses.length > 0 && (
               <div className="bg-cyan-50 rounded-lg p-4 mb-4 border border-cyan-200">
