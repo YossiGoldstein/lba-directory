@@ -9,17 +9,9 @@ import {
   Car, PartyPopper, GraduationCap, 
   HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard, Mic, Gem
 } from "lucide-react";
-import SearchResultsPanel from "../components/home/SearchResultsPanel";
-
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState(null);
-  const [agentResponse, setAgentResponse] = useState("");
-  const [matchedBusinesses, setMatchedBusinesses] = useState([]);
-  const [conversation, setConversation] = useState(null);
-  const [allBusinesses, setAllBusinesses] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
