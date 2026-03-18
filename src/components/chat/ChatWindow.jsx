@@ -268,19 +268,19 @@ export default function ChatWindow({
 
                     {/* Extract and show business cards if businesses are mentioned */}
                     {(() => {
-                      const businessIds = extractBusinessesFromMessage(message.content);
-                      if (businessIds.length > 0) {
-                        return (
-                          <div className="mt-3 space-y-2">
-                            {businessIds.slice(0, 3).map(id => {
-                              const business = businesses.find(b => b.id === id);
-                              if (!business) return null;
-                              return <BusinessResultCard key={id} business={business} />;
-                            })}
-                          </div>
-                        );
-                      }
-                      return null;
+                       const businessIds = extractBusinessesFromMessage(message.content);
+                       if (businessIds.length > 0) {
+                         return (
+                           <div className="mt-3 space-y-2">
+                             {businessIds.slice(0, 3).map(id => {
+                               const business = businesses.find(b => b.id === id);
+                               if (!business) return null;
+                               return <BusinessSearchResultCard key={id} business={business} />;
+                             })}
+                           </div>
+                         );
+                       }
+                       return null;
                     })()}
                   </>
                 )}
