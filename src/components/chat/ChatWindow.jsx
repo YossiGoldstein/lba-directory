@@ -83,14 +83,22 @@ export default function ChatWindow({
     const unsubscribe = base44.agents.subscribeToConversation(
       conversation.id,
       (data) => {
-        const msgs = (data.messages || []).filter(
+        const allMsgs = data.messages || [];
+        const msgs = allMsgs.filter(
           m => !m.content?.startsWith("[System:") && !m.content?.startsWith("Context:")
         );
         setMessages(msgs);
-        // Turn off loading once we get a non-empty assistant response
+
+        // Turn off loading when assistant responds (with or without content)
+        // Also check if all tool calls are finished
         const lastMsg = msgs[msgs.length - 1];
-        if (lastMsg && lastMsg.role === "assistant" && lastMsg.content) {
-          setIsLoading(false);
+        if (lastMsg && lastMsg.role === "assistant") {
+          const pendingTools = (lastMsg.tool_calls || []).filter(
+            t => t.status === "running" || t.status === "in_progress" || t.status === "pending"
+          );
+          if (pendingTools.length === 0) {
+            setIsLoading(false);
+          }
         }
       }
     );
