@@ -61,6 +61,7 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
+      <Route path="/ClaimBusiness" element={<ClaimBusiness />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
