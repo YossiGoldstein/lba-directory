@@ -405,7 +405,7 @@ export default function BusinessListing() {
                   {/* Action Buttons */}
                   <div className="flex flex-wrap gap-2 w-full md:w-auto md:ml-auto">
                     <Button 
-                    size="lg"
+                    size="sm"
                     variant="outline" 
                     onClick={handleToggleFavorite}
                     disabled={isAddingFavorite || isLoadingUser || isLoadingFavorite}
@@ -413,7 +413,7 @@ export default function BusinessListing() {
                       isFavorite 
                         ? 'bg-red-500 hover:bg-red-600 text-white border-red-500' 
                         : 'bg-white/90 hover:bg-white border-2 border-white'
-                    } w-full sm:w-auto transition-colors`}
+                    } transition-colors text-sm`}
                     >
                     <Heart className={`w-5 h-5 mr-2 ${isFavorite ? 'fill-white' : ''}`} />
                     {isLoadingUser ? 'Loading...' : isFavorite ? 'Saved' : 'Add to Favorites'}
