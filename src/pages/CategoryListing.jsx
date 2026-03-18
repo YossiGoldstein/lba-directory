@@ -111,7 +111,7 @@ export default function CategoryListing() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-    window.location.href = createPageUrl(`SearchResults?query=${encodeURIComponent(searchQuery.trim())}`);
+    window.location.href = `/SearchResults?query=${encodeURIComponent(searchQuery.trim())}`;
   };
 
   const businessesToMap = displayedBusinesses;
