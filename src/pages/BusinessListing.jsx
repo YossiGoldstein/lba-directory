@@ -403,13 +403,13 @@ export default function BusinessListing() {
                 {/* Bottom Row - Action Buttons */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 w-full">
                   {/* Action Buttons */}
-                  <div className="flex flex-wrap gap-2 w-full md:w-auto md:ml-auto">
+                  <div className="flex flex-wrap gap-2 w-full">
                     <Button 
                     size="sm"
                     variant="outline" 
                     onClick={handleToggleFavorite}
                     disabled={isAddingFavorite || isLoadingUser || isLoadingFavorite}
-                    className={`${
+                    className={`flex-1 min-w-[140px] ${
                       isFavorite 
                         ? 'bg-red-500 hover:bg-red-600 text-white border-red-500' 
                         : 'bg-white/90 hover:bg-white border-2 border-white'
@@ -424,7 +424,7 @@ export default function BusinessListing() {
                       <Button
                         size="sm"
                         onClick={handleClaimBusiness}
-                        className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:opacity-90 text-white font-semibold text-sm"
+                        className="flex-1 min-w-[140px] bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:opacity-90 text-white font-semibold text-sm"
                       >
                         🏢 Claim This Business
                       </Button>
@@ -432,9 +432,9 @@ export default function BusinessListing() {
 
                     {(business.latitude && business.longitude) || business.address_line1 ? (
                       <Button
-                        size="lg"
+                        size="sm"
                         asChild
-                        className="bg-white/90 hover:bg-white text-gray-900 font-semibold border-2 border-white transition-colors text-sm"
+                        className="flex-1 min-w-[140px] bg-white/90 hover:bg-white text-gray-900 font-semibold border-2 border-white transition-colors text-sm"
                       >
                         <a
                           href={
