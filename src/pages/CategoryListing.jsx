@@ -47,7 +47,7 @@ export default function CategoryListing() {
   const currentCategory = categories.find((c) => c.slug === slug);
 
   // Filter businesses by current category (for default view)
-  const categoryBusinesses = React.useMemo(() => {
+  const categoryBusinesses = useMemo(() => {
     if (slug === "all") return allBusinesses;
     
     return allBusinesses.filter((b) => {
