@@ -204,7 +204,7 @@ export default function Home() {
         </div>
 
         {/* Logo - Fixed positioning */}
-        <div className="absolute top-3 left-2 sm:top-4 sm:left-4 md:top-5 md:left-6 z-[150]">
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-4 md:top-2 md:left-6 z-[150]">
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
             alt="LBA Directory"
