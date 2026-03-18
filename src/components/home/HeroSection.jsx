@@ -15,7 +15,7 @@ export default function HeroSection() {
     const params = new URLSearchParams();
     if (searchQuery) params.append("query", searchQuery);
     if (location && location !== "all") params.append("location", location);
-    navigate(createPageUrl(`CategoryListing?${params.toString()}`));
+    navigate(createPageUrl(`SearchResults?${params.toString()}`));
   };
 
   return (
