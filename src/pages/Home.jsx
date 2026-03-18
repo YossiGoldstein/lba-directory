@@ -71,11 +71,9 @@ export default function Home() {
     e.preventDefault();
     if (!searchQuery.trim()) return;
 
-    console.log("🔍 Starting search for:", searchQuery);
-    setIsSearching(true);
-    setSearchResults(null);
-    setAgentResponse("");
-    setMatchedBusinesses([]);
+    // Redirect to dedicated search results page
+    window.location.href = createPageUrl(`SearchResults?query=${encodeURIComponent(searchQuery.trim())}`);
+    return;
 
     const query = searchQuery.toLowerCase().trim();
     const queryWords = query.split(/\s+/).filter(w => w.length > 2);
