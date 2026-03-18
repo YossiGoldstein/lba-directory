@@ -113,44 +113,55 @@ export default function ChatWindow({
   };
 
   const handleSend = async () => {
-    if (!inputValue.trim() || !conversation || isLoading) return;
+   if (!inputValue.trim() || !conversation || isLoading) return;
 
-    const userMessage = inputValue.trim();
-    setInputValue("");
-    setIsLoading(true);
+   const userMessage = inputValue.trim();
+   setInputValue("");
+   setIsLoading(true);
 
-    // Optimistically add user message to UI
-    setMessages(prev => [...prev, { role: "user", content: userMessage }]);
+   // Optimistically add user message to UI
+   setMessages(prev => [...prev, { role: "user", content: userMessage }]);
 
-    // Search mode (unauthenticated users)
-    if (conversation.isSearchMode) {
-      try {
-        const response = await base44.functions.invoke('searchBusinesses', { query: userMessage });
-        const data = response.data;
-        const found = data.businesses || [];
-        
-        let replyText = "";
-        if (found.length === 0) {
-          replyText = `I couldn't find any businesses matching "${userMessage}". Try a different search term.`;
-        } else {
-          replyText = `I found ${found.length} result${found.length > 1 ? 's' : ''} for "${userMessage}":`;
-        }
+   // Search mode (unauthenticated users)
+   if (conversation.isSearchMode) {
+     // Check if message is just a greeting or very short
+     const isGreeting = /^(hi|hello|hey|שלום|מה|אוקיי|סבבה|תודה)$/i.test(userMessage);
 
-        setBusinesses(prev => {
-          const ids = prev.map(b => b.id);
-          const newOnes = found.filter(b => !ids.includes(b.id));
-          return [...prev, ...newOnes];
-        });
+     if (isGreeting) {
+       // Respond to greeting without searching
+       const greetingResponse = "Hi there! 👋 I'm here to help you find local businesses in the Lakewood area. What are you looking for today?";
+       setMessages(prev => [...prev, { role: "assistant", content: greetingResponse }]);
+       setIsLoading(false);
+       return;
+     }
 
-        setMessages(prev => [...prev, { role: "assistant", content: replyText, _businessIds: found.map(b => b.id) }]);
-      } catch (err) {
-        console.error("Search failed:", err);
-        setMessages(prev => [...prev, { role: "assistant", content: "Sorry, I couldn't complete the search. Please try again." }]);
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
+     try {
+       const response = await base44.functions.invoke('searchBusinesses', { query: userMessage });
+       const data = response.data;
+       const found = data.businesses || [];
+
+       let replyText = "";
+       if (found.length === 0) {
+         replyText = `I couldn't find any businesses matching "${userMessage}". Try a different search term.`;
+       } else {
+         replyText = `I found ${found.length} result${found.length > 1 ? 's' : ''} for "${userMessage}":`;
+       }
+
+       setBusinesses(prev => {
+         const ids = prev.map(b => b.id);
+         const newOnes = found.filter(b => !ids.includes(b.id));
+         return [...prev, ...newOnes];
+       });
+
+       setMessages(prev => [...prev, { role: "assistant", content: replyText, _businessIds: found.map(b => b.id) }]);
+     } catch (err) {
+       console.error("Search failed:", err);
+       setMessages(prev => [...prev, { role: "assistant", content: "Sorry, I couldn't complete the search. Please try again." }]);
+     } finally {
+       setIsLoading(false);
+     }
+     return;
+   }
 
     // Agent conversation mode (authenticated users)
     const now = new Date().toLocaleString('en-US', {
