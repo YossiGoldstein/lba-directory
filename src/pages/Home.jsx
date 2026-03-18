@@ -136,7 +136,7 @@ export default function Home() {
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 text-white hover:text-cyan-200 z-50 relative"
+                className="lg:hidden p-2 text-white hover:text-cyan-200 z-50 relative"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
