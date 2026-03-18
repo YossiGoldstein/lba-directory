@@ -63,14 +63,6 @@ export default function ChatWindow({
             description: "Help finding local businesses",
           }
         });
-
-        // Send context as first system message so the AI has immediate context
-        if (contextNote) {
-          await base44.agents.addMessage(conv, {
-            role: "user",
-            content: contextNote
-          });
-        }
         
         setConversation(conv);
         setError(null);
