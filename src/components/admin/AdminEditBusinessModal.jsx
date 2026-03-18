@@ -690,6 +690,102 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
             </div>
           </TabsContent>
 
+          <TabsContent value="deals" className="space-y-4 mt-4">
+            <div className="space-y-4 border-b pb-4">
+              <h3 className="font-semibold">Add New Deal/Sale</h3>
+              
+              <div className="space-y-2">
+                <Label htmlFor="deal_title">Deal Title *</Label>
+                <Input
+                  id="deal_title"
+                  value={newDeal.title}
+                  onChange={(e) => setNewDeal({ ...newDeal, title: e.target.value })}
+                  placeholder="e.g., 20% Off Sushi"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="deal_description">Description</Label>
+                <Textarea
+                  id="deal_description"
+                  value={newDeal.description}
+                  onChange={(e) => setNewDeal({ ...newDeal, description: e.target.value })}
+                  placeholder="Details about the deal"
+                  rows={2}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="deal_badge">Badge Text</Label>
+                <Input
+                  id="deal_badge"
+                  value={newDeal.badge_text}
+                  onChange={(e) => setNewDeal({ ...newDeal, badge_text: e.target.value })}
+                  placeholder="e.g., Sale, New, Today Only"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="deal_start">Start Date *</Label>
+                  <Input
+                    id="deal_start"
+                    type="datetime-local"
+                    value={newDeal.start_date}
+                    onChange={(e) => setNewDeal({ ...newDeal, start_date: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="deal_end">End Date *</Label>
+                  <Input
+                    id="deal_end"
+                    type="datetime-local"
+                    value={newDeal.end_date}
+                    onChange={(e) => setNewDeal({ ...newDeal, end_date: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <Button onClick={handleAddDeal} className="bg-cyan-600 hover:bg-cyan-700 w-full">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Deal
+              </Button>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-4">Active Deals</h3>
+              {deals.length === 0 ? (
+                <p className="text-gray-500 text-sm">No deals yet</p>
+              ) : (
+                <div className="space-y-3">
+                  {deals.map((deal) => (
+                    <div key={deal.id} className="border rounded-lg p-3 bg-gray-50">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-medium">{deal.title}</p>
+                          {deal.badge_text && <p className="text-sm text-gray-600">{deal.badge_text}</p>}
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleDeleteDeal(deal.id)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      {deal.description && <p className="text-sm text-gray-600 mb-2">{deal.description}</p>}
+                      <p className="text-xs text-gray-500">
+                        {new Date(deal.start_date).toLocaleDateString()} - {new Date(deal.end_date).toLocaleDateString()}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
           <TabsContent value="status" className="space-y-4 mt-4">
             <div className="space-y-2">
               <Label htmlFor="status">Business Status</Label>
