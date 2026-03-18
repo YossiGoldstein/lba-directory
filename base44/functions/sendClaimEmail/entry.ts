@@ -128,12 +128,16 @@ Deno.serve(async (req) => {
 </html>
     `.trim();
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
+    const emailResult = await base44.asServiceRole.integrations.Core.SendEmail({
       from_name: 'LBA Directory',
       to: user.email,
       subject: `Claim Your Business: ${business.business_name}`,
       body: emailHtml
     });
+
+    if (!emailResult) {
+      throw new Error('Failed to send email');
+    }
 
     return Response.json({ success: true, message: 'Claim email sent successfully' });
 
