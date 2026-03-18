@@ -344,8 +344,8 @@ export default function BusinessListing() {
             <div className="flex flex-col gap-4">
               <div className="flex items-start gap-3 md:gap-6">
                 {/* Logo Circle */}
-                {business.logo_url && (
-                  <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-white flex-shrink-0">
+                 {business.logo_url && (
+                   <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-white flex-shrink-0">
                     <img
                       src={fixImageUrl(business.logo_url)}
                       alt={business.business_name}
