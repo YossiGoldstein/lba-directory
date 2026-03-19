@@ -30,6 +30,8 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
   const [isLoading, setIsLoading] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
+  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [optimization, setOptimization] = useState(null);
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
