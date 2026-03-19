@@ -8,6 +8,7 @@ import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import ClaimBusiness from './pages/ClaimBusiness';
+import AiSearchPage from './pages/AiSearch';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
