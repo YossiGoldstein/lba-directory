@@ -276,8 +276,7 @@ export default function ChatWindow({
                 }`}
               >
                 {message.role === "user" ? (
-                  // Strip the appended time context before displaying
-                  <p className="text-sm">{message.content.replace(/\n\n\[Current time in New York:.*\]$/, '')}</p>
+                 <p className="text-sm">{message.content.replace(/\n\nContext:.*$/s, '')}</p>
                 ) : (
                   <>
                     <ReactMarkdown
