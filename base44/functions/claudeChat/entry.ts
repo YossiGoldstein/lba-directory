@@ -53,7 +53,7 @@ function formatBusiness(b) {
 
   return [
     `Name: ${b.business_name}`,
-    b.slug ? `Profile: https://lbadirectory.com/businesses/${b.slug}` : null,
+    `Profile: https://lbadirectory.com/BusinessListing?id=${b.id}`,
     mapsLink ? `Address: ${address} | Maps: ${mapsLink}` : null,
     phone ? `Phone: ${b.phone} | tel:+1${phone}` : null,
     whatsapp ? `WhatsApp: ${b.whatsapp_number} | https://wa.me/1${whatsapp}` : null,
