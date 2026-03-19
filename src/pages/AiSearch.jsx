@@ -11,6 +11,8 @@ export default function AiSearch() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
+  const topRef = useRef(null);
+  const isInitialLoad = useRef(true);
 
   // On load, read ?query= from URL and fire initial search
   useEffect(() => {
@@ -22,7 +24,15 @@ export default function AiSearch() {
   }, []);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages.length === 0) return;
+    if (isInitialLoad.current && messages.length >= 2) {
+      // First result arrived — scroll to top
+      topRef.current?.scrollIntoView({ behavior: "smooth" });
+      isInitialLoad.current = false;
+    } else if (!isInitialLoad.current) {
+      // Subsequent messages — scroll to bottom
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages, loading]);
 
   const sendMessage = async (text) => {
