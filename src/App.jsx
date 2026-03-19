@@ -8,6 +8,7 @@ import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import ClaimBusiness from './pages/ClaimBusiness';
+import ServiceInquiry from './pages/ServiceInquiry';
 import AiSearchPage from './pages/AiSearch';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -63,6 +64,7 @@ const AuthenticatedApp = () => {
         />
       ))}
       <Route path="/ClaimBusiness" element={<ClaimBusiness />} />
+      <Route path="/ServiceInquiry" element={<ServiceInquiry />} />
       <Route path="/AiSearch" element={
         <LayoutWrapper currentPageName="AiSearch">
           <AiSearchPage />

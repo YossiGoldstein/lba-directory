@@ -35,6 +35,7 @@ Deno.serve(async (req) => {
     const baseUrl = `https://${appId}.base44.app`;
     const dashboardUrl = `${baseUrl}/#/business-dashboard`;
     const businessUrl = `${baseUrl}/#/business-listing?id=${business.id}`;
+    const inquiryUrl = `${baseUrl}/#/ServiceInquiry?business=${encodeURIComponent(business.business_name)}&phone=${encodeURIComponent(business.phone || '')}&email=${encodeURIComponent(ownerEmail)}`;
 
     // Send approval email to business email
     await base44.integrations.Core.SendEmail({
@@ -75,15 +76,22 @@ Deno.serve(async (req) => {
           
           <div style="background: #fef3c7; border: 2px solid #f59e0b; padding: 20px; border-radius: 8px; margin: 25px 0;">
             <h3 style="margin-top: 0; color: #92400e;">Want More Visibility?</h3>
-            <p>We offer additional services:</p>
+            <p>We offer additional services to help your business grow:</p>
             <ul style="margin: 10px 0; padding-left: 20px;">
-              <li>Upgrade to Pro - Priority ranking and unlimited images</li>
               <li>Logo Design - Professional design for your business</li>
-              <li>Website Building - Your own website with online ordering</li>
-              <li>Promotional Videos - Professional video for your business</li>
-              <li>Marketing Consulting - Help promoting your business</li>
+              <li>Landing Page - A dedicated page for your business</li>
+              <li>Full Website - Your own website with online ordering</li>
+              <li>CRM System - Manage your customers efficiently</li>
+              <li>Promotional Video - Professional video for your business</li>
+              <li>WhatsApp AI Chat - Automated customer support on WhatsApp</li>
             </ul>
-            <p><strong>Contact us!</strong></p>
+            <div style="text-align: center; margin: 20px 0;">
+              <a href="${inquiryUrl}" 
+                 style="display: inline-block; background: #f59e0b; color: white; padding: 12px 30px; 
+                         text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                I'm Interested - Tell Me More
+              </a>
+            </div>
           </div>
           
           <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 25px 0;">
