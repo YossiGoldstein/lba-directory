@@ -115,7 +115,7 @@ FORMATTING RULES:
 - Separate each business result with a --- divider
 - Keep tone friendly and helpful
 
---- LBA DIRECTORY (${approved.length} businesses) ---
+--- LBA DIRECTORY (showing ${relevant.length} of ${approved.length} businesses) ---
 ${businessCatalog}
 --- END OF DIRECTORY ---`;
 
