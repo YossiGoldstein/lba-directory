@@ -1,19 +1,33 @@
 import React, { useState } from "react";
-import { createPageUrl } from "@/utils";
-import { Search, MapPin } from "lucide-react";
+import { Search, MapPin, Loader2, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { base44 } from "@/api/base44Client";
+import ReactMarkdown from "react-markdown";
 
 export default function HeroSection() {
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("all");
+  const [aiResult, setAiResult] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    const params = new URLSearchParams();
-    if (searchQuery) params.append("query", searchQuery);
-    if (location && location !== "all") params.append("location", location);
-    window.location.href = `/SearchResults?${params.toString()}`;
+    if (!searchQuery.trim()) return;
+
+    setLoading(true);
+    setAiResult(null);
+
+    const userMessage = location && location !== "all"
+      ? `${searchQuery} in ${location}`
+      : searchQuery;
+
+    const response = await base44.functions.invoke("claudeChat", {
+      messages: [{ role: "user", content: userMessage }],
+    });
+
+    setAiResult(response.data?.content || "No results found.");
+    setLoading(false);
   };
 
   return (
@@ -72,29 +86,56 @@ export default function HeroSection() {
                 <Button 
                   type="submit"
                   size="lg"
+                  disabled={loading}
                   className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 rounded-xl text-base font-semibold shadow-lg hover:shadow-xl transition-all"
                 >
-                  Search
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Search"}
                 </Button>
               </div>
             </div>
           </form>
 
-          {/* Quick Stats or Trust Indicators */}
-          <div className="mt-12 flex flex-wrap justify-center gap-8 text-blue-100">
-            <div>
-              <div className="text-3xl font-bold text-white">500+</div>
-              <div className="text-sm">Local Businesses</div>
+          {/* AI Results */}
+          {(loading || aiResult) && (
+            <div className="mt-6 max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl text-left overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center gap-2 px-6 py-4 bg-blue-50 border-b border-blue-100">
+                <Bot className="w-5 h-5 text-blue-600" />
+                <span className="text-sm font-semibold text-blue-700">LBA Directory Assistant</span>
+              </div>
+
+              <div className="px-6 py-5">
+                {loading ? (
+                  <div className="flex items-center gap-3 text-gray-500">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Searching the directory...</span>
+                  </div>
+                ) : (
+                  <div className="prose prose-sm max-w-none text-gray-800 [&>p]:mb-3 [&>ul]:mb-3 [&>ul>li]:mb-1 [&>h3]:font-semibold [&>h3]:text-gray-900 [&>h3]:mb-2 [&>strong]:font-semibold">
+                    <ReactMarkdown>{aiResult}</ReactMarkdown>
+                  </div>
+                )}
+              </div>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-white">10+</div>
-              <div className="text-sm">Categories</div>
+          )}
+
+          {/* Quick Stats */}
+          {!aiResult && !loading && (
+            <div className="mt-12 flex flex-wrap justify-center gap-8 text-blue-100">
+              <div>
+                <div className="text-3xl font-bold text-white">500+</div>
+                <div className="text-sm">Local Businesses</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-white">10+</div>
+                <div className="text-sm">Categories</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-white">1000+</div>
+                <div className="text-sm">Happy Customers</div>
+              </div>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-white">1000+</div>
-              <div className="text-sm">Happy Customers</div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </section>
