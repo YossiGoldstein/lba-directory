@@ -974,6 +974,8 @@ Format as JSON.`;
             )}
           </TabsContent>
 
+        </Tabs>
+
         <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
           <Button variant="outline" onClick={onClose}>
             Cancel
