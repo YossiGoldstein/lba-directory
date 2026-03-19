@@ -115,9 +115,9 @@ export default function SubmissionSuccess() {
               <strong>Contact us</strong> to learn more!
             </p>
             <div className="space-y-2 text-sm text-gray-600">
-              <p>📧 <strong>Email:</strong> office@lbadirectory.com</p>
-              <p>📱 <strong>WhatsApp:</strong> 732-600-1260</p>
-              <p>☎️ <strong>Phone:</strong> 732-600-1260</p>
+              <p><strong>Email:</strong> office@lbadirectory.com</p>
+              <p><strong>WhatsApp:</strong> 732-600-1260</p>
+              <p><strong>Phone:</strong> 732-600-1260</p>
             </div>
           </div>
         </div>
