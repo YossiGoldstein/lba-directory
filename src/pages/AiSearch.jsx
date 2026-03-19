@@ -42,12 +42,15 @@ export default function AiSearch() {
     setInput("");
     setLoading(true);
 
-    const response = await base44.functions.invoke("claudeChat", {
-      messages: updatedMessages,
-    });
-
-    const aiContent = response.data?.content || "Sorry, I couldn't find an answer.";
-    setMessages([...updatedMessages, { role: "assistant", content: aiContent }]);
+    try {
+      const response = await base44.functions.invoke("claudeChat", {
+        messages: updatedMessages,
+      });
+      const aiContent = response.data?.content || "Sorry, I couldn't find an answer.";
+      setMessages([...updatedMessages, { role: "assistant", content: aiContent }]);
+    } catch (err) {
+      setMessages([...updatedMessages, { role: "assistant", content: "Sorry, something went wrong. Please try again in a moment." }]);
+    }
     setLoading(false);
   };
 
