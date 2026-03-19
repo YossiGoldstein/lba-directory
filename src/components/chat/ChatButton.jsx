@@ -49,18 +49,20 @@ export default function ChatButton({ pageContext }) {
         />
       )}
 
-      {/* Floating Chat Bubble */}
-      <button
-        onClick={handleToggle}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 z-[49] transition-all hover:scale-110 flex items-center justify-center"
-        aria-label="Open chat assistant"
-      >
-        {isOpen && !isMinimized ? (
-          <Minimize2 className="w-6 h-6 text-white" />
-        ) : (
-          <MessageCircle className="w-6 h-6 text-white" />
-        )}
-      </button>
+      {/* Floating Chat Bubble — hidden on mobile when chat is open (would overlap send button) */}
+      {!(isMobile && isOpen && !isMinimized) && (
+        <button
+          onClick={handleToggle}
+          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 z-[49] transition-all hover:scale-110 flex items-center justify-center"
+          aria-label="Open chat assistant"
+        >
+          {isOpen && !isMinimized ? (
+            <Minimize2 className="w-6 h-6 text-white" />
+          ) : (
+            <MessageCircle className="w-6 h-6 text-white" />
+          )}
+        </button>
+      )}
 
 
     </>
