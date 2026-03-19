@@ -79,6 +79,7 @@ export default function AiSearch() {
 
       {/* Messages */}
       <div className="flex-1 max-w-3xl mx-auto w-full px-4 py-6 space-y-4">
+        <div ref={topRef} />
         {messages.length === 0 && !loading && (
           <div className="text-center text-gray-400 mt-20">
             <Bot className="w-12 h-12 mx-auto mb-3 text-blue-200" />
