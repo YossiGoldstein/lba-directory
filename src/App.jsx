@@ -62,6 +62,11 @@ const AuthenticatedApp = () => {
         />
       ))}
       <Route path="/ClaimBusiness" element={<ClaimBusiness />} />
+      <Route path="/AiSearch" element={
+        <LayoutWrapper currentPageName="AiSearch">
+          <AiSearchPage />
+        </LayoutWrapper>
+      } />
       <Route path="/searchresults" element={
         <LayoutWrapper currentPageName="SearchResults">
           <Pages.SearchResults />
