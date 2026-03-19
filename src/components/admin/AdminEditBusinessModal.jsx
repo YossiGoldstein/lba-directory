@@ -987,3 +987,5 @@ Format as JSON.`;
     </Dialog>
   );
 }
+
+export default AdminEditBusinessModal;
