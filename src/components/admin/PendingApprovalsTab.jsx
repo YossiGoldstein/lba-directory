@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { CheckCircle, XCircle, ExternalLink, Sparkles } from "lucide-react";
+import { CheckCircle, XCircle, ExternalLink, Sparkles, AlertTriangle } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
 
