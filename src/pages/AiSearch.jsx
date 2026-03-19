@@ -105,7 +105,22 @@ export default function AiSearch() {
                 <p className="text-sm leading-relaxed">{msg.content}</p>
               ) : (
                 <div className="prose prose-sm max-w-none text-gray-800 [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:mb-2 [&>ul>li]:mb-1 [&>strong]:font-semibold [&>h3]:font-bold [&>h3]:text-gray-900 [&>h3]:mt-3 [&>h3]:mb-1">
-                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  <ReactMarkdown
+                    components={{
+                      a: ({ href, children }) => (
+                        <a
+                          href={href}
+                          target={href?.startsWith("tel:") || href?.startsWith("wa.me") ? "_self" : "_blank"}
+                          rel="noopener noreferrer"
+                          className="text-blue-600 underline hover:text-blue-800"
+                        >
+                          {children}
+                        </a>
+                      ),
+                    }}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
                 </div>
               )}
             </div>
