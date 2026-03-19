@@ -275,30 +275,6 @@ export default function Home() {
 
             </form>
 
-            {/* AI Results */}
-            {(isSearching || aiResult) && (
-              <div className="max-w-3xl mx-auto w-full mb-6 px-2">
-                <div className="bg-white rounded-2xl shadow-2xl text-left overflow-hidden">
-                  <div className="flex items-center gap-2 px-5 py-3 bg-blue-50 border-b border-blue-100">
-                    <Bot className="w-4 h-4 text-blue-600" />
-                    <span className="text-sm font-semibold text-blue-700">LBA Directory Assistant</span>
-                  </div>
-                  <div className="px-5 py-4">
-                    {isSearching ? (
-                      <div className="flex items-center gap-3 text-gray-500 text-sm">
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Searching the directory...</span>
-                      </div>
-                    ) : (
-                      <div className="prose prose-sm max-w-none text-gray-800 [&>p]:mb-2 [&>ul]:mb-2 [&>ul>li]:mb-1 [&>strong]:font-semibold">
-                        <ReactMarkdown>{aiResult}</ReactMarkdown>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Category Icons - Responsive: Grid on mobile/tablet, Single row on desktop */}
             <div className="grid grid-cols-5 gap-2 sm:gap-3 md:gap-4 justify-items-center xl:flex xl:justify-center xl:items-center xl:gap-6 px-2 sm:px-4">
               {categoryIcons.map((category) => {
