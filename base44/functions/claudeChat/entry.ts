@@ -18,12 +18,14 @@ function getDeliveryOptions(b) {
 }
 
 function formatBusiness(b) {
-  const address = [b.address_line1, b.address_line2, b.city, b.state, b.zip_code].filter(Boolean).join(', ');
+  const address = [b.address_line1, b.city, b.state].filter(Boolean).join(', ');
   const mapsLink = address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : null;
   const phone = b.phone ? b.phone.replace(/\D/g, '') : null;
   const whatsapp = b.whatsapp_number ? b.whatsapp_number.replace(/\D/g, '') : null;
   const delivery = getDeliveryOptions(b);
   const hours = b.by_appointment_only ? 'By appointment only' : (b.opening_hours_text || null);
+  // Combine tags for keyword matching, keep description short
+  const keywords = [...(b.tags || []), ...(b.ai_tags || [])].join(', ');
 
   return [
     `Name: ${b.business_name}`,
@@ -32,12 +34,9 @@ function formatBusiness(b) {
     whatsapp ? `WhatsApp: ${b.whatsapp_number} | https://wa.me/1${whatsapp}` : null,
     b.website_url ? `Website: ${b.website_url}` : null,
     hours ? `Hours: ${hours}` : null,
-    b.short_description ? `Description: ${b.short_description}` : null,
-    b.long_description ? `Details: ${b.long_description.slice(0, 300)}` : null,
+    b.short_description ? `Desc: ${b.short_description.slice(0, 150)}` : null,
     delivery.length > 0 ? `Delivery: ${delivery.join(', ')}` : null,
-    b.general_rating > 0 ? `Rating: ${b.general_rating}/5` : null,
-    b.tags && b.tags.length > 0 ? `Tags: ${b.tags.join(', ')}` : null,
-    b.ai_tags && b.ai_tags.length > 0 ? `Keywords: ${b.ai_tags.join(', ')}` : null,
+    keywords ? `Tags: ${keywords}` : null,
   ].filter(Boolean).join('\n');
 }
 
