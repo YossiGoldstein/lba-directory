@@ -46,7 +46,13 @@ export default function Home() {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-    window.location.href = `/SearchResults?query=${encodeURIComponent(searchQuery.trim())}`;
+    setIsSearching(true);
+    setAiResult(null);
+    const response = await base44.functions.invoke("claudeChat", {
+      messages: [{ role: "user", content: searchQuery.trim() }],
+    });
+    setAiResult(response.data?.content || "No results found.");
+    setIsSearching(false);
   };
 
   const handleLogout = () => {
