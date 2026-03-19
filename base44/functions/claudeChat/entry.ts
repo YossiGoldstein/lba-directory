@@ -49,7 +49,6 @@ function formatBusiness(b) {
   const mapsLink = address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : null;
   const phone = b.phone ? b.phone.replace(/\D/g, '') : null;
   const whatsapp = b.whatsapp_number ? b.whatsapp_number.replace(/\D/g, '') : null;
-  const hours = b.opening_hours_text || null;
 
   return [
     `Name: ${b.business_name}`,
@@ -58,8 +57,8 @@ function formatBusiness(b) {
     phone ? `Phone: ${b.phone} | tel:+1${phone}` : null,
     whatsapp ? `WhatsApp: ${b.whatsapp_number} | https://wa.me/1${whatsapp}` : null,
     b.website_url ? `Website: ${b.website_url}` : null,
-    hours ? `Hours: ${hours}` : null,
-    b.short_description ? `Desc: ${b.short_description.slice(0, 120)}` : null,
+    b.opening_hours_text ? `Hours: ${b.opening_hours_text}` : null,
+    b.short_description ? `Desc: ${b.short_description.slice(0, 100)}` : null,
   ].filter(Boolean).join('\n');
 }
 
