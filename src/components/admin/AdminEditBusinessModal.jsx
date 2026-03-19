@@ -302,13 +302,16 @@ Format as JSON.`;
         </DialogHeader>
 
         <Tabs defaultValue="basics" className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="basics">Basics</TabsTrigger>
             <TabsTrigger value="contact">Contact</TabsTrigger>
             <TabsTrigger value="links">Links</TabsTrigger>
             <TabsTrigger value="gallery">Gallery</TabsTrigger>
             <TabsTrigger value="deals">Sales</TabsTrigger>
             <TabsTrigger value="status">Status</TabsTrigger>
+            <TabsTrigger value="ai" className="flex items-center gap-1">
+              <Sparkles className="w-3 h-3" /> AI
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="basics" className="space-y-4 mt-4">
