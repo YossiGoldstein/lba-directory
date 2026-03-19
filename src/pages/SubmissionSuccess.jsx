@@ -80,7 +80,7 @@ export default function SubmissionSuccess() {
           {/* Email Notification */}
           <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-6 mb-8">
             <p className="text-gray-700 text-lg">
-              💌 <strong>Check your email</strong> - We've already sent you an initial confirmation that your submission was received!
+              <strong>Check your email</strong> - We've already sent you an initial confirmation that your submission was received!
             </p>
           </div>
 
