@@ -19,23 +19,25 @@ function getDeliveryOptions(b) {
 
 function formatBusiness(b) {
   const address = [b.address_line1, b.address_line2, b.city, b.state, b.zip_code].filter(Boolean).join(', ');
+  const mapsLink = address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : null;
+  const phone = b.phone ? b.phone.replace(/\D/g, '') : null;
+  const whatsapp = b.whatsapp_number ? b.whatsapp_number.replace(/\D/g, '') : null;
   const delivery = getDeliveryOptions(b);
-  const hours = b.by_appointment_only ? 'By appointment only' : (b.opening_hours_text || 'Not specified');
+  const hours = b.by_appointment_only ? 'By appointment only' : (b.opening_hours_text || null);
 
   return [
-    `- Name: ${b.business_name}`,
-    b.short_description ? `  Description: ${b.short_description}` : null,
-    b.long_description ? `  Details: ${b.long_description.slice(0, 400)}` : null,
-    address ? `  Address: ${address}` : null,
-    b.phone ? `  Phone: ${b.phone}` : null,
-    b.whatsapp_number ? `  WhatsApp: ${b.whatsapp_number}` : null,
-    b.email ? `  Email: ${b.email}` : null,
-    b.website_url ? `  Website: ${b.website_url}` : null,
-    `  Hours: ${hours}`,
-    delivery.length > 0 ? `  Delivery: ${delivery.join(', ')}` : null,
-    b.general_rating > 0 ? `  Rating: ${b.general_rating}/5` : null,
-    b.tags && b.tags.length > 0 ? `  Tags: ${b.tags.join(', ')}` : null,
-    b.ai_tags && b.ai_tags.length > 0 ? `  Keywords: ${b.ai_tags.join(', ')}` : null,
+    `Name: ${b.business_name}`,
+    mapsLink ? `Address: ${address} | Maps: ${mapsLink}` : null,
+    phone ? `Phone: ${b.phone} | tel:+1${phone}` : null,
+    whatsapp ? `WhatsApp: ${b.whatsapp_number} | https://wa.me/1${whatsapp}` : null,
+    b.website_url ? `Website: ${b.website_url}` : null,
+    hours ? `Hours: ${hours}` : null,
+    b.short_description ? `Description: ${b.short_description}` : null,
+    b.long_description ? `Details: ${b.long_description.slice(0, 300)}` : null,
+    delivery.length > 0 ? `Delivery: ${delivery.join(', ')}` : null,
+    b.general_rating > 0 ? `Rating: ${b.general_rating}/5` : null,
+    b.tags && b.tags.length > 0 ? `Tags: ${b.tags.join(', ')}` : null,
+    b.ai_tags && b.ai_tags.length > 0 ? `Keywords: ${b.ai_tags.join(', ')}` : null,
   ].filter(Boolean).join('\n');
 }
 
