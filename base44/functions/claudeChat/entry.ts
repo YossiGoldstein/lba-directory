@@ -174,7 +174,7 @@ RESPONSE FORMAT — use this EXACT structure for EVERY business result:
 ---
 
 CRITICAL RULES:
-- The 🔗 View Profile link MUST always be the SECOND line, right after the business name — use the exact URL from the Profile field
+- The 🔗 View Profile link MUST always be the SECOND line, right after the business name — use the exact URL from the Profile field (always present for every business)
 - Format address as: [Address](https://www.google.com/maps/search/?api=1&query=ENCODED_ADDRESS)
 - Format phone as: [Phone Number](tel:+1PHONEDIGITS)
 - Format WhatsApp as: [WhatsApp](https://wa.me/1WHATSAPPDIGITS)
