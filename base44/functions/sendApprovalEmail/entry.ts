@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
     // Send approval email to business email
     await base44.integrations.Core.SendEmail({
       to: ownerEmail,
-      subject: "🎉 Your Business Has Been Approved! - LBA Directory",
+      subject: "Your Business Has Been Approved! - LBA Directory",
       body: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #10b981;">Your Business Has Been Approved</h2>

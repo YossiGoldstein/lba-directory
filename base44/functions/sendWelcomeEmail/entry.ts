@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎉 Welcome to LBA Directory!</h1>
+            <h1>Welcome to LBA Directory!</h1>
         </div>
         <div class="content">
             <p>Hello <strong>${fullName}</strong>,</p>
