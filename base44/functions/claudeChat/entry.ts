@@ -5,6 +5,33 @@ const anthropic = new Anthropic({
   apiKey: Deno.env.get("ANTHROPIC_API_KEY"),
 });
 
+// Map of intent keywords -> category name fragments to match against
+const INTENT_MAP = [
+  { keywords: ['food','eat','restaurant','pizza','sushi','meat','chicken','burger','falafel','salad','sandwich','deli','cafe','coffee','bagel','bakery','bread','pastry','cake','catering','dinner','lunch','breakfast','brunch','takeout','delivery','dairy','fleishig','milchig'], topics: ['food','restaurant','pizza','bakery','cafe','catering','deli','sushi','meat','dairy'] },
+  { keywords: ['plumber','plumbing','pipe','leak','drain','water','faucet'], topics: ['plumbing','home services'] },
+  { keywords: ['electric','electrician','wiring','outlet','panel','generator'], topics: ['electric','home services'] },
+  { keywords: ['doctor','medical','health','physician','pediatric','dental','dentist','orthodontist','chiropractor','therapy','therapist','pharmacy','medication'], topics: ['medical','health','dental','pharmacy'] },
+  { keywords: ['tutor','school','education','learning','child','kids','camp','hebrew','judaics'], topics: ['education','tutoring','camp'] },
+  { keywords: ['lawyer','attorney','legal','law','notary'], topics: ['legal','law'] },
+  { keywords: ['accountant','accounting','tax','cpa','finance','financial'], topics: ['accounting','finance','tax'] },
+  { keywords: ['real estate','realtor','house','apartment','rent','buy','sell','mortgage'], topics: ['real estate','mortgage'] },
+  { keywords: ['car','auto','vehicle','tire','mechanic','repair','oil','engine'], topics: ['auto','car'] },
+  { keywords: ['clothing','clothes','fashion','suit','dress','shoes','kids wear','womens','mens'], topics: ['clothing','fashion'] },
+  { keywords: ['jewelry','ring','necklace','bracelet','watch','gem','diamond'], topics: ['jewelry'] },
+  { keywords: ['grocery','supermarket','market','produce','fruit','vegetable'], topics: ['grocery','supermarket','market'] },
+  { keywords: ['pest','exterminator','bug','rodent','mice','rat','termite'], topics: ['pest'] },
+  { keywords: ['cleaning','cleaner','maid','laundry','dry cleaning'], topics: ['cleaning','laundry'] },
+  { keywords: ['insurance','coverage','policy','life insurance','health insurance'], topics: ['insurance'] },
+  { keywords: ['travel','trip','flight','hotel','vacation','tickets'], topics: ['travel'] },
+  { keywords: ['gym','fitness','exercise','sport','yoga','pilates'], topics: ['fitness','gym'] },
+  { keywords: ['moving','mover','storage','truck'], topics: ['moving','storage'] },
+  { keywords: ['photography','photographer','photo','video','videography'], topics: ['photography','video'] },
+  { keywords: ['print','printing','design','graphic','sign','banner','flyer'], topics: ['printing','design'] },
+  { keywords: ['computer','tech','it','laptop','phone repair','software'], topics: ['computer','technology'] },
+];
+
+const STOP_WORDS = new Set(['the','and','for','are','but','not','you','all','can','her','was','one','our','out','get','has','him','his','how','its','who','did','yes','any','had','just','let','about','from','they','this','that','with','have','will','your','what','which','when','here','there','find','need','want','looking','like','good','near','area','open','now','best','where','tell','show','know','some','into','then','than','also','been','such']);
+
 function getDeliveryOptions(b) {
   const options = [];
   if (b.doordash_url) options.push('DoorDash');
@@ -24,7 +51,6 @@ function formatBusiness(b) {
   const whatsapp = b.whatsapp_number ? b.whatsapp_number.replace(/\D/g, '') : null;
   const delivery = getDeliveryOptions(b);
   const hours = b.by_appointment_only ? 'By appointment only' : (b.opening_hours_text || null);
-  // Combine tags for keyword matching, keep description short
   const keywords = [...(b.tags || []), ...(b.ai_tags || [])].join(', ');
 
   return [
@@ -40,6 +66,31 @@ function formatBusiness(b) {
   ].filter(Boolean).join('\n');
 }
 
+// Detect intent topics from user query
+function getIntentTopics(queryText) {
+  const words = queryText.toLowerCase().split(/\s+/);
+  const matched = new Set();
+  for (const { keywords, topics } of INTENT_MAP) {
+    if (keywords.some(k => queryText.includes(k))) {
+      topics.forEach(t => matched.add(t));
+    }
+  }
+  return [...matched];
+}
+
+// Find matching category IDs from category list
+function matchCategories(categories, topics) {
+  if (topics.length === 0) return [];
+  const matched = [];
+  for (const cat of categories) {
+    const name = (cat.name || '').toLowerCase();
+    if (topics.some(t => name.includes(t))) {
+      matched.push(cat.id);
+    }
+  }
+  return matched;
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -49,17 +100,40 @@ Deno.serve(async (req) => {
       return Response.json({ error: "messages array is required" }, { status: 400 });
     }
 
-    // Extract keywords from the latest user message
+    // Extract meaningful keywords from the latest user message
     const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
     const queryText = (lastUserMsg?.content || '').toLowerCase();
-    const stopWords = new Set(['the','and','for','are','but','not','you','all','can','her','was','one','our','out','get','has','him','his','how','its','who','did','yes','any','had','just','let','about','from','they','this','that','with','have','will','your','what','which','when','here','there','find','need','want','looking','like','good','near','area','open','now','best']);
-    const queryWords = queryText.split(/\s+/).filter(w => w.length > 2 && !stopWords.has(w));
+    const queryWords = queryText.split(/\s+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
 
-    // Fetch approved businesses — filter by status at DB level
-    const allBusinesses = await base44.asServiceRole.entities.Business.filter({ status: 'approved' });
+    // Detect intent topics
+    const intentTopics = getIntentTopics(queryText);
 
-    // Score each business by keyword relevance (use only lightweight fields)
-    const scored = allBusinesses.map(b => {
+    // Fetch categories (small, fast) to map intent → category IDs
+    const categories = await base44.asServiceRole.entities.Category.filter({ is_active: true });
+    const matchedCategoryIds = matchCategories(categories, intentTopics);
+
+    let businesses = [];
+
+    if (matchedCategoryIds.length > 0) {
+      // Fetch businesses for matched categories in parallel
+      const fetches = matchedCategoryIds.slice(0, 5).map(catId =>
+        base44.asServiceRole.entities.Business.filter({ status: 'approved', category_id: catId })
+      );
+      const results = await Promise.all(fetches);
+      // Deduplicate by id
+      const seen = new Set();
+      for (const batch of results) {
+        for (const b of batch) {
+          if (!seen.has(b.id)) { seen.add(b.id); businesses.push(b); }
+        }
+      }
+    } else {
+      // No clear category match — fetch a broad set (VIPs + recent) and rely on keyword scoring
+      businesses = await base44.asServiceRole.entities.Business.filter({ status: 'approved' }, '-listing_rank', 80);
+    }
+
+    // Score and rank by keyword relevance
+    const scored = businesses.map(b => {
       const haystack = [
         b.business_name, b.short_description,
         ...(b.tags || []), ...(b.ai_tags || [])
@@ -69,9 +143,8 @@ Deno.serve(async (req) => {
       return { b, score: score + vipBonus };
     });
 
-    // Sort by score, take top 20
     scored.sort((a, b) => b.score - a.score);
-    const relevant = scored.slice(0, 20).map(s => s.b);
+    const relevant = scored.slice(0, 15).map(s => s.b);
     const businessCatalog = relevant.map(formatBusiness).join('\n\n');
 
     const systemPrompt = `You are the LBA Directory Assistant — a friendly, knowledgeable AI that helps people find local businesses in the Lakewood, NJ area (also serving Toms River, Jackson, Brick, Howell, Manchester).
@@ -111,7 +184,7 @@ FORMATTING RULES:
 - Separate each business result with a --- divider
 - Keep tone friendly and helpful
 
---- LBA DIRECTORY (showing ${relevant.length} of ${approved.length} businesses) ---
+--- LBA DIRECTORY (${relevant.length} relevant businesses) ---
 ${businessCatalog}
 --- END OF DIRECTORY ---`;
 
