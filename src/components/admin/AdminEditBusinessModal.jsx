@@ -886,6 +886,94 @@ Format as JSON.`;
           </TabsContent>
         </Tabs>
 
+          <TabsContent value="ai" className="space-y-4 mt-4">
+            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-gray-700 mb-4">
+                Let AI review this listing and suggest improvements to descriptions and tags for the Lakewood community.
+              </p>
+              <Button
+                onClick={handleOptimize}
+                className="bg-cyan-600 hover:bg-cyan-700 gap-2"
+                disabled={isOptimizing}
+              >
+                {isOptimizing ? (
+                  <><Loader2 className="w-4 h-4 animate-spin" /> Optimizing...</>
+                ) : (
+                  <><Sparkles className="w-4 h-4" /> Run AI Optimization</>
+                )}
+              </Button>
+            </div>
+
+            {optimization && (
+              <div className="space-y-4">
+                {optimization.improved_short_description && (
+                  <div className="p-4 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg border border-cyan-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-semibold text-gray-900">Improved Short Description</h4>
+                      <Button size="sm" variant="outline" className="gap-1"
+                        onClick={() => { setFormData(f => ({ ...f, short_description: optimization.improved_short_description })); toast.success("Applied!"); }}>
+                        <Check className="w-3 h-3" /> Apply
+                      </Button>
+                    </div>
+                    <p className="text-gray-700 text-sm">{optimization.improved_short_description}</p>
+                  </div>
+                )}
+
+                {optimization.improved_long_description && (
+                  <div className="p-4 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg border border-cyan-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-semibold text-gray-900">Improved Long Description</h4>
+                      <Button size="sm" variant="outline" className="gap-1"
+                        onClick={() => { setFormData(f => ({ ...f, long_description: optimization.improved_long_description })); toast.success("Applied!"); }}>
+                        <Check className="w-3 h-3" /> Apply
+                      </Button>
+                    </div>
+                    <p className="text-gray-700 text-sm whitespace-pre-line">{optimization.improved_long_description}</p>
+                  </div>
+                )}
+
+                {optimization.improved_tags && (
+                  <div className="p-4 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg border border-cyan-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-semibold text-gray-900">Improved Tags</h4>
+                      <Button size="sm" variant="outline" className="gap-1"
+                        onClick={() => { setFormData(f => ({ ...f, tags: optimization.improved_tags })); toast.success("Applied!"); }}>
+                        <Check className="w-3 h-3" /> Apply
+                      </Button>
+                    </div>
+                    <p className="text-gray-700 text-sm">{optimization.improved_tags}</p>
+                  </div>
+                )}
+
+                {optimization.suggestions && (
+                  <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                    <h4 className="font-semibold text-gray-900 mb-2">Additional Suggestions</h4>
+                    <ReactMarkdown className="prose prose-sm max-w-none text-gray-700">
+                      {optimization.suggestions}
+                    </ReactMarkdown>
+                  </div>
+                )}
+
+                <div className="flex justify-center pt-2">
+                  <Button
+                    onClick={() => {
+                      setFormData(f => ({
+                        ...f,
+                        short_description: optimization.improved_short_description || f.short_description,
+                        long_description: optimization.improved_long_description || f.long_description,
+                        tags: optimization.improved_tags || f.tags,
+                      }));
+                      toast.success("All improvements applied!");
+                    }}
+                    className="bg-cyan-600 hover:bg-cyan-700 gap-2 px-8"
+                  >
+                    <Check className="w-4 h-4" /> Apply All
+                  </Button>
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
         <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
           <Button variant="outline" onClick={onClose}>
             Cancel
