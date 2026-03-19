@@ -192,7 +192,7 @@ ${businessCatalog}
 
     const response = await anthropic.messages.create({
       model: "claude-haiku-4-5",
-      max_tokens: 600,
+      max_tokens: 1200,
       system: systemPrompt,
       messages,
     });
