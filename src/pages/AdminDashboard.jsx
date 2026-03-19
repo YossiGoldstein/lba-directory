@@ -24,6 +24,7 @@ import ReviewsReportsTab from "../components/admin/ReviewsReportsTab";
 import DealsOverviewTab from "../components/admin/DealsOverviewTab";
 import CategoriesTab from "../components/admin/CategoriesTab";
 import AiModerationTab from "../components/admin/AiModerationTab";
+import ServiceInquiriesTab from "../components/admin/ServiceInquiriesTab";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -242,6 +243,7 @@ export default function AdminDashboard() {
               { value: "ai", label: "AI Moderation" },
               { value: "geocode", label: "Geocode" },
               { value: "password-setup", label: "Password Setup" },
+              { value: "inquiries", label: "Service Inquiries" },
             ].map(tab => (
               <TabsList key={tab.value} className="bg-transparent p-0 h-auto">
                 <TabsTrigger 
@@ -298,6 +300,10 @@ export default function AdminDashboard() {
                 <GeocodeTab onUpdate={loadStats} />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="inquiries">
+            <ServiceInquiriesTab />
           </TabsContent>
 
           <TabsContent value="password-setup">
