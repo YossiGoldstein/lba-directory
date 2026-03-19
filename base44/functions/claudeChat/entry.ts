@@ -181,6 +181,7 @@ FORMATTING RULES:
 - Format phone as: [Phone Number](tel:+1PHONEDIGITS)
 - Format WhatsApp as: [WhatsApp](https://wa.me/1WHATSAPPDIGITS)
 - Format website as: [Website URL](website_url)
+- Format profile link as: 🔗 View full profile: [Business Name](https://lbadirectory.com/businesses/SLUG)
 - If a field is missing, skip that line entirely — do NOT write "Not available" or "N/A"
 - Separate each business result with a --- divider
 - Keep tone friendly and helpful
