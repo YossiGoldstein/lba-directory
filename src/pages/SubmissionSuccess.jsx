@@ -70,7 +70,7 @@ export default function SubmissionSuccess() {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900">You're Live! 🚀</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">You're Live!</h3>
                   <p className="text-gray-700">Your business will be live on the directory and searchable by customers</p>
                 </div>
               </div>
