@@ -128,11 +128,24 @@ Deno.serve(async (req) => {
       businesses = await base44.asServiceRole.entities.Business.filter({ status: 'approved' }, '-listing_rank', 80);
     }
 
+    // Slim down business objects to only needed fields
+    businesses = businesses.map(b => ({
+      id: b.id,
+      business_name: b.business_name,
+      phone: b.phone,
+      whatsapp_number: b.whatsapp_number,
+      address_line1: b.address_line1,
+      city: b.city,
+      opening_hours_text: b.opening_hours_text,
+      short_description: b.short_description,
+      website_url: b.website_url,
+      is_vip: b.is_vip,
+    }));
+
     // Score and rank by keyword relevance
     const scored = businesses.map(b => {
       const haystack = [
         b.business_name, b.short_description,
-        ...(b.tags || []), ...(b.ai_tags || [])
       ].join(' ').toLowerCase();
       const score = queryWords.reduce((acc, w) => acc + (haystack.includes(w) ? 1 : 0), 0);
       const vipBonus = b.is_vip ? 0.5 : 0;
