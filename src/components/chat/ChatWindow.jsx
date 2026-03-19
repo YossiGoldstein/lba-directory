@@ -123,30 +123,16 @@ export default function ChatWindow({
    // Optimistically add user message to UI
    setMessages(prev => [...prev, { role: "user", content: userMessage }]);
 
-   // Search mode (unauthenticated users)
+   // Search mode (unauthenticated users) - now powered by Claude
    if (conversation.isSearchMode) {
-     // Check if message is just a greeting or very short
-     const isGreeting = /^(hi|hello|hey|שלום|מה|אוקיי|סבבה|תודה)$/i.test(userMessage);
-
-     if (isGreeting) {
-       // Respond to greeting without searching
-       const greetingResponse = "Hi there! 👋 I'm here to help you find local businesses in the Lakewood area. What are you looking for today?";
-       setMessages(prev => [...prev, { role: "assistant", content: greetingResponse }]);
-       setIsLoading(false);
-       return;
-     }
-
      try {
-       const response = await base44.functions.invoke('searchBusinesses', { query: userMessage });
+       const response = await base44.functions.invoke('searchBusinesses', {
+         query: userMessage,
+         conversationHistory: chatHistory,
+       });
        const data = response.data;
        const found = data.businesses || [];
-
-       let replyText = "";
-       if (found.length === 0) {
-         replyText = `I couldn't find any businesses matching "${userMessage}". Try a different search term.`;
-       } else {
-         replyText = `I found ${found.length} result${found.length > 1 ? 's' : ''} for "${userMessage}":`;
-       }
+       const aiReply = data.aiReply || `I found ${found.length} result(s) for "${userMessage}":`;
 
        setBusinesses(prev => {
          const ids = prev.map(b => b.id);
@@ -154,7 +140,15 @@ export default function ChatWindow({
          return [...prev, ...newOnes];
        });
 
-       setMessages(prev => [...prev, { role: "assistant", content: replyText, _businessIds: found.map(b => b.id) }]);
+       const assistantMessage = { role: "assistant", content: aiReply, _businessIds: found.map(b => b.id) };
+       setMessages(prev => [...prev, assistantMessage]);
+
+       // Update conversation history for Claude context
+       setChatHistory(prev => [
+         ...prev,
+         { role: "user", content: userMessage },
+         { role: "assistant", content: aiReply },
+       ]);
      } catch (err) {
        console.error("Search failed:", err);
        setMessages(prev => [...prev, { role: "assistant", content: "Sorry, I couldn't complete the search. Please try again." }]);
