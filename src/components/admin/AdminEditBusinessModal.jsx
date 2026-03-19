@@ -884,7 +884,6 @@ Format as JSON.`;
 
 
           </TabsContent>
-        </Tabs>
 
           <TabsContent value="ai" className="space-y-4 mt-4">
             <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
