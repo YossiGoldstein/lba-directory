@@ -226,6 +226,32 @@ export default function PendingApprovalsTab({ onUpdate }) {
                 </div>
               </div>
 
+              {/* Missing Fields */}
+              {(() => {
+                const missing = getMissingFields(business);
+                if (missing.length === 0) return (
+                  <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-4 py-2">
+                    <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+                    <span className="text-sm text-green-700 font-medium">All fields complete</span>
+                  </div>
+                );
+                return (
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                      <span className="text-sm font-semibold text-amber-800">Missing Fields ({missing.length})</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {missing.map(field => (
+                        <span key={field} className="text-xs bg-amber-100 text-amber-800 border border-amber-300 px-2 py-1 rounded-full">
+                          {field}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Tags */}
               {business.tags && business.tags.length > 0 && (
                 <div>
