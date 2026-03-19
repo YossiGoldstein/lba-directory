@@ -45,25 +45,21 @@ function getDeliveryOptions(b) {
 }
 
 function formatBusiness(b) {
-  const address = [b.address_line1, b.city, b.state].filter(Boolean).join(', ');
+  const address = [b.address_line1, b.city].filter(Boolean).join(', ');
   const mapsLink = address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : null;
   const phone = b.phone ? b.phone.replace(/\D/g, '') : null;
   const whatsapp = b.whatsapp_number ? b.whatsapp_number.replace(/\D/g, '') : null;
-  const delivery = getDeliveryOptions(b);
-  const hours = b.by_appointment_only ? 'By appointment only' : (b.opening_hours_text || null);
-  const keywords = [...(b.tags || []), ...(b.ai_tags || [])].join(', ');
+  const hours = b.opening_hours_text || null;
 
   return [
     `Name: ${b.business_name}`,
+    b.slug ? `Profile: https://lbadirectory.com/businesses/${b.slug}` : null,
     mapsLink ? `Address: ${address} | Maps: ${mapsLink}` : null,
     phone ? `Phone: ${b.phone} | tel:+1${phone}` : null,
     whatsapp ? `WhatsApp: ${b.whatsapp_number} | https://wa.me/1${whatsapp}` : null,
     b.website_url ? `Website: ${b.website_url}` : null,
     hours ? `Hours: ${hours}` : null,
-    b.short_description ? `Desc: ${b.short_description.slice(0, 150)}` : null,
-    delivery.length > 0 ? `Delivery: ${delivery.join(', ')}` : null,
-    keywords ? `Tags: ${keywords}` : null,
-    b.slug ? `Profile: https://lbadirectory.com/businesses/${b.slug}` : null,
+    b.short_description ? `Desc: ${b.short_description.slice(0, 120)}` : null,
   ].filter(Boolean).join('\n');
 }
 
