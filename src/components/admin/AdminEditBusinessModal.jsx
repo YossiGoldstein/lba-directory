@@ -19,7 +19,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { X, Upload, Loader2, Image as ImageIcon, Plus, Trash2 } from "lucide-react";
+import { X, Upload, Loader2, Image as ImageIcon, Plus, Trash2, Sparkles, Check } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
 
 export default function AdminEditBusinessModal({ business, isOpen, onClose, onSave }) {
