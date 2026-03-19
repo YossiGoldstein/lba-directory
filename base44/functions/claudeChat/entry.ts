@@ -49,33 +49,29 @@ Deno.serve(async (req) => {
       return Response.json({ error: "messages array is required" }, { status: 400 });
     }
 
-    // Fetch approved businesses
-    const allBusinesses = await base44.asServiceRole.entities.Business.list();
-    const approved = allBusinesses.filter(b => b.status === 'approved');
-
-    // Extract keywords from the latest user message to filter businesses
+    // Extract keywords from the latest user message
     const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
     const queryText = (lastUserMsg?.content || '').toLowerCase();
-    const queryWords = queryText.split(/\s+/).filter(w => w.length > 2);
+    const stopWords = new Set(['the','and','for','are','but','not','you','all','can','her','was','one','our','out','get','has','him','his','how','its','who','did','yes','any','had','just','let','about','from','they','this','that','with','have','will','your','what','which','when','here','there','find','need','want','looking','like','good','near','area','open','now','best']);
+    const queryWords = queryText.split(/\s+/).filter(w => w.length > 2 && !stopWords.has(w));
 
-    // Score each business by keyword relevance
-    const scored = approved.map(b => {
+    // Fetch approved businesses — filter by status at DB level
+    const allBusinesses = await base44.asServiceRole.entities.Business.filter({ status: 'approved' });
+
+    // Score each business by keyword relevance (use only lightweight fields)
+    const scored = allBusinesses.map(b => {
       const haystack = [
-        b.business_name, b.short_description, b.long_description,
+        b.business_name, b.short_description,
         ...(b.tags || []), ...(b.ai_tags || [])
       ].join(' ').toLowerCase();
       const score = queryWords.reduce((acc, w) => acc + (haystack.includes(w) ? 1 : 0), 0);
-      return { b, score };
+      const vipBonus = b.is_vip ? 0.5 : 0;
+      return { b, score: score + vipBonus };
     });
 
-    // Sort by relevance (VIPs first among ties), take top 30
-    scored.sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score;
-      if (b.b.is_vip !== a.b.is_vip) return b.b.is_vip ? 1 : -1;
-      return 0;
-    });
-
-    const relevant = scored.slice(0, 30).map(s => s.b);
+    // Sort by score, take top 20
+    scored.sort((a, b) => b.score - a.score);
+    const relevant = scored.slice(0, 20).map(s => s.b);
     const businessCatalog = relevant.map(formatBusiness).join('\n\n');
 
     const systemPrompt = `You are the LBA Directory Assistant — a friendly, knowledgeable AI that helps people find local businesses in the Lakewood, NJ area (also serving Toms River, Jackson, Brick, Howell, Manchester).
