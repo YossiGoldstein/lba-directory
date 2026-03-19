@@ -20,6 +20,7 @@ export default function ChatWindow({
   const [isInitializing, setIsInitializing] = useState(true);
   const [businesses, setBusinesses] = useState([]);
   const [error, setError] = useState(null);
+  const [chatHistory, setChatHistory] = useState([]);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
