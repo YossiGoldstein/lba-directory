@@ -231,6 +231,58 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
     }
   };
 
+  const handleOptimize = async () => {
+    setIsOptimizing(true);
+    setOptimization(null);
+    try {
+      const prompt = `Please review this business listing and suggest improvements.
+
+Business:
+Name: ${formData.business_name || "[Not set]"}
+Short Description: ${formData.short_description || "[None]"}
+Long Description: ${formData.long_description || "[None]"}
+Tags: ${formData.tags || "[None]"}
+Address: ${formData.address_line1 || ""}, ${formData.city || ""}, ${formData.state || ""}
+Hours: ${formData.opening_hours_text || "[Not set]"}
+
+Guidelines:
+- Tone must fit Lakewood Haredi community.
+- Avoid non-kosher concepts.
+- Focus on clarity and value.
+- No slang or immodest language.
+- Keep it professional and modest.
+
+Please provide:
+1. Improved short description
+2. Improved long description
+3. Better tags (comma-separated)
+4. Any additional suggestions
+
+Format as JSON.`;
+
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            improved_short_description: { type: "string" },
+            improved_long_description: { type: "string" },
+            improved_tags: { type: "string" },
+            suggestions: { type: "string" }
+          }
+        }
+      });
+
+      setOptimization(response);
+      toast.success("AI optimization complete!");
+    } catch (error) {
+      console.error("Optimization failed:", error);
+      toast.error("Failed to optimize listing.");
+    } finally {
+      setIsOptimizing(false);
+    }
+  };
+
   const handleDeleteDeal = async (dealId) => {
     try {
       await base44.entities.Deal.delete(dealId);
