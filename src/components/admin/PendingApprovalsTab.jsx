@@ -90,6 +90,24 @@ export default function PendingApprovalsTab({ onUpdate }) {
     }
   });
 
+  const getMissingFields = (business) => {
+    const checks = [
+      { field: "Logo",            missing: !business.logo_url },
+      { field: "Short Description", missing: !business.short_description },
+      { field: "Full Description",  missing: !business.long_description },
+      { field: "Phone",           missing: !business.phone },
+      { field: "Email",           missing: !business.email },
+      { field: "Address",         missing: !business.address_line1 },
+      { field: "City",            missing: !business.city },
+      { field: "ZIP Code",        missing: !business.zip_code },
+      { field: "Opening Hours",   missing: !business.opening_hours_text },
+      { field: "Website",         missing: !business.website_url },
+      { field: "Tags",            missing: !business.tags || business.tags.length === 0 },
+      { field: "Gallery Photos",  missing: !business.gallery_images || business.gallery_images.length === 0 },
+    ];
+    return checks.filter(c => c.missing).map(c => c.field);
+  };
+
   const getCategoryName = (categoryId) => {
     const cat = categories.find(c => c.id === categoryId);
     return cat ? cat.name : "Unknown";
