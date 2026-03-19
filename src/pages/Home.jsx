@@ -2,13 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
-import { base44 } from "@/api/base44Client";
-import ReactMarkdown from "react-markdown";
 import { 
   Search, MapPin, TrendingUp, Users, Shield, 
   ShoppingCart, Shirt, Briefcase, Home as HomeIcon, 
   Car, PartyPopper, GraduationCap, 
-  HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard, Mic, Gem, Bot, Loader2
+  HandHeart, ArrowRight, Heart, Menu, X, LogOut, LayoutDashboard, Mic, Gem
 } from "lucide-react";
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
