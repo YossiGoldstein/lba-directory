@@ -109,7 +109,7 @@ export default function SubmissionSuccess() {
 
           {/* Additional Info */}
           <div className="mt-10 pt-10 border-t border-gray-200">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">🎯 Want to Promote Your Business?</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Want to Promote Your Business?</h3>
             <p className="text-gray-700 mb-6">
               We offer additional services like logo design, website building, promotional videos, and more. <br />
               <strong>Contact us</strong> to learn more!
