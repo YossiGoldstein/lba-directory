@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
             },
             body: JSON.stringify({
                 to: email,
-                subject: "Welcome to LBA Directory - Your Account is Ready! 🎉",
+                subject: "Welcome to LBA Directory - Your Account is Ready!",
                 body: emailBody,
                 from_name: "LBA Directory"
             })
