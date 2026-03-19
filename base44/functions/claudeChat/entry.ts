@@ -63,6 +63,7 @@ function formatBusiness(b) {
     b.short_description ? `Desc: ${b.short_description.slice(0, 150)}` : null,
     delivery.length > 0 ? `Delivery: ${delivery.join(', ')}` : null,
     keywords ? `Tags: ${keywords}` : null,
+    b.slug ? `Profile: https://lbadirectory.com/businesses/${b.slug}` : null,
   ].filter(Boolean).join('\n');
 }
 
