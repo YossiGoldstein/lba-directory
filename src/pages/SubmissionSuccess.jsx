@@ -34,7 +34,7 @@ export default function SubmissionSuccess() {
 
           {/* Next Steps */}
           <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-8 mb-8 text-left">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">📋 What Happens Next?</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-6">What Happens Next?</h2>
 
             <div className="space-y-4">
               <div className="flex gap-4">
