@@ -15,6 +15,7 @@ const SERVICES = [
   { id: "whatsapp_ai", label: "WhatsApp AI Chat" },
   { id: "ai_solutions", label: "AI Solutions" },
   { id: "marketing", label: "Marketing Solutions" },
+  { id: "other", label: "Other" },
 ];
 
 export default function ServiceInquiry() {
