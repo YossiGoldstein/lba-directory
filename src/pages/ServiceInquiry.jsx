@@ -7,11 +7,14 @@ import { CheckCircle } from "lucide-react";
 
 const SERVICES = [
   { id: "logo", label: "Logo Design" },
+  { id: "ad_creation", label: "Ad Creation" },
   { id: "landing_page", label: "Landing Page" },
   { id: "website", label: "Full Website" },
   { id: "crm", label: "CRM System" },
   { id: "video", label: "Promotional Video" },
   { id: "whatsapp_ai", label: "WhatsApp AI Chat" },
+  { id: "ai_solutions", label: "AI Solutions" },
+  { id: "marketing", label: "Marketing Solutions" },
 ];
 
 export default function ServiceInquiry() {
