@@ -13,8 +13,6 @@ export default function SearchResults() {
 
   const [isSearching, setIsSearching] = useState(true);
   const [matchedBusinesses, setMatchedBusinesses] = useState([]);
-  const [aiReply, setAiReply] = useState("");
-  const [isRefining, setIsRefining] = useState(false);
 
   useEffect(() => {
     if (searchQuery) {
@@ -24,38 +22,14 @@ export default function SearchResults() {
 
   const performSearch = async () => {
     setIsSearching(true);
-    setAiReply("");
-
-    // Step 1: Fast keyword search — show results immediately
-    let fastBusinesses = [];
     try {
       const response = await base44.functions.invoke("searchBusinesses", { query: searchQuery });
-      fastBusinesses = response.data?.businesses || [];
-      setMatchedBusinesses(fastBusinesses);
+      setMatchedBusinesses(response.data?.businesses || []);
     } catch (error) {
       console.error("Search failed:", error);
+      setMatchedBusinesses([]);
     } finally {
       setIsSearching(false);
-    }
-
-    // Step 2: Claude refines in background (only if we have results)
-    if (fastBusinesses.length > 0) {
-      setIsRefining(true);
-      try {
-        const refineResponse = await base44.functions.invoke("refineSearch", {
-          query: searchQuery,
-          businesses: fastBusinesses,
-        });
-        const { selected_ids, aiReply: reply } = refineResponse.data || {};
-        if (selected_ids?.length > 0) {
-          setMatchedBusinesses(fastBusinesses.filter(b => selected_ids.includes(b.id)));
-        }
-        if (reply) setAiReply(reply);
-      } catch (e) {
-        // Silent fail — keep fast results
-      } finally {
-        setIsRefining(false);
-      }
     }
   };
 
