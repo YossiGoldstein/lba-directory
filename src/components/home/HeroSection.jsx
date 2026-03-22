@@ -98,8 +98,7 @@ export default function HeroSection() {
                 <div className="text-3xl font-bold text-white">1000+</div>
                 <div className="text-sm">Happy Customers</div>
               </div>
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </section>
