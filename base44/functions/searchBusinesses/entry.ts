@@ -21,6 +21,79 @@ function extractKeywords(query) {
     .filter(w => w.length > 2 && !STOP_WORDS.has(w));
 }
 
+function isOpenNowQuery(query) {
+  const q = query.toLowerCase();
+  return q.includes('open now') || q.includes('open today') || q.includes('currently open') || q.includes('open right now');
+}
+
+// Get current NY time info
+function getNYTimeInfo() {
+  const now = new Date();
+  const nyTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  return {
+    dayName: days[nyTime.getDay()],
+    dayIndex: nyTime.getDay(), // 0=Sun, 6=Sat
+    hours: nyTime.getHours(),
+    minutes: nyTime.getMinutes(),
+    timeStr: nyTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
+    formatted: nyTime.toLocaleString('en-US', { weekday: 'long', hour: '2-digit', minute: '2-digit', hour12: true }),
+  };
+}
+
+// Try to determine if a business is open based on opening_hours_json or opening_hours_text
+function isBusinessOpen(business, nyTimeInfo) {
+  // By appointment only — never "open now" in the walk-in sense
+  if (business.by_appointment_only) return false;
+
+  // Try structured hours first
+  if (business.opening_hours_json) {
+    try {
+      const hours = typeof business.opening_hours_json === 'string'
+        ? JSON.parse(business.opening_hours_json)
+        : business.opening_hours_json;
+
+      const dayKeys = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+      const todayKey = dayKeys[nyTimeInfo.dayIndex];
+      const todayHours = hours[todayKey] || hours[nyTimeInfo.dayName] || hours[nyTimeInfo.dayName.toLowerCase()];
+
+      if (!todayHours) return null; // unknown
+      if (todayHours.closed || todayHours === 'closed') return false;
+
+      const currentMinutes = nyTimeInfo.hours * 60 + nyTimeInfo.minutes;
+
+      const parseTime = (t) => {
+        if (!t) return null;
+        const str = t.toLowerCase().replace(/\s/g, '');
+        const match = str.match(/^(\d{1,2}):?(\d{2})?(am|pm)?$/);
+        if (!match) return null;
+        let h = parseInt(match[1]);
+        const m = match[2] ? parseInt(match[2]) : 0;
+        const period = match[3];
+        if (period === 'pm' && h !== 12) h += 12;
+        if (period === 'am' && h === 12) h = 0;
+        return h * 60 + m;
+      };
+
+      const open = parseTime(todayHours.open || todayHours.from);
+      const close = parseTime(todayHours.close || todayHours.to);
+
+      if (open !== null && close !== null) {
+        if (close < open) {
+          // spans midnight
+          return currentMinutes >= open || currentMinutes < close;
+        }
+        return currentMinutes >= open && currentMinutes < close;
+      }
+    } catch (e) {
+      // fall through to text-based
+    }
+  }
+
+  // No reliable structured data — return null (unknown)
+  return null;
+}
+
 function getDeliveryOptions(b) {
   const options = [];
   if (b.doordash_url) options.push('DoorDash');
