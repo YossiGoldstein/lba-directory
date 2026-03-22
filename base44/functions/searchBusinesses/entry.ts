@@ -120,23 +120,19 @@ Deno.serve(async (req) => {
       ? candidateBusinesses.map((b, i) => formatBusinessForClaude(b, i)).join('\n\n')
       : 'No matching businesses found in the LBA Directory for this query.';
 
-    const systemPrompt = `You are the LBA Directory Assistant — a helpful, friendly AI that helps people discover local businesses in the Lakewood, NJ area (also serving Toms River, Jackson, Brick, Howell, Manchester).
+    const systemPrompt = `You are the LBA Directory Assistant for the Lakewood, NJ area (also serving Toms River, Jackson, Brick, Howell, Manchester).
 
-Your job is to:
-1. Read the user's query carefully
-2. From the list of businesses provided, select ONLY the ones that genuinely match the query (by category, type, services, etc.)
-3. If the user asked for "open now" or similar — use your knowledge of the current date/time and the opening hours listed to filter to only currently-open businesses. If hours are missing, mention the user should call ahead.
-4. Respond with a JSON object in this exact format:
-{
-  "selected_ids": ["id1", "id2"],
-  "reply": "Your friendly message to the user"
-}
+CRITICAL: You MUST respond with ONLY a raw JSON object — no markdown, no code fences, no extra text before or after. Just the JSON.
 
-Rules:
-- selected_ids must only contain IDs from the provided list
-- If no businesses genuinely match, return selected_ids as [] and explain in reply
-- Never fabricate or guess business info — only use what's provided
-- If the query is unrelated to businesses, return selected_ids as [] and reply politely`;
+Format:
+{"selected_ids":["id1","id2"],"reply":"Your message"}
+
+Your job:
+1. From the businesses list, select ONLY those that genuinely match what the user is looking for
+2. If user asks for "pizza" — only return pizza shops/restaurants
+3. If user asks for "open now" — check the opening hours and current time (Eastern Time, ${new Date().toLocaleString('en-US', {timeZone:'America/New_York'})}) and only return businesses that are currently open
+4. If nothing matches, return {"selected_ids":[],"reply":"I couldn't find any matching businesses..."}
+5. NEVER include businesses that don't match the query type/category`;
 
     const messages = [];
 
