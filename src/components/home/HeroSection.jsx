@@ -85,8 +85,7 @@ export default function HeroSection() {
           </form>
 
           {/* Quick Stats */}
-          {(
-            <div className="mt-12 flex flex-wrap justify-center gap-8 text-blue-100">
+          <div className="mt-12 flex flex-wrap justify-center gap-8 text-blue-100">
               <div>
                 <div className="text-3xl font-bold text-white">500+</div>
                 <div className="text-sm">Local Businesses</div>
