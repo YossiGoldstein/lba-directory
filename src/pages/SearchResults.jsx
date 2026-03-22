@@ -12,8 +12,8 @@ export default function SearchResults() {
   const searchQuery = urlParams.get("query") || "";
 
   const [isSearching, setIsSearching] = useState(true);
-
   const [matchedBusinesses, setMatchedBusinesses] = useState([]);
+  const [aiReply, setAiReply] = useState("");
 
   useEffect(() => {
     if (searchQuery) {
