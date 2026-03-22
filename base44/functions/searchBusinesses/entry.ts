@@ -112,23 +112,31 @@ Deno.serve(async (req) => {
       });
     }
 
-    const topBusinesses = matchedBusinesses.slice(0, 5);
+    // Give Claude a larger pool to work with (up to 20 candidates)
+    const candidateBusinesses = matchedBusinesses.slice(0, 20);
 
-    // Build Claude context
-    const businessContext = topBusinesses.length > 0
-      ? topBusinesses.map((b, i) => formatBusinessForClaude(b, i)).join('\n\n')
+    // Build Claude context — include all candidates
+    const businessContext = candidateBusinesses.length > 0
+      ? candidateBusinesses.map((b, i) => formatBusinessForClaude(b, i)).join('\n\n')
       : 'No matching businesses found in the LBA Directory for this query.';
 
     const systemPrompt = `You are the LBA Directory Assistant — a helpful, friendly AI that helps people discover local businesses in the Lakewood, NJ area (also serving Toms River, Jackson, Brick, Howell, Manchester).
 
+Your job is to:
+1. Read the user's query carefully
+2. From the list of businesses provided, select ONLY the ones that genuinely match the query (by category, type, services, etc.)
+3. If the user asked for "open now" or similar — use your knowledge of the current date/time and the opening hours listed to filter to only currently-open businesses. If hours are missing, mention the user should call ahead.
+4. Respond with a JSON object in this exact format:
+{
+  "selected_ids": ["id1", "id2"],
+  "reply": "Your friendly message to the user"
+}
+
 Rules:
-- Always respond in English
-- Be warm, concise, and helpful
-- When businesses are found: introduce them naturally, highlight the most relevant details (name, what they do, phone, hours, delivery options if relevant, appointment info)
-- If the user asked for businesses that are "open now": you know what time and day it is — use the opening hours provided for each business to determine who is currently open, and only recommend those. If hours are missing, tell the user to call ahead.
-- If no businesses match: apologize briefly and suggest trying different keywords or calling LBA Directory at 732-600-1260
-- Never fabricate business info — only use what's provided
-- If the user is making small talk or asking a non-business question, respond politely and redirect to business search`;
+- selected_ids must only contain IDs from the provided list
+- If no businesses genuinely match, return selected_ids as [] and explain in reply
+- Never fabricate or guess business info — only use what's provided
+- If the query is unrelated to businesses, return selected_ids as [] and reply politely`;
 
     const messages = [];
 
@@ -140,23 +148,42 @@ Rules:
       });
     }
 
+    // Include business IDs in the context so Claude can reference them
+    const contextWithIds = candidateBusinesses.length > 0
+      ? candidateBusinesses.map((b, i) => `[ID: ${b.id}]\n${formatBusinessForClaude(b, i)}`).join('\n\n')
+      : 'No matching businesses found in the LBA Directory for this query.';
+
     messages.push({
       role: "user",
-      content: `User's question: "${query}"\n\nRelevant businesses from the LBA Directory:\n${businessContext}`
+      content: `User's question: "${query}"\n\nAvailable businesses from the LBA Directory:\n${contextWithIds}`
     });
 
     const claudeResponse = await anthropic.messages.create({
       model: "claude-haiku-4-5",
-      max_tokens: 600,
+      max_tokens: 800,
       system: systemPrompt,
       messages,
     });
 
-    const aiReply = claudeResponse.content[0].text;
+    let aiReply = '';
+    let selectedIds = [];
+
+    try {
+      const parsed = JSON.parse(claudeResponse.content[0].text);
+      aiReply = parsed.reply || '';
+      selectedIds = parsed.selected_ids || [];
+    } catch {
+      // Claude didn't return valid JSON — use raw text and fall back to all candidates
+      aiReply = claudeResponse.content[0].text;
+      selectedIds = candidateBusinesses.map(b => b.id);
+    }
+
+    // Filter to only businesses Claude selected
+    const selectedBusinesses = candidateBusinesses.filter(b => selectedIds.includes(b.id));
 
     return Response.json({
       query,
-      businesses: topBusinesses.map(b => ({
+      businesses: selectedBusinesses.map(b => ({
         id: b.id,
         business_name: b.business_name,
         short_description: b.short_description,
