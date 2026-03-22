@@ -70,11 +70,6 @@ const AuthenticatedApp = () => {
           <AiSearchPage />
         </LayoutWrapper>
       } />
-      <Route path="/searchresults" element={
-        <LayoutWrapper currentPageName="SearchResults">
-          <Pages.SearchResults />
-        </LayoutWrapper>
-      } />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
