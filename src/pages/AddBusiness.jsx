@@ -316,7 +316,7 @@ Return JSON: { short_version, medium_version, long_version }`,
           to: form.email || customer.email,
           subject: "✅ Your Submission Was Received - LBA Directory",
           body: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
-            <h2 style="color:#0891b2;">Hello ${customer.full_name}! 👋</h2>
+            <h2 style="color:#0891b2;">Hello ${customer.full_name}!</h2>
             <p>Thank you for submitting <strong>${form.business_name}</strong> to LBA Directory!</p>
             <p>Our team will review your details within 1–2 business days. Once approved, your business will be live!</p>
             <div style="text-align:center;margin:20px 0;">
