@@ -70,6 +70,15 @@ export default function SearchResults() {
           <>
             <div className="flex flex-col lg:flex-row gap-6">
               <div className="flex-1">
+                {aiReply && (
+                  <div className="mb-6 bg-white rounded-xl border border-cyan-200 shadow-sm p-4 flex gap-3">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <MessageCircle className="w-4 h-4 text-white" />
+                    </div>
+                    <p className="text-gray-700 text-sm leading-relaxed">{aiReply}</p>
+                  </div>
+                )}
+
                 <p className="text-lg font-semibold text-gray-900 mb-6">
                   {matchedBusinesses.length} Result{matchedBusinesses.length !== 1 ? 's' : ''}
                 </p>
