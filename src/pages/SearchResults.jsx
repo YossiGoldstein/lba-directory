@@ -25,27 +25,10 @@ export default function SearchResults() {
   const performSearch = async () => {
     setIsSearching(true);
     try {
-      const allBusinesses = await base44.entities.Business.list();
-      const approved = allBusinesses.filter(b => b.status === "approved");
-
-      const query = searchQuery.toLowerCase();
-      const matched = approved.filter(b => {
-        const name = (b.business_name || "").toLowerCase();
-        const desc = (b.short_description || "").toLowerCase();
-        const longDesc = (b.long_description || "").toLowerCase();
-        const tags = ((b.tags || []).join(" ") || "").toLowerCase();
-        const aiTags = ((b.ai_tags || []).join(" ") || "").toLowerCase();
-        
-        return name.includes(query) || desc.includes(query) || longDesc.includes(query) || 
-               tags.includes(query) || aiTags.includes(query);
-      });
-
-      const message = matched.length > 0 
-        ? `Found ${matched.length} business${matched.length !== 1 ? 'es' : ''} matching "${searchQuery}"`
-        : `No businesses found for "${searchQuery}"`;
-
-      setAiResponse(message);
-      setMatchedBusinesses(matched);
+      const response = await base44.functions.invoke("searchBusinesses", { query: searchQuery });
+      const data = response.data;
+      setMatchedBusinesses(data.businesses || []);
+      setAiResponse(data.aiReply || "");
     } catch (error) {
       console.error("Search failed:", error);
       setAiResponse("Something went wrong. Please try again.");

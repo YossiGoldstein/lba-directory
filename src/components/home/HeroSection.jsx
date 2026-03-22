@@ -1,33 +1,22 @@
 import React, { useState } from "react";
-import { Search, MapPin, Loader2, Bot } from "lucide-react";
+import { Search, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { base44 } from "@/api/base44Client";
-import ReactMarkdown from "react-markdown";
+import { createPageUrl } from "@/utils";
 
 export default function HeroSection() {
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("all");
-  const [aiResult, setAiResult] = useState(null);
-  const [loading, setLoading] = useState(false);
 
-  const handleSearch = async (e) => {
+  const handleSearch = (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
 
-    setLoading(true);
-    setAiResult(null);
-
-    const userMessage = location && location !== "all"
+    const query = location && location !== "all"
       ? `${searchQuery} in ${location}`
       : searchQuery;
 
-    const response = await base44.functions.invoke("claudeChat", {
-      messages: [{ role: "user", content: userMessage }],
-    });
-
-    setAiResult(response.data?.content || "No results found.");
-    setLoading(false);
+    window.location.href = createPageUrl(`SearchResults?query=${encodeURIComponent(query)}`);
   };
 
   return (
