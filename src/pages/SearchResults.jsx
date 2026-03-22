@@ -84,7 +84,7 @@ export default function SearchResults() {
 
                     <div className="mt-8 bg-white rounded-xl shadow-md border border-gray-200 p-6">
                       <div className="flex items-center gap-2 mb-4">
-                        <Sparkles className="w-5 h-5 text-cyan-600" />
+                        <Search className="w-5 h-5 text-cyan-600" />
                         <h2 className="text-lg font-semibold text-gray-900">Refine your search</h2>
                       </div>
                       <form onSubmit={(e) => {
