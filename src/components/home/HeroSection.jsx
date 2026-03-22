@@ -84,32 +84,8 @@ export default function HeroSection() {
             </div>
           </form>
 
-          {/* AI Results */}
-          {(loading || aiResult) && (
-            <div className="mt-6 max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl text-left overflow-hidden">
-              {/* Header */}
-              <div className="flex items-center gap-2 px-6 py-4 bg-blue-50 border-b border-blue-100">
-                <Bot className="w-5 h-5 text-blue-600" />
-                <span className="text-sm font-semibold text-blue-700">LBA Directory Assistant</span>
-              </div>
-
-              <div className="px-6 py-5">
-                {loading ? (
-                  <div className="flex items-center gap-3 text-gray-500">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Searching the directory...</span>
-                  </div>
-                ) : (
-                  <div className="prose prose-sm max-w-none text-gray-800 [&>p]:mb-3 [&>ul]:mb-3 [&>ul>li]:mb-1 [&>h3]:font-semibold [&>h3]:text-gray-900 [&>h3]:mb-2 [&>strong]:font-semibold">
-                    <ReactMarkdown>{aiResult}</ReactMarkdown>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
           {/* Quick Stats */}
-          {!aiResult && !loading && (
+          {(
             <div className="mt-12 flex flex-wrap justify-center gap-8 text-blue-100">
               <div>
                 <div className="text-3xl font-bold text-white">500+</div>
