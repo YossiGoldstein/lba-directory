@@ -103,14 +103,6 @@ Deno.serve(async (req) => {
         return keywords.some(kw => fullText.includes(kw));
       });
 
-      // If "open now" query — filter to confirmed-open businesses, or keep unknowns as fallback
-      if (filterOpenNow) {
-        const confirmedOpen = matchedBusinesses.filter(b => isBusinessOpen(b, nyTimeInfo) === true);
-        const unknown = matchedBusinesses.filter(b => isBusinessOpen(b, nyTimeInfo) === null);
-        // Use confirmed open businesses; if none, fall back to unknown (can't determine hours)
-        matchedBusinesses = confirmedOpen.length > 0 ? confirmedOpen : unknown;
-      }
-
       // Sort: VIP → featured → rank → rating
       matchedBusinesses.sort((a, b) => {
         if (a.is_vip !== b.is_vip) return (b.is_vip ? 1 : 0) - (a.is_vip ? 1 : 0);
