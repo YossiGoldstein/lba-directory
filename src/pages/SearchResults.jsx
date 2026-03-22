@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { Search, ArrowLeft } from "lucide-react";
+import { Search, ArrowLeft, MessageCircle } from "lucide-react";
 import BusinessCard from "../components/category/BusinessCard";
 import BusinessMap from "../components/category/BusinessMap";
 
