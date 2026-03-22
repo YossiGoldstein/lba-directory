@@ -75,10 +75,9 @@ export default function HeroSection() {
                 <Button 
                   type="submit"
                   size="lg"
-                  disabled={loading}
                   className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 rounded-xl text-base font-semibold shadow-lg hover:shadow-xl transition-all"
                 >
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Search"}
+                  Search
                 </Button>
               </div>
             </div>
