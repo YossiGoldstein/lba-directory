@@ -66,26 +66,9 @@ export default function SearchResults() {
           <>
             <div className="flex flex-col lg:flex-row gap-6">
               <div className="flex-1">
-                {aiReply && (
-                  <div className="mb-6 bg-white rounded-xl border border-cyan-200 shadow-sm p-4 flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <MessageCircle className="w-4 h-4 text-white" />
-                    </div>
-                    <p className="text-gray-700 text-sm leading-relaxed">{aiReply}</p>
-                  </div>
-                )}
-
-                <div className="flex items-center gap-3 mb-6">
-                  <p className="text-lg font-semibold text-gray-900">
-                    {matchedBusinesses.length} Result{matchedBusinesses.length !== 1 ? 's' : ''}
-                  </p>
-                  {isRefining && (
-                    <span className="flex items-center gap-1.5 text-xs text-gray-400">
-                      <div className="w-3 h-3 border-2 border-gray-300 border-t-cyan-500 rounded-full animate-spin"></div>
-                      AI refining...
-                    </span>
-                  )}
-                </div>
+                <p className="text-lg font-semibold text-gray-900 mb-6">
+                  {matchedBusinesses.length} Result{matchedBusinesses.length !== 1 ? 's' : ''}
+                </p>
 
                 {matchedBusinesses.length > 0 ? (
                   <>
