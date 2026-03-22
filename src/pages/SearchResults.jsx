@@ -27,7 +27,7 @@ export default function SearchResults() {
       const response = await base44.functions.invoke("searchBusinesses", { query: searchQuery });
       const data = response.data;
       setMatchedBusinesses(data.businesses || []);
-      setAiResponse(data.aiReply || "");
+
     } catch (error) {
       console.error("Search failed:", error);
       setAiResponse("Something went wrong. Please try again.");
