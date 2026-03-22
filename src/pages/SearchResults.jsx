@@ -30,7 +30,6 @@ export default function SearchResults() {
 
     } catch (error) {
       console.error("Search failed:", error);
-      setAiResponse("Something went wrong. Please try again.");
       setMatchedBusinesses([]);
     } finally {
       setIsSearching(false);
