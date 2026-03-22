@@ -115,6 +115,26 @@ export default function SearchResults() {
                     <p className="text-sm text-gray-500 mt-2">Try rephrasing your search query</p>
                   </div>
                 )}
+
+                {/* AI Assistant CTA */}
+                <div className="mt-8 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl border border-cyan-200 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                      <MessageCircle className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900">Can't find what you're looking for?</p>
+                      <p className="text-sm text-gray-600">Ask our AI Assistant for personalized help</p>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => document.querySelector('[aria-label="Open chat assistant"]')?.click()}
+                    className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white whitespace-nowrap"
+                  >
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Ask AI Assistant
+                  </Button>
+                </div>
               </div>
 
               <div className="hidden lg:block w-[40%] max-w-[600px] flex-shrink-0">
