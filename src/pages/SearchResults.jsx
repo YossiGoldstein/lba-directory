@@ -68,22 +68,6 @@ export default function SearchResults() {
           </div>
         ) : (
           <>
-            {aiResponse && (
-              <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6 mb-6">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Sparkles className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 mb-2">AI Assistant</h3>
-                    <ReactMarkdown className="prose prose-sm max-w-none prose-p:text-gray-700">
-                      {aiResponse}
-                    </ReactMarkdown>
-                  </div>
-                </div>
-              </div>
-            )}
-
             <div className="flex flex-col lg:flex-row gap-6">
               <div className="flex-1">
                 <p className="text-lg font-semibold text-gray-900 mb-6">
