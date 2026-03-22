@@ -166,14 +166,16 @@ Your job:
 
     const rawText = claudeResponse.content[0].text.trim();
     try {
-      // Strip markdown code fences if present
-      const jsonStr = rawText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+      // Extract JSON — find first { and last }
+      const start = rawText.indexOf('{');
+      const end = rawText.lastIndexOf('}');
+      const jsonStr = rawText.slice(start, end + 1);
       const parsed = JSON.parse(jsonStr);
       aiReply = parsed.reply || '';
       selectedIds = parsed.selected_ids || [];
     } catch {
       // Claude didn't return valid JSON — show message, return no businesses
-      aiReply = rawText;
+      aiReply = "I couldn't process the search results. Please try again.";
       selectedIds = [];
     }
 
