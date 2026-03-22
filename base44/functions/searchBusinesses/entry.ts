@@ -1,20 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
+import Anthropic from 'npm:@anthropic-ai/sdk';
 
-const STOP_WORDS = new Set([
-  'im','i','a','an','the','to','for','and','or','is','are','am','be','been',
-  'being','have','has','had','do','does','did','will','would','could','should',
-  'may','might','can','in','on','at','by','with','from','of','as','about',
-  'into','through','during','looking','buy','find','search','need','want','get',
-  'help','show','me','you','he','she','it','we','they','what','where','when',
-  'why','how','please','any','some','there','here','this','that','my','your'
-]);
-
-function extractKeywords(query) {
-  return query.toLowerCase()
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .split(/\s+/)
-    .filter(w => w.length > 2 && !STOP_WORDS.has(w));
-}
+const anthropic = new Anthropic({
+  apiKey: Deno.env.get("ANTHROPIC_API_KEY"),
+});
 
 function getDeliveryOptions(b) {
   const options = [];
@@ -50,9 +39,8 @@ function serializeBusiness(b) {
     reviews_count: b.reviews_count,
     is_vip: b.is_vip,
     is_featured: b.is_featured,
+    listing_rank: b.listing_rank,
     logo_url: b.logo_url,
-    tags: b.tags,
-    ai_tags: b.ai_tags,
     delivery_options: getDeliveryOptions(b),
     doordash_url: b.doordash_url,
     uber_eats_url: b.uber_eats_url,
@@ -73,54 +61,69 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Query is required' }, { status: 400 });
     }
 
+    // Fetch all approved businesses
     const allBusinesses = await base44.asServiceRole.entities.Business.list();
     const approved = allBusinesses.filter(b => b.status === 'approved');
 
-    // Strip "open now" phrases for keyword matching
-    const cleanedQuery = query.toLowerCase()
-      .replace(/open now|open today|currently open|open right now/g, '')
-      .trim();
-    const keywords = extractKeywords(cleanedQuery);
+    // Build minimal payload for Claude — only what it needs to match
+    const minimalList = approved.map(b => ({
+      id: b.id,
+      name: b.business_name,
+      category: b.category_id,
+      tags: [...(b.tags || []), ...(b.ai_tags || [])].join(', '),
+      hours: b.by_appointment_only ? 'By appointment only' : (b.opening_hours_text || ''),
+      description: b.short_description || '',
+    }));
 
-    let matchedBusinesses = [];
+    const now = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
 
-    if (keywords.length > 0) {
-      matchedBusinesses = approved.filter(b => {
-        const searchText = [
-          b.business_name,
-          b.short_description,
-          b.long_description,
-          b.ai_summary,
-          b.ai_highlights,
-          ...(b.tags || []),
-          ...(b.ai_tags || []),
-          b.city,
-          b.state,
-          b.category_id,
-          b.doordash_url ? 'doordash delivery' : '',
-          b.uber_eats_url ? 'uber eats delivery' : '',
-          b.grubhub_url ? 'grubhub delivery' : '',
-          b.instacart_url ? 'instacart delivery' : '',
-          b.by_appointment_only ? 'appointment' : '',
-        ].filter(Boolean).join(' ').toLowerCase();
+    const prompt = `Current time: ${now} Eastern Time.
+User query: "${query}"
 
-        return keywords.some(kw => searchText.includes(kw));
-      });
+Below is a list of businesses. Return ONLY a JSON array of matching business IDs, ranked by relevance (best match first). No explanation, no markdown — just the raw JSON array.
 
-      // Sort: VIP → featured → rank → rating
-      matchedBusinesses.sort((a, b) => {
-        if (a.is_vip !== b.is_vip) return (b.is_vip ? 1 : 0) - (a.is_vip ? 1 : 0);
-        if (a.is_featured !== b.is_featured) return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0);
-        if ((b.listing_rank || 0) !== (a.listing_rank || 0)) return (b.listing_rank || 0) - (a.listing_rank || 0);
-        return (b.general_rating || 0) - (a.general_rating || 0);
-      });
+Rules:
+- Include only businesses that genuinely match the query
+- If query mentions "open now", use hours field + current time to filter
+- If nothing matches, return []
+
+Businesses:
+${JSON.stringify(minimalList)}`;
+
+    const response = await anthropic.messages.create({
+      model: 'claude-haiku-4-5',
+      max_tokens: 300,
+      messages: [{ role: 'user', content: prompt }],
+    });
+
+    const rawText = response.content[0].text.trim();
+
+    // Extract JSON array robustly
+    const start = rawText.indexOf('[');
+    const end = rawText.lastIndexOf(']');
+    let rankedIds = [];
+    if (start !== -1 && end !== -1) {
+      rankedIds = JSON.parse(rawText.slice(start, end + 1));
     }
 
-    const topBusinesses = matchedBusinesses.slice(0, 10);
+    // Build a map for fast lookup
+    const businessMap = Object.fromEntries(approved.map(b => [b.id, b]));
+
+    // Return businesses in Claude's ranked order, preserving VIP/featured at top
+    const matched = rankedIds
+      .filter(id => businessMap[id])
+      .map(id => businessMap[id]);
+
+    // Re-sort to ensure VIP/featured always bubble up within ranked results
+    matched.sort((a, b) => {
+      if (a.is_vip !== b.is_vip) return (b.is_vip ? 1 : 0) - (a.is_vip ? 1 : 0);
+      if (a.is_featured !== b.is_featured) return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0);
+      return rankedIds.indexOf(a.id) - rankedIds.indexOf(b.id);
+    });
 
     return Response.json({
       query,
-      businesses: topBusinesses.map(serializeBusiness),
+      businesses: matched.map(serializeBusiness),
     });
 
   } catch (error) {
