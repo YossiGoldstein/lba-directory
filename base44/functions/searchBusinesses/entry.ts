@@ -164,14 +164,17 @@ Your job:
     let aiReply = '';
     let selectedIds = [];
 
+    const rawText = claudeResponse.content[0].text.trim();
     try {
-      const parsed = JSON.parse(claudeResponse.content[0].text);
+      // Strip markdown code fences if present
+      const jsonStr = rawText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+      const parsed = JSON.parse(jsonStr);
       aiReply = parsed.reply || '';
       selectedIds = parsed.selected_ids || [];
     } catch {
-      // Claude didn't return valid JSON — use raw text and fall back to all candidates
-      aiReply = claudeResponse.content[0].text;
-      selectedIds = candidateBusinesses.map(b => b.id);
+      // Claude didn't return valid JSON — show message, return no businesses
+      aiReply = rawText;
+      selectedIds = [];
     }
 
     // Filter to only businesses Claude selected
