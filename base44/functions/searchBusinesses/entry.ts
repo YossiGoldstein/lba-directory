@@ -64,14 +64,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Query is required' }, { status: 400 });
     }
 
-    const nyTimeInfo = getNYTimeInfo();
-    const filterOpenNow = isOpenNowQuery(query);
-
     // Fetch all approved businesses
     const allBusinesses = await base44.asServiceRole.entities.Business.list();
     const approved = allBusinesses.filter(b => b.status === 'approved');
 
-    // Keyword search across all relevant fields (strip "open now" phrases so they don't confuse keyword search)
+    // Strip "open now" type phrases so they don't confuse keyword search
     const cleanedQuery = query.toLowerCase()
       .replace(/open now|open today|currently open|open right now/g, '')
       .trim();
