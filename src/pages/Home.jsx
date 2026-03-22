@@ -43,7 +43,7 @@ export default function Home() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-    window.location.href = `/AiSearch?query=${encodeURIComponent(searchQuery.trim())}`;
+    window.location.href = createPageUrl(`SearchResults?query=${encodeURIComponent(searchQuery.trim())}`);
   };
 
   const handleLogout = () => {
