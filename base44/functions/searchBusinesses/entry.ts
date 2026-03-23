@@ -5,6 +5,22 @@ const anthropic = new Anthropic({
   apiKey: Deno.env.get("ANTHROPIC_API_KEY"),
 });
 
+// In-memory cache — survives across requests within the same isolate
+let cachedBusinesses = null;
+let cacheExpiry = 0;
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+async function getApprovedBusinesses(base44) {
+  const now = Date.now();
+  if (cachedBusinesses && now < cacheExpiry) {
+    return cachedBusinesses;
+  }
+  const all = await base44.asServiceRole.entities.Business.list();
+  cachedBusinesses = all.filter(b => b.status === 'approved');
+  cacheExpiry = now + CACHE_TTL_MS;
+  return cachedBusinesses;
+}
+
 function getDeliveryOptions(b) {
   const options = [];
   if (b.doordash_url) options.push('DoorDash');
