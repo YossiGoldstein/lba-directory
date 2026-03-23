@@ -77,9 +77,12 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Query is required' }, { status: 400 });
     }
 
-    // Fetch all approved businesses
-    const allBusinesses = await base44.asServiceRole.entities.Business.list();
-    const approved = allBusinesses.filter(b => b.status === 'approved');
+    // Fetch approved businesses (cached for 5 min) in parallel with query parsing
+    const stopWords = new Set(['a','an','the','in','on','at','for','to','of','and','or','is','are','with','near','me','i','my']);
+
+    const [approved] = await Promise.all([
+      getApprovedBusinesses(base44),
+    ]);
 
     // Keyword pre-filter: extract meaningful words (ignore short stop words)
     const stopWords = new Set(['a','an','the','in','on','at','for','to','of','and','or','is','are','with','near','me','i','my']);
