@@ -10,6 +10,25 @@ let cachedBusinesses = null;
 let cacheExpiry = 0;
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
+const STOP_WORDS = new Set(['a','an','the','in','on','at','for','to','of','and','or','is','are','with','near','me','i','my']);
+
+function extractQueryWords(query) {
+  return query.toLowerCase().split(/\s+/).filter(w => w.length > 1 && !STOP_WORDS.has(w));
+}
+
+function businessMatchesKeywords(b, queryWords) {
+  const haystack = [
+    b.business_name,
+    b.short_description,
+    b.long_description,
+    ...(b.tags || []),
+    ...(b.ai_tags || []),
+    b.category_id,
+    b.city,
+  ].join(' ').toLowerCase();
+  return queryWords.some(w => haystack.includes(w));
+}
+
 async function getApprovedBusinesses(base44) {
   const now = Date.now();
   if (cachedBusinesses && now < cacheExpiry) {
