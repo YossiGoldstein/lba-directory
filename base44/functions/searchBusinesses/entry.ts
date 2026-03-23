@@ -127,7 +127,7 @@ ${JSON.stringify(minimalList)}`;
     }
 
     // Build a map for fast lookup
-    const businessMap = Object.fromEntries(approved.map(b => [b.id, b]));
+    const businessMap = Object.fromEntries(candidatePool.map(b => [b.id, b]));
 
     // Return businesses in Claude's ranked order, preserving VIP/featured at top
     const matched = rankedIds
