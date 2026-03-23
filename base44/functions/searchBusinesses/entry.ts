@@ -65,8 +65,28 @@ Deno.serve(async (req) => {
     const allBusinesses = await base44.asServiceRole.entities.Business.list();
     const approved = allBusinesses.filter(b => b.status === 'approved');
 
+    // Keyword pre-filter: extract meaningful words (ignore short stop words)
+    const stopWords = new Set(['a','an','the','in','on','at','for','to','of','and','or','is','are','with','near','me','i','my']);
+    const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 1 && !stopWords.has(w));
+
+    function businessMatchesKeywords(b) {
+      const haystack = [
+        b.business_name,
+        b.short_description,
+        b.long_description,
+        ...(b.tags || []),
+        ...(b.ai_tags || []),
+        b.category_id,
+        b.city,
+      ].join(' ').toLowerCase();
+      return queryWords.some(w => haystack.includes(w));
+    }
+
+    const preFiltered = approved.filter(businessMatchesKeywords);
+    const candidatePool = preFiltered.length > 0 ? preFiltered : approved;
+
     // Build minimal payload for Claude — only what it needs to match
-    const minimalList = approved.map(b => ({
+    const minimalList = candidatePool.map(b => ({
       id: b.id,
       name: b.business_name,
       category: b.category_id,
