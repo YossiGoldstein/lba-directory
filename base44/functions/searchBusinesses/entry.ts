@@ -99,24 +99,9 @@ Deno.serve(async (req) => {
     // Fetch approved businesses (cached for 5 min)
     const approved = await getApprovedBusinesses(base44);
 
-    // Keyword pre-filter: extract meaningful words (ignore short stop words)
-    const stopWords = new Set(['a','an','the','in','on','at','for','to','of','and','or','is','are','with','near','me','i','my']);
-    const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 1 && !stopWords.has(w));
-
-    function businessMatchesKeywords(b) {
-      const haystack = [
-        b.business_name,
-        b.short_description,
-        b.long_description,
-        ...(b.tags || []),
-        ...(b.ai_tags || []),
-        b.category_id,
-        b.city,
-      ].join(' ').toLowerCase();
-      return queryWords.some(w => haystack.includes(w));
-    }
-
-    const preFiltered = approved.filter(businessMatchesKeywords);
+    // Keyword pre-filter
+    const queryWords = extractQueryWords(query);
+    const preFiltered = approved.filter(b => businessMatchesKeywords(b, queryWords));
     const candidatePool = preFiltered.length > 0 ? preFiltered : approved;
 
     // Build minimal payload for Claude — only what it needs to match
