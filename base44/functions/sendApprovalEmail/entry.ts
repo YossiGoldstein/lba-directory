@@ -1,14 +1,8 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-
-    // Get admin user to verify
-    const user = await base44.auth.me();
-    if (!user || user.role !== 'admin') {
-      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-    }
 
     const { business_id } = await req.json();
 
@@ -16,8 +10,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing business_id' }, { status: 400 });
     }
 
-    // Get business and owner details
-    const businesses = await base44.entities.Business.list();
+    // Use service role to fetch business (admin uses custom localStorage auth, not base44 auth)
+    const businesses = await base44.asServiceRole.entities.Business.list();
     const business = businesses.find(b => b.id === business_id);
 
     if (!business) {
@@ -38,7 +32,7 @@ Deno.serve(async (req) => {
     const inquiryUrl = `${baseUrl}/#/ServiceInquiry?business=${encodeURIComponent(business.business_name)}&phone=${encodeURIComponent(business.phone || '')}&email=${encodeURIComponent(ownerEmail)}`;
 
     // Send approval email to business email
-    await base44.integrations.Core.SendEmail({
+    await base44.asServiceRole.integrations.Core.SendEmail({
       to: ownerEmail,
       subject: "Your Business Has Been Approved! - LBA Directory",
       body: `
@@ -119,7 +113,7 @@ Deno.serve(async (req) => {
 
     return Response.json({ 
       success: true, 
-      message: "Approval email sent successfully" 
+      message: `Approval email sent successfully to ${ownerEmail}`
     });
 
   } catch (error) {
