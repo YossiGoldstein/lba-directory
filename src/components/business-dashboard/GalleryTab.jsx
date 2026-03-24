@@ -2,31 +2,45 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Upload, X, Image as ImageIcon } from "lucide-react";
+import { Upload, X, Image as ImageIcon, Star } from "lucide-react";
 import { toast } from "sonner";
 
 export default function GalleryTab({ business, onBusinessUpdate }) {
   const [images, setImages] = useState(business.gallery_images || []);
+  const [logoUrl, setLogoUrl] = useState(business.logo_url || "");
+  const [coverImage, setCoverImage] = useState(business.cover_image || "");
   const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingLogo(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setLogoUrl(file_url);
+      toast.success("Logo uploaded");
+    } catch (error) {
+      toast.error("Failed to upload logo");
+    } finally {
+      setIsUploadingLogo(false);
+    }
+  };
 
   const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
-
     setIsUploading(true);
-
     try {
       const uploadPromises = files.map(async (file) => {
         const { file_url } = await base44.integrations.Core.UploadFile({ file });
         return file_url;
       });
-
       const uploadedUrls = await Promise.all(uploadPromises);
       setImages([...images, ...uploadedUrls]);
       toast.success(`${uploadedUrls.length} image(s) uploaded`);
     } catch (error) {
-      console.error("Upload failed:", error);
       toast.error("Failed to upload images");
     } finally {
       setIsUploading(false);
@@ -34,23 +48,26 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
   };
 
   const handleRemoveImage = (indexToRemove) => {
+    const removed = images[indexToRemove];
+    if (coverImage === removed) setCoverImage("");
     setImages(images.filter((_, index) => index !== indexToRemove));
+  };
+
+  const handleSetCover = (url) => {
+    setCoverImage(url === coverImage ? "" : url);
   };
 
   const handleSave = async () => {
     setIsSaving(true);
-
     try {
       await base44.entities.Business.update(business.id, {
         gallery_images: images,
+        logo_url: logoUrl,
+        cover_image: coverImage,
       });
-
-      toast.success("Gallery updated successfully!");
-      if (onBusinessUpdate) {
-        onBusinessUpdate();
-      }
+      toast.success("Gallery saved successfully!");
+      if (onBusinessUpdate) onBusinessUpdate();
     } catch (error) {
-      console.error("Failed to save gallery:", error);
       toast.error("Failed to save gallery");
     } finally {
       setIsSaving(false);
@@ -59,9 +76,50 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
 
   return (
     <div className="space-y-6">
+      {/* Logo Upload */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <ImageIcon className="w-5 h-5" />
+            Business Logo
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-6">
+            <div className="w-24 h-24 rounded-full border-2 border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center flex-shrink-0">
+              {logoUrl ? (
+                <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
+              ) : (
+                <ImageIcon className="w-8 h-8 text-gray-300" />
+              )}
+            </div>
+            <div>
+              <input
+                type="file"
+                id="logo-upload"
+                accept="image/*"
+                onChange={handleLogoUpload}
+                className="hidden"
+                disabled={isUploadingLogo}
+              />
+              <label htmlFor="logo-upload">
+                <Button asChild variant="outline" className="cursor-pointer" disabled={isUploadingLogo}>
+                  <span>
+                    <Upload className="w-4 h-4 mr-2" />
+                    {isUploadingLogo ? "Uploading..." : "Upload Logo"}
+                  </span>
+                </Button>
+              </label>
+              <p className="text-xs text-gray-500 mt-2">PNG, JPG up to 10MB. Shown as circular icon.</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Gallery + Cover */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
             <ImageIcon className="w-5 h-5" />
             Business Gallery
           </CardTitle>
@@ -89,28 +147,46 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {isUploading ? "Uploading..." : "Upload Images"}
                 </h3>
-                <p className="text-gray-600 mb-4">
-                  Click to select images or drag and drop
-                </p>
-                <p className="text-xs text-gray-500">
-                  PNG, JPG, JPEG up to 10MB each
-                </p>
+                <p className="text-gray-600 mb-2">Click to select images or drag and drop</p>
+                <p className="text-xs text-gray-500">PNG, JPG, JPEG up to 10MB each</p>
               </div>
             </label>
           </div>
+
+          {images.length > 0 && (
+            <p className="text-sm text-gray-500 flex items-center gap-1">
+              <Star className="w-4 h-4 text-yellow-500" />
+              Click the star icon on an image to set it as your Cover photo
+            </p>
+          )}
 
           {/* Image Gallery */}
           {images.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {images.map((imageUrl, index) => (
                 <div key={index} className="relative group">
-                  <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
+                  <div className={`aspect-square rounded-lg overflow-hidden bg-gray-100 border-2 transition-colors ${coverImage === imageUrl ? 'border-yellow-400' : 'border-transparent'}`}>
                     <img
                       src={imageUrl}
                       alt={`Gallery ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
                   </div>
+                  {/* Cover badge */}
+                  {coverImage === imageUrl && (
+                    <div className="absolute top-2 left-2 bg-yellow-400 text-white text-xs px-2 py-0.5 rounded-full font-semibold">
+                      Cover
+                    </div>
+                  )}
+                  {/* Set as cover */}
+                  <button
+                    onClick={() => handleSetCover(imageUrl)}
+                    title="Set as cover"
+                    className={`absolute bottom-2 left-2 w-8 h-8 rounded-full flex items-center justify-center transition-opacity ${coverImage === imageUrl ? 'bg-yellow-400 opacity-100' : 'bg-white opacity-0 group-hover:opacity-100'} shadow`}
+                  >
+                    <Star className={`w-4 h-4 ${coverImage === imageUrl ? 'text-white fill-white' : 'text-yellow-500'}`} />
+                  </button>
+                  {/* Remove */}
                   <button
                     onClick={() => handleRemoveImage(index)}
                     className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
@@ -133,7 +209,7 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
             <Button
               onClick={handleSave}
               className="bg-cyan-600 hover:bg-cyan-700"
-              disabled={isSaving || isUploading}
+              disabled={isSaving || isUploading || isUploadingLogo}
             >
               {isSaving ? "Saving..." : "Save Gallery"}
             </Button>
