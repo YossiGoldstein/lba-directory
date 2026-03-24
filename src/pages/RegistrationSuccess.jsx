@@ -30,7 +30,7 @@ export default function RegistrationSuccess() {
               </div>
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">
-              Registration Successful! 🎉
+              Registration Successful!
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
