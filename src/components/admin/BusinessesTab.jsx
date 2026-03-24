@@ -45,12 +45,10 @@ export default function BusinessesTab({ onUpdate }) {
     return cat ? cat.name : "Unknown";
   };
 
-  const getOwnerName = (createdBy) => {
-    if (createdBy === "office@lbadirectory.com") {
-      return "LBA Directory";
-    }
-    const owner = users.find(u => u.email === createdBy);
-    return owner ? owner.full_name : createdBy;
+  const getOwnerInfo = (business) => {
+    const contactEmail = business.email || business.created_by;
+    const addedBy = business.created_by;
+    return { contactEmail, addedBy };
   };
 
   const filteredBusinesses = businesses.filter(business => {
@@ -200,7 +198,10 @@ export default function BusinessesTab({ onUpdate }) {
                     <div className="font-medium text-gray-900">{business.business_name}</div>
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-600">
-                    {getOwnerName(business.created_by)}
+                    <div>{business.email || "—"}</div>
+                    {business.created_by && business.created_by !== business.email && (
+                      <div className="text-xs text-gray-400">Added by: {business.created_by === "office@lbadirectory.com" || business.created_by === "ydg7780@gmail.com" ? "Admin" : business.created_by}</div>
+                    )}
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-600">
                     {getCategoryName(business.category_id)}
