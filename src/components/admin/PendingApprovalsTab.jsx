@@ -39,18 +39,17 @@ export default function PendingApprovalsTab({ onUpdate }) {
       queryClient.invalidateQueries({ queryKey: ["pending-businesses"] });
       queryClient.invalidateQueries({ queryKey: ["admin-businesses"] });
       toast.success("Business approved successfully!");
-      
-      // Send approval email
+
+      // Send approval email using the dedicated sendApprovalEmail function
       try {
-        await base44.functions.invoke('sendBusinessEmail', {
-          type: 'business_approved',
-          businessId: businessId,
-          data: {}
+        await base44.functions.invoke('sendApprovalEmail', {
+          business_id: businessId
         });
       } catch (error) {
         console.error("Failed to send approval email:", error);
+        toast.warning("Business approved but approval email failed to send");
       }
-      
+
       if (onUpdate) onUpdate();
     },
     onError: () => {
@@ -60,7 +59,7 @@ export default function PendingApprovalsTab({ onUpdate }) {
 
   const rejectMutation = useMutation({
     mutationFn: async ({ businessId, reason }) => {
-      return await base44.entities.Business.update(businessId, { 
+      return await base44.entities.Business.update(businessId, {
         status: "rejected",
         admin_notes: reason || "Rejected by admin"
       });
@@ -69,7 +68,7 @@ export default function PendingApprovalsTab({ onUpdate }) {
       queryClient.invalidateQueries({ queryKey: ["pending-businesses"] });
       queryClient.invalidateQueries({ queryKey: ["admin-businesses"] });
       toast.success("Business rejected");
-      
+
       // Send rejection email
       try {
         await base44.functions.invoke('sendBusinessEmail', {
@@ -82,7 +81,7 @@ export default function PendingApprovalsTab({ onUpdate }) {
       } catch (error) {
         console.error("Failed to send rejection email:", error);
       }
-      
+
       if (onUpdate) onUpdate();
     },
     onError: () => {
@@ -177,11 +176,7 @@ export default function PendingApprovalsTab({ onUpdate }) {
                     Owner: {business.created_by === "office@lbadirectory.com" ? "LBA Directory" : business.created_by} • Submitted: {new Date(business.created_date).toLocaleDateString()}
                   </p>
                 </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  asChild
-                >
+                <Button size="sm" variant="outline" asChild>
                   <a
                     href={`${createPageUrl("BusinessListing")}?id=${business.id}`}
                     target="_blank"
