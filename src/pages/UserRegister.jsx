@@ -48,39 +48,24 @@ export default function UserRegister() {
     setLoading(true);
 
     try {
-      // Check if email already exists
-      const customers = await base44.entities.Customer.list();
-      if (customers.some(c => c.email === formData.email)) {
-        toast.error("Email already exists");
+      const response = await base44.functions.invoke('registerCustomer', {
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone || '',
+        password: formData.password
+      });
+
+      if (response.data?.error) {
+        if (response.data.error.includes('already')) {
+          toast.error("This email is already registered. Please sign in.");
+        } else {
+          toast.error(response.data.error);
+        }
         setLoading(false);
         return;
       }
 
-      // Simple password hash (in production, use proper hashing on backend)
-      const passwordHash = btoa(formData.password);
-
-      // Create customer
-      await base44.entities.Customer.create({
-        full_name: formData.fullName,
-        email: formData.email,
-        phone: formData.phone || "",
-        password_hash: passwordHash,
-        is_active: true
-      });
-
-      // Send welcome email
-      try {
-        await base44.functions.invoke('sendWelcomeEmail', {
-          email: formData.email,
-          fullName: formData.fullName,
-          password: formData.password
-        });
-      } catch (emailError) {
-        console.error("Failed to send welcome email:", emailError);
-      }
-
-      toast.success("Registration successful! Check your email.");
-
+      toast.success("Account created successfully!");
       setTimeout(() => {
         window.location.href = createPageUrl("RegistrationSuccess") + `?email=${encodeURIComponent(formData.email)}`;
       }, 1000);
