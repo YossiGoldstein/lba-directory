@@ -1,12 +1,14 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-function mimeToBase64Url(mimeStr) {
-  const bytes = new TextEncoder().encode(mimeStr);
+function toBase64(str) {
+  const bytes = new TextEncoder().encode(str);
   let binary = '';
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary);
+}
+
+function mimeToBase64Url(mimeStr) {
+  return toBase64(mimeStr).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 async function sendGmail(base44, { to, subject, html }) {
@@ -16,7 +18,7 @@ async function sendGmail(base44, { to, subject, html }) {
   const plainText = 'Please view this email in an HTML-capable email client.';
   const mime = [
     `To: ${to}`,
-    `Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`,
+    `Subject: =?UTF-8?B?${toBase64(subject)}?=`,
     'MIME-Version: 1.0',
     `Content-Type: multipart/alternative; boundary="${boundary}"`,
     '',
