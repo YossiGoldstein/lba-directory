@@ -71,7 +71,16 @@ export default function UserRegister() {
       }, 1000);
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error("Registration failed. Please try again.");
+      const msg = error?.response?.data?.error || error?.message || "Registration failed. Please try again.";
+      if (msg.includes('already')) {
+        toast.error("This email is already registered. Please sign in.");
+      } else if (msg.includes('Password') || msg.includes('password')) {
+        toast.error(msg);
+      } else if (msg.includes('Missing') || msg.includes('required')) {
+        toast.error("Please fill in all required fields.");
+      } else {
+        toast.error(msg);
+      }
       setLoading(false);
     }
   };
