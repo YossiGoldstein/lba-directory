@@ -1,25 +1,41 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
+function mimeToBase64Url(mimeStr) {
+  const bytes = new TextEncoder().encode(mimeStr);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
 async function sendGmail(base44, { to, subject, html }) {
   const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
 
   const boundary = 'boundary_' + Date.now();
+  const plainText = 'Please view this email in an HTML-capable email client.';
   const mime = [
     `To: ${to}`,
-    `Subject: ${subject}`,
+    `Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`,
     'MIME-Version: 1.0',
     `Content-Type: multipart/alternative; boundary="${boundary}"`,
     '',
     `--${boundary}`,
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: 8bit',
+    '',
+    plainText,
+    '',
+    `--${boundary}`,
     'Content-Type: text/html; charset=UTF-8',
-    'Content-Transfer-Encoding: quoted-printable',
+    'Content-Transfer-Encoding: 8bit',
     '',
     html,
-    `--${boundary}--`
+    '',
+    `--${boundary}--`,
   ].join('\r\n');
 
-  const encoded = btoa(unescape(encodeURIComponent(mime)))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const encoded = mimeToBase64Url(mime);
 
   const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
     method: 'POST',
@@ -64,8 +80,7 @@ Deno.serve(async (req) => {
       is_active: true
     });
 
-    const appId = Deno.env.get('BASE44_APP_ID');
-    const dashboardUrl = `https://${appId}.base44.app/#/UserDashboard`;
+    const dashboardUrl = 'https://www.lbadirectory.com/UserDashboard';
 
     try {
       await sendGmail(base44, {
