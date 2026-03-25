@@ -46,8 +46,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing business_id' }, { status: 400 });
     }
 
-    const businesses = await base44.asServiceRole.entities.Business.list();
-    const business = businesses.find(b => b.id === business_id);
+    const businesses = await base44.asServiceRole.entities.Business.filter({ id: business_id });
+    const business = businesses[0];
 
     if (!business) {
       return Response.json({ error: 'Business not found' }, { status: 404 });
