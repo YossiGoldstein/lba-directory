@@ -121,6 +121,16 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
 
       await base44.entities.Business.update(business.id, updateData);
       toast.success("Business updated successfully!");
+
+      // Send approval email if status changed to approved
+      if (formData.status === 'approved' && business.status !== 'approved') {
+        try {
+          await base44.functions.invoke('sendApprovalEmail', { business_id: business.id });
+        } catch (err) {
+          console.error('Failed to send approval email:', err);
+        }
+      }
+
       onSave();
       onClose();
     } catch (error) {
