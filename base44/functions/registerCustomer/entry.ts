@@ -1,5 +1,27 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
+async function sendEmail({ to, subject, html }) {
+  const resendKey = Deno.env.get('RESEND_API_KEY');
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${resendKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      from: 'LBA Directory <office@lbadirectory.com>',
+      to,
+      subject,
+      html
+    })
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Resend error: ${err}`);
+  }
+  return res.json();
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -13,13 +35,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
     }
 
-    // Check if email already exists
     const existing = await base44.asServiceRole.entities.Customer.filter({ email });
     if (existing && existing.length > 0) {
       return Response.json({ error: 'Email already registered' }, { status: 409 });
     }
 
-    // Create customer
     const passwordHash = btoa(password);
     const customer = await base44.asServiceRole.entities.Customer.create({
       full_name: fullName,
@@ -29,23 +49,31 @@ Deno.serve(async (req) => {
       is_active: true
     });
 
-    // Send welcome email (non-blocking)
+    const appId = Deno.env.get('BASE44_APP_ID');
+    const dashboardUrl = `https://${appId}.base44.app/#/UserDashboard`;
+
     try {
-      await base44.asServiceRole.integrations.Core.SendEmail({
+      await sendEmail({
         to: email,
-        subject: 'Welcome to LBA Directory!',
-        body: `
+        subject: "Welcome to LBA Directory - Your Account is Ready!",
+        html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #0891b2;">Welcome to LBA Directory, ${fullName}!</h2>
-            <p>Your account has been created successfully.</p>
-            <p>You can now sign in and start exploring local businesses in your community.</p>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="https://${Deno.env.get('BASE44_APP_ID')}.base44.app/#/SignIn"
-                 style="display: inline-block; background: #0891b2; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
-                Sign In Now
-              </a>
+            <div style="background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+              <h1 style="margin: 0; font-size: 26px;">Welcome to LBA Directory!</h1>
             </div>
-            <p style="color: #6b7280; font-size: 14px;">LBA Directory Team</p>
+            <div style="background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb;">
+              <p>Hello <strong>${fullName}</strong>,</p>
+              <p>Your account has been successfully created.</p>
+
+              <div style="text-align: center; margin: 20px 0;">
+                <a href="${dashboardUrl}" style="display: inline-block; background: #0891b2; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                  Go to Your Dashboard
+                </a>
+              </div>
+
+              <p>Questions? <a href="mailto:office@lbadirectory.com" style="color: #0891b2;">office@lbadirectory.com</a> | (732) 600-1260</p>
+              <p>The LBA Directory Team</p>
+            </div>
           </div>
         `
       });
