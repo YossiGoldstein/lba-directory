@@ -1,23 +1,38 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-async function sendEmail({ to, subject, html }) {
-  const resendKey = Deno.env.get('RESEND_API_KEY');
-  const res = await fetch('https://api.resend.com/emails', {
+async function sendGmail(base44, { to, subject, html }) {
+  const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
+
+  const boundary = 'boundary_' + Date.now();
+  const mime = [
+    `To: ${to}`,
+    `Subject: ${subject}`,
+    'MIME-Version: 1.0',
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/html; charset=UTF-8',
+    'Content-Transfer-Encoding: quoted-printable',
+    '',
+    html,
+    `--${boundary}--`
+  ].join('\r\n');
+
+  const encoded = btoa(unescape(encodeURIComponent(mime)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+  const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${resendKey}`,
+      'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      from: 'LBA Directory <office@lbadirectory.com>',
-      to,
-      subject,
-      html
-    })
+    body: JSON.stringify({ raw: encoded })
   });
+
   if (!res.ok) {
     const err = await res.text();
-    throw new Error(`Resend error: ${err}`);
+    throw new Error(`Gmail send error: ${err}`);
   }
   return res.json();
 }
@@ -49,7 +64,7 @@ Deno.serve(async (req) => {
     const businessUrl = `${baseUrl}/#/business-listing?id=${business.id}`;
     const inquiryUrl = `${baseUrl}/#/ServiceInquiry?business=${encodeURIComponent(business.business_name)}&phone=${encodeURIComponent(business.phone || '')}&email=${encodeURIComponent(ownerEmail)}`;
 
-    await sendEmail({
+    await sendGmail(base44, {
       to: ownerEmail,
       subject: "Your Business Has Been Approved - LBA Directory",
       html: `
@@ -84,7 +99,7 @@ Deno.serve(async (req) => {
 
             <div style="background: #fef3c7; border: 2px solid #f59e0b; padding: 20px; border-radius: 8px; margin: 25px 0;">
               <h3 style="margin-top: 0; color: #92400e;">Want More Visibility?</h3>
-              <p>We offer additional services to help your business grow: Logo Design, Landing Page, Full Website, CRM System, Promotional Video, WhatsApp AI Chat.</p>
+              <p>We offer additional services: Logo Design, Landing Page, Full Website, CRM System, Promotional Video, WhatsApp AI Chat.</p>
               <div style="text-align: center; margin: 20px 0;">
                 <a href="${inquiryUrl}" style="display: inline-block; background: #f59e0b; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
                   I'm Interested - Tell Me More

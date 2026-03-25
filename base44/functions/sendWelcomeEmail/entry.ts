@@ -1,29 +1,45 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-async function sendEmail({ to, subject, html }) {
-  const resendKey = Deno.env.get('RESEND_API_KEY');
-  const res = await fetch('https://api.resend.com/emails', {
+async function sendGmail(base44, { to, subject, html }) {
+  const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
+
+  const boundary = 'boundary_' + Date.now();
+  const mime = [
+    `To: ${to}`,
+    `Subject: ${subject}`,
+    'MIME-Version: 1.0',
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/html; charset=UTF-8',
+    'Content-Transfer-Encoding: quoted-printable',
+    '',
+    html,
+    `--${boundary}--`
+  ].join('\r\n');
+
+  const encoded = btoa(unescape(encodeURIComponent(mime)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+  const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${resendKey}`,
+      'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      from: 'LBA Directory <office@lbadirectory.com>',
-      to,
-      subject,
-      html
-    })
+    body: JSON.stringify({ raw: encoded })
   });
+
   if (!res.ok) {
     const err = await res.text();
-    throw new Error(`Resend error: ${err}`);
+    throw new Error(`Gmail send error: ${err}`);
   }
   return res.json();
 }
 
 Deno.serve(async (req) => {
   try {
+    const base44 = createClientFromRequest(req);
     const { email, fullName } = await req.json();
 
     if (!email || !fullName) {
@@ -33,7 +49,7 @@ Deno.serve(async (req) => {
     const appId = Deno.env.get('BASE44_APP_ID');
     const dashboardUrl = `https://${appId}.base44.app/#/UserDashboard`;
 
-    await sendEmail({
+    await sendGmail(base44, {
       to: email,
       subject: "Welcome to LBA Directory - Your Account is Ready!",
       html: `
@@ -67,7 +83,7 @@ Deno.serve(async (req) => {
               </ul>
             </div>
 
-            <p>Questions? Contact us: <a href="mailto:office@lbadirectory.com" style="color: #0891b2;">office@lbadirectory.com</a> | (732) 600-1260</p>
+            <p>Questions? <a href="mailto:office@lbadirectory.com" style="color: #0891b2;">office@lbadirectory.com</a> | (732) 600-1260</p>
             <p>Welcome aboard!<br><strong>The LBA Directory Team</strong></p>
           </div>
           <div style="text-align: center; padding: 20px; color: #6b7280; font-size: 13px;">
