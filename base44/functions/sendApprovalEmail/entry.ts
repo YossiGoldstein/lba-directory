@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
       address ? `Address: ${address}` : null,
       `Status: Approved`,
       '',
-      `View Your Live Listing: ${businessUrl}`,
+      `View My Listing: ${businessUrl}`,
       `Go to My Dashboard: ${dashboardUrl}`,
       '',
       "What's Next?",
@@ -139,14 +139,14 @@ Deno.serve(async (req) => {
 <table cellpadding="5">
 <tr><td style="color:#6b7280;font-size:14px;">Business:</td><td style="color:#111827;font-size:14px;font-weight:bold;">${business.business_name}</td></tr>
 ${business.phone ? `<tr><td style="color:#6b7280;font-size:14px;">Phone:</td><td style="color:#111827;font-size:14px;">${business.phone}</td></tr>` : ''}
-${address ? `<tr><td style="color:#6b7280;font-size:14px;">Address:</td><td style="color:#111827;font-size:14px;">${address}</td></tr>` : ''}
+${business.email ? `<tr><td style="color:#6b7280;font-size:14px;">Email:</td><td style="color:#111827;font-size:14px;">${business.email}</td></tr>` : ''}
 <tr><td style="color:#6b7280;font-size:14px;">Status:</td><td><span style="background:#dcfce7;color:#15803d;padding:2px 10px;border-radius:20px;font-size:13px;font-weight:bold;">Approved</span></td></tr>
 </table>
 </td></tr>
 </table>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
 <tr><td align="center" style="padding-bottom:10px;">
-<a href="${businessUrl}" style="display:inline-block;background:#0e4f6e;color:#ffffff;padding:13px 32px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:15px;">View Your Live Listing</a>
+<a href="${businessUrl}" style="display:inline-block;background:#0e4f6e;color:#ffffff;padding:13px 32px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:15px;">View My Listing</a>
 </td></tr>
 <tr><td align="center">
 <a href="${dashboardUrl}" style="display:inline-block;border:2px solid #0e4f6e;color:#0e4f6e;background:#ffffff;padding:11px 32px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:15px;">Go to My Dashboard</a>
