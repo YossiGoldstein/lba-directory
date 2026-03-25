@@ -199,7 +199,7 @@ export default function BusinessesTab({ onUpdate }) {
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-600">
                     <div>{business.email || "—"}</div>
-                    {business.created_by && business.created_by !== business.email && (
+                    {business.created_by && business.created_by !== business.email && business.created_by !== "anonymous" && (
                       <div className="text-xs text-gray-400">Added by: {business.created_by === "office@lbadirectory.com" || business.created_by === "ydg7780@gmail.com" ? "Admin" : business.created_by}</div>
                     )}
                   </td>
