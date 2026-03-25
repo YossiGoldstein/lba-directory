@@ -158,10 +158,14 @@ ${address ? `<tr><td style="color:#6b7280;font-size:14px;">Address:</td><td styl
 </table>
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;margin-bottom:24px;">
 <tr><td style="padding:18px 22px;">
-<p style="margin:0 0 8px;color:#78350f;font-size:15px;font-weight:bold;">Want to Grow Even Faster?</p>
-<p style="margin:0 0 14px;color:#92400e;font-size:14px;">We offer professional services - Logo Design, Website Development, CRM Systems, Promotional Videos, WhatsApp AI Chat, and more.</p>
+<p style="margin:0 0 8px;color:#78350f;font-size:15px;font-weight:bold;">Want More Customers From Your Listing?</p>
+<p style="margin:0 0 6px;color:#92400e;font-size:14px;line-height:1.7;">Many businesses on LBA Directory boost their results with our done-for-you growth services:</p>
+<p style="margin:0 0 4px;color:#92400e;font-size:14px;">&#8226; <strong>More visibility</strong> - get featured and ranked higher in search results</p>
+<p style="margin:0 0 4px;color:#92400e;font-size:14px;">&#8226; <strong>More leads</strong> - professional website, logo, and promotional video that convert</p>
+<p style="margin:0 0 4px;color:#92400e;font-size:14px;">&#8226; <strong>Better automation</strong> - WhatsApp AI chat that handles inquiries 24/7</p>
+<p style="margin:0 0 14px;color:#92400e;font-size:14px;">&#8226; <strong>Stronger reputation</strong> - CRM tools to follow up and retain customers</p>
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
-<a href="${inquiryUrl}" style="display:inline-block;background:#d97706;color:#ffffff;padding:11px 26px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:14px;">Contact Us to Learn More</a>
+<a href="${inquiryUrl}" style="display:inline-block;background:#d97706;color:#ffffff;padding:11px 26px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:14px;">Get More Customers Now</a>
 </td></tr></table>
 </td></tr>
 </table>
