@@ -5,12 +5,22 @@ const BASE_URL = 'https://www.lbadirectory.com';
 async function sendGmail(base44, { to, subject, htmlBody }) {
   const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
 
-  // Encode subject for non-ASCII safety
+  // Encode subject
   const subjectEncoded = `=?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`;
 
-  // Build raw MIME message with HTML inline (no nested base64)
+  // Encode the HTML body as base64url
+  const htmlBase64 = btoa(unescape(encodeURIComponent(htmlBody)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+  // Plain text fallback
+  const plainText = `Your business has been approved and is now live on LBA Directory!\n\nVisit: ${BASE_URL}`;
+  const plainBase64 = btoa(unescape(encodeURIComponent(plainText)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
   const boundary = `boundary_${Date.now()}`;
-  const mimeLines = [
+
+  // Build MIME with base64-encoded parts
+  const mime = [
     `To: ${to}`,
     `Subject: ${subjectEncoded}`,
     'MIME-Version: 1.0',
@@ -18,21 +28,21 @@ async function sendGmail(base44, { to, subject, htmlBody }) {
     '',
     `--${boundary}`,
     'Content-Type: text/plain; charset=UTF-8',
-    'Content-Transfer-Encoding: quoted-printable',
+    'Content-Transfer-Encoding: base64',
     '',
-    `Your business has been approved and is now live on LBA Directory!\n\nView your listing: ${BASE_URL}/BusinessListing?id=`,
+    plainBase64,
     '',
     `--${boundary}`,
     'Content-Type: text/html; charset=UTF-8',
-    'Content-Transfer-Encoding: quoted-printable',
+    'Content-Transfer-Encoding: base64',
     '',
-    htmlBody,
+    htmlBase64,
     '',
     `--${boundary}--`
   ].join('\r\n');
 
-  // Base64url encode the full MIME message
-  const encoded = btoa(unescape(encodeURIComponent(mimeLines)))
+  // Base64url encode the full raw message
+  const rawEncoded = btoa(mime)
     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
   const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
@@ -41,7 +51,7 @@ async function sendGmail(base44, { to, subject, htmlBody }) {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ raw: encoded })
+    body: JSON.stringify({ raw: rawEncoded })
   });
 
   if (!res.ok) {
