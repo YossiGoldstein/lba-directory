@@ -96,13 +96,18 @@ Deno.serve(async (req) => {
       `Go to My Dashboard: ${dashboardUrl}`,
       '',
       "What's Next?",
-      '- Customers can now find and contact you directly',
-      '- Log in to your dashboard to manage your listing, add photos, and post deals',
-      '- Collect reviews to build your reputation',
-      '- Share your listing on social media to reach more customers',
+      '- Log in to your dashboard to manage your listing and keep it up to date, add photos, post deals, check your stats, and more.',
+      '- Collect reviews to build your reputation.',
+      '- Share your listing on social media to reach more customers.',
       '',
-      'Want to Grow Even Faster?',
-      `Contact Us to Learn More: ${inquiryUrl}`,
+      'Want to promote your business even more?',
+      'The LBA Directory offers many services to help you boost your business:',
+      '- Upgrade your listing package - get featured and ranked higher in search results, get free advertising, discounts on services, and more.',
+      '- More leads - professional website, logo, and promotional video that convert.',
+      '- Better automation - WhatsApp AI chat that handles inquiries 24/7, and automate many daily tasks, and more.',
+      '- Stronger reputation - CRM tools to follow up and retain customers.',
+      '',
+      `Boost your business Now: ${inquiryUrl}`,
       '',
       'Have questions? We are here to help:',
       'Email: office@lbadirectory.com',
@@ -150,22 +155,21 @@ ${address ? `<tr><td style="color:#6b7280;font-size:14px;">Address:</td><td styl
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f9ff;border-left:4px solid #0891b2;margin-bottom:24px;">
 <tr><td style="padding:18px 22px;">
 <p style="margin:0 0 8px;color:#0c4a6e;font-size:14px;font-weight:bold;">What&#39;s Next?</p>
-<p style="margin:0 0 4px;color:#374151;font-size:14px;">&#8226; Customers can now find and contact you directly</p>
-<p style="margin:0 0 4px;color:#374151;font-size:14px;">&#8226; Log in to your dashboard to manage your listing, add photos, and post deals</p>
-<p style="margin:0 0 4px;color:#374151;font-size:14px;">&#8226; Collect reviews to build your reputation</p>
-<p style="margin:0;color:#374151;font-size:14px;">&#8226; Share your listing on social media to reach more customers</p>
+<p style="margin:0 0 4px;color:#374151;font-size:14px;">&#8226; Log in to your dashboard to manage your listing and keep it up to date, add photos, post deals, check your stats, and more.</p>
+<p style="margin:0 0 4px;color:#374151;font-size:14px;">&#8226; Collect reviews to build your reputation.</p>
+<p style="margin:0;color:#374151;font-size:14px;">&#8226; Share your listing on social media to reach more customers.</p>
 </td></tr>
 </table>
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;margin-bottom:24px;">
 <tr><td style="padding:18px 22px;">
-<p style="margin:0 0 8px;color:#78350f;font-size:15px;font-weight:bold;">Want More Customers From Your Listing?</p>
-<p style="margin:0 0 6px;color:#92400e;font-size:14px;line-height:1.7;">Many businesses on LBA Directory boost their results with our done-for-you growth services:</p>
-<p style="margin:0 0 4px;color:#92400e;font-size:14px;">&#8226; <strong>More visibility</strong> - get featured and ranked higher in search results</p>
-<p style="margin:0 0 4px;color:#92400e;font-size:14px;">&#8226; <strong>More leads</strong> - professional website, logo, and promotional video that convert</p>
-<p style="margin:0 0 4px;color:#92400e;font-size:14px;">&#8226; <strong>Better automation</strong> - WhatsApp AI chat that handles inquiries 24/7</p>
-<p style="margin:0 0 14px;color:#92400e;font-size:14px;">&#8226; <strong>Stronger reputation</strong> - CRM tools to follow up and retain customers</p>
+<p style="margin:0 0 8px;color:#78350f;font-size:15px;font-weight:bold;">Want to promote your business even more?</p>
+<p style="margin:0 0 6px;color:#92400e;font-size:14px;line-height:1.7;">The LBA Directory offers many services to help you boost your business:</p>
+<p style="margin:0 0 4px;color:#92400e;font-size:14px;">&#8226; <strong>Upgrade your listing package</strong> - get featured and ranked higher in search results, get free advertising, discounts on services, and more.</p>
+<p style="margin:0 0 4px;color:#92400e;font-size:14px;">&#8226; <strong>More leads</strong> - professional website, logo, and promotional video that convert.</p>
+<p style="margin:0 0 4px;color:#92400e;font-size:14px;">&#8226; <strong>Better automation</strong> - WhatsApp AI chat that handles inquiries 24/7, and automate many daily tasks, and more.</p>
+<p style="margin:0 0 14px;color:#92400e;font-size:14px;">&#8226; <strong>Stronger reputation</strong> - CRM tools to follow up and retain customers.</p>
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
-<a href="${inquiryUrl}" style="display:inline-block;background:#d97706;color:#ffffff;padding:11px 26px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:14px;">Get More Customers Now</a>
+<a href="${inquiryUrl}" style="display:inline-block;background:#d97706;color:#ffffff;padding:11px 26px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:14px;">Boost your business Now</a>
 </td></tr></table>
 </td></tr>
 </table>
