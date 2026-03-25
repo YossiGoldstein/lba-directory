@@ -4,6 +4,9 @@ async function sendGmail(base44, { to, subject, html }) {
   const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
 
   const boundary = 'boundary_' + Date.now();
+  const htmlBase64 = btoa(unescape(encodeURIComponent(html)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
   const mime = [
     `To: ${to}`,
     `Subject: ${subject}`,
@@ -12,9 +15,9 @@ async function sendGmail(base44, { to, subject, html }) {
     '',
     `--${boundary}`,
     'Content-Type: text/html; charset=UTF-8',
-    'Content-Transfer-Encoding: quoted-printable',
+    'Content-Transfer-Encoding: base64',
     '',
-    html,
+    htmlBase64,
     `--${boundary}--`
   ].join('\r\n');
 
@@ -59,7 +62,7 @@ Deno.serve(async (req) => {
     }
 
     const appId = Deno.env.get("BASE44_APP_ID");
-    const baseUrl = `https://preview-sandbox--${appId}.base44.app`;
+    const baseUrl = `https://${appId}.base44.app`;
     const dashboardUrl = `${baseUrl}/BusinessDashboard`;
     const businessUrl = `${baseUrl}/BusinessListing?id=${business.id}`;
     const adminUrl = `${baseUrl}/AdminDashboard`;
@@ -240,7 +243,7 @@ Deno.serve(async (req) => {
 
     await sendGmail(base44, {
       to: ownerEmail,
-      subject: `🎉 "${business.business_name}" is Now Live on LBA Directory!`,
+      subject: `"${business.business_name}" is Now Live on LBA Directory!`,`
       html
     });
 
