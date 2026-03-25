@@ -1,27 +1,38 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-async function sendGmail(base44, { to, subject, html }) {
+const BASE_URL = 'https://www.lbadirectory.com';
+
+async function sendGmail(base44, { to, subject, htmlBody }) {
   const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
 
-  const boundary = 'boundary_' + Date.now();
-  const htmlBase64 = btoa(unescape(encodeURIComponent(html)))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  // Encode subject for non-ASCII safety
+  const subjectEncoded = `=?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`;
 
-  const mime = [
+  // Build raw MIME message with HTML inline (no nested base64)
+  const boundary = `boundary_${Date.now()}`;
+  const mimeLines = [
     `To: ${to}`,
-    `Subject: ${subject}`,
+    `Subject: ${subjectEncoded}`,
     'MIME-Version: 1.0',
     `Content-Type: multipart/alternative; boundary="${boundary}"`,
     '',
     `--${boundary}`,
-    'Content-Type: text/html; charset=UTF-8',
-    'Content-Transfer-Encoding: base64',
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: quoted-printable',
     '',
-    htmlBase64,
+    `Your business has been approved and is now live on LBA Directory!\n\nView your listing: ${BASE_URL}/BusinessListing?id=`,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/html; charset=UTF-8',
+    'Content-Transfer-Encoding: quoted-printable',
+    '',
+    htmlBody,
+    '',
     `--${boundary}--`
   ].join('\r\n');
 
-  const encoded = btoa(unescape(encodeURIComponent(mime)))
+  // Base64url encode the full MIME message
+  const encoded = btoa(unescape(encodeURIComponent(mimeLines)))
     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
   const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
@@ -61,188 +72,159 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'No email address found for business' }, { status: 404 });
     }
 
-    const appId = Deno.env.get("BASE44_APP_ID");
-    const baseUrl = `https://${appId}.base44.app`;
-    const dashboardUrl = `${baseUrl}/BusinessDashboard`;
-    const businessUrl = `${baseUrl}/BusinessListing?id=${business.id}`;
-    const adminUrl = `${baseUrl}/AdminDashboard`;
-    const inquiryUrl = `${baseUrl}/ServiceInquiry?business=${encodeURIComponent(business.business_name)}&phone=${encodeURIComponent(business.phone || '')}&email=${encodeURIComponent(ownerEmail)}&name=${encodeURIComponent(business.business_name)}`;
+    const businessUrl = `${BASE_URL}/BusinessListing?id=${business.id}`;
+    const dashboardUrl = `${BASE_URL}/BusinessDashboard`;
+    const inquiryUrl = `${BASE_URL}/ServiceInquiry`;
 
-    const phoneLink = business.phone ? `<a href="tel:${business.phone}" style="color:#0891b2;text-decoration:none;">${business.phone}</a>` : '—';
-    const emailLink = ownerEmail ? `<a href="mailto:${ownerEmail}" style="color:#0891b2;text-decoration:none;">${ownerEmail}</a>` : '—';
-    const websiteLink = business.website_url ? `<a href="${business.website_url}" style="color:#0891b2;text-decoration:none;">${business.website_url}</a>` : '—';
-    const address = [business.address_line1, business.city, business.state].filter(Boolean).join(', ') || '—';
+    const address = [business.address_line1, business.city, business.state].filter(Boolean).join(', ') || '';
 
-    const html = `<!DOCTYPE html>
+    const htmlBody = `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Business is Approved!</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Business is Approved</title>
 </head>
-<body style="margin:0;padding:0;background-color:#f3f4f6;font-family:Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;padding:30px 0;">
-    <tr>
-      <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08);">
-          
-          <!-- Header -->
-          <tr>
-            <td style="background:linear-gradient(135deg,#0891b2 0%,#0e4f6e 100%);padding:40px 30px;text-align:center;">
-              <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png" alt="LBA Directory" style="height:48px;margin-bottom:20px;filter:brightness(0) invert(1);" />
+<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:Arial,Helvetica,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:32px 0;">
+  <tr>
+    <td align="center">
+      <table role="presentation" width="580" cellpadding="0" cellspacing="0" style="max-width:580px;width:100%;background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #e2e8f0;">
 
-              <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">Your Business is Now Live!</h1>
-              <p style="margin:10px 0 0;color:rgba(255,255,255,0.85);font-size:16px;">Congratulations — you're now part of the LBA Directory</p>
-            </td>
-          </tr>
+        <!-- Header -->
+        <tr>
+          <td style="background:#0e4f6e;padding:36px 40px;text-align:center;">
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png" alt="LBA Directory" style="height:44px;display:block;margin:0 auto 16px;" />
+            <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;line-height:1.3;">Your Business is Now Live!</h1>
+            <p style="margin:8px 0 0;color:#bae6fd;font-size:15px;">Congratulations &mdash; you&apos;re now part of the LBA Directory</p>
+          </td>
+        </tr>
 
-          <!-- Body -->
-          <tr>
-            <td style="padding:36px 36px 0;">
-              <p style="margin:0 0 20px;color:#374151;font-size:16px;line-height:1.6;">
-                Great news! Your business <strong style="color:#0891b2;">"${business.business_name}"</strong> has been reviewed and approved. Your listing is now live and visible to thousands of local customers.
-              </p>
+        <!-- Body -->
+        <tr>
+          <td style="padding:36px 40px 0;">
+            <p style="margin:0 0 24px;color:#374151;font-size:15px;line-height:1.7;">
+              Dear Business Owner,
+            </p>
+            <p style="margin:0 0 24px;color:#374151;font-size:15px;line-height:1.7;">
+              We are pleased to inform you that your business listing for <strong style="color:#0e4f6e;">${business.business_name}</strong> has been reviewed and <strong>approved</strong>. Your listing is now live and visible to thousands of local customers searching the LBA Directory.
+            </p>
 
-              <!-- Business Details Box -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border:2px solid #22c55e;border-radius:12px;margin-bottom:28px;">
-                <tr>
-                  <td style="padding:24px;">
-                    <h3 style="margin:0 0 16px;color:#15803d;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Your Business Details</h3>
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td style="padding:6px 0;color:#6b7280;font-size:14px;width:130px;font-weight:600;">Business:</td>
-                        <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:700;">${business.business_name}</td>
-                      </tr>
-                      <tr>
-                        <td style="padding:6px 0;color:#6b7280;font-size:14px;font-weight:600;">Phone:</td>
-                        <td style="padding:6px 0;font-size:14px;">${phoneLink}</td>
-                      </tr>
-                      <tr>
-                        <td style="padding:6px 0;color:#6b7280;font-size:14px;font-weight:600;">Email:</td>
-                        <td style="padding:6px 0;font-size:14px;">${emailLink}</td>
-                      </tr>
-                      ${business.website_url ? `
-                      <tr>
-                        <td style="padding:6px 0;color:#6b7280;font-size:14px;font-weight:600;">Website:</td>
-                        <td style="padding:6px 0;font-size:14px;">${websiteLink}</td>
-                      </tr>` : ''}
-                      <tr>
-                        <td style="padding:6px 0;color:#6b7280;font-size:14px;font-weight:600;">Address:</td>
-                        <td style="padding:6px 0;color:#111827;font-size:14px;">${address}</td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
+            <!-- Details -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;margin-bottom:28px;">
+              <tr>
+                <td style="padding:20px 24px;">
+                  <p style="margin:0 0 12px;color:#0e4f6e;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;">Listing Details</p>
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td style="padding:5px 0;color:#6b7280;font-size:14px;width:110px;vertical-align:top;">Business:</td>
+                      <td style="padding:5px 0;color:#111827;font-size:14px;font-weight:600;">${business.business_name}</td>
+                    </tr>
+                    ${business.phone ? `<tr>
+                      <td style="padding:5px 0;color:#6b7280;font-size:14px;vertical-align:top;">Phone:</td>
+                      <td style="padding:5px 0;color:#111827;font-size:14px;">${business.phone}</td>
+                    </tr>` : ''}
+                    ${address ? `<tr>
+                      <td style="padding:5px 0;color:#6b7280;font-size:14px;vertical-align:top;">Address:</td>
+                      <td style="padding:5px 0;color:#111827;font-size:14px;">${address}</td>
+                    </tr>` : ''}
+                    <tr>
+                      <td style="padding:5px 0;color:#6b7280;font-size:14px;vertical-align:top;">Status:</td>
+                      <td style="padding:5px 0;font-size:14px;"><span style="background:#dcfce7;color:#15803d;padding:2px 10px;border-radius:20px;font-weight:600;font-size:13px;">Approved</span></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
 
-              <!-- CTA Buttons -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
-                <tr>
-                  <td align="center" style="padding:0 8px;">
-                    <a href="${businessUrl}" style="display:inline-block;background:linear-gradient(135deg,#22c55e,#16a34a);color:#ffffff;padding:14px 28px;text-decoration:none;border-radius:10px;font-weight:700;font-size:15px;margin:6px;">
-                      View Your Live Listing
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td align="center" style="padding:0 8px;">
-                    <a href="${dashboardUrl}" style="display:inline-block;background:linear-gradient(135deg,#0891b2,#0e7490);color:#ffffff;padding:14px 28px;text-decoration:none;border-radius:10px;font-weight:700;font-size:15px;margin:6px;">
-                      Go to My Dashboard
-                    </a>
-                  </td>
-                </tr>
-              </table>
+            <!-- CTA Buttons -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+              <tr>
+                <td align="center" style="padding-bottom:12px;">
+                  <a href="${businessUrl}" style="display:inline-block;background:#0e4f6e;color:#ffffff;padding:13px 30px;text-decoration:none;border-radius:6px;font-weight:700;font-size:15px;letter-spacing:0.3px;">View Your Live Listing</a>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">
+                  <a href="${dashboardUrl}" style="display:inline-block;background:#ffffff;color:#0e4f6e;padding:12px 30px;text-decoration:none;border-radius:6px;font-weight:700;font-size:15px;border:2px solid #0e4f6e;letter-spacing:0.3px;">Go to My Dashboard</a>
+                </td>
+              </tr>
+            </table>
 
-              <!-- What's next -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="background:#eff6ff;border-radius:12px;margin-bottom:28px;">
-                <tr>
-                  <td style="padding:24px;">
-                    <h3 style="margin:0 0 14px;color:#1e40af;font-size:16px;font-weight:700;">What's Next?</h3>
-                    <ul style="margin:0;padding:0 0 0 20px;color:#374151;font-size:14px;line-height:2;">
-                      <li>Customers can now find and contact you directly</li>
-                      <li>Log in to manage your listing, add photos &amp; deals</li>
-                      <li>Collect reviews and boost your reputation</li>
-                      <li>Share your listing on social media</li>
-                    </ul>
-                  </td>
-                </tr>
-              </table>
+            <!-- What's Next -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f0f9ff;border-left:4px solid #0891b2;border-radius:0 6px 6px 0;margin-bottom:28px;">
+              <tr>
+                <td style="padding:20px 24px;">
+                  <p style="margin:0 0 10px;color:#0c4a6e;font-size:14px;font-weight:700;">What&apos;s Next?</p>
+                  <p style="margin:0 0 6px;color:#374151;font-size:14px;line-height:1.6;">- Customers can now find and contact you directly</p>
+                  <p style="margin:0 0 6px;color:#374151;font-size:14px;line-height:1.6;">- Log in to your dashboard to manage your listing, add photos, and post deals</p>
+                  <p style="margin:0 0 6px;color:#374151;font-size:14px;line-height:1.6;">- Collect reviews to build your reputation</p>
+                  <p style="margin:0;color:#374151;font-size:14px;line-height:1.6;">- Share your listing on social media to reach more customers</p>
+                </td>
+              </tr>
+            </table>
 
-              <!-- Service Inquiry CTA -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid #f59e0b;border-radius:12px;margin-bottom:28px;">
-                <tr>
-                  <td style="padding:24px;">
-                    <h3 style="margin:0 0 10px;color:#92400e;font-size:17px;font-weight:700;">Want to Grow Even Faster?</h3>
-                    <p style="margin:0 0 16px;color:#78350f;font-size:14px;line-height:1.6;">We offer professional services to help your business stand out:</p>
-                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
-                      <tr>
-                        <td width="50%" style="padding:4px 0;color:#92400e;font-size:13px;">Logo Design</td>
-                        <td width="50%" style="padding:4px 0;color:#92400e;font-size:13px;">Full Website</td>
-                      </tr>
-                      <tr>
-                        <td style="padding:4px 0;color:#92400e;font-size:13px;">CRM System</td>
-                        <td style="padding:4px 0;color:#92400e;font-size:13px;">Promotional Video</td>
-                      </tr>
-                      <tr>
-                        <td style="padding:4px 0;color:#92400e;font-size:13px;">WhatsApp AI Chat</td>
-                        <td style="padding:4px 0;color:#92400e;font-size:13px;">AI Solutions</td>
-                      </tr>
-                    </table>
-                    <div style="text-align:center;">
-                      <a href="${inquiryUrl}" style="display:inline-block;background:linear-gradient(135deg,#f59e0b,#d97706);color:#ffffff;padding:14px 32px;text-decoration:none;border-radius:10px;font-weight:700;font-size:15px;">
-                        Fill Out the Inquiry Form
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-              </table>
+            <!-- Services Promo -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;margin-bottom:28px;">
+              <tr>
+                <td style="padding:20px 24px;">
+                  <p style="margin:0 0 10px;color:#78350f;font-size:15px;font-weight:700;">Want to Grow Even Faster?</p>
+                  <p style="margin:0 0 14px;color:#92400e;font-size:14px;line-height:1.6;">We offer professional services to help your business stand out — including Logo Design, Website Development, CRM Systems, Promotional Videos, WhatsApp AI Chat, and more.</p>
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td align="center">
+                        <a href="${inquiryUrl}" style="display:inline-block;background:#d97706;color:#ffffff;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:700;font-size:14px;">Contact Us to Learn More</a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
 
-            </td>
-          </tr>
+          </td>
+        </tr>
 
-          <!-- Contact & Footer -->
-          <tr>
-            <td style="padding:20px 36px 36px;">
-              <p style="margin:0 0 6px;color:#6b7280;font-size:14px;">Questions? We're here to help:</p>
-              <p style="margin:0 0 6px;font-size:14px;">
-                 <a href="mailto:office@lbadirectory.com" style="color:#0891b2;text-decoration:none;">office@lbadirectory.com</a>
-                 &nbsp;&nbsp;|&nbsp;&nbsp;
-                <a href="tel:7326001260" style="color:#0891b2;text-decoration:none;">732-600-1260</a>
-                &nbsp;&nbsp;|&nbsp;&nbsp;
-                <a href="https://wa.me/17326001260" style="color:#0891b2;text-decoration:none;">WhatsApp</a>
-              </p>
-              <p style="margin:16px 0 0;color:#374151;font-size:14px;">
-                Best regards,<br/>
-                <strong>The LBA Directory Team</strong>
-              </p>
-            </td>
-          </tr>
+        <!-- Contact -->
+        <tr>
+          <td style="padding:0 40px 28px;">
+            <p style="margin:0 0 8px;color:#6b7280;font-size:14px;">Have questions? We&apos;re here to help:</p>
+            <p style="margin:0 0 4px;font-size:14px;color:#374151;">
+              Email: <a href="mailto:office@lbadirectory.com" style="color:#0891b2;text-decoration:none;">office@lbadirectory.com</a>
+            </p>
+            <p style="margin:0 0 4px;font-size:14px;color:#374151;">
+              Phone: <a href="tel:7326001260" style="color:#0891b2;text-decoration:none;">732-600-1260</a>
+            </p>
+            <p style="margin:0 0 4px;font-size:14px;color:#374151;">
+              WhatsApp: <a href="https://wa.me/17326001260" style="color:#0891b2;text-decoration:none;">Message us on WhatsApp</a>
+            </p>
+            <p style="margin:20px 0 0;color:#374151;font-size:14px;line-height:1.6;">
+              Best regards,<br>
+              <strong>The LBA Directory Team</strong>
+            </p>
+          </td>
+        </tr>
 
-          <!-- Footer Bar -->
-          <tr>
-            <td style="background:#1f2937;padding:20px 36px;text-align:center;border-radius:0 0 16px 16px;">
-              <p style="margin:0 0 8px;color:#9ca3af;font-size:12px;">
-                LBA Directory — Serving Lakewood, Toms River, Jackson, Brick, Howell &amp; Manchester
-              </p>
-              <p style="margin:0;font-size:12px;">
-                <a href="${adminUrl}" style="color:#6b7280;text-decoration:none;">Admin Panel</a>
-                &nbsp;&nbsp;|&nbsp;&nbsp;
-                <a href="${baseUrl}" style="color:#6b7280;text-decoration:none;">Visit Directory</a>
-              </p>
-            </td>
-          </tr>
+        <!-- Footer -->
+        <tr>
+          <td style="background:#1e293b;padding:18px 40px;text-align:center;border-radius:0 0 8px 8px;">
+            <p style="margin:0 0 6px;color:#94a3b8;font-size:12px;">LBA Directory &mdash; Serving Lakewood, Toms River, Jackson, Brick, Howell &amp; Manchester</p>
+            <p style="margin:0;font-size:12px;">
+              <a href="${BASE_URL}" style="color:#64748b;text-decoration:none;">Visit Directory</a>
+            </p>
+          </td>
+        </tr>
 
-        </table>
-      </td>
-    </tr>
-  </table>
+      </table>
+    </td>
+  </tr>
+</table>
 </body>
 </html>`;
 
     await sendGmail(base44, {
       to: ownerEmail,
-      subject: `"${business.business_name}" is Now Live on LBA Directory!`,
-      html
+      subject: `Your Business "${business.business_name}" is Now Live on LBA Directory`,
+      htmlBody
     });
 
     return Response.json({ success: true, message: `Approval email sent to ${ownerEmail}` });
