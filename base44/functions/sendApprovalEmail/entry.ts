@@ -90,9 +90,7 @@ Deno.serve(async (req) => {
           <tr>
             <td style="background:linear-gradient(135deg,#0891b2 0%,#0e4f6e 100%);padding:40px 30px;text-align:center;">
               <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png" alt="LBA Directory" style="height:48px;margin-bottom:20px;filter:brightness(0) invert(1);" />
-              <div style="width:70px;height:70px;background:rgba(255,255,255,0.15);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;">
-                <span style="font-size:36px;">🎉</span>
-              </div>
+
               <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">Your Business is Now Live!</h1>
               <p style="margin:10px 0 0;color:rgba(255,255,255,0.85);font-size:16px;">Congratulations — you're now part of the LBA Directory</p>
             </td>
@@ -109,7 +107,7 @@ Deno.serve(async (req) => {
               <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border:2px solid #22c55e;border-radius:12px;margin-bottom:28px;">
                 <tr>
                   <td style="padding:24px;">
-                    <h3 style="margin:0 0 16px;color:#15803d;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">📋 Your Business Details</h3>
+                    <h3 style="margin:0 0 16px;color:#15803d;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Your Business Details</h3>
                     <table width="100%" cellpadding="0" cellspacing="0">
                       <tr>
                         <td style="padding:6px 0;color:#6b7280;font-size:14px;width:130px;font-weight:600;">Business:</td>
@@ -142,14 +140,14 @@ Deno.serve(async (req) => {
                 <tr>
                   <td align="center" style="padding:0 8px;">
                     <a href="${businessUrl}" style="display:inline-block;background:linear-gradient(135deg,#22c55e,#16a34a);color:#ffffff;padding:14px 28px;text-decoration:none;border-radius:10px;font-weight:700;font-size:15px;margin:6px;">
-                      🌐 View Your Live Listing
+                      View Your Live Listing
                     </a>
                   </td>
                 </tr>
                 <tr>
                   <td align="center" style="padding:0 8px;">
                     <a href="${dashboardUrl}" style="display:inline-block;background:linear-gradient(135deg,#0891b2,#0e7490);color:#ffffff;padding:14px 28px;text-decoration:none;border-radius:10px;font-weight:700;font-size:15px;margin:6px;">
-                      📊 Go to My Dashboard
+                      Go to My Dashboard
                     </a>
                   </td>
                 </tr>
@@ -159,7 +157,7 @@ Deno.serve(async (req) => {
               <table width="100%" cellpadding="0" cellspacing="0" style="background:#eff6ff;border-radius:12px;margin-bottom:28px;">
                 <tr>
                   <td style="padding:24px;">
-                    <h3 style="margin:0 0 14px;color:#1e40af;font-size:16px;font-weight:700;">✅ What's Next?</h3>
+                    <h3 style="margin:0 0 14px;color:#1e40af;font-size:16px;font-weight:700;">What's Next?</h3>
                     <ul style="margin:0;padding:0 0 0 20px;color:#374151;font-size:14px;line-height:2;">
                       <li>Customers can now find and contact you directly</li>
                       <li>Log in to manage your listing, add photos &amp; deals</li>
@@ -174,25 +172,25 @@ Deno.serve(async (req) => {
               <table width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid #f59e0b;border-radius:12px;margin-bottom:28px;">
                 <tr>
                   <td style="padding:24px;">
-                    <h3 style="margin:0 0 10px;color:#92400e;font-size:17px;font-weight:700;">🚀 Want to Grow Even Faster?</h3>
+                    <h3 style="margin:0 0 10px;color:#92400e;font-size:17px;font-weight:700;">Want to Grow Even Faster?</h3>
                     <p style="margin:0 0 16px;color:#78350f;font-size:14px;line-height:1.6;">We offer professional services to help your business stand out:</p>
                     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
                       <tr>
-                        <td width="50%" style="padding:4px 0;color:#92400e;font-size:13px;">✔ Logo Design</td>
-                        <td width="50%" style="padding:4px 0;color:#92400e;font-size:13px;">✔ Full Website</td>
+                        <td width="50%" style="padding:4px 0;color:#92400e;font-size:13px;">Logo Design</td>
+                        <td width="50%" style="padding:4px 0;color:#92400e;font-size:13px;">Full Website</td>
                       </tr>
                       <tr>
-                        <td style="padding:4px 0;color:#92400e;font-size:13px;">✔ CRM System</td>
-                        <td style="padding:4px 0;color:#92400e;font-size:13px;">✔ Promotional Video</td>
+                        <td style="padding:4px 0;color:#92400e;font-size:13px;">CRM System</td>
+                        <td style="padding:4px 0;color:#92400e;font-size:13px;">Promotional Video</td>
                       </tr>
                       <tr>
-                        <td style="padding:4px 0;color:#92400e;font-size:13px;">✔ WhatsApp AI Chat</td>
-                        <td style="padding:4px 0;color:#92400e;font-size:13px;">✔ AI Solutions</td>
+                        <td style="padding:4px 0;color:#92400e;font-size:13px;">WhatsApp AI Chat</td>
+                        <td style="padding:4px 0;color:#92400e;font-size:13px;">AI Solutions</td>
                       </tr>
                     </table>
                     <div style="text-align:center;">
                       <a href="${inquiryUrl}" style="display:inline-block;background:linear-gradient(135deg,#f59e0b,#d97706);color:#ffffff;padding:14px 32px;text-decoration:none;border-radius:10px;font-weight:700;font-size:15px;">
-                        📋 Fill Out the Inquiry Form
+                        Fill Out the Inquiry Form
                       </a>
                     </div>
                   </td>
@@ -207,11 +205,11 @@ Deno.serve(async (req) => {
             <td style="padding:20px 36px 36px;">
               <p style="margin:0 0 6px;color:#6b7280;font-size:14px;">Questions? We're here to help:</p>
               <p style="margin:0 0 6px;font-size:14px;">
-                📧 <a href="mailto:office@lbadirectory.com" style="color:#0891b2;text-decoration:none;">office@lbadirectory.com</a>
+                 <a href="mailto:office@lbadirectory.com" style="color:#0891b2;text-decoration:none;">office@lbadirectory.com</a>
+                 &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="tel:7326001260" style="color:#0891b2;text-decoration:none;">732-600-1260</a>
                 &nbsp;&nbsp;|&nbsp;&nbsp;
-                📞 <a href="tel:7326001260" style="color:#0891b2;text-decoration:none;">732-600-1260</a>
-                &nbsp;&nbsp;|&nbsp;&nbsp;
-                💬 <a href="https://wa.me/17326001260" style="color:#0891b2;text-decoration:none;">WhatsApp</a>
+                <a href="https://wa.me/17326001260" style="color:#0891b2;text-decoration:none;">WhatsApp</a>
               </p>
               <p style="margin:16px 0 0;color:#374151;font-size:14px;">
                 Best regards,<br/>
