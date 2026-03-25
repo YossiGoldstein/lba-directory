@@ -243,7 +243,7 @@ Deno.serve(async (req) => {
 
     await sendGmail(base44, {
       to: ownerEmail,
-      subject: `"${business.business_name}" is Now Live on LBA Directory!`,`
+      subject: `"${business.business_name}" is Now Live on LBA Directory!`,
       html
     });
 
