@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
 
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
 
-    const dashboardUrl = `${BASE_URL}/UserDashboard`;
+    const dashboardUrl = `${BASE_URL}/SignIn?next=${encodeURIComponent('/UserDashboard')}`;
     const name = full_name || 'there';
 
     const plainText = [
