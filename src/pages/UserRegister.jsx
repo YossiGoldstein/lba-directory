@@ -21,6 +21,9 @@ export default function UserRegister() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const isValidPassword = (pwd) => /^[a-zA-Z0-9]*$/.test(pwd);
+  const passwordInvalid = formData.password.length > 0 && !isValidPassword(formData.password);
+
   // Redirect if already logged in
   React.useEffect(() => {
     const checkAuth = () => {
@@ -37,6 +40,11 @@ export default function UserRegister() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (!isValidPassword(formData.password)) {
+      toast.error("Password must contain English letters and numbers only");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords don't match");
       return;
@@ -174,12 +182,15 @@ export default function UserRegister() {
                     value={formData.password}
                     onChange={(e) => setFormData({...formData, password: e.target.value})}
                     required
-                    className="pl-10 pr-10"
+                    className={`pl-10 pr-10 ${passwordInvalid ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                   />
                   <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+                {passwordInvalid && (
+                  <p className="text-sm text-red-500 mt-1">Password must contain English letters and numbers only</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -204,7 +215,7 @@ export default function UserRegister() {
               <Button 
                 type="submit" 
                 className="w-full bg-cyan-600 hover:bg-cyan-700"
-                disabled={loading}
+                disabled={loading || passwordInvalid}
               >
                 {loading ? "Creating Account..." : "Create Account"}
               </Button>
