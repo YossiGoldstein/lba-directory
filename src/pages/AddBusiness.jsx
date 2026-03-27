@@ -309,20 +309,26 @@ Return JSON: { short_version, medium_version, long_version }`,
       // Free tier → create immediately
       const createdBusiness = await base44.entities.Business.create(businessData);
 
-      // Send emails
-      const dashboardUrl = `${window.location.origin}${createPageUrl("UserDashboard")}`;
+      // Send submission email
+      try {
+        await base44.functions.invoke('sendSubmissionEmail', { business_id: createdBusiness.id });
+      } catch (e) {
+        console.error('Submission email failed:', e.message);
+      }
+
+      // Notify admin
       try {
         await base44.integrations.Core.SendEmail({
-          to: form.email || customer.email,
-          subject: "✅ Your Submission Was Received - LBA Directory",
-          body: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
-            <h2 style="color:#0891b2;">Hello ${customer.full_name}!</h2>
-            <p>Thank you for submitting <strong>${form.business_name}</strong> to LBA Directory!</p>
-            <p>Our team will review your details within 1–2 business days. Once approved, your business will be live!</p>
-            <div style="text-align:center;margin:20px 0;">
-              <a href="${dashboardUrl}" style="background:#0891b2;color:white;padding:12px 30px;text-decoration:none;border-radius:8px;font-weight:bold;">My Dashboard</a>
-            </div>
-            <p>Best regards,<br><strong>LBA Directory Team</strong></p>
+          to: 'office@lbadirectory.com',
+          subject: '🔔 New Business Submission - LBA Directory',
+          body: `<div style="font-family:Arial,sans-serif;">
+            <h2>New Business Submission</h2>
+            <p><strong>Name:</strong> ${form.business_name}</p>
+            <p><strong>Owner:</strong> ${customer.full_name} (${customer.email})</p>
+            <p><strong>Category:</strong> ${form.category_name}</p>
+            <p><strong>Phone:</strong> ${form.phone}</p>
+            <p><strong>City:</strong> ${form.city}</p>
+            <p><strong>Tier:</strong> ${form.listing_tier}</p>
           </div>`
         });
       } catch {}
