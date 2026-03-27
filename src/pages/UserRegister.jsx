@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
-import { User, Mail, Lock, Phone } from "lucide-react";
+import { Eye, EyeOff, User, Mail, Lock, Phone } from "lucide-react";
 
 export default function UserRegister() {
   const [formData, setFormData] = useState({
@@ -18,6 +18,8 @@ export default function UserRegister() {
     confirmPassword: ""
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Redirect if already logged in
   React.useEffect(() => {
@@ -167,13 +169,16 @@ export default function UserRegister() {
                   <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                   <Input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={(e) => setFormData({...formData, password: e.target.value})}
                     required
-                    className="pl-10"
+                    className="pl-10 pr-10"
                   />
+                  <button type="button" onClick={() => setShowPassword(v => !v)} className="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
               </div>
 
@@ -183,13 +188,16 @@ export default function UserRegister() {
                   <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                   <Input
                     id="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
                     required
-                    className="pl-10"
+                    className="pl-10 pr-10"
                   />
+                  <button type="button" onClick={() => setShowConfirmPassword(v => !v)} className="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
+                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
               </div>
 
