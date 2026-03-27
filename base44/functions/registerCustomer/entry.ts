@@ -73,7 +73,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Email already registered' }, { status: 409 });
     }
 
-    const passwordHash = btoa(password);
+    const passwordHash = btoa(unescape(encodeURIComponent(password)));
     const customer = await base44.asServiceRole.entities.Customer.create({
       full_name: fullName,
       email,
