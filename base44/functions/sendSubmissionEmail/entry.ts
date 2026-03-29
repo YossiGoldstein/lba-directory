@@ -98,7 +98,6 @@ Deno.serve(async (req) => {
       'WhatsApp: 732-600-1260',
       'Phone: 732-600-1260',
       '',
-      'Best regards,',
       'The LBA Directory Team',
     ].join('\n');
 
@@ -160,7 +159,7 @@ Deno.serve(async (req) => {
 <p style="margin:0 0 4px;font-size:14px;color:#374151;">Email: <a href="mailto:office@lbadirectory.com" style="color:#0891b2;text-decoration:none;">office@lbadirectory.com</a></p>
 <p style="margin:0 0 4px;font-size:14px;color:#374151;">WhatsApp: <a href="https://wa.me/17326001260" style="color:#0891b2;text-decoration:none;">732-600-1260</a></p>
 <p style="margin:0 0 20px;font-size:14px;color:#374151;">Phone: <a href="tel:7326001260" style="color:#0891b2;text-decoration:none;">732-600-1260</a></p>
-<p style="margin:0;color:#374151;font-size:14px;">Best regards,<br><strong>The LBA Directory Team</strong></p>
+<p style="margin:0;color:#374151;font-size:14px;"><strong>The LBA Directory Team</strong></p>
 </td></tr>
 <tr><td style="background:#1e293b;padding:16px 40px;text-align:center;border-radius:0 0 8px 8px;">
 <p style="margin:0;color:#94a3b8;font-size:12px;">LBA Directory &#8226; Serving Lakewood, Toms River, Jackson, Brick, Howell and Manchester</p>
