@@ -87,9 +87,6 @@ Deno.serve(async (req) => {
       '- Get notified about deals and promotions',
       '- Add your business',
       '',
-      'If you added your business already, wait for the approval email.',
-      'In the meantime you can keep editing and updating it.',
-      '',
       'If you have any questions, feel free to contact us at office@lbadirectory.com or at (732) 600-1260.',
       '',
       'Welcome aboard!',
@@ -135,10 +132,10 @@ ${auto_password ? `<tr><td style="color:#6b7280;font-size:14px;">Password:</td><
 <p style="margin:0;color:#374151;font-size:14px;">&#8226; Add your business</p>
 </td></tr>
 </table>
-<p style="margin:0 0 16px;color:#374151;font-size:14px;line-height:1.7;">If you added your business already, wait for the approval email. In the meantime you can keep editing and updating it.</p>
 <p style="margin:0 0 6px;color:#6b7280;font-size:14px;">If you have any questions, feel free to contact us:</p>
 <p style="margin:0 0 4px;font-size:14px;color:#374151;">Email: <a href="mailto:office@lbadirectory.com" style="color:#0891b2;text-decoration:none;">office@lbadirectory.com</a></p>
-<p style="margin:0 0 20px;font-size:14px;color:#374151;">Phone: <a href="tel:7326001260" style="color:#0891b2;text-decoration:none;">(732) 600-1260</a></p>
+<p style="margin:0 0 4px;font-size:14px;color:#374151;">Phone: <a href="tel:7326001260" style="color:#0891b2;text-decoration:none;">(732) 600-1260</a></p>
+<p style="margin:0 0 20px;font-size:14px;color:#374151;">WhatsApp: <a href="https://wa.me/17326001260" style="color:#0891b2;text-decoration:none;">732-600-1260</a></p>
 <p style="margin:0;color:#374151;font-size:14px;">Welcome aboard!<br><strong>The LBA Directory Team</strong></p>
 </td></tr>
 <tr><td style="background:#1e293b;padding:16px 40px;text-align:center;border-radius:0 0 8px 8px;">
