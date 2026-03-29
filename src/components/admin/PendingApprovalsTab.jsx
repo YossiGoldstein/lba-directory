@@ -39,17 +39,6 @@ export default function PendingApprovalsTab({ onUpdate }) {
       queryClient.invalidateQueries({ queryKey: ["pending-businesses"] });
       queryClient.invalidateQueries({ queryKey: ["admin-businesses"] });
       toast.success("Business approved successfully!");
-
-      // Send approval email using the dedicated sendApprovalEmail function
-      try {
-        await base44.functions.invoke('sendApprovalEmail', {
-          business_id: businessId
-        });
-      } catch (error) {
-        console.error("Failed to send approval email:", error);
-        toast.warning("Business approved but approval email failed to send");
-      }
-
       if (onUpdate) onUpdate();
     },
     onError: () => {

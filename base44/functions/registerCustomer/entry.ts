@@ -84,12 +84,6 @@ Deno.serve(async (req) => {
 
     const dashboardUrl = 'https://www.lbadirectory.com/UserDashboard';
 
-    try {
-      await base44.functions.invoke('sendWelcomeEmail', { email, full_name: fullName });
-    } catch (e) {
-      console.error('Welcome email failed:', e.message);
-    }
-
     return Response.json({ success: true, customerId: customer.id });
   } catch (error) {
     console.error('Registration error:', error);

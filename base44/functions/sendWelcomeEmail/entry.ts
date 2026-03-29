@@ -55,7 +55,10 @@ async function sendGmail(accessToken, { to, subject, htmlBody, plainText }) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { email, full_name } = await req.json();
+    const body = await req.json();
+    // Support both direct call and entity automation payload
+    const email = body.email || body.data?.email;
+    const full_name = body.full_name || body.data?.full_name;
 
     if (!email) {
       return Response.json({ error: 'Missing email' }, { status: 400 });

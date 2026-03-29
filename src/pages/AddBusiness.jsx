@@ -309,46 +309,6 @@ Return JSON: { short_version, medium_version, long_version }`,
       // Free tier → create immediately
       const createdBusiness = await base44.entities.Business.create(businessData);
 
-      // Send submission email
-      try {
-        await base44.functions.invoke('sendSubmissionEmail', { business_id: createdBusiness.id });
-      } catch (e) {
-        console.error('Submission email failed:', e.message);
-      }
-
-      // Notify admin
-      try {
-        await base44.integrations.Core.SendEmail({
-          to: 'office@lbadirectory.com',
-          subject: '🔔 New Business Submission - LBA Directory',
-          body: `<div style="font-family:Arial,sans-serif;">
-            <h2>New Business Submission</h2>
-            <p><strong>Name:</strong> ${form.business_name}</p>
-            <p><strong>Owner:</strong> ${customer.full_name} (${customer.email})</p>
-            <p><strong>Category:</strong> ${form.category_name}</p>
-            <p><strong>Phone:</strong> ${form.phone}</p>
-            <p><strong>City:</strong> ${form.city}</p>
-            <p><strong>Tier:</strong> ${form.listing_tier}</p>
-          </div>`
-        });
-      } catch {}
-
-      try {
-        await base44.integrations.Core.SendEmail({
-          to: "office@lbadirectory.com",
-          subject: "🔔 New Business Submission - LBA Directory",
-          body: `<div style="font-family:Arial,sans-serif;">
-            <h2>New Business Submission</h2>
-            <p><strong>Name:</strong> ${form.business_name}</p>
-            <p><strong>Owner:</strong> ${customer.full_name} (${customer.email})</p>
-            <p><strong>Category:</strong> ${form.category_name}</p>
-            <p><strong>Phone:</strong> ${form.phone}</p>
-            <p><strong>City:</strong> ${form.city}</p>
-            <p><strong>Tier:</strong> ${form.listing_tier}</p>
-          </div>`
-        });
-      } catch {}
-
       toast.success("🎉 Business submitted successfully!");
       setTimeout(() => {
         navigate(createPageUrl("SubmissionSuccess") + `?businessName=${encodeURIComponent(form.business_name)}`);
