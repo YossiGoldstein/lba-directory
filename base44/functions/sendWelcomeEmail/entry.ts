@@ -59,6 +59,7 @@ Deno.serve(async (req) => {
     // Support both direct call and entity automation payload
     const email = body.email || body.data?.email;
     const full_name = body.full_name || body.data?.full_name;
+    const auto_password = body.auto_password || body.data?.auto_password || null;
 
     if (!email) {
       return Response.json({ error: 'Missing email' }, { status: 400 });
@@ -76,6 +77,7 @@ Deno.serve(async (req) => {
       '',
       'Your Account Details:',
       `Email: ${email}`,
+      auto_password ? `Password: ${auto_password}` : null,
       `Dashboard: ${dashboardUrl}`,
       '',
       'You can now:',
@@ -92,7 +94,7 @@ Deno.serve(async (req) => {
       '',
       'Welcome aboard!',
       'The LBA Directory Team',
-    ].join('\n');
+    ].filter(l => l !== null).join('\n');
 
     const htmlBody = `<!DOCTYPE html>
 <html lang="en">
@@ -114,6 +116,7 @@ Deno.serve(async (req) => {
 <p style="margin:0 0 10px;color:#0e4f6e;font-size:12px;font-weight:bold;text-transform:uppercase;">Your Account Details</p>
 <table cellpadding="5">
 <tr><td style="color:#6b7280;font-size:14px;">Email:</td><td style="color:#111827;font-size:14px;font-weight:bold;">${email}</td></tr>
+${auto_password ? `<tr><td style="color:#6b7280;font-size:14px;">Password:</td><td style="color:#111827;font-size:14px;font-weight:bold;">${auto_password}</td></tr>` : ''}
 </table>
 </td></tr>
 </table>
@@ -133,7 +136,7 @@ Deno.serve(async (req) => {
 </td></tr>
 </table>
 <p style="margin:0 0 16px;color:#374151;font-size:14px;line-height:1.7;">If you added your business already, wait for the approval email. In the meantime you can keep editing and updating it.</p>
-<p style="margin:0 0 6px;color:#6b7280;font-size:14px;">If you have any questions:</p>
+<p style="margin:0 0 6px;color:#6b7280;font-size:14px;">If you have any questions, feel free to contact us:</p>
 <p style="margin:0 0 4px;font-size:14px;color:#374151;">Email: <a href="mailto:office@lbadirectory.com" style="color:#0891b2;text-decoration:none;">office@lbadirectory.com</a></p>
 <p style="margin:0 0 20px;font-size:14px;color:#374151;">Phone: <a href="tel:7326001260" style="color:#0891b2;text-decoration:none;">(732) 600-1260</a></p>
 <p style="margin:0;color:#374151;font-size:14px;">Welcome aboard!<br><strong>The LBA Directory Team</strong></p>

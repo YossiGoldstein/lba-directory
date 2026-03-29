@@ -83,16 +83,20 @@ Deno.serve(async (req) => {
 
     const businessUrl = `${BASE_URL}/BusinessListing?id=${business.id}`;
     const dashboardUrl = `${BASE_URL}/BusinessDashboard`;
-    const inquiryUrl = `${BASE_URL}/ServiceInquiry`;
+    const inquiryUrl = `https://lbadirectory.com/ServiceInquiry`;
     const address = [business.address_line1, business.city, business.state].filter(Boolean).join(', ');
 
     const plainText = [
       `Your Business "${business.business_name}" is Now Live on LBA Directory!`,
       '',
+      'Dear Business Owner,',
+      `We are pleased to inform you that your business listing for "${business.business_name}" has been approved and is now live and visible to thousands of local customers.`,
+      '',
+      'Listing Details:',
       `Business: ${business.business_name}`,
       business.phone ? `Phone: ${business.phone}` : null,
-      address ? `Address: ${address}` : null,
-      `Status: Approved`,
+      business.email ? `Email: ${business.email}` : null,
+      'Status: Approved ✅',
       '',
       `View My Listing: ${businessUrl}`,
       `Go to My Dashboard: ${dashboardUrl}`,
@@ -102,8 +106,7 @@ Deno.serve(async (req) => {
       '- Collect reviews to build your reputation.',
       '- Share your listing on social media to reach more customers.',
       '',
-      'Want to promote your business even more?',
-      'The LBA Directory offers many services to help you boost your business:',
+      'Want to promote your business even more? The LBA Directory offers many services:',
       '- Upgrade your listing package - get featured and ranked higher in search results, get free advertising, discounts on services, and more.',
       '- More leads - professional website, logo, and promotional video that convert.',
       '- Better automation - WhatsApp AI chat that handles inquiries 24/7, and automate many daily tasks, and more.',
@@ -142,7 +145,7 @@ Deno.serve(async (req) => {
 <tr><td style="color:#6b7280;font-size:14px;">Business:</td><td style="color:#111827;font-size:14px;font-weight:bold;">${business.business_name}</td></tr>
 ${business.phone ? `<tr><td style="color:#6b7280;font-size:14px;">Phone:</td><td style="color:#111827;font-size:14px;">${business.phone}</td></tr>` : ''}
 ${business.email ? `<tr><td style="color:#6b7280;font-size:14px;">Email:</td><td style="color:#111827;font-size:14px;">${business.email}</td></tr>` : ''}
-<tr><td style="color:#6b7280;font-size:14px;">Status:</td><td><span style="background:#dcfce7;color:#15803d;padding:2px 10px;border-radius:20px;font-size:13px;font-weight:bold;">Approved</span></td></tr>
+<tr><td style="color:#6b7280;font-size:14px;">Status:</td><td><span style="background:#dcfce7;color:#15803d;padding:2px 10px;border-radius:20px;font-size:13px;font-weight:bold;">Approved ✅</span></td></tr>
 </table>
 </td></tr>
 </table>

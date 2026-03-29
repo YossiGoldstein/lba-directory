@@ -80,18 +80,18 @@ Deno.serve(async (req) => {
     const dashboardUrl = `${BASE_URL}/BusinessDashboard`;
 
     const plainText = [
-      'Hello,',
+      'Submission Successful!',
       '',
-      `Thank you! "${business.business_name}" has been submitted to our directory.`,
+      `Thank you! Your business "${business.business_name}" has been submitted to our directory.`,
       '',
       'What Happens Next?',
       '1. Review & Approval - Our team will review your submission within 1-2 business days.',
-      '2. Email Notification - You will receive an email confirmation with all your details.',
+      "2. Email Notification - You'll receive an email confirmation with all your details.",
       "3. You're Live! - Your business will be live on the directory and searchable by customers.",
       '',
       'In the meantime, you can log in to your dashboard to keep editing and updating your listing.',
       '',
-      `Go to My Dashboard: ${dashboardUrl}`,
+      `My Dashboard: ${dashboardUrl}`,
       '',
       'Have questions?',
       'Email: office@lbadirectory.com',
@@ -115,7 +115,7 @@ Deno.serve(async (req) => {
 <p style="margin:6px 0 0;color:#bae6fd;font-size:14px;">We received your business listing</p>
 </td></tr>
 <tr><td style="padding:32px 40px;">
-<p style="margin:0 0 24px;color:#374151;font-size:15px;line-height:1.7;">Thank you! <strong style="color:#0e4f6e;">${business.business_name}</strong> has been submitted to our directory.</p>
+<p style="margin:0 0 24px;color:#374151;font-size:15px;line-height:1.7;">Thank you! Your business <strong style="color:#0e4f6e;">${business.business_name}</strong> has been submitted to our directory.</p>
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f9ff;border-left:4px solid #0891b2;margin-bottom:24px;">
 <tr><td style="padding:18px 22px;">
 <p style="margin:0 0 14px;color:#0c4a6e;font-size:14px;font-weight:bold;">What Happens Next?</p>
@@ -135,7 +135,7 @@ Deno.serve(async (req) => {
   </td>
   <td style="padding-bottom:14px;">
     <p style="margin:0 0 2px;color:#111827;font-size:14px;font-weight:bold;">Email Notification</p>
-    <p style="margin:0;color:#374151;font-size:14px;">You will receive an email confirmation with all your details.</p>
+    <p style="margin:0;color:#374151;font-size:14px;">You'll receive an email confirmation with all your details.</p>
   </td>
 </tr>
 <tr>
@@ -153,7 +153,7 @@ Deno.serve(async (req) => {
 <p style="margin:0 0 20px;color:#374151;font-size:14px;line-height:1.7;">In the meantime, you can log in to your dashboard to keep editing and updating your listing.</p>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
 <tr><td align="center">
-<a href="${dashboardUrl}" style="display:inline-block;background:#0e4f6e;color:#ffffff;padding:13px 32px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:15px;">Go to My Dashboard</a>
+<a href="${dashboardUrl}" style="display:inline-block;background:#0e4f6e;color:#ffffff;padding:13px 32px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:15px;">My Dashboard</a>
 </td></tr>
 </table>
 <p style="margin:0 0 6px;color:#6b7280;font-size:14px;">Have questions?</p>
