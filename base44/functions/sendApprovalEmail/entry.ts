@@ -133,7 +133,7 @@ Deno.serve(async (req) => {
 <tr><td style="background:#0e4f6e;padding:32px 40px;text-align:center;border-radius:8px 8px 0 0;">
 <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png" alt="LBA Directory" height="40" style="display:block;margin:0 auto 14px;">
 <h1 style="margin:0;color:#ffffff;font-size:22px;">Your Business is Now Live!</h1>
-<p style="margin:6px 0 0;color:#bae6fd;font-size:14px;">Congratulations - you are now part of the LBA Directory</p>
+<p style="margin:6px 0 0;color:#bae6fd;font-size:14px;">Congratulations! You are now part of the LBA Directory</p>
 </td></tr>
 <tr><td style="padding:32px 40px;">
 <p style="margin:0 0 16px;color:#374151;font-size:15px;">Dear Business Owner,</p>
