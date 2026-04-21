@@ -187,16 +187,24 @@ export default function BusinessListing() {
     return stars;
   };
 
-  const handleShare = () => {
+  const getShareUrl = () => {
+    const identifier = business.slug
+      ? `slug=${business.slug}`
+      : `id=${business.id}`;
+    return `https://www.lbadirectory.com/functions/businessOgProxy?${identifier}`;
+  };
+
+  const handleShare = async () => {
+    const shareUrl = getShareUrl();
     if (navigator.share) {
       navigator.share({
-        title: business.business_name,
-        text: business.short_description,
-        url: window.location.href,
+        title: `${business.business_name} | LBA Directory`,
+        text: business.short_description || `Find ${business.business_name} on LBA Directory`,
+        url: shareUrl,
       });
     } else {
-      navigator.clipboard.writeText(window.location.href);
-      toast.success("Link copied to clipboard!");
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("Share link copied!");
     }
   };
 

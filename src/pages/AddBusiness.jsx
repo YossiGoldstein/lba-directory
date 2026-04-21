@@ -307,6 +307,24 @@ Return JSON: { short_version, medium_version, long_version }`,
       }
 
       // Free tier → create immediately
+      // Generate slug from business name
+      const rawSlug = form.business_name
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+
+      // Ensure slug uniqueness
+      const existingBusinesses = await base44.entities.Business.list();
+      let slug = rawSlug;
+      let counter = 2;
+      while (existingBusinesses.some(b => b.slug === slug)) {
+        slug = `${rawSlug}-${counter++}`;
+      }
+      businessData.slug = slug;
+
       const createdBusiness = await base44.entities.Business.create(businessData);
 
       toast.success("🎉 Business submitted successfully!");
