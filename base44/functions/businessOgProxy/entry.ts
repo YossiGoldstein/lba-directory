@@ -29,12 +29,9 @@ async function resolveFinalUrl(url) {
   }
 }
 
-function detectImageType(url) {
-  const lower = url.toLowerCase().split("?")[0];
-  if (lower.endsWith(".png")) return "image/png";
-  if (lower.endsWith(".webp")) return "image/webp";
-  if (lower.endsWith(".gif")) return "image/gif";
-  return "image/jpeg";
+function getResizedImageUrl(originalUrl, width = 1200) {
+  if (!originalUrl) return originalUrl;
+  return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=${width}&h=630&fit=cover&a=attention&q=85&output=jpg`;
 }
 
 function generateSlug(name) {
@@ -71,12 +68,11 @@ function notFoundHtml() {
 </html>`;
 }
 
-function businessHtml(business, resolvedImage) {
+function businessHtml(business, ogImage) {
   const title = `${business.business_name} | ${SITE_NAME}`;
   const rawDesc = business.short_description || business.long_description || `Find ${business.business_name} on LBA Directory`;
   const description = rawDesc.length > 160 ? rawDesc.slice(0, 157) + "..." : rawDesc;
   const targetUrl = `${BASE_URL}/BusinessListing?id=${business.id}`;
-  const imageType = detectImageType(resolvedImage);
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -85,9 +81,9 @@ function businessHtml(business, resolvedImage) {
   <title>${title}</title>
   <meta property="og:title" content="${title}">
   <meta property="og:description" content="${description}">
-  <meta property="og:image" content="${resolvedImage}">
-  <meta property="og:image:secure_url" content="${resolvedImage}">
-  <meta property="og:image:type" content="${imageType}">
+  <meta property="og:image" content="${ogImage}">
+  <meta property="og:image:secure_url" content="${ogImage}">
+  <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="${targetUrl}">
@@ -96,7 +92,7 @@ function businessHtml(business, resolvedImage) {
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${title}">
   <meta name="twitter:description" content="${description}">
-  <meta name="twitter:image" content="${resolvedImage}">
+  <meta name="twitter:image" content="${ogImage}">
   <meta http-equiv="refresh" content="0; url=${targetUrl}">
 </head>
 <body>
@@ -152,8 +148,9 @@ Deno.serve(async (req) => {
 
     const rawImage = business.logo_url || (business.gallery_images && business.gallery_images[0]) || DEFAULT_IMAGE;
     const resolvedImage = await resolveFinalUrl(rawImage);
+    const ogImage = rawImage === DEFAULT_IMAGE ? DEFAULT_IMAGE : getResizedImageUrl(resolvedImage);
 
-    return new Response(businessHtml(business, resolvedImage), {
+    return new Response(businessHtml(business, ogImage), {
       status: 200,
       headers: { "Content-Type": "text/html; charset=utf-8" },
     });
