@@ -4,6 +4,39 @@ const DEFAULT_IMAGE = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/objec
 const SITE_NAME = "LBA Directory";
 const BASE_URL = "https://www.lbadirectory.com";
 
+async function resolveFinalUrl(url) {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 3000);
+    try {
+      const res = await fetch(url, {
+        method: "HEAD",
+        redirect: "manual",
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+      // Follow a single redirect level (covers 301/302/307/308)
+      if ([301, 302, 307, 308].includes(res.status)) {
+        const location = res.headers.get("location");
+        if (location) return location.startsWith("http") ? location : url;
+      }
+      return url;
+    } finally {
+      clearTimeout(timer);
+    }
+  } catch {
+    return url; // timeout or network error — return original as fallback
+  }
+}
+
+function detectImageType(url) {
+  const lower = url.toLowerCase().split("?")[0];
+  if (lower.endsWith(".png")) return "image/png";
+  if (lower.endsWith(".webp")) return "image/webp";
+  if (lower.endsWith(".gif")) return "image/gif";
+  return "image/jpeg";
+}
+
 function generateSlug(name) {
   return name
     .toLowerCase()
@@ -38,12 +71,12 @@ function notFoundHtml() {
 </html>`;
 }
 
-function businessHtml(business) {
+function businessHtml(business, resolvedImage) {
   const title = `${business.business_name} | ${SITE_NAME}`;
   const rawDesc = business.short_description || business.long_description || `Find ${business.business_name} on LBA Directory`;
   const description = rawDesc.length > 160 ? rawDesc.slice(0, 157) + "..." : rawDesc;
-  const image = business.logo_url || (business.gallery_images && business.gallery_images[0]) || DEFAULT_IMAGE;
   const targetUrl = `${BASE_URL}/BusinessListing?id=${business.id}`;
+  const imageType = detectImageType(resolvedImage);
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -52,7 +85,9 @@ function businessHtml(business) {
   <title>${title}</title>
   <meta property="og:title" content="${title}">
   <meta property="og:description" content="${description}">
-  <meta property="og:image" content="${image}">
+  <meta property="og:image" content="${resolvedImage}">
+  <meta property="og:image:secure_url" content="${resolvedImage}">
+  <meta property="og:image:type" content="${imageType}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="${targetUrl}">
@@ -61,7 +96,7 @@ function businessHtml(business) {
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${title}">
   <meta name="twitter:description" content="${description}">
-  <meta name="twitter:image" content="${image}">
+  <meta name="twitter:image" content="${resolvedImage}">
   <meta http-equiv="refresh" content="0; url=${targetUrl}">
 </head>
 <body>
@@ -115,7 +150,10 @@ Deno.serve(async (req) => {
       business = { ...business, slug };
     }
 
-    return new Response(businessHtml(business), {
+    const rawImage = business.logo_url || (business.gallery_images && business.gallery_images[0]) || DEFAULT_IMAGE;
+    const resolvedImage = await resolveFinalUrl(rawImage);
+
+    return new Response(businessHtml(business, resolvedImage), {
       status: 200,
       headers: { "Content-Type": "text/html; charset=utf-8" },
     });
