@@ -4,6 +4,7 @@ import { createPageUrl } from "@/utils";
 
 const DEFAULT_CENTER = { lat: 40.0957, lng: -74.2177 }; // Lakewood, NJ
 const GEOCODE_API_KEY = "AIzaSyDfr-zgnbCEuvQGbEll582R4kSes79FDc8";
+const MARKER_SIZE = 40;
 
 async function geocodeAddress(address) {
   try {
@@ -26,47 +27,73 @@ function buildAddress(b) {
   return `${b.address_line1}, ${b.city}, ${b.state || ""} ${b.zip_code || ""}`.trim();
 }
 
-function placeMarker(map, position, business, infoWindow) {
-  const logoUrl = business.logo_url ? fixImageUrl(business.logo_url) : null;
+// Draw a letter-based canvas marker
+function drawLetterCanvas(initial) {
+  const size = MARKER_SIZE;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  // Circle background
+  ctx.beginPath();
+  ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+  ctx.fillStyle = "#0891b2";
+  ctx.fill();
+  // White border
+  ctx.beginPath();
+  ctx.arc(size / 2, size / 2, size / 2 - 2, 0, Math.PI * 2);
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  // Letter
+  ctx.fillStyle = "white";
+  ctx.font = `bold ${size * 0.42}px Arial`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(initial, size / 2, size / 2);
+  return canvas.toDataURL();
+}
+
+// Draw a logo image clipped into a circle on canvas
+function drawLogoCanvas(img) {
+  const size = MARKER_SIZE;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  // Clip circle
+  ctx.beginPath();
+  ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.drawImage(img, 0, 0, size, size);
+  // White border
+  ctx.beginPath();
+  ctx.arc(size / 2, size / 2, size / 2 - 1.5, 0, Math.PI * 2);
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  return canvas.toDataURL();
+}
+
+// Returns a promise resolving to a dataURL icon for the business
+function buildMarkerIcon(business) {
   const initial = (business.business_name || "?").charAt(0).toUpperCase();
+  const logoUrl = business.logo_url ? fixImageUrl(business.logo_url) : null;
 
-  const markerDiv = document.createElement("div");
-  markerDiv.style.cssText = `
-    width: 44px; height: 44px; border-radius: 50%; overflow: hidden;
-    border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.35);
-    cursor: pointer; background: linear-gradient(135deg,#0891b2,#06b6d4);
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  `;
+  if (!logoUrl) {
+    return Promise.resolve(drawLetterCanvas(initial));
+  }
 
-  if (logoUrl) {
-    const img = document.createElement("img");
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => resolve(drawLogoCanvas(img));
+    img.onerror = () => resolve(drawLetterCanvas(initial));
     img.src = logoUrl;
-    img.alt = business.business_name;
-    img.style.cssText = "width:100%;height:100%;object-fit:cover;";
-    img.onerror = () => {
-      markerDiv.innerHTML = `<span style="font-weight:bold;font-size:18px;color:white;">${initial}</span>`;
-    };
-    markerDiv.appendChild(img);
-  } else {
-    markerDiv.innerHTML = `<span style="font-weight:bold;font-size:18px;color:white;">${initial}</span>`;
-  }
+  });
+}
 
-  let marker;
-  if (window.google.maps.marker?.AdvancedMarkerElement) {
-    marker = new window.google.maps.marker.AdvancedMarkerElement({
-      map,
-      position,
-      content: markerDiv,
-      title: business.business_name,
-    });
-  } else {
-    marker = new window.google.maps.Marker({
-      map,
-      position,
-      title: business.business_name,
-    });
-  }
-
+function placeMarker(map, position, business, infoWindow, iconUrl) {
   const profileUrl = createPageUrl(`BusinessListing?id=${business.id}`);
   const infoContent = `
     <div style="max-width:220px;font-family:Arial,sans-serif;">
@@ -82,7 +109,7 @@ function placeMarker(map, position, business, infoWindow) {
     </div>
   `;
 
-  const clickHandler = () => {
+  const openInfo = (marker) => {
     infoWindow.setContent(infoContent);
     if (window.google.maps.marker?.AdvancedMarkerElement && marker instanceof window.google.maps.marker.AdvancedMarkerElement) {
       infoWindow.open({ anchor: marker, map });
@@ -91,12 +118,35 @@ function placeMarker(map, position, business, infoWindow) {
     }
   };
 
-  if (marker.addListener) {
-    marker.addListener("click", clickHandler);
-  } else {
-    markerDiv.addEventListener("click", clickHandler);
+  // Try AdvancedMarkerElement with an img element as content
+  if (window.google.maps.marker?.AdvancedMarkerElement) {
+    const imgEl = document.createElement("img");
+    imgEl.src = iconUrl;
+    imgEl.style.cssText = `width:${MARKER_SIZE}px;height:${MARKER_SIZE}px;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.4);cursor:pointer;`;
+
+    const marker = new window.google.maps.marker.AdvancedMarkerElement({
+      map,
+      position,
+      content: imgEl,
+      title: business.business_name,
+    });
+
+    imgEl.addEventListener("click", () => openInfo(marker));
+    return marker;
   }
 
+  // Fallback: standard Marker with canvas icon
+  const marker = new window.google.maps.Marker({
+    map,
+    position,
+    title: business.business_name,
+    icon: {
+      url: iconUrl,
+      scaledSize: new window.google.maps.Size(MARKER_SIZE, MARKER_SIZE),
+      anchor: new window.google.maps.Point(MARKER_SIZE / 2, MARKER_SIZE / 2),
+    },
+  });
+  marker.addListener("click", () => openInfo(marker));
   return marker;
 }
 
@@ -105,7 +155,7 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
   const mapInstanceRef = useRef(null);
   const infoWindowRef = useRef(null);
   const markersRef = useRef([]);
-  const activeEffectRef = useRef(0); // cancel stale async runs
+  const activeEffectRef = useRef(0);
 
   // Init map once
   useEffect(() => {
@@ -127,9 +177,7 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
     const infoWindow = infoWindowRef.current;
     if (!map || !infoWindow) return;
 
-    // Cancel any previous async run
-    const effectId = Date.now();
-    activeEffectRef.current = effectId;
+    const effectId = ++activeEffectRef.current;
 
     // Clear existing markers
     markersRef.current.forEach((m) => { try { m.setMap(null); } catch (e) {} });
@@ -140,7 +188,7 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
     console.log(`[GoogleMap] Received ${businesses.length} businesses`);
 
     const run = async () => {
-      // Separate businesses into those with coords and those needing geocoding
+      // Step 1: resolve positions (parallel geocoding for those without coords)
       const withCoords = [];
       const needsGeocode = [];
 
@@ -149,15 +197,12 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
           withCoords.push({ business: b, position: { lat: Number(b.latitude), lng: Number(b.longitude) } });
         } else {
           const address = buildAddress(b);
-          if (address) {
-            needsGeocode.push({ business: b, address });
-          }
+          if (address) needsGeocode.push({ business: b, address });
         }
       }
 
       console.log(`[GoogleMap] ${withCoords.length} have coords, ${needsGeocode.length} need geocoding`);
 
-      // Geocode all in parallel
       const geocoded = await Promise.all(
         needsGeocode.map(async ({ business, address }) => {
           const position = await geocodeAddress(address);
@@ -165,21 +210,30 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
         })
       );
 
-      // If a newer effect started while we were geocoding, bail out
-      if (activeEffectRef.current !== effectId) return;
+      if (activeEffectRef.current !== effectId) return; // stale
 
       const geocodedValid = geocoded.filter(Boolean);
       console.log(`[GoogleMap] ${geocodedValid.length} successfully geocoded`);
 
       const allResolved = [...withCoords, ...geocodedValid];
 
-      // Place all markers
-      allResolved.forEach(({ business, position }) => {
-        const marker = placeMarker(map, position, business, infoWindow);
+      // Step 2: build canvas icons in parallel
+      const withIcons = await Promise.all(
+        allResolved.map(async (item) => ({
+          ...item,
+          iconUrl: await buildMarkerIcon(item.business),
+        }))
+      );
+
+      if (activeEffectRef.current !== effectId) return; // stale
+
+      // Step 3: place all markers
+      withIcons.forEach(({ business, position, iconUrl }) => {
+        const marker = placeMarker(map, position, business, infoWindow, iconUrl);
         markersRef.current.push(marker);
       });
 
-      // Re-center map to average position
+      // Re-center to average position
       if (allResolved.length > 0) {
         const avgLat = allResolved.reduce((s, { position: p }) => s + p.lat, 0) / allResolved.length;
         const avgLng = allResolved.reduce((s, { position: p }) => s + p.lng, 0) / allResolved.length;
