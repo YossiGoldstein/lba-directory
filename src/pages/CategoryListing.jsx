@@ -114,8 +114,6 @@ export default function CategoryListing() {
     window.location.href = `/SearchResults?query=${encodeURIComponent(searchQuery.trim())}`;
   };
 
-  const businessesToMap = displayedBusinesses;
-
   return (
     <div className="min-h-screen bg-blue-50">
       <div className="w-full py-4 sm:py-6 lg:py-8">
@@ -150,7 +148,7 @@ export default function CategoryListing() {
         {/* Default View - Businesses */}
         <div className="flex flex-col lg:flex-row gap-0 lg:gap-6">
             {/* Listings Column */}
-            <div className="flex-1 min-w-0 px-0 lg:pr-6 lg:overflow-y-auto lg:h-[calc(100vh-12rem)]">
+            <div className="flex-1 min-w-0 px-0 lg:pr-6">
             {/* Info Block */}
             {categoryBusinesses.length > 0 && (
               <div className="bg-cyan-50 rounded-lg p-4 mb-4 border border-cyan-200">
@@ -248,9 +246,9 @@ export default function CategoryListing() {
           </div>
 
           {/* Map Column - visible on tablet and desktop */}
-          <div className="hidden md:block lg:block w-full md:h-[450px] lg:w-[40%] lg:max-w-[600px] flex-shrink-0 mt-4 lg:mt-0 px-4 lg:px-0">
-            <div className="lg:sticky lg:top-4">
-              <BusinessMap businesses={businessesToMap} height="450px" />
+          <div className="hidden lg:block w-[40%] max-w-[600px] flex-shrink-0">
+            <div className="sticky top-[64px]" style={{ height: "calc(100vh - 64px)" }}>
+              <BusinessMap businesses={displayedBusinesses} height="calc(100vh - 64px)" />
             </div>
           </div>
         </div>
