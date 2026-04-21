@@ -135,8 +135,8 @@ export default function SearchResults() {
               </div>
 
               <div className="hidden lg:block w-[40%] max-w-[600px] flex-shrink-0">
-                <div className="sticky top-4 h-[calc(100vh-2rem)] rounded-xl overflow-hidden shadow-lg border border-gray-200">
-                  <BusinessMap businesses={matchedBusinesses} />
+                <div className="sticky top-4">
+                  <BusinessMap businesses={matchedBusinesses} height="450px" />
                 </div>
               </div>
             </div>

@@ -7,7 +7,6 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { 
   ChevronRight, 
   Star, 
@@ -17,6 +16,7 @@ import {
   MapPin,
   MessageSquare
 } from "lucide-react";
+import SingleBusinessMap from "@/components/maps/SingleBusinessMap";
 import ContactCard from "../components/business/ContactCard";
 import ReviewCard from "../components/business/ReviewCard";
 import ReviewForm from "../components/business/ReviewForm";
@@ -24,8 +24,7 @@ import DealsSection from "../components/business/DealsSection";
 import RelatedBusinesses from "../components/business/RelatedBusinesses";
 import AskAboutBusiness from "../components/business/AskAboutBusiness";
 import RelatedCategoriesSection from "../components/business/RelatedCategoriesSection";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+
 import { toast } from "sonner";
 
 const formatPhoneNumber = (phone) => {
@@ -37,13 +36,7 @@ const formatPhoneNumber = (phone) => {
   return phone;
 };
 
-// Fix Leaflet markers
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-});
+
 
 export default function BusinessListing() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -572,18 +565,7 @@ export default function BusinessListing() {
                     <div className="p-4 border-b border-gray-200">
                       <h3 className="text-lg font-bold text-gray-900">Location</h3>
                     </div>
-                    <div className="h-80">
-                      <MapContainer
-                        center={[business.latitude, business.longitude]}
-                        zoom={15}
-                        style={{ height: "100%", width: "100%" }}
-                      >
-                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                        <Marker position={[business.latitude, business.longitude]}>
-                          <Popup>{business.business_name}</Popup>
-                        </Marker>
-                      </MapContainer>
-                    </div>
+                    <SingleBusinessMap business={business} height="320px" />
                   </div>
                 )}
               </div>
