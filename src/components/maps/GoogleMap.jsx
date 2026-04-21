@@ -34,8 +34,8 @@ function placeMarker(map, position, business, infoWindow) {
   markerDiv.style.cssText = `
     width: 44px; height: 44px; border-radius: 50%; overflow: hidden;
     border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.35);
-    cursor: pointer; background: white;
-    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; background: linear-gradient(135deg,#0891b2,#06b6d4);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   `;
 
   if (logoUrl) {
@@ -45,11 +45,9 @@ function placeMarker(map, position, business, infoWindow) {
     img.style.cssText = "width:100%;height:100%;object-fit:cover;";
     img.onerror = () => {
       markerDiv.innerHTML = `<span style="font-weight:bold;font-size:18px;color:white;">${initial}</span>`;
-      markerDiv.style.background = "linear-gradient(135deg,#0891b2,#06b6d4)";
     };
     markerDiv.appendChild(img);
   } else {
-    markerDiv.style.background = "linear-gradient(135deg,#0891b2,#06b6d4)";
     markerDiv.innerHTML = `<span style="font-weight:bold;font-size:18px;color:white;">${initial}</span>`;
   }
 
@@ -105,12 +103,13 @@ function placeMarker(map, position, business, infoWindow) {
 export default function GoogleMap({ businesses = [], height = "450px" }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
+  const infoWindowRef = useRef(null);
   const markersRef = useRef([]);
+  const activeEffectRef = useRef(0); // cancel stale async runs
 
+  // Init map once
   useEffect(() => {
     if (!mapRef.current || !window.google) return;
-
-    // Init map always at default center
     const map = new window.google.maps.Map(mapRef.current, {
       center: DEFAULT_CENTER,
       zoom: 13,
@@ -119,51 +118,80 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
       fullscreenControl: false,
     });
     mapInstanceRef.current = map;
+    infoWindowRef.current = new window.google.maps.InfoWindow();
+  }, []);
 
-    const infoWindow = new window.google.maps.InfoWindow();
+  // Update markers whenever businesses change
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    const infoWindow = infoWindowRef.current;
+    if (!map || !infoWindow) return;
 
-    // Clear old markers
-    markersRef.current.forEach((m) => { try { m.setMap(null); } catch(e){} });
+    // Cancel any previous async run
+    const effectId = Date.now();
+    activeEffectRef.current = effectId;
+
+    // Clear existing markers
+    markersRef.current.forEach((m) => { try { m.setMap(null); } catch (e) {} });
     markersRef.current = [];
 
     if (!businesses || businesses.length === 0) return;
 
-    const positions = [];
+    console.log(`[GoogleMap] Received ${businesses.length} businesses`);
 
-    const processBusinesses = async () => {
-      for (const business of businesses) {
-        let position = null;
+    const run = async () => {
+      // Separate businesses into those with coords and those needing geocoding
+      const withCoords = [];
+      const needsGeocode = [];
 
-        // 1. Use stored coords
-        if (business.latitude && business.longitude && !isNaN(business.latitude) && !isNaN(business.longitude)) {
-          position = { lat: Number(business.latitude), lng: Number(business.longitude) };
+      for (const b of businesses) {
+        if (b.latitude && b.longitude && !isNaN(Number(b.latitude)) && !isNaN(Number(b.longitude))) {
+          withCoords.push({ business: b, position: { lat: Number(b.latitude), lng: Number(b.longitude) } });
         } else {
-          // 2. Geocode address
-          const address = buildAddress(business);
+          const address = buildAddress(b);
           if (address) {
-            position = await geocodeAddress(address);
+            needsGeocode.push({ business: b, address });
           }
-        }
-
-        if (position) {
-          positions.push(position);
-          const marker = placeMarker(map, position, business, infoWindow);
-          markersRef.current.push(marker);
         }
       }
 
-      // Re-center map if we have positions
-      if (positions.length > 0) {
-        const avgLat = positions.reduce((s, p) => s + p.lat, 0) / positions.length;
-        const avgLng = positions.reduce((s, p) => s + p.lng, 0) / positions.length;
+      console.log(`[GoogleMap] ${withCoords.length} have coords, ${needsGeocode.length} need geocoding`);
+
+      // Geocode all in parallel
+      const geocoded = await Promise.all(
+        needsGeocode.map(async ({ business, address }) => {
+          const position = await geocodeAddress(address);
+          return position ? { business, position } : null;
+        })
+      );
+
+      // If a newer effect started while we were geocoding, bail out
+      if (activeEffectRef.current !== effectId) return;
+
+      const geocodedValid = geocoded.filter(Boolean);
+      console.log(`[GoogleMap] ${geocodedValid.length} successfully geocoded`);
+
+      const allResolved = [...withCoords, ...geocodedValid];
+
+      // Place all markers
+      allResolved.forEach(({ business, position }) => {
+        const marker = placeMarker(map, position, business, infoWindow);
+        markersRef.current.push(marker);
+      });
+
+      // Re-center map to average position
+      if (allResolved.length > 0) {
+        const avgLat = allResolved.reduce((s, { position: p }) => s + p.lat, 0) / allResolved.length;
+        const avgLng = allResolved.reduce((s, { position: p }) => s + p.lng, 0) / allResolved.length;
         map.setCenter({ lat: avgLat, lng: avgLng });
       }
     };
 
-    processBusinesses();
+    run();
 
     return () => {
-      markersRef.current.forEach((m) => { try { m.setMap(null); } catch(e){} });
+      markersRef.current.forEach((m) => { try { m.setMap(null); } catch (e) {} });
+      markersRef.current = [];
     };
   }, [businesses]);
 
