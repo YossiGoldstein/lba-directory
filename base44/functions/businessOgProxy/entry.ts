@@ -146,7 +146,7 @@ Deno.serve(async (req) => {
       business = { ...business, slug };
     }
 
-    const rawImage = business.logo_url || (business.gallery_images && business.gallery_images[0]) || DEFAULT_IMAGE;
+    const rawImage = business.cover_photo_url || (business.gallery_images && business.gallery_images[0]) || business.logo_url || DEFAULT_IMAGE;
     const resolvedImage = await resolveFinalUrl(rawImage);
     const ogImage = rawImage === DEFAULT_IMAGE ? DEFAULT_IMAGE : getResizedImageUrl(resolvedImage);
 

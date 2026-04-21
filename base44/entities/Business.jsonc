@@ -1,0 +1,290 @@
+{
+  "name": "Business",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "User ID of business owner"
+    },
+    "business_name": {
+      "type": "string",
+      "description": "Business name"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-friendly slug"
+    },
+    "category_id": {
+      "type": "string",
+      "description": "Primary category ID"
+    },
+    "subcategory_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional category IDs"
+    },
+    "short_description": {
+      "type": "string",
+      "description": "Short description for cards"
+    },
+    "long_description": {
+      "type": "string",
+      "description": "Full business description"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "Business logo URL"
+    },
+    "cover_photo_url": {
+      "type": "string",
+      "description": "Cover photo URL (landscape, shown as hero banner and OG image)"
+    },
+    "gallery_images": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Gallery image URLs"
+    },
+    "address_line1": {
+      "type": "string",
+      "description": "Street address"
+    },
+    "address_line2": {
+      "type": "string",
+      "description": "Apartment, suite, etc."
+    },
+    "city": {
+      "type": "string",
+      "description": "City"
+    },
+    "state": {
+      "type": "string",
+      "description": "State"
+    },
+    "zip_code": {
+      "type": "string",
+      "description": "ZIP code"
+    },
+    "country": {
+      "type": "string",
+      "default": "USA",
+      "description": "Country"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "GPS latitude"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "GPS longitude"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "whatsapp_number": {
+      "type": "string",
+      "description": "WhatsApp number"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address"
+    },
+    "password_hash": {
+      "type": "string",
+      "description": "Hashed password for business owner login"
+    },
+    "website_url": {
+      "type": "string",
+      "description": "Website URL"
+    },
+    "facebook_url": {
+      "type": "string",
+      "description": "Facebook page URL"
+    },
+    "instagram_url": {
+      "type": "string",
+      "description": "Instagram profile URL"
+    },
+    "linkedin_url": {
+      "type": "string",
+      "description": "LinkedIn profile URL"
+    },
+    "youtube_url": {
+      "type": "string",
+      "description": "YouTube channel URL"
+    },
+    "other_social_url": {
+      "type": "string",
+      "description": "Other social media URL"
+    },
+    "uber_eats_url": {
+      "type": "string",
+      "description": "Uber Eats ordering URL"
+    },
+    "postmates_url": {
+      "type": "string",
+      "description": "Postmates ordering URL"
+    },
+    "toast_url": {
+      "type": "string",
+      "description": "Toast ordering URL"
+    },
+    "grubhub_url": {
+      "type": "string",
+      "description": "Grubhub ordering URL"
+    },
+    "instacart_url": {
+      "type": "string",
+      "description": "Instacart ordering URL"
+    },
+    "doordash_url": {
+      "type": "string",
+      "description": "DoorDash ordering URL"
+    },
+    "k1_url": {
+      "type": "string",
+      "description": "K1 ordering URL"
+    },
+    "opening_hours_text": {
+      "type": "string",
+      "description": "Human-readable opening hours"
+    },
+    "opening_hours_json": {
+      "type": "object",
+      "description": "Structured opening hours data"
+    },
+    "by_appointment_only": {
+      "type": "boolean",
+      "default": false,
+      "description": "Business operates by appointment only"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Search tags"
+    },
+    "package_id": {
+      "type": "string",
+      "description": "Subscription package ID"
+    },
+    "listing_tier": {
+      "type": "string",
+      "enum": [
+        "free",
+        "pro",
+        "premium"
+      ],
+      "default": "free",
+      "description": "Current listing tier"
+    },
+    "listing_rank": {
+      "type": "number",
+      "default": 1,
+      "description": "Listing rank for sorting (higher = better placement)"
+    },
+    "is_vip": {
+      "type": "boolean",
+      "default": false,
+      "description": "VIP listing status - appears first in search results"
+    },
+    "payment_status": {
+      "type": "string",
+      "enum": [
+        "paid",
+        "unpaid",
+        "failed"
+      ],
+      "default": "unpaid",
+      "description": "Payment status"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID"
+    },
+    "stripe_subscription_id": {
+      "type": "string",
+      "description": "Stripe subscription ID"
+    },
+    "is_lba_sponsor": {
+      "type": "boolean",
+      "default": false,
+      "description": "LBA sponsor status"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Featured listing"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending",
+      "description": "Approval status"
+    },
+    "views_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Profile view count"
+    },
+    "clicks_to_website": {
+      "type": "number",
+      "default": 0,
+      "description": "Website click count"
+    },
+    "clicks_to_phone": {
+      "type": "number",
+      "default": 0,
+      "description": "Phone click count"
+    },
+    "general_rating": {
+      "type": "number",
+      "default": 0,
+      "description": "Average general rating"
+    },
+    "servicing_rating": {
+      "type": "number",
+      "default": 0,
+      "description": "Average servicing rating"
+    },
+    "pricing_rating": {
+      "type": "number",
+      "default": 0,
+      "description": "Average pricing rating"
+    },
+    "reviews_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Total number of reviews"
+    },
+    "ai_summary": {
+      "type": "string",
+      "description": "AI-generated business summary"
+    },
+    "ai_highlights": {
+      "type": "string",
+      "description": "AI-generated key selling points"
+    },
+    "ai_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "AI-generated tags"
+    }
+  },
+  "required": [
+    "business_name",
+    "category_id",
+    "phone"
+  ]
+}

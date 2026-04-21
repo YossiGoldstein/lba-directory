@@ -337,135 +337,139 @@ export default function BusinessListing() {
 
   return (
     <div className="min-h-screen bg-blue-50">
-      {/* Hero Section with Cover Image */}
-      <div className="relative w-full h-auto min-h-[400px] md:min-h-[480px] bg-gray-900">
-        {/* Cover Image */}
-        <BusinessImage business={business} className="w-full h-full object-cover" />
+      {/* Hero Section - Two zones: image + dark info bar */}
+      <div className="w-full bg-gray-900">
+        {/* TOP ZONE: Cover Image — only if there's an image to show */}
+        {(business.cover_photo_url || (business.gallery_images && business.gallery_images.length > 0) || business.logo_url) && (
+          <div className="relative w-full overflow-hidden" style={{ maxHeight: "480px" }}>
+            <BusinessImage
+              business={business}
+              className="w-full object-cover"
+              style={{ maxHeight: "480px", minHeight: "220px", objectFit: "cover", display: "block" }}
+            />
+          </div>
+        )}
 
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/90"></div>
-        
-
-
-        {/* Business Info Overlay - Bottom */}
-        <div className="absolute bottom-0 left-0 right-0 pb-4 pt-16">
-          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col gap-4">
-              <div className="flex items-start gap-3 md:gap-6">
-                {/* Logo Circle */}
-                 {business.logo_url && (
-                   <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-white flex-shrink-0">
-                    <img
-                      src={fixImageUrl(business.logo_url)}
-                      alt={business.business_name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+        {/* BOTTOM ZONE: Dark info bar */}
+        <div className="bg-gray-900 px-4 sm:px-6 md:px-8 pb-6 md:pb-8">
+          <div className="max-w-[1600px] mx-auto">
+            {/* Logo straddling top of dark zone */}
+            <div className="flex items-end gap-4 md:gap-6 -mt-8 md:-mt-14 mb-4">
+              <div className="w-16 h-16 md:w-28 md:h-28 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-white flex-shrink-0 flex items-center justify-center">
+                {business.logo_url ? (
+                  <img
+                    src={fixImageUrl(business.logo_url)}
+                    alt={business.business_name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-3xl md:text-5xl font-bold text-cyan-600">
+                    {business.business_name?.charAt(0)?.toUpperCase()}
+                  </span>
                 )}
-
-                {/* Business Details */}
-                <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3 mb-3">
-                  <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold text-white drop-shadow-lg break-words">
-                    {business.business_name}
-                  </h1>
-                  {business.listing_tier === 'premium' && (
-                    <svg className="w-7 h-7 sm:w-8 sm:h-8 text-blue-400 flex-shrink-0 drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+              </div>
+              {/* Badges aligned to bottom of logo row */}
+              <div className="pb-1 flex flex-wrap gap-2">
+                {business.is_lba_sponsor && (
+                  <Badge className="bg-blue-600 text-white">LBA Sponsor</Badge>
+                )}
+                {business.listing_tier === 'premium' && (
+                  <Badge className="bg-yellow-500 text-white flex items-center gap-1">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                     </svg>
-                  )}
-                </div>
+                    Premium
+                  </Badge>
+                )}
+              </div>
+            </div>
 
-                <div className="flex flex-col gap-2 text-white">
-                  {/* Address */}
-                  {(business.address_line1 || business.city) && (
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
-                      <span className="text-sm md:text-lg drop-shadow">
-                        {business.address_line1 && `${business.address_line1}, `}
-                        {business.city}
-                        {business.state && `, ${business.state}`}
-                      </span>
-                    </div>
-                  )}
-                  
-                  {/* Phone */}
-                  {business.phone && (
-                    <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                      </svg>
-                      <span className="text-sm md:text-lg drop-shadow">{formatPhoneNumber(business.phone)}</span>
-                    </div>
-                  )}
-                </div>
+            {/* Business Name */}
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 leading-tight">
+              {business.business_name}
+            </h1>
 
-                {/* Badges */}
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {business.is_lba_sponsor && (
-                    <Badge className="bg-blue-600 text-white">LBA Sponsor</Badge>
-                  )}
+            {/* Address + Phone */}
+            <div className="flex flex-col gap-1.5 text-gray-300 mb-5">
+              {(business.address_line1 || business.city) && (
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 flex-shrink-0 text-gray-400" />
+                  <span className="text-sm md:text-base">
+                    {business.address_line1 && `${business.address_line1}, `}
+                    {business.city}{business.state && `, ${business.state}`}
+                  </span>
                 </div>
+              )}
+              {business.phone && (
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 flex-shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  <span className="text-sm md:text-base">{formatPhoneNumber(business.phone)}</span>
                 </div>
-                </div>
+              )}
+            </div>
 
-                {/* Bottom Row - Action Buttons */}
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 w-full">
-                  {/* Action Buttons */}
-                  <div className="flex flex-wrap gap-2 w-full">
-                    <Button 
-                    size="sm"
-                    variant="outline" 
-                    onClick={handleToggleFavorite}
-                    disabled={isAddingFavorite || isLoadingUser || isLoadingFavorite}
-                    className={`flex-1 min-w-[140px] ${
-                      isFavorite 
-                        ? 'bg-red-500 hover:bg-red-600 text-white border-red-500' 
-                        : 'bg-white/90 hover:bg-white border-2 border-white'
-                    } transition-colors text-sm`}
-                    >
-                    <Heart className={`w-5 h-5 mr-2 ${isFavorite ? 'fill-white' : ''}`} />
-                    {isLoadingUser ? 'Loading...' : isFavorite ? 'Saved' : 'Add to Favorites'}
-                    </Button>
+            {/* Action Buttons */}
+            <div className="flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleToggleFavorite}
+                disabled={isAddingFavorite || isLoadingUser || isLoadingFavorite}
+                className={`flex-1 min-w-[140px] ${
+                  isFavorite
+                    ? 'bg-red-500 hover:bg-red-600 text-white border-red-500'
+                    : 'bg-white/90 hover:bg-white text-gray-900 border-2 border-white'
+                } transition-colors text-sm`}
+              >
+                <Heart className={`w-4 h-4 mr-2 ${isFavorite ? 'fill-white' : ''}`} />
+                {isLoadingUser ? 'Loading...' : isFavorite ? 'Saved' : 'Add to Favorites'}
+              </Button>
 
-                    {/* Claim Business Button - only if not yet claimed */}
-                    {!business.owner_id && (
-                      <Button
-                        size="sm"
-                        onClick={handleClaimBusiness}
-                        className="flex-1 min-w-[140px] bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:opacity-90 text-white font-semibold text-sm"
-                      >
-                        🏢 Claim This Business
-                      </Button>
-                    )}
+              {!business.owner_id && (
+                <Button
+                  size="sm"
+                  onClick={handleClaimBusiness}
+                  className="flex-1 min-w-[140px] bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:opacity-90 text-white font-semibold text-sm"
+                >
+                  🏢 Claim This Business
+                </Button>
+              )}
 
-                    {(business.latitude && business.longitude) || business.address_line1 ? (
-                      <Button
-                        size="sm"
-                        asChild
-                        className="flex-1 min-w-[140px] bg-white/90 hover:bg-white text-gray-900 font-semibold border-2 border-white transition-colors text-sm"
-                      >
-                        <a
-                          href={
-                            business.latitude && business.longitude
-                              ? `https://www.google.com/maps/dir/?api=1&destination=${business.latitude},${business.longitude}`
-                              : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-                                  `${business.address_line1}, ${business.city}, ${business.state} ${business.zip_code}`
-                                )}`
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <MapPin className="w-5 h-5 mr-2" />
-                          Get Directions
-                        </a>
-                      </Button>
-                    ) : null}
-                    </div>
-                </div>
-                </div>
-                </div>
-                </div>
+              {((business.latitude && business.longitude) || business.address_line1) && (
+                <Button
+                  size="sm"
+                  asChild
+                  className="flex-1 min-w-[140px] bg-white/90 hover:bg-white text-gray-900 font-semibold border-2 border-white transition-colors text-sm"
+                >
+                  <a
+                    href={
+                      business.latitude && business.longitude
+                        ? `https://www.google.com/maps/dir/?api=1&destination=${business.latitude},${business.longitude}`
+                        : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${business.address_line1}, ${business.city}, ${business.state} ${business.zip_code}`)}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Get Directions
+                  </a>
+                </Button>
+              )}
+
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleShare}
+                className="flex-1 min-w-[120px] bg-white/90 hover:bg-white text-gray-900 border-2 border-white transition-colors text-sm"
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Share
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Ratings Bar - Below Hero */}

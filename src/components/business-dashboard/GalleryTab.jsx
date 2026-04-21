@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Upload, X, Image as ImageIcon, Star } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Upload, X, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
+import CoverPhotoUpload from "@/components/business/CoverPhotoUpload";
 
 export default function GalleryTab({ business, onBusinessUpdate }) {
   const [images, setImages] = useState(business.gallery_images || []);
   const [logoUrl, setLogoUrl] = useState(business.logo_url || "");
-  const [coverImage, setCoverImage] = useState(business.cover_image || "");
+  const [coverPhotoUrl, setCoverPhotoUrl] = useState(business.cover_photo_url || "");
   const [isUploading, setIsUploading] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -48,13 +50,7 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
   };
 
   const handleRemoveImage = (indexToRemove) => {
-    const removed = images[indexToRemove];
-    if (coverImage === removed) setCoverImage("");
     setImages(images.filter((_, index) => index !== indexToRemove));
-  };
-
-  const handleSetCover = (url) => {
-    setCoverImage(url === coverImage ? "" : url);
   };
 
   const handleSave = async () => {
@@ -63,7 +59,7 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
       await base44.entities.Business.update(business.id, {
         gallery_images: images,
         logo_url: logoUrl,
-        cover_image: coverImage,
+        cover_photo_url: coverPhotoUrl,
       });
       toast.success("Gallery saved successfully!");
       if (onBusinessUpdate) onBusinessUpdate();
@@ -116,7 +112,20 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
         </CardContent>
       </Card>
 
-      {/* Gallery + Cover */}
+      {/* Cover Photo */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <ImageIcon className="w-5 h-5" />
+            Cover Photo
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CoverPhotoUpload value={coverPhotoUrl} onChange={setCoverPhotoUrl} />
+        </CardContent>
+      </Card>
+
+      {/* Gallery */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
@@ -153,40 +162,14 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
             </label>
           </div>
 
-          {images.length > 0 && (
-            <p className="text-sm text-gray-500 flex items-center gap-1">
-              <Star className="w-4 h-4 text-yellow-500" />
-              Click the star icon on an image to set it as your Cover photo
-            </p>
-          )}
-
           {/* Image Gallery */}
           {images.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {images.map((imageUrl, index) => (
                 <div key={index} className="relative group">
-                  <div className={`aspect-square rounded-lg overflow-hidden bg-gray-100 border-2 transition-colors ${coverImage === imageUrl ? 'border-yellow-400' : 'border-transparent'}`}>
-                    <img
-                      src={imageUrl}
-                      alt={`Gallery ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border-2 border-transparent">
+                    <img src={imageUrl} alt={`Gallery ${index + 1}`} className="w-full h-full object-cover" />
                   </div>
-                  {/* Cover badge */}
-                  {coverImage === imageUrl && (
-                    <div className="absolute top-2 left-2 bg-yellow-400 text-white text-xs px-2 py-0.5 rounded-full font-semibold">
-                      Cover
-                    </div>
-                  )}
-                  {/* Set as cover */}
-                  <button
-                    onClick={() => handleSetCover(imageUrl)}
-                    title="Set as cover"
-                    className={`absolute bottom-2 left-2 w-8 h-8 rounded-full flex items-center justify-center transition-opacity ${coverImage === imageUrl ? 'bg-yellow-400 opacity-100' : 'bg-white opacity-0 group-hover:opacity-100'} shadow`}
-                  >
-                    <Star className={`w-4 h-4 ${coverImage === imageUrl ? 'text-white fill-white' : 'text-yellow-500'}`} />
-                  </button>
-                  {/* Remove */}
                   <button
                     onClick={() => handleRemoveImage(index)}
                     className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"

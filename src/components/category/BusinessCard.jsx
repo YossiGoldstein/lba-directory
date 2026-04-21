@@ -60,7 +60,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
     <Link to={createPageUrl(`BusinessListing?id=${business.id}`)} className="block group h-full">
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300 overflow-hidden h-full flex flex-col">
         {/* Wide Cover Image - Banner Style */}
-        <div className="relative w-full h-24 sm:h-28 bg-gray-100">
+        <div className="relative w-full h-32 sm:h-40 bg-gray-100">
           <BusinessImage business={business} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
           
           {/* Gradient Overlay */}

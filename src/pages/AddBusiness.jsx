@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CheckCircle, Upload, X, Image as ImageIcon, Building2, Sparkles, Loader2, Info, Check } from "lucide-react";
+import CoverPhotoUpload from "@/components/business/CoverPhotoUpload";
 import { toast } from "sonner";
 import { PLANS } from "@/components/lib/plansConfig";
 
@@ -79,7 +80,6 @@ export default function AddBusiness() {
   const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
   const [isGeneratingTags, setIsGeneratingTags] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
-  const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
   const [hoursMode, setHoursMode] = useState("hours");
 
@@ -105,7 +105,7 @@ export default function AddBusiness() {
     opening_hours_json: DEFAULT_HOURS,
     by_appointment_only: false,
     logo_url: "",
-    cover_image_url: "",
+    cover_photo_url: "",
     gallery_images: [],
     // AI helpers
     ai_business_type: "",
@@ -213,17 +213,6 @@ Return JSON: { short_version, medium_version, long_version }`,
     finally { setIsUploadingLogo(false); e.target.value = ""; }
   };
 
-  const handleCoverUpload = async (e) => {
-    const file = e.target.files?.[0]; if (!file) return;
-    setIsUploadingCover(true);
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      set({ cover_image_url: file_url });
-      toast.success("Cover image uploaded!");
-    } catch { toast.error("Cover upload failed"); }
-    finally { setIsUploadingCover(false); e.target.value = ""; }
-  };
-
   const handleGalleryUpload = async (e) => {
     const files = Array.from(e.target.files || []); if (!files.length) return;
     setIsUploadingGallery(true);
@@ -278,9 +267,8 @@ Return JSON: { short_version, medium_version, long_version }`,
         opening_hours_json: form.by_appointment_only ? null : form.opening_hours_json,
         by_appointment_only: form.by_appointment_only,
         logo_url: form.logo_url,
-        gallery_images: form.cover_image_url
-          ? [form.cover_image_url, ...form.gallery_images]
-          : form.gallery_images,
+        cover_photo_url: form.cover_photo_url,
+        gallery_images: form.gallery_images,
         listing_tier: form.listing_tier === "lba-sponsor" ? "pro" : form.listing_tier,
         is_lba_sponsor: form.listing_tier === "lba-sponsor",
         listing_rank: 1,
@@ -550,6 +538,12 @@ Return JSON: { short_version, medium_version, long_version }`,
 
         {/* ── 5. Images ── */}
         <Section number="5" title="Images">
+          {/* Cover Photo */}
+          <div>
+            <Label className="mb-2 block font-semibold">Cover Photo</Label>
+            <CoverPhotoUpload value={form.cover_photo_url} onChange={(url) => set({ cover_photo_url: url })} />
+          </div>
+
           {/* Logo */}
           <div>
             <Label className="mb-2 block">Business Logo</Label>
@@ -565,27 +559,6 @@ Return JSON: { short_version, medium_version, long_version }`,
               <div className="relative inline-block">
                 <img src={form.logo_url} alt="Logo" className="w-28 h-28 rounded-lg object-cover border-2 border-cyan-400" />
                 <button onClick={() => set({ logo_url: "" })} className="absolute -top-2 -right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center" type="button">
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Cover */}
-          <div>
-            <Label className="mb-2 block">Cover Image</Label>
-            {!form.cover_image_url ? (
-              <div className="border-2 border-dashed border-cyan-300 rounded-lg p-6 text-center bg-cyan-50">
-                <input type="file" id="cover-upload" accept="image/*" onChange={handleCoverUpload} className="hidden" disabled={isUploadingCover} />
-                <label htmlFor="cover-upload" className={`cursor-pointer ${isUploadingCover ? "opacity-50 pointer-events-none" : ""}`}>
-                  <ImageIcon className="w-10 h-10 text-cyan-400 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-gray-700">{isUploadingCover ? "Uploading..." : "Upload Cover Image"}</p>
-                </label>
-              </div>
-            ) : (
-              <div className="relative inline-block">
-                <img src={form.cover_image_url} alt="Cover" className="w-full max-w-sm h-40 rounded-lg object-cover border-2 border-cyan-400" />
-                <button onClick={() => set({ cover_image_url: "" })} className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center" type="button">
                   <X className="w-3 h-3" />
                 </button>
               </div>
