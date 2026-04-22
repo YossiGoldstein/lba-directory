@@ -36,8 +36,6 @@ const formatPhoneNumber = (phone) => {
   return phone;
 };
 
-
-
 export default function BusinessListing() {
   const urlParams = new URLSearchParams(window.location.search);
   const businessId = urlParams.get("id");
@@ -49,7 +47,6 @@ export default function BusinessListing() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isAddingFavorite, setIsAddingFavorite] = useState(false);
 
-  // Get userId from localStorage (customer session)
   const storedCustomerData = localStorage.getItem("lba_customer");
   const currentUserId = storedCustomerData ? JSON.parse(storedCustomerData).id : null;
 
@@ -72,7 +69,6 @@ export default function BusinessListing() {
     loadUser();
   }, []);
 
-  // Fetch favorite state from DB on load
   const { data: favoriteRecord, isLoading: isLoadingFavorite } = useQuery({
     queryKey: ["favorite", currentUserId, businessId],
     queryFn: async () => {
@@ -89,7 +85,6 @@ export default function BusinessListing() {
     }
   }, [favoriteRecord]);
 
-  // Fetch business
   const { data: business, isLoading: businessLoading } = useQuery({
     queryKey: ["business", businessId],
     queryFn: async () => {
@@ -99,7 +94,6 @@ export default function BusinessListing() {
     enabled: !!businessId,
   });
 
-  // Fetch all categories
   const { data: allCategories = [] } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -108,7 +102,6 @@ export default function BusinessListing() {
     },
   });
 
-  // Fetch category
   const { data: category } = useQuery({
     queryKey: ["category", business?.category_id],
     queryFn: async () => {
@@ -117,7 +110,6 @@ export default function BusinessListing() {
     enabled: !!business?.category_id && allCategories.length > 0,
   });
 
-  // Fetch deals
   const { data: deals = [] } = useQuery({
     queryKey: ["deals", businessId],
     queryFn: async () => {
@@ -133,7 +125,6 @@ export default function BusinessListing() {
     enabled: !!businessId,
   });
 
-  // Fetch reviews
   const { 
     data: reviews = [], 
     refetch: refetchReviews 
@@ -156,7 +147,6 @@ export default function BusinessListing() {
     enabled: !!businessId,
   });
 
-  // Fetch related businesses
   const { data: relatedBusinesses = [] } = useQuery({
     queryKey: ["relatedBusinesses", business?.category_id, businessId],
     queryFn: async () => {
@@ -209,10 +199,8 @@ export default function BusinessListing() {
   };
 
   const handleToggleFavorite = async () => {
-    // Prevent double-clicks
     if (isAddingFavorite) return;
     
-    // Check both user and customer authentication
     const customerData = localStorage.getItem("lba_customer");
     const hasAuth = user || customerData;
     
@@ -221,21 +209,17 @@ export default function BusinessListing() {
       return;
     }
     
-    // Use customer ID if available, otherwise use user ID
     const userId = customerData ? JSON.parse(customerData).id : user.id;
 
     setIsAddingFavorite(true);
     try {
-      // Always fetch current state from DB to ensure accuracy
       const existing = await base44.entities.Favorite.filter({ user_id: userId, business_id: businessId });
       
       if (existing.length > 0) {
-        // Remove all matching favorites (handles any legacy duplicates too)
         await Promise.all(existing.map(f => base44.entities.Favorite.delete(f.id)));
         setIsFavorite(false);
         toast.success("Removed from favorites");
       } else {
-        // Add to favorites (no duplicate possible since we checked)
         await base44.entities.Favorite.create({
           user_id: userId,
           business_id: businessId
@@ -246,7 +230,6 @@ export default function BusinessListing() {
     } catch (error) {
       console.error("Failed to toggle favorite:", error);
       toast.error("Failed to update favorites");
-      // Refresh state from DB on error
       try {
         const existing = await base44.entities.Favorite.filter({ user_id: userId, business_id: businessId });
         setIsFavorite(existing.length > 0);
@@ -264,7 +247,6 @@ export default function BusinessListing() {
   const [claimSent, setClaimSent] = useState(false);
 
   const handleClaimBusiness = async () => {
-    // Check if user has authentication (either Base44 user or customer localStorage)
     const customerData = localStorage.getItem("lba_customer");
     if (!customerData) {
       window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
@@ -292,7 +274,6 @@ export default function BusinessListing() {
   };
 
   const handleSubmitReview = () => {
-    // Check both user and customer authentication
     const customerData = localStorage.getItem("lba_customer");
     const hasAuth = user || customerData;
     
@@ -303,7 +284,6 @@ export default function BusinessListing() {
     setShowReviewForm(!showReviewForm);
   };
 
-  // Loading state
   if (businessLoading) {
     return (
       <div className="min-h-screen bg-blue-50 flex items-center justify-center">
@@ -315,7 +295,6 @@ export default function BusinessListing() {
     );
   }
 
-  // Not found state
   if (!business) {
     return (
       <div className="min-h-screen bg-blue-50 flex items-center justify-center p-4">
@@ -339,11 +318,11 @@ export default function BusinessListing() {
     <div className="min-h-screen bg-blue-50">
       {/* Hero Section - Two zones: image + dark info bar */}
       <div className="w-full bg-gray-900">
-        {/* TOP ZONE: Cover Image — only if there's an image to show */}
+        {/* TOP ZONE: Cover Image */}
         {(business.cover_photo_url || (business.gallery_images && business.gallery_images.length > 0) || business.logo_url) && (
           <div
-            className="relative w-full overflow-hidden bg-gray-800 h-56 sm:h-72 md:h-96"
-            style={{ maxHeight: "480px", height: "clamp(220px, 40vw, 480px)" }}
+            className="relative w-full overflow-hidden bg-gray-800"
+            style={{ height: "clamp(220px, 40vw, 480px)" }}
           >
             <BusinessImage
               business={business}
@@ -370,7 +349,6 @@ export default function BusinessListing() {
                   </span>
                 )}
               </div>
-              {/* Badges aligned to bottom of logo row */}
               <div className="pb-1 flex flex-wrap gap-2">
                 {business.is_lba_sponsor && (
                   <Badge className="bg-blue-600 text-white">LBA Sponsor</Badge>
@@ -445,7 +423,7 @@ export default function BusinessListing() {
                   asChild
                   className="flex-1 min-w-[140px] bg-white/90 hover:bg-white text-gray-900 font-semibold border-2 border-white transition-colors text-sm"
                 >
-                  <a
+                  
                     href={
                       business.latitude && business.longitude
                         ? `https://www.google.com/maps/dir/?api=1&destination=${business.latitude},${business.longitude}`
@@ -478,7 +456,6 @@ export default function BusinessListing() {
       <div className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            {/* Ratings Row */}
             {business.reviews_count > 0 ? (
               <div className="flex items-center gap-6 flex-wrap justify-center md:justify-start">
                 <div className="flex items-center gap-2">
@@ -507,7 +484,6 @@ export default function BusinessListing() {
               <div className="text-gray-500 text-sm">No reviews yet</div>
             )}
 
-            {/* Submit Review Button */}
             <Button 
               onClick={handleSubmitReview}
               className="bg-cyan-600 hover:bg-cyan-700 text-white"
@@ -516,12 +492,12 @@ export default function BusinessListing() {
               Submit a Review
             </Button>
           </div>
-          </div>
-          </div>
+        </div>
+      </div>
 
-          {/* Review Form Modal */}
-          {showReviewForm && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      {/* Review Form Modal */}
+      {showReviewForm && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-gray-900">Submit Your Review</h3>
@@ -540,53 +516,49 @@ export default function BusinessListing() {
               }}
             />
           </div>
-          </div>
-          )}
+        </div>
+      )}
 
-          {/* Main Content - Two Column Layout */}
-          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Right Column - Contact & Map */}
-              <div className="lg:col-span-1 space-y-4 order-1 lg:order-2">
-                {/* Contact Card */}
-                <ContactCard business={business} />
+      {/* Main Content - Two Column Layout */}
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Right Column - Contact & Map */}
+          <div className="lg:col-span-1 space-y-4 order-1 lg:order-2">
+            <ContactCard business={business} />
 
-                {/* Gallery - Desktop only */}
-                {business.gallery_images && business.gallery_images.length > 1 && (
-                  <div className="hidden lg:block bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                    <h3 className="text-lg font-bold text-gray-900 mb-3">Gallery</h3>
-                    <div className="grid grid-cols-3 gap-2">
-                      {business.gallery_images.slice(1).map((img, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => setSelectedImage(fixImageUrl(img))}
-                          className="aspect-square rounded-lg overflow-hidden hover:opacity-75 transition-opacity"
-                        >
-                          <img
-                            src={fixImageUrl(img)}
-                            alt={`${business.business_name} - ${idx + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Map */}
-                {business.latitude && business.longitude && (
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="p-4 border-b border-gray-200">
-                      <h3 className="text-lg font-bold text-gray-900">Location</h3>
-                    </div>
-                    <SingleBusinessMap business={business} height="320px" />
-                  </div>
-                )}
+            {business.gallery_images && business.gallery_images.length > 1 && (
+              <div className="hidden lg:block bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <h3 className="text-lg font-bold text-gray-900 mb-3">Gallery</h3>
+                <div className="grid grid-cols-3 gap-2">
+                  {business.gallery_images.slice(1).map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedImage(fixImageUrl(img))}
+                      className="aspect-square rounded-lg overflow-hidden hover:opacity-75 transition-opacity"
+                    >
+                      <img
+                        src={fixImageUrl(img)}
+                        alt={`${business.business_name} - ${idx + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
               </div>
+            )}
+
+            {business.latitude && business.longitude && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div className="p-4 border-b border-gray-200">
+                  <h3 className="text-lg font-bold text-gray-900">Location</h3>
+                </div>
+                <SingleBusinessMap business={business} height="320px" />
+              </div>
+            )}
+          </div>
 
           {/* Left Column - Business Details */}
           <div className="lg:col-span-2 space-y-4 order-2 lg:order-1">
-            {/* Description */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">About this business</h2>
               {business.ai_summary && (
@@ -600,7 +572,6 @@ export default function BusinessListing() {
               </div>
             </div>
 
-            {/* Opening Hours */}
             {business.opening_hours_text && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Opening Hours</h2>
@@ -608,14 +579,12 @@ export default function BusinessListing() {
               </div>
             )}
 
-            {/* Deals / Sales */}
             {deals.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <DealsSection deals={deals} />
               </div>
             )}
 
-            {/* Tags */}
             {business.tags && business.tags.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Highlights</h2>
@@ -634,7 +603,6 @@ export default function BusinessListing() {
           </div>
         </div>
 
-        {/* Gallery - Mobile only (after all content) */}
         {business.gallery_images && business.gallery_images.length > 1 && (
           <div className="lg:hidden bg-white rounded-lg shadow-sm border border-gray-200 p-4 mt-6">
             <h3 className="text-lg font-bold text-gray-900 mb-3">Gallery</h3>
@@ -656,7 +624,6 @@ export default function BusinessListing() {
           </div>
         )}
 
-        {/* Related Categories Section */}
         <div className="mt-6">
           <RelatedCategoriesSection
             business={business}
@@ -664,8 +631,6 @@ export default function BusinessListing() {
             allCategories={allCategories}
           />
         </div>
-
-
       </div>
 
       {/* Claim Business Modal */}
