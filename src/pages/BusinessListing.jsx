@@ -321,12 +321,12 @@ export default function BusinessListing() {
         {/* TOP ZONE: Cover Image */}
         {(business.cover_photo_url || (business.gallery_images && business.gallery_images.length > 0) || business.logo_url) && (
           <div
-            className="relative w-full overflow-hidden bg-gray-800"
-            style={{ height: "480px", maxHeight: "50vh", minHeight: "220px" }}
+            className="w-full overflow-hidden bg-gray-800"
+            style={{ height: "400px", maxHeight: "45vh", minHeight: "200px" }}
           >
             <BusinessImage
               business={business}
-              className="absolute inset-0 w-full h-full object-cover"
+              className="w-full h-full object-cover"
             />
           </div>
         )}
