@@ -141,6 +141,10 @@
       "type": "string",
       "description": "YouTube channel URL"
     },
+    "x_url": {
+      "type": "string",
+      "description": "X (formerly Twitter) profile URL"
+    },
     "other_social_url": {
       "type": "string",
       "description": "Other social media URL"

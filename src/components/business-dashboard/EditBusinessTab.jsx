@@ -27,6 +27,7 @@ export default function EditBusinessTab({ business, onUpdate }) {
     website_url: business.website_url || "",
     facebook_url: business.facebook_url || "",
     instagram_url: business.instagram_url || "",
+    x_url: business.x_url || "",
     other_social_url: business.other_social_url || "",
     tags: business.tags ? business.tags.join(", ") : "",
   });
@@ -319,6 +320,17 @@ export default function EditBusinessTab({ business, onUpdate }) {
               value={formData.instagram_url}
               onChange={(e) => setFormData({...formData, instagram_url: e.target.value})}
               placeholder="https://instagram.com/business"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="x_url">X (Twitter)</Label>
+            <Input
+              id="x_url"
+              type="url"
+              value={formData.x_url}
+              onChange={(e) => setFormData({...formData, x_url: e.target.value})}
+              placeholder="https://x.com/yourhandle"
             />
           </div>
 
