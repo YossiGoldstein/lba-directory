@@ -344,7 +344,8 @@ export default function BusinessListing() {
           <div
             className="relative w-full overflow-hidden bg-gray-800"
             style={{
-              height: "clamp(220px, 40vw, 480px)"
+              height: "clamp(220px, 40vw, 480px)",
+              minHeight: 0
             }}
           >
             <BusinessImage
