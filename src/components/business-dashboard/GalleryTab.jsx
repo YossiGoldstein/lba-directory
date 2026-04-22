@@ -213,6 +213,15 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
         </CardHeader>
         <CardContent>
           <VideoManager value={videos} onChange={setVideos} />
+          <div className="flex justify-end pt-4 border-t border-gray-200 mt-4">
+            <Button
+              onClick={handleSave}
+              className="bg-cyan-600 hover:bg-cyan-700"
+              disabled={isSaving}
+            >
+              {isSaving ? "Saving..." : "Save Videos"}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
