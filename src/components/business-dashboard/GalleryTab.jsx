@@ -3,14 +3,16 @@ import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Upload, X, Image as ImageIcon } from "lucide-react";
+import { Upload, X, Image as ImageIcon, Video } from "lucide-react";
 import { toast } from "sonner";
 import CoverPhotoUpload from "@/components/business/CoverPhotoUpload";
+import VideoManager from "@/components/business/VideoManager";
 
 export default function GalleryTab({ business, onBusinessUpdate }) {
   const [images, setImages] = useState(business.gallery_images || []);
   const [logoUrl, setLogoUrl] = useState(business.logo_url || "");
   const [coverPhotoUrl, setCoverPhotoUrl] = useState(business.cover_photo_url || "");
+  const [videos, setVideos] = useState(business.videos || []);
   const [isUploading, setIsUploading] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -60,6 +62,7 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
         gallery_images: images,
         logo_url: logoUrl,
         cover_photo_url: coverPhotoUrl,
+        videos: videos,
       });
       toast.success("Gallery saved successfully!");
       if (onBusinessUpdate) onBusinessUpdate();
@@ -197,6 +200,19 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
               {isSaving ? "Saving..." : "Save Gallery"}
             </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Videos */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Video className="w-5 h-5" />
+            Videos
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <VideoManager value={videos} onChange={setVideos} />
         </CardContent>
       </Card>
     </div>

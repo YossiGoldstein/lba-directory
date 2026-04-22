@@ -600,6 +600,35 @@ export default function BusinessListing() {
                 </div>
               </div>
             )}
+
+            {business.videos && business.videos.length > 0 && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Videos</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {business.videos.map((video, idx) => (
+                    <div key={idx} className="relative rounded-lg overflow-hidden bg-gray-900 aspect-video">
+                      {video.type === "upload" ? (
+                        <video
+                          src={video.embed_url}
+                          controls
+                          className="w-full h-full object-cover"
+                          preload="metadata"
+                        />
+                      ) : (
+                        <iframe
+                          src={video.embed_url}
+                          title={video.title || `Video ${idx + 1}`}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                          className="w-full h-full"
+                          frameBorder="0"
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

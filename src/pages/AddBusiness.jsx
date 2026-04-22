@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CheckCircle, Upload, X, Image as ImageIcon, Building2, Sparkles, Loader2, Info, Check } from "lucide-react";
 import CoverPhotoUpload from "@/components/business/CoverPhotoUpload";
+import VideoManager from "@/components/business/VideoManager";
 import { toast } from "sonner";
 import { PLANS } from "@/components/lib/plansConfig";
 
@@ -107,6 +108,7 @@ export default function AddBusiness() {
     logo_url: "",
     cover_photo_url: "",
     gallery_images: [],
+    videos: [],
     // AI helpers
     ai_business_type: "",
     ai_services: "",
@@ -269,6 +271,7 @@ Return JSON: { short_version, medium_version, long_version }`,
         logo_url: form.logo_url,
         cover_photo_url: form.cover_photo_url,
         gallery_images: form.gallery_images,
+        videos: form.videos || [],
         listing_tier: form.listing_tier === "lba-sponsor" ? "pro" : form.listing_tier,
         is_lba_sponsor: form.listing_tier === "lba-sponsor",
         listing_rank: 1,
@@ -563,6 +566,12 @@ Return JSON: { short_version, medium_version, long_version }`,
                 </button>
               </div>
             )}
+          </div>
+
+          {/* Videos */}
+          <div>
+            <Label className="mb-2 block font-semibold">Videos (optional)</Label>
+            <VideoManager value={form.videos || []} onChange={(videos) => set({ videos })} />
           </div>
 
           {/* Gallery */}
