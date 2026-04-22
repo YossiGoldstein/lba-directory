@@ -322,11 +322,11 @@ export default function BusinessListing() {
         {(business.cover_photo_url || (business.gallery_images && business.gallery_images.length > 0) || business.logo_url) && (
           <div
             className="relative w-full overflow-hidden bg-gray-800"
-            style={{ height: "clamp(220px, 40vw, 480px)" }}
+            style={{ height: "480px", maxHeight: "50vh", minHeight: "220px" }}
           >
             <BusinessImage
               business={business}
-              className="w-full h-full object-cover absolute inset-0"
+              className="absolute inset-0 w-full h-full object-cover"
             />
           </div>
         )}
