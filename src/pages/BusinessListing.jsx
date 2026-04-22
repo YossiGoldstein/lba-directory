@@ -341,11 +341,17 @@ export default function BusinessListing() {
       <div className="w-full bg-gray-900">
         {/* TOP ZONE: Cover Image — only if there's an image to show */}
         {(business.cover_photo_url || (business.gallery_images && business.gallery_images.length > 0) || business.logo_url) && (
-          <div className="relative w-full overflow-hidden" style={{ maxHeight: "480px" }}>
+          <div
+            className="relative w-full overflow-hidden bg-gray-800"
+            style={{
+              aspectRatio: "16 / 9",
+              maxHeight: "480px",
+              minHeight: "220px"
+            }}
+          >
             <BusinessImage
               business={business}
-              className="w-full object-cover"
-              style={{ maxHeight: "480px", minHeight: "220px", objectFit: "cover", display: "block" }}
+              className="w-full h-full object-cover absolute inset-0"
             />
           </div>
         )}
