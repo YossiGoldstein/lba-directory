@@ -423,7 +423,7 @@ export default function BusinessListing() {
                   asChild
                   className="flex-1 min-w-[140px] bg-white/90 hover:bg-white text-gray-900 font-semibold border-2 border-white transition-colors text-sm"
                 >
-                  
+                  <a
                     href={
                       business.latitude && business.longitude
                         ? `https://www.google.com/maps/dir/?api=1&destination=${business.latitude},${business.longitude}`
