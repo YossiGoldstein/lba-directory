@@ -337,14 +337,16 @@ export default function BusinessListing() {
 
   return (
     <div className="min-h-screen bg-blue-50">
-      {/* Hero Section - Two zones: image + dark info bar - v2 */}
+      {/* Hero Section - Two zones: image + dark info bar */}
       <div className="w-full bg-gray-900">
         {/* TOP ZONE: Cover Image — only if there's an image to show */}
         {(business.cover_photo_url || (business.gallery_images && business.gallery_images.length > 0) || business.logo_url) && (
           <div
             className="relative w-full overflow-hidden bg-gray-800"
             style={{
-              height: "clamp(220px, 40vw, 480px)"
+              aspectRatio: "16 / 9",
+              maxHeight: "480px",
+              minHeight: "220px"
             }}
           >
             <BusinessImage
