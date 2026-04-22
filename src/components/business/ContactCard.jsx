@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, Mail, Globe, MessageCircle, Facebook, Instagram, MapPin, ExternalLink, Package } from "lucide-react";
+import { getSocialPlatform } from "@/components/lib/socialPlatforms";
 
 const formatPhoneNumber = (phone) => {
   if (!phone) return "";
@@ -173,18 +174,24 @@ export default function ContactCard({ business }) {
                   </svg>
                 </a>
               )}
-              {business.other_social_url && (
-                <a
-                  href={business.other_social_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Other Social Media"
-                  aria-label="Other Social Media"
-                  className="w-9 h-9 bg-gray-500 hover:bg-gray-600 text-white rounded-lg flex items-center justify-center transition-colors"
-                >
-                  <Globe className="w-4 h-4" />
-                </a>
-              )}
+              {business.other_social_url && (() => {
+                const platform = getSocialPlatform(business.other_social_url);
+                return (
+                  <a
+                    href={business.other_social_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={platform.name === "Other" ? "Other Social Media" : platform.name}
+                    aria-label={platform.name === "Other" ? "Other Social Media" : platform.name}
+                    className={`w-9 h-9 ${platform.color} text-white rounded-lg flex items-center justify-center transition-colors`}
+                  >
+                    {platform.svg
+                      ? <svg className="w-4 h-4" fill="currentColor" viewBox={platform.svg.props.viewBox}>{platform.svg.props.children}</svg>
+                      : <Globe className="w-4 h-4" />
+                    }
+                  </a>
+                );
+              })()}
             </div>
           </div>
         )}
