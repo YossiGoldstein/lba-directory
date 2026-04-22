@@ -176,17 +176,18 @@ export default function ContactCard({ business }) {
               )}
               {business.other_social_url && (() => {
                 const platform = getSocialPlatform(business.other_social_url);
+                const label = platform.name === "Other" ? "Other Social Media" : platform.name;
                 return (
                   <a
                     href={business.other_social_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    title={platform.name === "Other" ? "Other Social Media" : platform.name}
-                    aria-label={platform.name === "Other" ? "Other Social Media" : platform.name}
+                    title={label}
+                    aria-label={label}
                     className={`w-9 h-9 ${platform.color} text-white rounded-lg flex items-center justify-center transition-colors`}
                   >
-                    {platform.svg
-                      ? <svg className="w-4 h-4" fill="currentColor" viewBox={platform.svg.props.viewBox}>{platform.svg.props.children}</svg>
+                    {platform.path
+                      ? <svg className="w-4 h-4" fill="currentColor" viewBox={platform.viewBox}><path d={platform.path}/></svg>
                       : <Globe className="w-4 h-4" />
                     }
                   </a>
