@@ -547,14 +547,14 @@ export default function BusinessListing() {
               </div>
             )}
 
-            {business.latitude && business.longitude && (
+            {(business.latitude && business.longitude) || business.address_line1 ? (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                 <div className="p-4 border-b border-gray-200">
                   <h3 className="text-lg font-bold text-gray-900">Location</h3>
                 </div>
                 <SingleBusinessMap business={business} height="320px" />
               </div>
-            )}
+            ) : null}
           </div>
 
           {/* Left Column - Business Details */}
@@ -655,6 +655,20 @@ export default function BusinessListing() {
                   />
                 </button>
               ))}
+            </div>
+          </div>
+        )}
+
+        {((business.latitude && business.longitude) || business.address_line1) && (
+          <div className="mt-6 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <MapPin className="w-6 h-6 text-cyan-600" />
+                Find Us
+              </h2>
+            </div>
+            <div style={{ height: "300px" }}>
+              <SingleBusinessMap business={business} height="300px" />
             </div>
           </div>
         )}
