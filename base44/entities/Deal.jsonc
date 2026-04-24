@@ -1,0 +1,51 @@
+{
+  "name": "Deal",
+  "type": "object",
+  "properties": {
+    "business_id": {
+      "type": "string",
+      "description": "Business offering the deal"
+    },
+    "title": {
+      "type": "string",
+      "description": "Deal title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Deal description"
+    },
+    "badge_text": {
+      "type": "string",
+      "description": "Badge text (e.g. Sale, New, Today Only)"
+    },
+    "flyer_url": {
+      "type": "string",
+      "description": "URL of uploaded sale flyer image"
+    },
+    "sale_link": {
+      "type": "string",
+      "description": "External link to the sale or promotion page"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Deal start date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Deal end date"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Is deal currently active"
+    }
+  },
+  "required": [
+    "business_id",
+    "title",
+    "start_date",
+    "end_date"
+  ]
+}

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { TrendingUp, Plus, Edit, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
+import { TrendingUp, Plus, Edit, Trash2, ToggleLeft, ToggleRight, Upload, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -17,10 +17,13 @@ export default function DealsTab({ business }) {
     title: "",
     description: "",
     badge_text: "",
+    flyer_url: "",
+    sale_link: "",
     start_date: "",
     end_date: "",
     is_active: true,
   });
+  const [isUploadingFlyer, setIsUploadingFlyer] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -99,11 +102,28 @@ export default function DealsTab({ business }) {
     },
   });
 
+  const handleFlyerUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingFlyer(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setFormData(prev => ({ ...prev, flyer_url: file_url }));
+      toast.success("Flyer uploaded");
+    } catch (error) {
+      toast.error("Failed to upload flyer");
+    } finally {
+      setIsUploadingFlyer(false);
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       title: "",
       description: "",
       badge_text: "",
+      flyer_url: "",
+      sale_link: "",
       start_date: "",
       end_date: "",
       is_active: true,
@@ -118,6 +138,8 @@ export default function DealsTab({ business }) {
       title: deal.title,
       description: deal.description || "",
       badge_text: deal.badge_text || "",
+      flyer_url: deal.flyer_url || "",
+      sale_link: deal.sale_link || "",
       start_date: deal.start_date ? format(new Date(deal.start_date), "yyyy-MM-dd") : "",
       end_date: deal.end_date ? format(new Date(deal.end_date), "yyyy-MM-dd") : "",
       is_active: deal.is_active !== false,
@@ -218,6 +240,53 @@ export default function DealsTab({ business }) {
                 />
               </div>
 
+              {/* Sale Flyer Upload */}
+              <div className="space-y-2">
+                <Label>Sale Flyer (optional)</Label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="file"
+                    id="flyer-upload"
+                    accept="image/*"
+                    onChange={handleFlyerUpload}
+                    className="hidden"
+                    disabled={isUploadingFlyer}
+                  />
+                  <label htmlFor="flyer-upload">
+                    <Button asChild variant="outline" className="cursor-pointer" disabled={isUploadingFlyer}>
+                      <span>
+                        <Upload className="w-4 h-4 mr-2" />
+                        {isUploadingFlyer ? "Uploading..." : "Upload Flyer"}
+                      </span>
+                    </Button>
+                  </label>
+                  {formData.flyer_url && (
+                    <div className="flex items-center gap-2">
+                      <img src={formData.flyer_url} alt="Flyer preview" className="h-12 w-12 object-cover rounded border" />
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, flyer_url: "" }))}
+                        className="text-red-500 text-xs hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Sale Link */}
+              <div className="space-y-2">
+                <Label htmlFor="sale_link">Sale Link (optional)</Label>
+                <Input
+                  id="sale_link"
+                  type="url"
+                  value={formData.sale_link}
+                  onChange={(e) => setFormData({...formData, sale_link: e.target.value})}
+                  placeholder="https://example.com/sale"
+                />
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="start_date">Start Date *</Label>
@@ -307,6 +376,24 @@ export default function DealsTab({ business }) {
                         <p className="text-xs text-gray-500">
                           {format(new Date(deal.start_date), "MMM d, yyyy")} - {format(new Date(deal.end_date), "MMM d, yyyy")}
                         </p>
+                        <div className="flex items-center gap-3 mt-2">
+                          {deal.flyer_url && (
+                            <a href={deal.flyer_url} target="_blank" rel="noopener noreferrer">
+                              <img src={deal.flyer_url} alt="Flyer" className="h-10 w-10 object-cover rounded border" />
+                            </a>
+                          )}
+                          {deal.sale_link && (
+                            <a
+                              href={deal.sale_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-cyan-600 hover:underline flex items-center gap-1"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              Sale Link
+                            </a>
+                          )}
+                        </div>
                       </div>
 
                       <div className="flex gap-2">
