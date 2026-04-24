@@ -547,14 +547,14 @@ export default function BusinessListing() {
               </div>
             )}
 
-            {(business.latitude && business.longitude) || business.address_line1 ? (
+            {((business.latitude && business.longitude) || business.address_line1 || business.city) && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                 <div className="p-4 border-b border-gray-200">
                   <h3 className="text-lg font-bold text-gray-900">Location</h3>
                 </div>
                 <SingleBusinessMap business={business} height="320px" />
               </div>
-            ) : null}
+            )}
           </div>
 
           {/* Left Column - Business Details */}
