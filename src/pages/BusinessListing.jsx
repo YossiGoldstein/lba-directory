@@ -567,9 +567,15 @@ export default function BusinessListing() {
                   <p className="text-gray-700">{business.ai_summary}</p>
                 </div>
               )}
-              <div className="text-gray-700 whitespace-pre-line">
-                {business.long_description || business.short_description}
-              </div>
+              {business.short_description && (
+                <p className="text-gray-600 italic mb-4">{business.short_description}</p>
+              )}
+              {business.long_description && (
+                <div className="text-gray-700 whitespace-pre-line">{business.long_description}</div>
+              )}
+              {!business.short_description && !business.long_description && (
+                <p className="text-gray-500">No description available.</p>
+              )}
             </div>
 
             {business.opening_hours_text && (
