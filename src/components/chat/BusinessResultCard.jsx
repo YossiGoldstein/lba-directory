@@ -145,7 +145,7 @@ export default function BusinessResultCard({ business, hasActiveDeals }) {
             size="sm"
             className="bg-cyan-600 hover:bg-cyan-700 text-xs"
           >
-            <Link to={createPageUrl(`BusinessListing?id=${business.id}`)}>
+            <Link to={`/businesslisting/${business.slug || business.id}`}>
               <ExternalLink className="w-3 h-3 mr-1" />
               View Details
             </Link>

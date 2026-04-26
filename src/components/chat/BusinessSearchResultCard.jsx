@@ -41,7 +41,7 @@ export default function BusinessSearchResultCard({ business }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1 flex-wrap">
             <Link
-              to={`/BusinessListing?id=${business.id}&businessName=${encodeURIComponent(business.business_name)}`}
+              to={`/businesslisting/${business.slug || business.id}`}
               className="font-semibold text-blue-600 hover:text-blue-800 text-sm leading-tight"
             >
               {business.business_name}
@@ -135,7 +135,7 @@ export default function BusinessSearchResultCard({ business }) {
           {expanded ? 'Show less' : 'More details'}
         </button>
         <Link
-          to={`/BusinessListing?id=${business.id}&businessName=${encodeURIComponent(business.business_name)}`}
+          to={`/businesslisting/${business.slug || business.id}`}
           className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
         >
           View Profile <ExternalLink className="w-3 h-3" />

@@ -8,7 +8,7 @@ import { MapPin, Phone, Star, ExternalLink, CheckCircle } from "lucide-react";
 
 export default function BusinessCard({ business }) {
   return (
-    <Link to={createPageUrl(`BusinessListing?id=${business.id}`)}>
+    <Link to={`/businesslisting/${business.slug || business.id}`}>
       <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group h-full">
         {/* Image */}
         <div className="relative h-48 bg-gray-200 overflow-hidden">

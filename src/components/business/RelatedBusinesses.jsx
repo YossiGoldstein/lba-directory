@@ -18,7 +18,7 @@ export default function RelatedBusinesses({ businesses, categoryName }) {
         {businesses.map((business) => (
           <Link
             key={business.id}
-            to={createPageUrl(`BusinessListing?id=${business.id}`)}
+            to={`/businesslisting/${business.slug || business.id}`}
             className="block group"
           >
             <Card className="h-full hover:shadow-lg transition-shadow">

@@ -15,7 +15,7 @@ export default function LatestDeals({ deals, businesses }) {
 
   const getBusinessSlug = (businessId) => {
     const business = businesses.find(b => b.id === businessId);
-    return business?.id;
+    return business?.slug || business?.id;
   };
 
   if (!deals || deals.length === 0) {
@@ -82,7 +82,7 @@ export default function LatestDeals({ deals, businesses }) {
                     className="w-full group-hover:bg-green-600 group-hover:text-white group-hover:border-green-600 transition-all"
                     asChild
                   >
-                    <Link to={createPageUrl(`BusinessListing?id=${businessId}`)}>
+                    <Link to={`/businesslisting/${businessId}`}>
                       View Business <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </Button>

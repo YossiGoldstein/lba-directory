@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { fixImageUrl } from "@/components/lib/imageUtils";
 import BusinessImage from "@/components/lib/BusinessImage";
@@ -37,8 +37,10 @@ const formatPhoneNumber = (phone) => {
 };
 
 export default function BusinessListing() {
+  const { slug } = useParams();
+  const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
-  const businessId = urlParams.get("id");
+  const legacyId = urlParams.get("id");
 
   const [user, setUser] = useState(null);
   const [customer, setCustomer] = useState(null);
@@ -49,6 +51,29 @@ export default function BusinessListing() {
 
   const storedCustomerData = localStorage.getItem("lba_customer");
   const currentUserId = storedCustomerData ? JSON.parse(storedCustomerData).id : null;
+
+  // Fetch business by slug (primary) or legacy id (fallback)
+  const { data: business, isLoading: businessLoading } = useQuery({
+    queryKey: ["business", slug, legacyId],
+    queryFn: async () => {
+      if (legacyId) {
+        // Legacy ?id= param — fetch by id then redirect to slug URL
+        const businesses = await base44.entities.Business.list();
+        const found = businesses.find((b) => b.id === legacyId);
+        if (found?.slug) {
+          navigate(`/businesslisting/${found.slug}`, { replace: true });
+          return found;
+        }
+        return found || null;
+      }
+      // Normal slug-based lookup
+      const results = await base44.entities.Business.filter({ slug: slug });
+      return results[0] || null;
+    },
+    enabled: !!(slug || legacyId),
+  });
+
+  const businessId = business?.id;
 
   useEffect(() => {
     const loadUser = async () => {
@@ -84,15 +109,6 @@ export default function BusinessListing() {
       setIsFavorite(favoriteRecord.length > 0);
     }
   }, [favoriteRecord]);
-
-  const { data: business, isLoading: businessLoading } = useQuery({
-    queryKey: ["business", businessId],
-    queryFn: async () => {
-      const businesses = await base44.entities.Business.list();
-      return businesses.find((b) => b.id === businessId);
-    },
-    enabled: !!businessId,
-  });
 
   const { data: allCategories = [] } = useQuery({
     queryKey: ["categories"],
@@ -178,10 +194,7 @@ export default function BusinessListing() {
   };
 
   const getShareUrl = () => {
-    const identifier = business.slug
-      ? `slug=${business.slug}`
-      : `id=${business.id}`;
-    return `https://www.lbadirectory.com/functions/b?${identifier}`;
+    return `https://www.lbadirectory.com/businesslisting/${business.slug || business.id}`;
   };
 
   const handleShare = async () => {

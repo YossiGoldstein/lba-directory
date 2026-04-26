@@ -35,7 +35,7 @@ export default function FeaturedBusinesses({ businesses, categories }) {
           {businesses.map((business) => (
             <Link 
               key={business.id} 
-              to={createPageUrl(`BusinessListing?id=${business.id}`)}
+              to={`/businesslisting/${business.slug || business.id}`}
             >
               <Card className="group hover:shadow-2xl transition-all duration-300 h-full overflow-hidden border-2 border-transparent hover:border-blue-500">
                 {/* Image */}

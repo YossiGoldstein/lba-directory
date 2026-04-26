@@ -8,6 +8,7 @@ import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
+import BusinessListing from './pages/BusinessListing';
 import ClaimBusiness from './pages/ClaimBusiness';
 import ServiceInquiry from './pages/ServiceInquiry';
 import AiSearchPage from './pages/AiSearch';
@@ -64,6 +65,11 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
+      <Route path="/businesslisting/:slug" element={
+        <LayoutWrapper currentPageName="BusinessListing">
+          <BusinessListing />
+        </LayoutWrapper>
+      } />
       <Route path="/ClaimBusiness" element={<ClaimBusiness />} />
       <Route path="/ServiceInquiry" element={<ServiceInquiry />} />
       <Route path="/AiSearch" element={
