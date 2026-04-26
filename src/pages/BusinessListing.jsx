@@ -94,6 +94,50 @@ export default function BusinessListing() {
     loadUser();
   }, []);
 
+  // Dynamic OG meta tags + document.title
+  useEffect(() => {
+    if (!business) return;
+
+    const DEFAULT_LOGO = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/3a0b2e08d_LBA-directory-logo-color.png";
+    const ogTitle = business.business_name;
+    const ogDescription = business.short_description
+      || (business.long_description ? business.long_description.slice(0, 160) : "Find local businesses on LBA Directory");
+    const ogImage = business.logo_url || DEFAULT_LOGO;
+    const ogUrl = `https://lbadirectory.com/businesslisting/${business.slug || business.id}`;
+
+    const prevTitle = document.title;
+    document.title = `${ogTitle} | LBA Directory`;
+
+    const setMeta = (property, content, isName = false) => {
+      const attr = isName ? "name" : "property";
+      let el = document.querySelector(`meta[${attr}="${property}"]`);
+      const created = !el;
+      if (created) {
+        el = document.createElement("meta");
+        el.setAttribute(attr, property);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", content);
+      return created ? el : null; // return el only if we created it (so we can remove it on cleanup)
+    };
+
+    const created = [
+      setMeta("og:title", ogTitle),
+      setMeta("og:description", ogDescription),
+      setMeta("og:image", ogImage),
+      setMeta("og:url", ogUrl),
+      setMeta("og:type", "website"),
+      setMeta("twitter:card", "summary_large_image"),
+      setMeta("twitter:image", ogImage, true),
+    ].filter(Boolean);
+
+    return () => {
+      document.title = prevTitle;
+      // Remove only tags we created; reset ones that already existed
+      created.forEach((el) => el.parentNode && el.parentNode.removeChild(el));
+    };
+  }, [business]);
+
   const { data: favoriteRecord, isLoading: isLoadingFavorite } = useQuery({
     queryKey: ["favorite", currentUserId, businessId],
     queryFn: async () => {
