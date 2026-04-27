@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, Mail, Phone, Calendar, CheckCircle, XCircle, Trash2, Key, Eye, EyeOff, X } from "lucide-react";
+import { Search, Mail, Phone, Calendar, CheckCircle, XCircle, Trash2, Key, Eye, EyeOff, X, Pencil } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -13,10 +13,14 @@ export default function CustomersTab() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [passwordModal, setPasswordModal] = useState(null); // { customer }
+  const [passwordModal, setPasswordModal] = useState(null);
   const [newPassword, setNewPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
+  const [editModal, setEditModal] = useState(null); // { customer }
+  const [editName, setEditName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
 
   useEffect(() => {
     loadCustomers();
@@ -77,6 +81,27 @@ export default function CustomersTab() {
       toast.error("Failed to update password");
     } finally {
       setSavingPassword(false);
+    }
+  };
+
+  const handleEditCustomer = async () => {
+    if (!editName.trim() || !editEmail.trim()) {
+      toast.error("Name and email are required");
+      return;
+    }
+    setSavingEdit(true);
+    try {
+      await base44.entities.Customer.update(editModal.customer.id, {
+        full_name: editName.trim(),
+        email: editEmail.trim(),
+      });
+      toast.success("Customer updated successfully");
+      setEditModal(null);
+      loadCustomers();
+    } catch (error) {
+      toast.error("Failed to update customer");
+    } finally {
+      setSavingEdit(false);
     }
   };
 
@@ -194,6 +219,15 @@ export default function CustomersTab() {
                      <Button
                        size="sm"
                        variant="ghost"
+                       onClick={() => { setEditModal({ customer }); setEditName(customer.full_name || ""); setEditEmail(customer.email || ""); }}
+                       className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                       title="Edit Name & Email"
+                     >
+                       <Pencil className="w-4 h-4" />
+                     </Button>
+                     <Button
+                       size="sm"
+                       variant="ghost"
                        onClick={() => { setPasswordModal({ customer }); setNewPassword(""); }}
                        className="text-cyan-600 hover:text-cyan-700 hover:bg-cyan-50"
                        title="Set Password"
@@ -224,6 +258,45 @@ export default function CustomersTab() {
         </div>
       </CardContent>
     </Card>
+
+    {editModal && (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold">Edit Customer</h3>
+            <button onClick={() => setEditModal(null)} className="text-gray-400 hover:text-gray-600">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="space-y-4 mb-4">
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1">Full Name</label>
+              <input
+                type="text"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-cyan-500"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1">Email</label>
+              <input
+                type="email"
+                value={editEmail}
+                onChange={(e) => setEditEmail(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-cyan-500"
+              />
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="outline" className="flex-1" onClick={() => setEditModal(null)}>Cancel</Button>
+            <Button className="flex-1 bg-cyan-600 hover:bg-cyan-700" onClick={handleEditCustomer} disabled={savingEdit}>
+              {savingEdit ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        </div>
+      </div>
+    )}
 
     {passwordModal && (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
