@@ -294,16 +294,8 @@ export default function BusinessListing() {
 
   const handleShare = async () => {
     const shareUrl = getShareUrl();
-    if (navigator.share) {
-      navigator.share({
-        title: `${business.business_name} | LBA Directory`,
-        text: business.short_description || `Find ${business.business_name} on LBA Directory`,
-        url: shareUrl,
-      });
-    } else {
-      await navigator.clipboard.writeText(shareUrl);
-      toast.success("Share link copied!");
-    }
+    await navigator.clipboard.writeText(shareUrl);
+    toast.success("Link copied to clipboard!");
   };
 
   const handleToggleFavorite = async () => {
