@@ -59,7 +59,7 @@ export default function OverviewTab({ business, deals = [] }) {
     const identifier = business.slug
       ? `slug=${business.slug}`
       : `id=${business.id}`;
-    return `https://www.lbadirectory.com/functions/b?${identifier}`;
+    return `https://www.lbadirectory.com/functions/businessOgProxy?${identifier}`;
   };
 
   const handleCopyShareLink = async () => {
