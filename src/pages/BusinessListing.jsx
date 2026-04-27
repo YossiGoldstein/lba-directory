@@ -27,6 +27,46 @@ import RelatedCategoriesSection from "../components/business/RelatedCategoriesSe
 
 import { toast } from "sonner";
 
+const formatTime = (time) => {
+  if (!time) return "";
+  const [hourStr, minuteStr] = time.split(":");
+  const hour = parseInt(hourStr, 10);
+  const minute = minuteStr || "00";
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const h = hour % 12 || 12;
+  return `${h}:${minute} ${ampm}`;
+};
+
+const DAYS_ORDER = [
+  { key: "sunday", label: "Sunday" },
+  { key: "monday", label: "Monday" },
+  { key: "tuesday", label: "Tuesday" },
+  { key: "wednesday", label: "Wednesday" },
+  { key: "thursday", label: "Thursday" },
+  { key: "friday", label: "Friday" },
+  { key: "saturday", label: "Saturday" },
+  { key: "motzei_shabbos", label: "Motzei Shabbos" },
+];
+
+const OpeningHoursDisplay = ({ hours }) => (
+  <div className="space-y-2">
+    {DAYS_ORDER.map(({ key, label }) => {
+      const day = hours[key];
+      if (!day) return null;
+      return (
+        <div key={key} className="flex gap-2 text-gray-700">
+          <span className="font-medium w-36">{label}:</span>
+          <span>
+            {day.closed
+              ? "Closed"
+              : `${formatTime(day.open)} - ${formatTime(day.close)}`}
+          </span>
+        </div>
+      );
+    })}
+  </div>
+);
+
 const formatPhoneNumber = (phone) => {
   if (!phone) return "";
   const cleaned = phone.replace(/\D/g, "");
@@ -635,10 +675,14 @@ export default function BusinessListing() {
               )}
             </div>
 
-            {business.opening_hours_text && (
+            {(business.opening_hours_json || business.opening_hours_text) && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Opening Hours</h2>
-                <p className="text-gray-700 whitespace-pre-line">{business.opening_hours_text}</p>
+                {business.opening_hours_json ? (
+                  <OpeningHoursDisplay hours={business.opening_hours_json} />
+                ) : (
+                  <p className="text-gray-700 whitespace-pre-line">{business.opening_hours_text}</p>
+                )}
               </div>
             )}
 
