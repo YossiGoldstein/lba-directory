@@ -28,6 +28,16 @@ async function resolveFinalUrl(url) {
   }
 }
 
+function convertBase44ImageUrl(url) {
+  if (!url) return url;
+  const match = url.match(
+    /https:\/\/base44\.app\/api\/apps\/([^/]+)\/files\/mp\/public\/([^/]+)\/(.+)/
+  );
+  if (!match) return url; // not a base44.app URL, return as-is
+  const [, , appId, filename] = match;
+  return `https://media.base44.com/images/public/${appId}/${filename}`;
+}
+
 function getResizedImageUrl(originalUrl, width = 1200) {
   if (!originalUrl) return originalUrl;
   return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&w=${width}&h=630&fit=cover&a=attention&q=85&output=jpg`;
@@ -145,8 +155,9 @@ Deno.serve(async (req) => {
     }
 
     const rawImage = business.cover_photo_url || (business.gallery_images && business.gallery_images[0]) || business.logo_url || DEFAULT_IMAGE;
-    const resolvedImage = await resolveFinalUrl(rawImage);
-    const ogImage = rawImage === DEFAULT_IMAGE ? DEFAULT_IMAGE : getResizedImageUrl(resolvedImage);
+    const convertedImage = convertBase44ImageUrl(rawImage);
+    const resolvedImage = await resolveFinalUrl(convertedImage);
+    const ogImage = convertedImage === DEFAULT_IMAGE ? DEFAULT_IMAGE : getResizedImageUrl(resolvedImage);
 
     return new Response(businessHtml(business, ogImage), {
       status: 200,

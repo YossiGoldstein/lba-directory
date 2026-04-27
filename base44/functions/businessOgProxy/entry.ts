@@ -36,7 +36,7 @@ function convertBase44ImageUrl(url) {
   );
   if (!match) return url; // not a base44.app URL, return as-is
   const [, , appId, filename] = match;
-  return `https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/${appId}/${filename}`;
+  return `https://media.base44.com/images/public/${appId}/${filename}`;
 }
 
 function getResizedImageUrl(originalUrl, width = 1200) {
