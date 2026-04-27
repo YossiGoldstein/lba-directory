@@ -96,6 +96,50 @@ export default function PendingApprovalsTab({ onUpdate }) {
     return checks.filter(c => c.missing).map(c => c.field);
   };
 
+  const formatTime12h = (time24) => {
+    if (!time24) return "";
+    const [h, m] = time24.split(":").map(Number);
+    const period = h >= 12 ? "PM" : "AM";
+    const hour = h % 12 || 12;
+    return `${hour}:${String(m).padStart(2, "0")} ${period}`;
+  };
+
+  const formatOpeningHours = (business) => {
+    if (business.opening_hours_json) {
+      const days = [
+        { key: "sunday", label: "Sunday" },
+        { key: "monday", label: "Monday" },
+        { key: "tuesday", label: "Tuesday" },
+        { key: "wednesday", label: "Wednesday" },
+        { key: "thursday", label: "Thursday" },
+        { key: "friday", label: "Friday" },
+        { key: "saturday", label: "Saturday" },
+        { key: "motzei_shabbos", label: "Motzei Shabbos" },
+      ];
+      return days
+        .map(({ key, label }) => {
+          const day = business.opening_hours_json[key];
+          if (!day) return null;
+          if (day.closed) return `${label}: Closed`;
+          return `${label}: ${formatTime12h(day.open)} - ${formatTime12h(day.close)}`;
+        })
+        .filter(Boolean)
+        .join("\n");
+    }
+    if (business.opening_hours_text) {
+      return business.opening_hours_text.replace(
+        /\b(\d{1,2}):(\d{2})\b/g,
+        (_, h, m) => {
+          const hour = parseInt(h);
+          const period = hour >= 12 ? "PM" : "AM";
+          const h12 = hour % 12 || 12;
+          return `${h12}:${m} ${period}`;
+        }
+      );
+    }
+    return "Not specified";
+  };
+
   const getCategoryName = (categoryId) => {
     const cat = categories.find(c => c.id === categoryId);
     return cat ? cat.name : "Unknown";
@@ -205,7 +249,7 @@ export default function PendingApprovalsTab({ onUpdate }) {
                 <div>
                   <Label className="text-sm font-semibold text-gray-700">Opening Hours</Label>
                   <p className="text-sm text-gray-600 mt-1 whitespace-pre-line">
-                    {business.opening_hours_text || "Not specified"}
+                    {formatOpeningHours(business)}
                   </p>
                 </div>
               </div>
