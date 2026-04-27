@@ -67,6 +67,17 @@ const OpeningHoursDisplay = ({ hours }) => (
   </div>
 );
 
+function convertTextHoursToAmPm(text) {
+  if (!text) return text;
+  // Replace all HH:MM patterns (00:00–23:59) with 12h AM/PM
+  return text.replace(/\b([01]?\d|2[0-3]):([0-5]\d)\b/g, (_, h, m) => {
+    const hour = parseInt(h, 10);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const h12 = hour % 12 || 12;
+    return `${h12}:${m} ${ampm}`;
+  });
+}
+
 const formatPhoneNumber = (phone) => {
   if (!phone) return "";
   const cleaned = phone.replace(/\D/g, "");
@@ -681,7 +692,7 @@ export default function BusinessListing() {
                 {business.opening_hours_json ? (
                   <OpeningHoursDisplay hours={business.opening_hours_json} />
                 ) : (
-                  <p className="text-gray-700 whitespace-pre-line">{business.opening_hours_text}</p>
+                  <p className="text-gray-700 whitespace-pre-line">{convertTextHoursToAmPm(business.opening_hours_text)}</p>
                 )}
               </div>
             )}
