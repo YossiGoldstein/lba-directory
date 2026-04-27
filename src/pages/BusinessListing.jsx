@@ -296,11 +296,17 @@ export default function BusinessListing() {
   const handleShare = async () => {
     const shareUrl = getShareUrl();
     if (navigator.share) {
-      navigator.share({
-        title: `${business.business_name} | LBA Directory`,
-        text: business.short_description || `Find ${business.business_name} on LBA Directory`,
-        url: shareUrl,
-      });
+      try {
+        await navigator.share({
+          title: `${business.business_name} | LBA Directory`,
+          text: business.short_description || `Find ${business.business_name} on LBA Directory`,
+          url: shareUrl,
+        });
+      } catch (error) {
+        // Fall back to clipboard if share fails
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Share link copied!");
+      }
     } else {
       await navigator.clipboard.writeText(shareUrl);
       toast.success("Share link copied!");
