@@ -289,7 +289,8 @@ export default function BusinessListing() {
   };
 
   const getShareUrl = () => {
-    return `https://www.lbadirectory.com/businesslisting/${business.slug || business.id}`;
+    const identifier = business.slug ? "slug=" + business.slug : "id=" + business.id;
+    return "https://www.lbadirectory.com/functions/b?" + identifier;
   };
 
   const handleShare = async () => {

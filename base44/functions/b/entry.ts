@@ -81,7 +81,9 @@ function businessHtml(business, ogImage) {
   const title = `${business.business_name} | ${SITE_NAME}`;
   const rawDesc = business.short_description || business.long_description || `Find ${business.business_name} on LBA Directory`;
   const description = rawDesc.length > 160 ? rawDesc.slice(0, 157) + "..." : rawDesc;
-  const targetUrl = `${BASE_URL}/BusinessListing?id=${business.id}`;
+  const targetUrl = business.slug
+    ? `${BASE_URL}/businesslisting/${business.slug}`
+    : `${BASE_URL}/BusinessListing?id=${business.id}`;
 
   return `<!DOCTYPE html>
 <html lang="en">
