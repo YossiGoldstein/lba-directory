@@ -295,8 +295,23 @@ export default function BusinessListing() {
 
   const handleShare = async () => {
     const shareUrl = getShareUrl();
-    await navigator.clipboard.writeText(shareUrl);
-    toast.success("Link copied to clipboard!");
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: business.business_name + " | LBA Directory",
+          text: business.short_description || "Find local businesses on LBA Directory",
+          url: shareUrl,
+        });
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          await navigator.clipboard.writeText(shareUrl);
+          toast.success("Link copied to clipboard!");
+        }
+      }
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("Link copied to clipboard!");
+    }
   };
 
   const handleToggleFavorite = async () => {
