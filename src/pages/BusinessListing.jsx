@@ -289,28 +289,20 @@ export default function BusinessListing() {
   };
 
   const getShareUrl = () => {
-    const identifier = business.slug ? "slug=" + business.slug : "id=" + business.id;
-    return "https://www.lbadirectory.com/functions/businessOgProxy?" + identifier;
+    return `https://www.lbadirectory.com/businesslisting/${business.slug || business.id}`;
   };
 
   const handleShare = async () => {
     const shareUrl = getShareUrl();
     if (navigator.share) {
-      try {
-        await navigator.share({
-          title: business.business_name + " | LBA Directory",
-          text: business.short_description || "Find local businesses on LBA Directory",
-          url: shareUrl,
-        });
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          await navigator.clipboard.writeText(shareUrl);
-          toast.success("Link copied to clipboard!");
-        }
-      }
+      navigator.share({
+        title: `${business.business_name} | LBA Directory`,
+        text: business.short_description || `Find ${business.business_name} on LBA Directory`,
+        url: shareUrl,
+      });
     } else {
       await navigator.clipboard.writeText(shareUrl);
-      toast.success("Link copied to clipboard!");
+      toast.success("Share link copied!");
     }
   };
 
