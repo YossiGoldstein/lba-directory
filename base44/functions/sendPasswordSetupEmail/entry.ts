@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 // Token TTL: 48 hours in milliseconds
 const TOKEN_TTL_MS = 48 * 60 * 60 * 1000;
@@ -36,11 +36,8 @@ Deno.serve(async (req) => {
     console.log(`📧 Sending claim email to ${business.email} for business: ${business.business_name}`);
     console.log(`🔗 Claim URL: ${claimUrl}`);
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      from_name: 'LBA Directory',
-      to: business.email,
-      subject: `Claim Your Business Listing – ${business.business_name}`,
-      body: `<!DOCTYPE html>
+    // Build email body HTML
+    const htmlBody = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -52,8 +49,6 @@ Deno.serve(async (req) => {
     <tr>
       <td align="center">
         <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
-          
-          <!-- Header -->
           <tr>
             <td style="background:linear-gradient(135deg,#003D5C 0%,#0E8DAA 100%);padding:32px 40px;text-align:center;">
               <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png"
@@ -61,19 +56,12 @@ Deno.serve(async (req) => {
               <p style="color:rgba(255,255,255,0.8);margin:12px 0 0;font-size:14px;letter-spacing:0.5px;">Lakewood Business Alliance</p>
             </td>
           </tr>
-
-          <!-- Body -->
           <tr>
             <td style="padding:40px;">
-              
-              <h1 style="color:#111827;font-size:24px;margin:0 0 8px;font-weight:700;">
-                Your listing is live! 🎉
-              </h1>
+              <h1 style="color:#111827;font-size:24px;margin:0 0 8px;font-weight:700;">Your listing is live! 🎉</h1>
               <p style="color:#6b7280;font-size:15px;margin:0 0 24px;line-height:1.6;">
                 Congratulations! <strong style="color:#111827;">${business.business_name}</strong> has been approved and is now listed on LBA Directory.
               </p>
-
-              <!-- Business Info Box -->
               <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f9ff;border-left:4px solid #0E8DAA;border-radius:0 8px 8px 0;margin-bottom:28px;">
                 <tr>
                   <td style="padding:20px 24px;">
@@ -83,27 +71,19 @@ Deno.serve(async (req) => {
                   </td>
                 </tr>
               </table>
-
               <p style="color:#374151;font-size:15px;margin:0 0 8px;line-height:1.6;">
                 To access and manage your listing, click the button below to set your password and claim your account:
               </p>
-              <p style="color:#6b7280;font-size:13px;margin:0 0 28px;">
-                This link is valid for <strong>48 hours</strong>.
-              </p>
-
-              <!-- CTA Button -->
+              <p style="color:#6b7280;font-size:13px;margin:0 0 28px;">This link is valid for <strong>48 hours</strong>.</p>
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
                 <tr>
                   <td align="center">
-                    <a href="${claimUrl}"
-                       style="display:inline-block;background:linear-gradient(135deg,#27C666,#1FAF5A);color:#ffffff;text-decoration:none;font-size:16px;font-weight:700;padding:16px 40px;border-radius:8px;letter-spacing:0.3px;">
+                    <a href="${claimUrl}" style="display:inline-block;background:linear-gradient(135deg,#27C666,#1FAF5A);color:#ffffff;text-decoration:none;font-size:16px;font-weight:700;padding:16px 40px;border-radius:8px;letter-spacing:0.3px;">
                       Claim My Business &rarr;
                     </a>
                   </td>
                 </tr>
               </table>
-
-              <!-- What you can do -->
               <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border-radius:8px;margin-bottom:28px;">
                 <tr>
                   <td style="padding:20px 24px;">
@@ -115,30 +95,59 @@ Deno.serve(async (req) => {
                   </td>
                 </tr>
               </table>
-
               <p style="color:#9ca3af;font-size:12px;margin:0;line-height:1.6;">
                 Can't click the button? Copy and paste this link into your browser:<br>
                 <span style="color:#0E8DAA;word-break:break-all;">${claimUrl}</span>
               </p>
-
             </td>
           </tr>
-
-          <!-- Footer -->
           <tr>
             <td style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:24px 40px;text-align:center;">
               <p style="margin:0 0 4px;color:#6b7280;font-size:13px;">Questions? Contact us at <a href="mailto:office@lbadirectory.com" style="color:#0E8DAA;">office@lbadirectory.com</a> or call <a href="tel:7326001260" style="color:#0E8DAA;">732-600-1260</a></p>
               <p style="margin:0;color:#9ca3af;font-size:12px;">© ${new Date().getFullYear()} LBA Directory. Serving Lakewood &amp; surrounding communities.</p>
             </td>
           </tr>
-
         </table>
       </td>
     </tr>
   </table>
 </body>
-</html>`
+</html>`;
+
+    // Send via Gmail connector (supports external email addresses)
+    const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
+    const subject = `Claim Your Business Listing – ${business.business_name}`;
+    const fromName = 'LBA Directory';
+    const fromEmail = 'office@lbadirectory.com';
+
+    const mimeMessage = [
+      `From: ${fromName} <${fromEmail}>`,
+      `To: ${business.email}`,
+      `Subject: ${subject}`,
+      `MIME-Version: 1.0`,
+      `Content-Type: text/html; charset=UTF-8`,
+      ``,
+      htmlBody,
+    ].join('\r\n');
+
+    const encodedMessage = btoa(unescape(encodeURIComponent(mimeMessage)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    const gmailRes = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ raw: encodedMessage }),
     });
+
+    if (!gmailRes.ok) {
+      const errText = await gmailRes.text();
+      throw new Error(`Gmail API error: ${gmailRes.status} ${errText}`);
+    }
 
     console.log(`✅ Claim email sent successfully to ${business.email}`);
 
