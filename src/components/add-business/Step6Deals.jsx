@@ -5,21 +5,39 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { TrendingUp, Plus, Trash2, Sparkles, Loader2 } from "lucide-react";
+import { TrendingUp, Plus, Trash2, Sparkles, Loader2, Upload, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Step6Deals({ data, onChange }) {
   const [showForm, setShowForm] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isUploadingFlyer, setIsUploadingFlyer] = useState(false);
   const [currentDeal, setCurrentDeal] = useState({
     title: "",
     description: "",
     badge_text: "",
+    flyer_url: "",
+    sale_link: "",
     start_date: "",
     end_date: "",
   });
 
   const deals = data.deals || [];
+
+  const handleFlyerUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingFlyer(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setCurrentDeal(prev => ({ ...prev, flyer_url: file_url }));
+      toast.success("Flyer uploaded");
+    } catch (error) {
+      toast.error("Failed to upload flyer");
+    } finally {
+      setIsUploadingFlyer(false);
+    }
+  };
 
   const handleAISuggest = async () => {
     setIsGenerating(true);
@@ -56,12 +74,12 @@ Format as JSON with array of deals, each having:
 
       if (response.deals && response.deals.length > 0) {
         const suggestedDeal = response.deals[0];
-        setCurrentDeal({
-          ...currentDeal,
+        setCurrentDeal(prev => ({
+          ...prev,
           title: suggestedDeal.title,
           description: suggestedDeal.description,
           badge_text: suggestedDeal.badge_text,
-        });
+        }));
         setShowForm(true);
         toast.success("AI suggested a deal!");
       }
@@ -71,6 +89,19 @@ Format as JSON with array of deals, each having:
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const resetForm = () => {
+    setCurrentDeal({
+      title: "",
+      description: "",
+      badge_text: "",
+      flyer_url: "",
+      sale_link: "",
+      start_date: "",
+      end_date: "",
+    });
+    setShowForm(false);
   };
 
   const handleAddDeal = () => {
@@ -89,14 +120,7 @@ Format as JSON with array of deals, each having:
       deals: [...deals, currentDeal],
     });
 
-    setCurrentDeal({
-      title: "",
-      description: "",
-      badge_text: "",
-      start_date: "",
-      end_date: "",
-    });
-    setShowForm(false);
+    resetForm();
     toast.success("Deal added!");
   };
 
@@ -182,6 +206,57 @@ Format as JSON with array of deals, each having:
               />
             </div>
 
+            {/* Sale Flyer Upload */}
+            <div className="space-y-2">
+              <Label>Sale Flyer (optional)</Label>
+              <div className="flex items-center gap-3 flex-wrap">
+                <input
+                  type="file"
+                  id="deal-flyer-upload"
+                  accept="image/*"
+                  onChange={handleFlyerUpload}
+                  className="hidden"
+                  disabled={isUploadingFlyer}
+                />
+                <label htmlFor="deal-flyer-upload">
+                  <Button asChild variant="outline" className="cursor-pointer" disabled={isUploadingFlyer}>
+                    <span>
+                      <Upload className="w-4 h-4 mr-2" />
+                      {isUploadingFlyer ? "Uploading..." : "Upload Flyer"}
+                    </span>
+                  </Button>
+                </label>
+                {currentDeal.flyer_url && (
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={currentDeal.flyer_url}
+                      alt="Flyer preview"
+                      className="h-12 w-12 object-cover rounded border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setCurrentDeal(prev => ({ ...prev, flyer_url: "" }))}
+                      className="text-red-500 text-xs hover:underline"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Sale Link */}
+            <div className="space-y-2">
+              <Label htmlFor="deal_sale_link">Sale Link (optional)</Label>
+              <Input
+                id="deal_sale_link"
+                type="url"
+                value={currentDeal.sale_link}
+                onChange={(e) => setCurrentDeal({ ...currentDeal, sale_link: e.target.value })}
+                placeholder="https://example.com/sale"
+              />
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="deal_start">Start Date *</Label>
@@ -208,7 +283,7 @@ Format as JSON with array of deals, each having:
               <Button onClick={handleAddDeal} className="bg-cyan-600 hover:bg-cyan-700">
                 Add Deal
               </Button>
-              <Button variant="outline" onClick={() => setShowForm(false)}>
+              <Button variant="outline" onClick={resetForm}>
                 Cancel
               </Button>
             </div>
@@ -236,6 +311,26 @@ Format as JSON with array of deals, each having:
                     <p className="text-xs text-gray-500">
                       {deal.start_date} to {deal.end_date}
                     </p>
+                    <div className="flex items-center gap-3 mt-2">
+                      {deal.flyer_url && (
+                        <img
+                          src={deal.flyer_url}
+                          alt="Flyer"
+                          className="h-10 w-10 object-cover rounded border"
+                        />
+                      )}
+                      {deal.sale_link && (
+                        <a
+                          href={deal.sale_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-cyan-600 hover:underline flex items-center gap-1"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          Sale Link
+                        </a>
+                      )}
+                    </div>
                   </div>
                   <Button
                     onClick={() => handleRemoveDeal(index)}
