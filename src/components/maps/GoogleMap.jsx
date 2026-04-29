@@ -177,7 +177,10 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
     };
 
     tryInit();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      try { infoWindowRef.current?.close(); } catch (e) {}
+    };
   }, []);
 
   // Place/update markers whenever businesses or mapReady changes

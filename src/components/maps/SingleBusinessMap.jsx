@@ -2,19 +2,17 @@ import React, { useEffect, useRef } from "react";
 import { fixImageUrl } from "@/components/lib/imageUtils";
 
 const DEFAULT_CENTER = { lat: 40.0957, lng: -74.2177 }; // Lakewood, NJ
-const GEOCODE_API_KEY = "AIzaSyDfr-zgnbCEuvQGbEll582R4kSes79FDc8";
-// Required by AdvancedMarkerElement — replace with a real Map ID from Google Cloud Console if desired
 const MAP_ID = "DEMO_MAP_ID";
 
 async function geocodeAddress(address) {
   try {
     const res = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GEOCODE_API_KEY}`
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
+      { headers: { "User-Agent": "LBADirectory/1.0 (lbadirectory.com)" } }
     );
     const data = await res.json();
-    if (data.status === "OK" && data.results[0]) {
-      const { lat, lng } = data.results[0].geometry.location;
-      return { lat, lng };
+    if (Array.isArray(data) && data.length > 0) {
+      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
     }
   } catch (e) {
     // ignore
@@ -52,8 +50,30 @@ function buildMarkerDiv(business) {
   return div;
 }
 
+function buildFallbackIcon(business) {
+  const dpr = window.devicePixelRatio || 1;
+  const display = 56;
+  const px = display * dpr;
+  const initial = (business?.business_name || "?").charAt(0).toUpperCase();
+  const c = document.createElement("canvas");
+  c.width = px; c.height = px;
+  const ctx = c.getContext("2d");
+  ctx.scale(dpr, dpr);
+  const r = display / 2;
+  ctx.beginPath(); ctx.arc(r, r, r, 0, Math.PI * 2); ctx.fillStyle = "#0891b2"; ctx.fill();
+  ctx.beginPath(); ctx.arc(r, r, r - 2, 0, Math.PI * 2);
+  ctx.strokeStyle = "white"; ctx.lineWidth = 3; ctx.stroke();
+  ctx.fillStyle = "white";
+  ctx.font = `bold ${Math.round(display * 0.4)}px Arial`;
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText(initial, r, r);
+  return c.toDataURL();
+}
+
 export default function SingleBusinessMap({ business, height = "320px" }) {
   const mapRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+  const markerRef = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -95,34 +115,51 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
           : 14  // geocoded
         : 12;   // fallback city view
 
-      const map = new window.google.maps.Map(mapRef.current, {
-        center,
-        zoom,
-        mapId: MAP_ID,
-        mapTypeControl: false,
-        streetViewControl: false,
-        fullscreenControl: false,
-      });
+      // Reuse existing map instance rather than rebuilding the DOM node
+      if (!mapInstanceRef.current) {
+        mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
+          center,
+          zoom,
+          mapId: MAP_ID,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: false,
+        });
+      } else {
+        mapInstanceRef.current.setCenter(center);
+        mapInstanceRef.current.setZoom(zoom);
+      }
+
+      const map = mapInstanceRef.current;
+
+      // Remove previous marker before placing new one
+      if (markerRef.current) {
+        try { markerRef.current.setMap(null); } catch (e) {}
+        markerRef.current = null;
+      }
 
       if (!position) return;
 
       const markerDiv = buildMarkerDiv(business);
 
-      // AdvancedMarkerElement supports custom DOM content (the circular logo).
-      // It requires both &libraries=marker in the script URL and a mapId on the Map.
       if (window.google.maps.marker?.AdvancedMarkerElement) {
-        new window.google.maps.marker.AdvancedMarkerElement({
+        markerRef.current = new window.google.maps.marker.AdvancedMarkerElement({
           map,
           position,
           content: markerDiv,
           title: business?.business_name || "",
         });
       } else {
-        // Fallback: classic Marker (deprecated but always available)
-        new window.google.maps.Marker({
+        const iconUrl = buildFallbackIcon(business);
+        markerRef.current = new window.google.maps.Marker({
           map,
           position,
           title: business?.business_name || "",
+          icon: {
+            url: iconUrl,
+            scaledSize: new window.google.maps.Size(56, 56),
+            anchor: new window.google.maps.Point(28, 28),
+          },
         });
       }
     };
@@ -143,6 +180,7 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
       cancelled = true;
     };
   }, [
+    business?.id,
     business?.latitude,
     business?.longitude,
     business?.address_line1,
