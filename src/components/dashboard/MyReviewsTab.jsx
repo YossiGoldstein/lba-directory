@@ -98,7 +98,7 @@ export default function MyReviewsTab({ user }) {
                 <div className="flex items-start justify-between mb-4 pb-4 border-b border-gray-200">
                   <div className="flex-1">
                     <Link
-                      to={createPageUrl(`BusinessListing?id=${business.id}`)}
+                      to={`/businesslisting/${business.slug || business.id}`}
                       className="text-lg font-semibold text-gray-900 hover:text-cyan-600 transition-colors flex items-center gap-2"
                     >
                       {business.business_name}

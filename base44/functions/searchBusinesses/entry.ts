@@ -55,6 +55,7 @@ function getDeliveryOptions(b) {
 function serializeBusiness(b) {
   return {
     id: b.id,
+    slug: b.slug,
     business_name: b.business_name,
     short_description: b.short_description,
     long_description: b.long_description,

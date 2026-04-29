@@ -94,7 +94,7 @@ function buildMarkerIcon(business) {
 }
 
 function placeMarker(map, position, business, infoWindow, iconUrl) {
-  const profileUrl = createPageUrl(`BusinessListing?id=${business.id}`);
+  const profileUrl = `/businesslisting/${business.slug || business.id}`;
   const infoContent = `
     <div style="max-width:220px;font-family:Arial,sans-serif;">
       <h3 style="margin:0 0 6px;font-size:15px;font-weight:700;color:#111827;">

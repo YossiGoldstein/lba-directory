@@ -155,7 +155,7 @@ export default function SearchResultsPanel({
                           </p>
                         )}
                         <a
-                          href={createPageUrl(`BusinessListing?id=${business.id}`)}
+                          href={`/businesslisting/${business.slug || business.id}`}
                           className="text-cyan-600 text-sm font-medium hover:underline"
                         >
                           View Details →

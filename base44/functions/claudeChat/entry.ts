@@ -52,7 +52,7 @@ function formatBusiness(b) {
 
   return [
     `Name: ${b.business_name}`,
-    `Profile: https://lbadirectory.com/BusinessListing?id=${b.id}`,
+    `Profile: https://lbadirectory.com/businesslisting/${b.slug || b.id}`,
     mapsLink ? `Address: ${address} | Maps: ${mapsLink}` : null,
     phone ? `Phone: ${b.phone} | tel:+1${phone}` : null,
     whatsapp ? `WhatsApp: ${b.whatsapp_number} | https://wa.me/1${whatsapp}` : null,
@@ -131,6 +131,7 @@ Deno.serve(async (req) => {
     // Slim down business objects to only needed fields
     businesses = businesses.map(b => ({
       id: b.id,
+      slug: b.slug,
       business_name: b.business_name,
       phone: b.phone,
       whatsapp_number: b.whatsapp_number,
@@ -175,7 +176,7 @@ IMPORTANT RULES:
 RESPONSE FORMAT — use this EXACT structure for EVERY business result:
 
 🏪 **[Business Name]**
-🔗 [View Profile](https://lbadirectory.com/businesses/SLUG)
+🔗 [View Profile](https://lbadirectory.com/businesslisting/SLUG)
 📍 [Address](Google Maps link)
 📞 [Phone Number](tel:+1DIGITS)
 💬 [WhatsApp](https://wa.me/1DIGITS)

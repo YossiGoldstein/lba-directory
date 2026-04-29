@@ -69,7 +69,7 @@ export default function BusinessHeader({ business, category }) {
             variant="outline"
             className="gap-2"
           >
-            <Link to={createPageUrl(`BusinessListing?id=${business.id}`)}>
+            <Link to={`/businesslisting/${business.slug || business.id}`}>
               <ExternalLink className="w-4 h-4" />
               View Public Page
             </Link>
