@@ -28,7 +28,7 @@ function buildMarkerDiv(business) {
 
   const div = document.createElement("div");
   div.style.cssText = [
-    "width:48px;height:48px;border-radius:50%;overflow:hidden;",
+    "width:56px;height:56px;border-radius:50%;overflow:hidden;",
     "border:3px solid white;box-shadow:0 2px 10px rgba(0,0,0,0.4);",
     "background:white;display:flex;align-items:center;justify-content:center;",
     "cursor:pointer;",
@@ -40,13 +40,13 @@ function buildMarkerDiv(business) {
     img.alt = business.business_name || "";
     img.style.cssText = "width:100%;height:100%;object-fit:cover;";
     img.onerror = () => {
-      div.innerHTML = `<span style="font-weight:bold;font-size:20px;color:white;">${initial}</span>`;
+      div.innerHTML = `<span style="font-weight:bold;font-size:22px;color:white;">${initial}</span>`;
       div.style.background = "linear-gradient(135deg,#0891b2,#06b6d4)";
     };
     div.appendChild(img);
   } else {
     div.style.background = "linear-gradient(135deg,#0891b2,#06b6d4)";
-    div.innerHTML = `<span style="font-weight:bold;font-size:20px;color:white;">${initial}</span>`;
+    div.innerHTML = `<span style="font-weight:bold;font-size:22px;color:white;">${initial}</span>`;
   }
 
   return div;

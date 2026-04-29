@@ -57,6 +57,8 @@ function serializeBusiness(b) {
     id: b.id,
     slug: b.slug,
     business_name: b.business_name,
+    latitude: b.latitude,
+    longitude: b.longitude,
     short_description: b.short_description,
     long_description: b.long_description,
     address_line1: b.address_line1,
