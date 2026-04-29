@@ -4,41 +4,25 @@ import { fixImageUrl } from "@/components/lib/imageUtils";
 const DEFAULT_CENTER = { lat: 40.0957, lng: -74.2177 }; // Lakewood, NJ
 const MARKER_SIZE = 52; // display px
 
-// Uses Nominatim (OpenStreetMap) — no API key required, same service used
-// by the server-side geocodeBusinesses function.
-async function geocodeAddress(address) {
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
-      { headers: { "User-Agent": "LBADirectory/1.0 (lbadirectory.com)" } }
-    );
-    const data = await res.json();
-    if (Array.isArray(data) && data.length > 0) {
-      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-    }
-  } catch (e) {
-    // ignore
-  }
-  return null;
-}
-
-// 3-tier: stored coords → full address geocode → city-only geocode
-async function resolvePosition(b) {
+// Returns a position for every business — no external API calls.
+// Businesses with stored lat/lng use exact coordinates.
+// Others are placed in a golden-angle spiral around Lakewood center so
+// every business is visible. Run the geocodeBusinesses admin function to
+// populate exact coordinates for all businesses.
+function resolvePosition(b, spiralIndex) {
   if (b.latitude && b.longitude && !isNaN(Number(b.latitude)) && !isNaN(Number(b.longitude))) {
     return { lat: Number(b.latitude), lng: Number(b.longitude) };
   }
-  if (b.address_line1 && b.city) {
-    const addr = [b.address_line1, b.city, b.state || "", b.zip_code || ""].filter(Boolean).join(", ");
-    const pos = await geocodeAddress(addr);
-    if (pos) return pos;
-  }
-  if (b.city) {
-    return geocodeAddress(`${b.city}${b.state ? ", " + b.state : ", NJ"}`);
-  }
-  return null;
+  // Golden-angle spiral: even angular distribution, ~8 per ring, ~300 m per ring
+  const angle = (spiralIndex * 137.5 * Math.PI) / 180;
+  const radius = 0.003 * (Math.floor(spiralIndex / 8) + 1);
+  return {
+    lat: DEFAULT_CENTER.lat + radius * Math.cos(angle),
+    lng: DEFAULT_CENTER.lng + radius * Math.sin(angle),
+  };
 }
 
-// Spread markers that resolve to the same point so they don't stack invisibly
+// Spread markers at identical stored coordinates so they don't stack
 function jitterDuplicates(resolved) {
   const counts = new Map();
   return resolved.map((item) => {
@@ -210,19 +194,24 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
     if (!businesses || businesses.length === 0) return;
 
     const run = async () => {
-      // Resolve positions and build canvas icons in parallel
-      const [positions, icons] = await Promise.all([
-        Promise.all(businesses.map((b) => resolvePosition(b).catch(() => null))),
-        Promise.all(businesses.map((b) => buildMarkerIcon(b).catch(() => null))),
-      ]);
+      // Assign positions synchronously (no external API calls).
+      // spiralIndex counts only the businesses that lack stored coords.
+      let spiralIndex = 0;
+      let resolved = businesses.map((b) => ({
+        business: b,
+        position: resolvePosition(b, b.latitude && b.longitude ? 0 : spiralIndex++),
+      }));
+
+      resolved = jitterDuplicates(resolved);
+
+      // Build canvas icons in parallel (async only for image loading)
+      const icons = await Promise.all(
+        resolved.map(({ business: b }) => buildMarkerIcon(b).catch(() => null))
+      );
 
       if (activeEffectRef.current !== effectId) return;
 
-      let resolved = businesses
-        .map((b, i) => (positions[i] ? { business: b, position: positions[i], iconUrl: icons[i] } : null))
-        .filter(Boolean);
-
-      resolved = jitterDuplicates(resolved);
+      resolved = resolved.map((item, i) => ({ ...item, iconUrl: icons[i] }));
 
       resolved.forEach(({ business, position, iconUrl }) => {
         try {
@@ -233,9 +222,14 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
         }
       });
 
-      if (resolved.length > 0) {
-        const avgLat = resolved.reduce((s, { position: p }) => s + p.lat, 0) / resolved.length;
-        const avgLng = resolved.reduce((s, { position: p }) => s + p.lng, 0) / resolved.length;
+      // Center on exact-coordinate businesses if any; otherwise use default
+      const withExact = resolved.filter(({ business: b }) =>
+        b.latitude && b.longitude && !isNaN(Number(b.latitude)) && !isNaN(Number(b.longitude))
+      );
+      const reference = withExact.length > 0 ? withExact : resolved;
+      if (reference.length > 0) {
+        const avgLat = reference.reduce((s, { position: p }) => s + p.lat, 0) / reference.length;
+        const avgLng = reference.reduce((s, { position: p }) => s + p.lng, 0) / reference.length;
         map.setCenter({ lat: avgLat, lng: avgLng });
       }
     };
