@@ -3,8 +3,7 @@ import { fixImageUrl } from "@/components/lib/imageUtils";
 
 const DEFAULT_CENTER = { lat: 40.0957, lng: -74.2177 }; // Lakewood, NJ
 const GEOCODE_API_KEY = "AIzaSyDfr-zgnbCEuvQGbEll582R4kSes79FDc8";
-const MAP_ID = "DEMO_MAP_ID";
-const MARKER_SIZE = 52;
+const MARKER_SIZE = 52; // display px
 
 async function geocodeAddress(address) {
   try {
@@ -22,7 +21,7 @@ async function geocodeAddress(address) {
   return null;
 }
 
-// 3-tier position resolution: stored coords → full address → city only
+// 3-tier: stored coords → full address geocode → city-only geocode
 async function resolvePosition(b) {
   if (b.latitude && b.longitude && !isNaN(Number(b.latitude)) && !isNaN(Number(b.longitude))) {
     return { lat: Number(b.latitude), lng: Number(b.longitude) };
@@ -38,7 +37,7 @@ async function resolvePosition(b) {
   return null;
 }
 
-// Spread markers that land at the exact same lat/lng so they don't stack invisibly
+// Spread markers that resolve to the same point so they don't stack invisibly
 function jitterDuplicates(resolved) {
   const counts = new Map();
   return resolved.map((item) => {
@@ -58,70 +57,68 @@ function jitterDuplicates(resolved) {
   });
 }
 
-function buildMarkerDiv(business) {
-  const logoUrl = business?.logo_url ? fixImageUrl(business.logo_url) : null;
-  const initial = (business?.business_name || "?").charAt(0).toUpperCase();
-  const fontSize = Math.round(MARKER_SIZE * 0.4);
+// Build a circular canvas icon (HiDPI-aware).
+// Uses the business logo clipped to a circle; falls back to a letter if the
+// image can't be loaded (CORS, network error, etc.).
+function buildMarkerIcon(business) {
+  const dpr = window.devicePixelRatio || 1;
+  const display = MARKER_SIZE;
+  const canvas = display * dpr;
+  const initial = (business.business_name || "?").charAt(0).toUpperCase();
+  const logoUrl = business.logo_url ? fixImageUrl(business.logo_url) : null;
 
-  const div = document.createElement("div");
-  div.style.cssText = [
-    `width:${MARKER_SIZE}px;height:${MARKER_SIZE}px;border-radius:50%;overflow:hidden;`,
-    "border:3px solid white;box-shadow:0 2px 10px rgba(0,0,0,0.4);",
-    "background:white;display:flex;align-items:center;justify-content:center;",
-    "cursor:pointer;",
-  ].join("");
-
-  if (logoUrl) {
-    const img = document.createElement("img");
-    img.src = logoUrl;
-    img.alt = business.business_name || "";
-    img.style.cssText = "width:100%;height:100%;object-fit:cover;";
-    img.onerror = () => {
-      div.innerHTML = `<span style="font-weight:bold;font-size:${fontSize}px;color:white;">${initial}</span>`;
-      div.style.background = "linear-gradient(135deg,#0891b2,#06b6d4)";
-    };
-    div.appendChild(img);
-  } else {
-    div.style.background = "linear-gradient(135deg,#0891b2,#06b6d4)";
-    div.innerHTML = `<span style="font-weight:bold;font-size:${fontSize}px;color:white;">${initial}</span>`;
+  function letterIcon() {
+    const c = document.createElement("canvas");
+    c.width = canvas; c.height = canvas;
+    const ctx = c.getContext("2d");
+    ctx.scale(dpr, dpr);
+    const r = display / 2;
+    ctx.beginPath(); ctx.arc(r, r, r, 0, Math.PI * 2); ctx.fillStyle = "#0891b2"; ctx.fill();
+    ctx.beginPath(); ctx.arc(r, r, r - 2, 0, Math.PI * 2);
+    ctx.strokeStyle = "white"; ctx.lineWidth = 3; ctx.stroke();
+    ctx.fillStyle = "white";
+    ctx.font = `bold ${Math.round(display * 0.4)}px Arial`;
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(initial, r, r);
+    return c.toDataURL();
   }
 
-  return div;
+  if (!logoUrl) return Promise.resolve(letterIcon());
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      try {
+        const c = document.createElement("canvas");
+        c.width = canvas; c.height = canvas;
+        const ctx = c.getContext("2d");
+        ctx.scale(dpr, dpr);
+        // White circle background
+        ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2, 0, Math.PI * 2);
+        ctx.fillStyle = "white"; ctx.fill();
+        // Clip to circle and draw logo
+        ctx.save();
+        ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2 - 3, 0, Math.PI * 2); ctx.clip();
+        ctx.drawImage(img, 0, 0, display, display);
+        ctx.restore();
+        // White border ring
+        ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2 - 1.5, 0, Math.PI * 2);
+        ctx.strokeStyle = "white"; ctx.lineWidth = 3; ctx.stroke();
+        // Drop shadow effect (outer ring)
+        ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(0,0,0,0.25)"; ctx.lineWidth = 1.5; ctx.stroke();
+        resolve(c.toDataURL());
+      } catch (e) {
+        resolve(letterIcon());
+      }
+    };
+    img.onerror = () => resolve(letterIcon());
+    img.src = logoUrl;
+  });
 }
 
-// HiDPI canvas icon for the classic Marker fallback
-function buildFallbackIcon(business) {
-  const dpr = window.devicePixelRatio || 1;
-  const displaySize = MARKER_SIZE;
-  const canvasSize = displaySize * dpr;
-  const initial = (business.business_name || "?").charAt(0).toUpperCase();
-
-  const canvas = document.createElement("canvas");
-  canvas.width = canvasSize;
-  canvas.height = canvasSize;
-  const ctx = canvas.getContext("2d");
-  ctx.scale(dpr, dpr);
-
-  const r = displaySize / 2;
-  ctx.beginPath();
-  ctx.arc(r, r, r, 0, Math.PI * 2);
-  ctx.fillStyle = "#0891b2";
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(r, r, r - 2, 0, Math.PI * 2);
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = 3;
-  ctx.stroke();
-  ctx.fillStyle = "white";
-  ctx.font = `bold ${Math.round(displaySize * 0.4)}px Arial`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(initial, r, r);
-
-  return canvas.toDataURL();
-}
-
-function placeMarker(map, position, business, infoWindow) {
+function placeMarker(map, position, business, infoWindow, iconUrl) {
   const profileUrl = `/businesslisting/${business.slug || business.id}`;
   const infoContent = `
     <div style="max-width:220px;font-family:Arial,sans-serif;">
@@ -137,33 +134,21 @@ function placeMarker(map, position, business, infoWindow) {
     </div>
   `;
 
-  if (window.google.maps.marker?.AdvancedMarkerElement) {
-    const markerDiv = buildMarkerDiv(business);
-    const marker = new window.google.maps.marker.AdvancedMarkerElement({
-      map,
-      position,
-      content: markerDiv,
-      title: business.business_name,
-    });
-    markerDiv.addEventListener("click", () => {
-      infoWindow.setContent(infoContent);
-      infoWindow.open({ anchor: marker, map });
-    });
-    return marker;
-  }
-
-  // Classic Marker fallback
-  const iconUrl = buildFallbackIcon(business);
-  const marker = new window.google.maps.Marker({
+  const markerOptions = {
     map,
     position,
     title: business.business_name,
-    icon: {
+  };
+
+  if (iconUrl) {
+    markerOptions.icon = {
       url: iconUrl,
       scaledSize: new window.google.maps.Size(MARKER_SIZE, MARKER_SIZE),
       anchor: new window.google.maps.Point(MARKER_SIZE / 2, MARKER_SIZE / 2),
-    },
-  });
+    };
+  }
+
+  const marker = new window.google.maps.Marker(markerOptions);
   marker.addListener("click", () => {
     infoWindow.setContent(infoContent);
     infoWindow.open(map, marker);
@@ -188,7 +173,6 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
       const map = new window.google.maps.Map(mapRef.current, {
         center: DEFAULT_CENTER,
         zoom: 13,
-        mapId: MAP_ID,
         mapTypeControl: false,
         streetViewControl: false,
         fullscreenControl: false,
@@ -219,38 +203,35 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
 
     const effectId = ++activeEffectRef.current;
 
-    // Clear previous markers
     markersRef.current.forEach((m) => { try { m.setMap(null); } catch (e) {} });
     markersRef.current = [];
 
     if (!businesses || businesses.length === 0) return;
 
     const run = async () => {
-      // Resolve positions in parallel (3-tier: stored coords → full address → city)
-      const positions = await Promise.all(
-        businesses.map((b) => resolvePosition(b).catch(() => null))
-      );
+      // Resolve positions and build canvas icons in parallel
+      const [positions, icons] = await Promise.all([
+        Promise.all(businesses.map((b) => resolvePosition(b).catch(() => null))),
+        Promise.all(businesses.map((b) => buildMarkerIcon(b).catch(() => null))),
+      ]);
 
       if (activeEffectRef.current !== effectId) return;
 
       let resolved = businesses
-        .map((b, i) => (positions[i] ? { business: b, position: positions[i] } : null))
+        .map((b, i) => (positions[i] ? { business: b, position: positions[i], iconUrl: icons[i] } : null))
         .filter(Boolean);
 
-      // Spread markers that share the same geocoded point
       resolved = jitterDuplicates(resolved);
 
-      // Place all markers
-      resolved.forEach(({ business, position }) => {
+      resolved.forEach(({ business, position, iconUrl }) => {
         try {
-          const marker = placeMarker(map, position, business, infoWindow);
+          const marker = placeMarker(map, position, business, infoWindow, iconUrl);
           markersRef.current.push(marker);
         } catch (e) {
-          console.error("[GoogleMap] marker error for", business.business_name, e);
+          console.error("[GoogleMap] marker error:", business.business_name, e);
         }
       });
 
-      // Center map on average position of all markers
       if (resolved.length > 0) {
         const avgLat = resolved.reduce((s, { position: p }) => s + p.lat, 0) / resolved.length;
         const avgLng = resolved.reduce((s, { position: p }) => s + p.lng, 0) / resolved.length;
