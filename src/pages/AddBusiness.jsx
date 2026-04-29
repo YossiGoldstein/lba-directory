@@ -108,6 +108,8 @@ export default function AddBusiness() {
     website_url: "",
     facebook_url: "",
     instagram_url: "",
+    linkedin_url: "",
+    youtube_url: "",
     x_url: "",
     opening_hours_json: DEFAULT_HOURS,
     by_appointment_only: false,
@@ -292,6 +294,8 @@ Return JSON: { short_version, medium_version, long_version }`,
         website_url: form.website_url,
         facebook_url: form.facebook_url,
         instagram_url: form.instagram_url,
+        linkedin_url: form.linkedin_url,
+        youtube_url: form.youtube_url,
         x_url: form.x_url,
         opening_hours_text: form.by_appointment_only ? "By Appointment Only" : generateTextFromStructured(form.opening_hours_json),
         opening_hours_json: form.by_appointment_only ? null : form.opening_hours_json,
@@ -530,6 +534,14 @@ Return JSON: { short_version, medium_version, long_version }`,
             <div className="space-y-2">
               <Label>Instagram</Label>
               <Input type="url" value={form.instagram_url} onChange={e => set({ instagram_url: e.target.value })} placeholder="https://instagram.com/..." />
+            </div>
+            <div className="space-y-2">
+              <Label>LinkedIn</Label>
+              <Input type="url" value={form.linkedin_url} onChange={e => set({ linkedin_url: e.target.value })} placeholder="https://linkedin.com/company/..." />
+            </div>
+            <div className="space-y-2">
+              <Label>YouTube</Label>
+              <Input type="url" value={form.youtube_url} onChange={e => set({ youtube_url: e.target.value })} placeholder="https://youtube.com/@..." />
             </div>
             <div className="space-y-2">
               <Label>X (Twitter)</Label>
