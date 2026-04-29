@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
         subject: "Reset Your LBA Directory Password",
         body: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #0891b2;">Reset Your Password 🔐</h2>
+            <h2 style="color: #0891b2;">Reset Your Password</h2>
             <p>Hello ${customer.full_name}!</p>
             <p>We received a request to reset your password for your LBA Directory account.</p>
             <div style="text-align: center; margin: 30px 0;">
@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
               </a>
             </div>
             <p style="font-size: 12px; color: #6b7280;">Or copy this link: ${resetUrl}</p>
-            <p style="color: #dc2626; font-size: 14px;">⚠️ If you didn't request this, please ignore this email.</p>
+            <p style="color: #dc2626; font-size: 14px;">If you didn't request this, please ignore this email.</p>
             <p>Best regards,<br><strong>LBA Directory Team</strong></p>
           </div>
         `
@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
         subject: "Reset Your LBA Directory Password",
         body: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #0891b2;">Reset Your Password 🔐</h2>
+            <h2 style="color: #0891b2;">Reset Your Password</h2>
             <p>Hello ${business.business_name}!</p>
             <p>We received a request to reset your password for your LBA Directory business account.</p>
             <div style="text-align: center; margin: 30px 0;">
@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
               </a>
             </div>
             <p style="font-size: 12px; color: #6b7280;">Or copy this link: ${resetUrl}</p>
-            <p style="color: #dc2626; font-size: 14px;">⚠️ If you didn't request this, please ignore this email.</p>
+            <p style="color: #dc2626; font-size: 14px;">If you didn't request this, please ignore this email.</p>
             <p>Best regards,<br><strong>LBA Directory Team</strong></p>
           </div>
         `

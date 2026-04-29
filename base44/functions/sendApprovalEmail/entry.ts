@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
       `Business: ${business.business_name}`,
       business.phone ? `Phone: ${business.phone}` : null,
       business.email ? `Email: ${business.email}` : null,
-      'Status: Approved ✅',
+      'Status: Approved',
       '',
       `View My Listing: ${businessUrl}`,
       `Go to My Dashboard: ${dashboardUrl}`,
@@ -145,7 +145,7 @@ Deno.serve(async (req) => {
 <tr><td style="color:#6b7280;font-size:14px;">Business:</td><td style="color:#111827;font-size:14px;font-weight:bold;">${business.business_name}</td></tr>
 ${business.phone ? `<tr><td style="color:#6b7280;font-size:14px;">Phone:</td><td style="color:#111827;font-size:14px;">${business.phone}</td></tr>` : ''}
 ${business.email ? `<tr><td style="color:#6b7280;font-size:14px;">Email:</td><td style="color:#111827;font-size:14px;">${business.email}</td></tr>` : ''}
-<tr><td style="color:#6b7280;font-size:14px;">Status:</td><td><span style="background:#dcfce7;color:#15803d;padding:2px 10px;border-radius:20px;font-size:13px;font-weight:bold;">Approved ✅</span></td></tr>
+<tr><td style="color:#6b7280;font-size:14px;">Status:</td><td><span style="background:#dcfce7;color:#15803d;padding:2px 10px;border-radius:20px;font-size:13px;font-weight:bold;">Approved</span></td></tr>
 </table>
 </td></tr>
 </table>

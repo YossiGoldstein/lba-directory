@@ -7,6 +7,15 @@ function generateToken(businessId: string, email: string): string {
   return btoa(payload).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
 
+function mimeToBase64Url(mimeStr: string): string {
+  const bytes = new TextEncoder().encode(mimeStr);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -67,7 +76,7 @@ Deno.serve(async (req) => {
                 <tr>
                   <td align="center">
                     <a href="${claimUrl}" style="display:inline-block;background:linear-gradient(135deg,#27C666 0%,#1FAF5A 100%);color:#ffffff;text-decoration:none;font-size:16px;font-weight:700;padding:16px 40px;border-radius:8px;letter-spacing:0.5px;">
-                      ✅ Claim Your Business
+                      Claim Your Business
                     </a>
                   </td>
                 </tr>
@@ -93,20 +102,18 @@ Deno.serve(async (req) => {
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
     const subject = `Claim Your Business: ${business.business_name}`;
 
+    const encodedSubject = `=?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`;
     const mimeMessage = [
       `From: LBA Directory <office@lbadirectory.com>`,
       `To: ${user.email}`,
-      `Subject: ${subject}`,
+      `Subject: ${encodedSubject}`,
       `MIME-Version: 1.0`,
       `Content-Type: text/html; charset=UTF-8`,
       ``,
       emailHtml,
     ].join('\r\n');
 
-    const encodedMessage = btoa(unescape(encodeURIComponent(mimeMessage)))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
+    const encodedMessage = mimeToBase64Url(mimeMessage);
 
     const gmailRes = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
       method: 'POST',

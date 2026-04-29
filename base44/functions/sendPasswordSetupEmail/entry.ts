@@ -8,6 +8,15 @@ function generateToken(businessId, email) {
   return btoa(payload).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
 
+function mimeToBase64Url(mimeStr) {
+  const bytes = new TextEncoder().encode(mimeStr);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -58,7 +67,7 @@ Deno.serve(async (req) => {
           </tr>
           <tr>
             <td style="padding:40px;">
-              <h1 style="color:#111827;font-size:24px;margin:0 0 8px;font-weight:700;">Your listing is live! 🎉</h1>
+              <h1 style="color:#111827;font-size:24px;margin:0 0 8px;font-weight:700;">Your listing is live!</h1>
               <p style="color:#6b7280;font-size:15px;margin:0 0 24px;line-height:1.6;">
                 Congratulations! <strong style="color:#111827;">${business.business_name}</strong> has been approved and is now listed on LBA Directory.
               </p>
@@ -88,10 +97,10 @@ Deno.serve(async (req) => {
                 <tr>
                   <td style="padding:20px 24px;">
                     <p style="margin:0 0 12px;font-size:14px;font-weight:700;color:#166534;">Once you're in, you can:</p>
-                    <p style="margin:0 0 6px;font-size:14px;color:#374151;">✅ Update business information &amp; photos</p>
-                    <p style="margin:0 0 6px;font-size:14px;color:#374151;">✅ Create deals and promotions</p>
-                    <p style="margin:0 0 6px;font-size:14px;color:#374151;">✅ View analytics &amp; customer insights</p>
-                    <p style="margin:0;font-size:14px;color:#374151;">✅ Respond to reviews</p>
+                    <p style="margin:0 0 6px;font-size:14px;color:#374151;">Update business information &amp; photos</p>
+                    <p style="margin:0 0 6px;font-size:14px;color:#374151;">Create deals and promotions</p>
+                    <p style="margin:0 0 6px;font-size:14px;color:#374151;">View analytics &amp; customer insights</p>
+                    <p style="margin:0;font-size:14px;color:#374151;">Respond to reviews</p>
                   </td>
                 </tr>
               </table>
@@ -116,24 +125,22 @@ Deno.serve(async (req) => {
 
     // Send via Gmail connector (supports external email addresses)
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
-    const subject = `Claim Your Business Listing – ${business.business_name}`;
+    const subject = `Claim Your Business Listing - ${business.business_name}`;
     const fromName = 'LBA Directory';
     const fromEmail = 'office@lbadirectory.com';
 
+    const encodedSubject = `=?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`;
     const mimeMessage = [
       `From: ${fromName} <${fromEmail}>`,
       `To: ${business.email}`,
-      `Subject: ${subject}`,
+      `Subject: ${encodedSubject}`,
       `MIME-Version: 1.0`,
       `Content-Type: text/html; charset=UTF-8`,
       ``,
       htmlBody,
     ].join('\r\n');
 
-    const encodedMessage = btoa(unescape(encodeURIComponent(mimeMessage)))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
+    const encodedMessage = mimeToBase64Url(mimeMessage);
 
     const gmailRes = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
       method: 'POST',

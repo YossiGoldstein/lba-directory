@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
         const customers = await base44.asServiceRole.entities.Customer.list();
         
         let notifiedCount = 0;
-        const notificationTitle = `🎉 New Deal at ${business.business_name}!`;
+        const notificationTitle = `New Deal at ${business.business_name}!`;
         const notificationMessage = `${business.business_name} has a new deal: ${deal.title}`;
         const businessUrl = `https://${req.headers.get('host')}/BusinessListing?id=${business.id}`;
 
@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎉 New Deal Alert!</h1>
+            <h1>New Deal Alert!</h1>
         </div>
         <div class="content">
             <p>Hello <strong>${customer.full_name}</strong>,</p>
@@ -117,7 +117,7 @@ Deno.serve(async (req) => {
             try {
                 await base44.asServiceRole.integrations.Core.SendEmail({
                     to: customer.email,
-                    subject: `🎉 New Deal at ${business.business_name}!`,
+                    subject: `New Deal at ${business.business_name}!`,
                     body: emailBody,
                     from_name: "LBA Directory"
                 });
