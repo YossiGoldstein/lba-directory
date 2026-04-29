@@ -22,9 +22,40 @@ async function geocodeAddress(address) {
   return null;
 }
 
-function buildAddress(b) {
-  if (!b.address_line1 || !b.city) return null;
-  return `${b.address_line1}, ${b.city}, ${b.state || ""} ${b.zip_code || ""}`.trim();
+// 3-tier position resolution: stored coords → full address → city only
+async function resolvePosition(b) {
+  if (b.latitude && b.longitude && !isNaN(Number(b.latitude)) && !isNaN(Number(b.longitude))) {
+    return { lat: Number(b.latitude), lng: Number(b.longitude) };
+  }
+  if (b.address_line1 && b.city) {
+    const addr = [b.address_line1, b.city, b.state || "", b.zip_code || ""].filter(Boolean).join(", ");
+    const pos = await geocodeAddress(addr);
+    if (pos) return pos;
+  }
+  if (b.city) {
+    return geocodeAddress(`${b.city}${b.state ? ", " + b.state : ", NJ"}`);
+  }
+  return null;
+}
+
+// Spread markers that land at the exact same lat/lng so they don't stack invisibly
+function jitterDuplicates(resolved) {
+  const counts = new Map();
+  return resolved.map((item) => {
+    const key = `${item.position.lat.toFixed(4)},${item.position.lng.toFixed(4)}`;
+    const idx = counts.get(key) || 0;
+    counts.set(key, idx + 1);
+    if (idx === 0) return item;
+    const angle = (idx * 137.5 * Math.PI) / 180;
+    const radius = 0.0004 * Math.ceil(idx / 6);
+    return {
+      ...item,
+      position: {
+        lat: item.position.lat + radius * Math.cos(angle),
+        lng: item.position.lng + radius * Math.sin(angle),
+      },
+    };
+  });
 }
 
 function buildMarkerDiv(business) {
@@ -58,7 +89,7 @@ function buildMarkerDiv(business) {
   return div;
 }
 
-// HiDPI-aware canvas icon for the classic Marker fallback
+// HiDPI canvas icon for the classic Marker fallback
 function buildFallbackIcon(business) {
   const dpr = window.devicePixelRatio || 1;
   const displaySize = MARKER_SIZE;
@@ -148,7 +179,7 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
   const activeEffectRef = useRef(0);
   const [mapReady, setMapReady] = useState(false);
 
-  // Init map once, with retry loop for async/defer race condition
+  // Init map once — retry until window.google is available (async/defer race)
   useEffect(() => {
     let cancelled = false;
 
@@ -180,7 +211,7 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
     return () => { cancelled = true; };
   }, []);
 
-  // Update markers whenever businesses or mapReady changes
+  // Place/update markers whenever businesses or mapReady changes
   useEffect(() => {
     const map = mapInstanceRef.current;
     const infoWindow = infoWindowRef.current;
@@ -188,43 +219,41 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
 
     const effectId = ++activeEffectRef.current;
 
+    // Clear previous markers
     markersRef.current.forEach((m) => { try { m.setMap(null); } catch (e) {} });
     markersRef.current = [];
 
     if (!businesses || businesses.length === 0) return;
 
     const run = async () => {
-      const withCoords = [];
-      const needsGeocode = [];
-
-      for (const b of businesses) {
-        if (b.latitude && b.longitude && !isNaN(Number(b.latitude)) && !isNaN(Number(b.longitude))) {
-          withCoords.push({ business: b, position: { lat: Number(b.latitude), lng: Number(b.longitude) } });
-        } else {
-          const address = buildAddress(b);
-          if (address) needsGeocode.push({ business: b, address });
-        }
-      }
-
-      const geocoded = await Promise.all(
-        needsGeocode.map(async ({ business, address }) => {
-          const position = await geocodeAddress(address);
-          return position ? { business, position } : null;
-        })
+      // Resolve positions in parallel (3-tier: stored coords → full address → city)
+      const positions = await Promise.all(
+        businesses.map((b) => resolvePosition(b).catch(() => null))
       );
 
       if (activeEffectRef.current !== effectId) return;
 
-      const allResolved = [...withCoords, ...geocoded.filter(Boolean)];
+      let resolved = businesses
+        .map((b, i) => (positions[i] ? { business: b, position: positions[i] } : null))
+        .filter(Boolean);
 
-      allResolved.forEach(({ business, position }) => {
-        const marker = placeMarker(map, position, business, infoWindow);
-        markersRef.current.push(marker);
+      // Spread markers that share the same geocoded point
+      resolved = jitterDuplicates(resolved);
+
+      // Place all markers
+      resolved.forEach(({ business, position }) => {
+        try {
+          const marker = placeMarker(map, position, business, infoWindow);
+          markersRef.current.push(marker);
+        } catch (e) {
+          console.error("[GoogleMap] marker error for", business.business_name, e);
+        }
       });
 
-      if (allResolved.length > 0) {
-        const avgLat = allResolved.reduce((s, { position: p }) => s + p.lat, 0) / allResolved.length;
-        const avgLng = allResolved.reduce((s, { position: p }) => s + p.lng, 0) / allResolved.length;
+      // Center map on average position of all markers
+      if (resolved.length > 0) {
+        const avgLat = resolved.reduce((s, { position: p }) => s + p.lat, 0) / resolved.length;
+        const avgLng = resolved.reduce((s, { position: p }) => s + p.lng, 0) / resolved.length;
         map.setCenter({ lat: avgLat, lng: avgLng });
       }
     };
