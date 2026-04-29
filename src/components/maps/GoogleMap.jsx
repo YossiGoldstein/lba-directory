@@ -2,18 +2,19 @@ import React, { useEffect, useRef, useState } from "react";
 import { fixImageUrl } from "@/components/lib/imageUtils";
 
 const DEFAULT_CENTER = { lat: 40.0957, lng: -74.2177 }; // Lakewood, NJ
-const GEOCODE_API_KEY = "AIzaSyDfr-zgnbCEuvQGbEll582R4kSes79FDc8";
 const MARKER_SIZE = 52; // display px
 
+// Uses Nominatim (OpenStreetMap) — no API key required, same service used
+// by the server-side geocodeBusinesses function.
 async function geocodeAddress(address) {
   try {
     const res = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GEOCODE_API_KEY}`
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
+      { headers: { "User-Agent": "LBADirectory/1.0 (lbadirectory.com)" } }
     );
     const data = await res.json();
-    if (data.status === "OK" && data.results[0]) {
-      const { lat, lng } = data.results[0].geometry.location;
-      return { lat, lng };
+    if (Array.isArray(data) && data.length > 0) {
+      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
     }
   } catch (e) {
     // ignore
