@@ -19,8 +19,8 @@ export default function CoverPhotoUpload({ value, onChange }) {
       img.onload = () => {
         const ratio = img.width / img.height;
         let warn = "";
-        if (img.width < 1200 || ratio < 4 / 3) {
-          warn = "This image may appear cropped or low-quality on the listing page. We recommend uploading a landscape image of at least 1600×900 pixels.";
+        if (img.width < 1200 || ratio < 1.5) {
+          warn = "This image may appear heavily cropped on the listing page. We recommend a wide landscape image — at least 1200px wide with a 3:1 ratio or wider (e.g. 1200 × 400 px).";
         }
         URL.revokeObjectURL(img.src);
         resolve({ error: "", warning: warn });
@@ -59,8 +59,8 @@ export default function CoverPhotoUpload({ value, onChange }) {
       <div className="border border-blue-200 bg-blue-50 rounded-lg px-4 py-3 flex gap-2 text-sm text-blue-800">
         <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
         <div>
-          <p className="font-semibold mb-0.5">Recommended: 1600 × 900 pixels (landscape)</p>
-          <p className="text-blue-700">Keep important content in the <strong>top half</strong> of the image — the bottom is covered by your business info on the listing page. This image also appears when your listing is shared on WhatsApp, Facebook, and other social apps.</p>
+          <p className="font-semibold mb-0.5">Recommended: 1200 × 400 px or wider (3:1 landscape)</p>
+          <p className="text-blue-700">The cover photo displays as a full-width banner above your business info. If your image is taller than wide, the top and bottom will be cropped — keep important content <strong>centered</strong>. This image also appears when your listing is shared on WhatsApp, Facebook, and other social apps.</p>
         </div>
       </div>
 
@@ -90,7 +90,7 @@ export default function CoverPhotoUpload({ value, onChange }) {
           </label>
         </div>
       ) : (
-        <div className="relative rounded-lg overflow-hidden border-2 border-cyan-400" style={{ aspectRatio: "16/9" }}>
+        <div className="relative rounded-lg overflow-hidden border-2 border-cyan-400" style={{ aspectRatio: "3/1" }}>
           <img src={value} alt="Cover photo preview" className="w-full h-full object-cover" />
           <button
             type="button"
