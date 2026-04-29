@@ -190,6 +190,17 @@ export default function Step3Location({ data, onChange }) {
                 placeholder="https://youtube.com/@yourbusiness"
               />
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="x_url">X (Twitter)</Label>
+              <Input
+                id="x_url"
+                type="url"
+                value={data.x_url || ""}
+                onChange={(e) => onChange({ ...data, x_url: e.target.value })}
+                placeholder="https://x.com/yourbusiness"
+              />
+            </div>
           </div>
         </div>
 

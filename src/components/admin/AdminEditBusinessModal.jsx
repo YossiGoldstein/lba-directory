@@ -71,6 +71,7 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
         instagram_url: business.instagram_url || "",
         linkedin_url: business.linkedin_url || "",
         youtube_url: business.youtube_url || "",
+        x_url: business.x_url || "",
         other_social_url: business.other_social_url || "",
         uber_eats_url: business.uber_eats_url || "",
         doordash_url: business.doordash_url || "",
@@ -526,6 +527,16 @@ Format as JSON.`;
                   value={formData.youtube_url || ""}
                   onChange={(e) => setFormData({ ...formData, youtube_url: e.target.value })}
                   placeholder="https://youtube.com/@yourbusiness"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="x_url">X (Twitter)</Label>
+                <Input
+                  id="x_url"
+                  value={formData.x_url || ""}
+                  onChange={(e) => setFormData({ ...formData, x_url: e.target.value })}
+                  placeholder="https://x.com/yourbusiness"
                 />
               </div>
 

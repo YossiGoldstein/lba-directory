@@ -27,6 +27,8 @@ export default function EditBusinessTab({ business, onUpdate }) {
     website_url: business.website_url || "",
     facebook_url: business.facebook_url || "",
     instagram_url: business.instagram_url || "",
+    linkedin_url: business.linkedin_url || "",
+    youtube_url: business.youtube_url || "",
     x_url: business.x_url || "",
     other_social_url: business.other_social_url || "",
     tags: business.tags ? business.tags.join(", ") : "",
@@ -320,6 +322,28 @@ export default function EditBusinessTab({ business, onUpdate }) {
               value={formData.instagram_url}
               onChange={(e) => setFormData({...formData, instagram_url: e.target.value})}
               placeholder="https://instagram.com/business"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="linkedin_url">LinkedIn Page</Label>
+            <Input
+              id="linkedin_url"
+              type="url"
+              value={formData.linkedin_url}
+              onChange={(e) => setFormData({...formData, linkedin_url: e.target.value})}
+              placeholder="https://linkedin.com/company/yourbusiness"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="youtube_url">YouTube Channel</Label>
+            <Input
+              id="youtube_url"
+              type="url"
+              value={formData.youtube_url}
+              onChange={(e) => setFormData({...formData, youtube_url: e.target.value})}
+              placeholder="https://youtube.com/@yourbusiness"
             />
           </div>
 
