@@ -399,7 +399,7 @@ export default function Home() {
                   if (customerData) {
                     window.location.href = createPageUrl("AddBusiness");
                   } else {
-                    window.location.href = createPageUrl("BusinessOwnerRegister");
+                    window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));
                   }
                 }}
                 className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:from-[#1FAF5A] hover:to-[#27C666] text-white font-bold shadow-lg text-base"
