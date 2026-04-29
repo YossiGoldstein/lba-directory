@@ -15,6 +15,7 @@ import CoverPhotoUpload from "@/components/business/CoverPhotoUpload";
 import VideoManager from "@/components/business/VideoManager";
 import { toast } from "sonner";
 import { PLANS } from "@/components/lib/plansConfig";
+import { geocodeBusinessAddress } from "@/components/lib/geocodeUtils";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 const formatPhone = (value) => {
@@ -344,6 +345,17 @@ Return JSON: { short_version, medium_version, long_version }`,
       businessData.slug = slug;
 
       const createdBusiness = await base44.entities.Business.create(businessData);
+
+      // Geocode address and save coordinates
+      try {
+        const coords = await geocodeBusinessAddress(businessData);
+        if (coords) {
+          await base44.entities.Business.update(createdBusiness.id, {
+            latitude: coords.lat,
+            longitude: coords.lng,
+          });
+        }
+      } catch {}
 
       // Create any deals that were added during setup
       if (deals.length > 0) {

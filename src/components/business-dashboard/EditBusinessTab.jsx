@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building2, MapPin, Phone, Globe, Tag as TagIcon } from "lucide-react";
+import { geocodeBusinessAddress, addressChanged } from "@/components/lib/geocodeUtils";
 import { toast } from "sonner";
 
 export default function EditBusinessTab({ business, onUpdate }) {
@@ -83,7 +84,20 @@ export default function EditBusinessTab({ business, onUpdate }) {
       };
 
       await base44.entities.Business.update(business.id, updateData);
-      
+
+      // Re-geocode silently when address fields changed
+      if (addressChanged(formData, business)) {
+        try {
+          const coords = await geocodeBusinessAddress(formData);
+          if (coords) {
+            await base44.entities.Business.update(business.id, {
+              latitude: coords.lat,
+              longitude: coords.lng,
+            });
+          }
+        } catch {}
+      }
+
       toast.success("Business information updated successfully!");
       
       // Send email notification (optional, check if enabled in settings)

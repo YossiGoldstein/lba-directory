@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { X, Upload, Loader2, Image as ImageIcon, Plus, Trash2, Sparkles, Check, ExternalLink } from "lucide-react";
+import { geocodeBusinessAddress, addressChanged } from "@/components/lib/geocodeUtils";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
 
@@ -122,6 +123,20 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
       };
 
       await base44.entities.Business.update(business.id, updateData);
+
+      // Re-geocode silently when address fields changed
+      if (addressChanged(formData, business)) {
+        try {
+          const coords = await geocodeBusinessAddress(formData);
+          if (coords) {
+            await base44.entities.Business.update(business.id, {
+              latitude: coords.lat,
+              longitude: coords.lng,
+            });
+          }
+        } catch {}
+      }
+
       toast.success("Business updated successfully!");
 
       // Send approval email if status changed to approved
