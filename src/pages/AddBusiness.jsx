@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle, Upload, X, Image as ImageIcon, Building2, Sparkles, Loader2, Info, Check } from "lucide-react";
+import { CheckCircle, Upload, X, Image as ImageIcon, Building2, Sparkles, Loader2, Info, Check, Plus, Trash2, ExternalLink } from "lucide-react";
 import CoverPhotoUpload from "@/components/business/CoverPhotoUpload";
 import VideoManager from "@/components/business/VideoManager";
 import { toast } from "sonner";
@@ -82,7 +82,11 @@ export default function AddBusiness() {
   const [isGeneratingTags, setIsGeneratingTags] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
+  const [isUploadingDealFlyer, setIsUploadingDealFlyer] = useState(false);
   const [hoursMode, setHoursMode] = useState("hours");
+  const [deals, setDeals] = useState([]);
+  const [showDealForm, setShowDealForm] = useState(false);
+  const [currentDeal, setCurrentDeal] = useState({ title: "", description: "", badge_text: "", flyer_url: "", sale_link: "", start_date: "", end_date: "" });
 
   const [form, setForm] = useState({
     listing_tier: "free",
@@ -227,6 +231,27 @@ Return JSON: { short_version, medium_version, long_version }`,
     finally { setIsUploadingGallery(false); e.target.value = ""; }
   };
 
+  // ── Deal flyer upload ─────────────────────────────────────────────────
+  const handleDealFlyerUpload = async (e) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    setIsUploadingDealFlyer(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setCurrentDeal(prev => ({ ...prev, flyer_url: file_url }));
+      toast.success("Flyer uploaded!");
+    } catch { toast.error("Flyer upload failed"); }
+    finally { setIsUploadingDealFlyer(false); e.target.value = ""; }
+  };
+
+  const handleAddDeal = () => {
+    if (!currentDeal.title.trim()) { toast.error("Deal title is required"); return; }
+    if (!currentDeal.start_date || !currentDeal.end_date) { toast.error("Start and end dates are required"); return; }
+    setDeals(prev => [...prev, currentDeal]);
+    setCurrentDeal({ title: "", description: "", badge_text: "", flyer_url: "", sale_link: "", start_date: "", end_date: "" });
+    setShowDealForm(false);
+    toast.success("Deal added!");
+  };
+
   // ── Hours ─────────────────────────────────────────────────────────────
   const handleHourChange = (day, field, value) => {
     const updated = { ...form.opening_hours_json, [day]: { ...form.opening_hours_json[day], [field]: value } };
@@ -319,6 +344,13 @@ Return JSON: { short_version, medium_version, long_version }`,
       businessData.slug = slug;
 
       const createdBusiness = await base44.entities.Business.create(businessData);
+
+      // Create any deals that were added during setup
+      if (deals.length > 0) {
+        await Promise.all(deals.map(d =>
+          base44.entities.Deal.create({ ...d, business_id: createdBusiness.id, is_active: true })
+        ));
+      }
 
       toast.success("🎉 Business submitted successfully!");
       setTimeout(() => {
@@ -606,8 +638,106 @@ Return JSON: { short_version, medium_version, long_version }`,
           </div>
         </Section>
 
-        {/* ── 6. Plan ── */}
-        <Section number="6" title="Choose Your Listing Plan">
+        {/* ── 6. Deals ── */}
+        <Section number="6" title="Deals & Promotions (Optional)">
+          {!showDealForm && (
+            <Button onClick={() => setShowDealForm(true)} variant="outline" className="gap-2">
+              <Plus className="w-4 h-4" />
+              Add a Deal or Sale
+            </Button>
+          )}
+
+          {showDealForm && (
+            <div className="p-4 bg-cyan-50 rounded-lg border border-cyan-200 space-y-4">
+              <h3 className="font-semibold text-gray-900">New Deal</h3>
+
+              <div className="space-y-2">
+                <Label>Title *</Label>
+                <Input value={currentDeal.title} onChange={e => setCurrentDeal(p => ({ ...p, title: e.target.value }))} placeholder="10% off all items" />
+              </div>
+              <div className="space-y-2">
+                <Label>Description</Label>
+                <Textarea value={currentDeal.description} onChange={e => setCurrentDeal(p => ({ ...p, description: e.target.value }))} placeholder="Additional details..." rows={2} />
+              </div>
+              <div className="space-y-2">
+                <Label>Badge Text</Label>
+                <Input value={currentDeal.badge_text} onChange={e => setCurrentDeal(p => ({ ...p, badge_text: e.target.value }))} placeholder="Sale, Limited Time, New" />
+              </div>
+
+              {/* Flyer upload */}
+              <div className="space-y-2">
+                <Label>Sale Flyer (optional)</Label>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <input type="file" id="deal-flyer" accept="image/*" onChange={handleDealFlyerUpload} className="hidden" disabled={isUploadingDealFlyer} />
+                  <label htmlFor="deal-flyer">
+                    <Button asChild variant="outline" className="cursor-pointer" disabled={isUploadingDealFlyer}>
+                      <span><Upload className="w-4 h-4 mr-2" />{isUploadingDealFlyer ? "Uploading..." : "Upload Flyer"}</span>
+                    </Button>
+                  </label>
+                  {currentDeal.flyer_url && (
+                    <div className="flex items-center gap-2">
+                      <img src={currentDeal.flyer_url} alt="Flyer preview" className="h-12 w-12 object-cover rounded border" />
+                      <button type="button" onClick={() => setCurrentDeal(p => ({ ...p, flyer_url: "" }))} className="text-red-500 text-xs hover:underline">Remove</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Sale link */}
+              <div className="space-y-2">
+                <Label>Sale Link (optional)</Label>
+                <Input type="url" value={currentDeal.sale_link} onChange={e => setCurrentDeal(p => ({ ...p, sale_link: e.target.value }))} placeholder="https://example.com/sale" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label>Start Date *</Label>
+                  <Input type="date" value={currentDeal.start_date} onChange={e => setCurrentDeal(p => ({ ...p, start_date: e.target.value }))} />
+                </div>
+                <div className="space-y-2">
+                  <Label>End Date *</Label>
+                  <Input type="date" value={currentDeal.end_date} onChange={e => setCurrentDeal(p => ({ ...p, end_date: e.target.value }))} />
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Button onClick={handleAddDeal} className="bg-cyan-600 hover:bg-cyan-700">Add Deal</Button>
+                <Button variant="outline" onClick={() => setShowDealForm(false)}>Cancel</Button>
+              </div>
+            </div>
+          )}
+
+          {deals.length > 0 && (
+            <div className="space-y-3 mt-4">
+              {deals.map((deal, i) => (
+                <div key={i} className="p-3 bg-green-50 border border-green-200 rounded-lg flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="font-semibold text-gray-900 text-sm">{deal.title}</p>
+                      {deal.badge_text && <span className="text-xs bg-cyan-600 text-white px-2 py-0.5 rounded-full">{deal.badge_text}</span>}
+                    </div>
+                    {deal.description && <p className="text-xs text-gray-600 mb-1">{deal.description}</p>}
+                    <p className="text-xs text-gray-500">{deal.start_date} → {deal.end_date}</p>
+                    <div className="flex items-center gap-3 mt-1">
+                      {deal.flyer_url && <img src={deal.flyer_url} alt="Flyer" className="h-8 w-8 object-cover rounded border" />}
+                      {deal.sale_link && (
+                        <a href={deal.sale_link} target="_blank" rel="noopener noreferrer" className="text-xs text-cyan-600 hover:underline flex items-center gap-1">
+                          <ExternalLink className="w-3 h-3" />Sale Link
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  <Button onClick={() => setDeals(prev => prev.filter((_, j) => j !== i))} variant="ghost" size="icon" className="text-red-500 hover:text-red-700 shrink-0">
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </Section>
+
+        {/* ── 7. Plan ── */}
+        <Section number="7" title="Choose Your Listing Plan">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {PLANS.map(plan => {
               const Icon = plan.icon;

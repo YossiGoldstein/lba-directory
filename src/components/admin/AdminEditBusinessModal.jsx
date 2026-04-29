@@ -19,14 +19,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { X, Upload, Loader2, Image as ImageIcon, Plus, Trash2, Sparkles, Check } from "lucide-react";
+import { X, Upload, Loader2, Image as ImageIcon, Plus, Trash2, Sparkles, Check, ExternalLink } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
 
 export default function AdminEditBusinessModal({ business, isOpen, onClose, onSave }) {
   const [formData, setFormData] = useState({});
   const [deals, setDeals] = useState([]);
-  const [newDeal, setNewDeal] = useState({ title: "", description: "", badge_text: "", start_date: "", end_date: "" });
+  const [newDeal, setNewDeal] = useState({ title: "", description: "", badge_text: "", flyer_url: "", sale_link: "", start_date: "", end_date: "" });
+  const [isUploadingFlyer, setIsUploadingFlyer] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
@@ -217,6 +218,21 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
     toast.success("Cover image updated!");
   };
 
+  const handleDealFlyerUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingFlyer(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setNewDeal(prev => ({ ...prev, flyer_url: file_url }));
+      toast.success("Flyer uploaded");
+    } catch {
+      toast.error("Failed to upload flyer");
+    } finally {
+      setIsUploadingFlyer(false);
+    }
+  };
+
   const handleAddDeal = async () => {
     if (!newDeal.title?.trim() || !newDeal.start_date || !newDeal.end_date) {
       toast.error("Title, start date, and end date are required");
@@ -224,17 +240,19 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
     }
 
     try {
-      await base44.entities.Deal.create({
+      const created = await base44.entities.Deal.create({
         business_id: business.id,
         title: newDeal.title,
         description: newDeal.description,
         badge_text: newDeal.badge_text,
+        flyer_url: newDeal.flyer_url,
+        sale_link: newDeal.sale_link,
         start_date: newDeal.start_date,
         end_date: newDeal.end_date,
         is_active: true,
       });
-      setDeals([...deals, { ...newDeal, business_id: business.id, is_active: true }]);
-      setNewDeal({ title: "", description: "", badge_text: "", start_date: "", end_date: "" });
+      setDeals([...deals, { ...newDeal, ...created, business_id: business.id, is_active: true }]);
+      setNewDeal({ title: "", description: "", badge_text: "", flyer_url: "", sale_link: "", start_date: "", end_date: "" });
       toast.success("Sale added successfully!");
     } catch (error) {
       console.error("Failed to add sale:", error);
@@ -804,6 +822,53 @@ Format as JSON.`;
                 />
               </div>
 
+              {/* Sale Flyer */}
+              <div className="space-y-2">
+                <Label>Sale Flyer (optional)</Label>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <input
+                    type="file"
+                    id="admin-deal-flyer"
+                    accept="image/*"
+                    onChange={handleDealFlyerUpload}
+                    className="hidden"
+                    disabled={isUploadingFlyer}
+                  />
+                  <label htmlFor="admin-deal-flyer">
+                    <Button asChild variant="outline" className="cursor-pointer" disabled={isUploadingFlyer}>
+                      <span>
+                        <Upload className="w-4 h-4 mr-2" />
+                        {isUploadingFlyer ? "Uploading..." : "Upload Flyer"}
+                      </span>
+                    </Button>
+                  </label>
+                  {newDeal.flyer_url && (
+                    <div className="flex items-center gap-2">
+                      <img src={newDeal.flyer_url} alt="Flyer preview" className="h-12 w-12 object-cover rounded border" />
+                      <button
+                        type="button"
+                        onClick={() => setNewDeal(prev => ({ ...prev, flyer_url: "" }))}
+                        className="text-red-500 text-xs hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Sale Link */}
+              <div className="space-y-2">
+                <Label htmlFor="admin_deal_sale_link">Sale Link (optional)</Label>
+                <Input
+                  id="admin_deal_sale_link"
+                  type="url"
+                  value={newDeal.sale_link}
+                  onChange={(e) => setNewDeal({ ...newDeal, sale_link: e.target.value })}
+                  placeholder="https://example.com/sale"
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="deal_start">Start Date *</Label>
@@ -858,6 +923,20 @@ Format as JSON.`;
                       <p className="text-xs text-gray-500">
                         {new Date(deal.start_date).toLocaleDateString()} - {new Date(deal.end_date).toLocaleDateString()}
                       </p>
+                      <div className="flex items-center gap-3 mt-2">
+                        {deal.flyer_url && (
+                          <a href={deal.flyer_url} target="_blank" rel="noopener noreferrer">
+                            <img src={deal.flyer_url} alt="Flyer" className="h-10 w-10 object-cover rounded border" />
+                          </a>
+                        )}
+                        {deal.sale_link && (
+                          <a href={deal.sale_link} target="_blank" rel="noopener noreferrer"
+                            className="text-xs text-cyan-600 hover:underline flex items-center gap-1">
+                            <ExternalLink className="w-3 h-3" />
+                            Sale Link
+                          </a>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
