@@ -248,7 +248,7 @@ export default function CategoryListing() {
           {/* Map Column - visible on tablet and desktop */}
           <div className="hidden lg:block w-[40%] max-w-[600px] flex-shrink-0">
             <div className="sticky top-[64px]" style={{ height: "calc(100vh - 64px)" }}>
-              <BusinessMap businesses={sortedBusinesses} height="calc(100vh - 64px)" />
+              <BusinessMap businesses={displayedBusinesses} height="calc(100vh - 64px)" />
             </div>
           </div>
         </div>

@@ -43,18 +43,20 @@ function jitterDuplicates(resolved) {
 }
 
 // Build a circular canvas icon (HiDPI-aware).
-// Uses the business logo clipped to a circle; falls back to a letter if the
-// image can't be loaded (CORS, network error, etc.).
+// Attempt 1: load with crossOrigin="anonymous" → circular canvas icon (best quality).
+// Attempt 2 (CORS failure): load without crossOrigin → use the URL directly as the icon
+//   so the logo still shows instead of a letter initial.
+// Final fallback: letter initial on a colored circle.
 function buildMarkerIcon(business) {
   const dpr = window.devicePixelRatio || 1;
   const display = MARKER_SIZE;
-  const canvas = display * dpr;
+  const px = display * dpr;
   const initial = (business.business_name || "?").charAt(0).toUpperCase();
   const logoUrl = business.logo_url ? fixImageUrl(business.logo_url) : null;
 
   function letterIcon() {
     const c = document.createElement("canvas");
-    c.width = canvas; c.height = canvas;
+    c.width = px; c.height = px;
     const ctx = c.getContext("2d");
     ctx.scale(dpr, dpr);
     const r = display / 2;
@@ -68,38 +70,53 @@ function buildMarkerIcon(business) {
     return c.toDataURL();
   }
 
+  function circularDataUrl(img) {
+    const c = document.createElement("canvas");
+    c.width = px; c.height = px;
+    const ctx = c.getContext("2d");
+    ctx.scale(dpr, dpr);
+    ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2, 0, Math.PI * 2);
+    ctx.fillStyle = "white"; ctx.fill();
+    ctx.save();
+    ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2 - 3, 0, Math.PI * 2); ctx.clip();
+    ctx.drawImage(img, 0, 0, display, display);
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2 - 1.5, 0, Math.PI * 2);
+    ctx.strokeStyle = "white"; ctx.lineWidth = 3; ctx.stroke();
+    ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(0,0,0,0.25)"; ctx.lineWidth = 1.5; ctx.stroke();
+    return c.toDataURL();
+  }
+
   if (!logoUrl) return Promise.resolve(letterIcon());
 
   return new Promise((resolve) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
+    // Attempt 1: CORS-enabled load so canvas stays clean for toDataURL
+    const corsImg = new Image();
+    corsImg.crossOrigin = "anonymous";
+    corsImg.onload = () => {
       try {
-        const c = document.createElement("canvas");
-        c.width = canvas; c.height = canvas;
-        const ctx = c.getContext("2d");
-        ctx.scale(dpr, dpr);
-        // White circle background
-        ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2, 0, Math.PI * 2);
-        ctx.fillStyle = "white"; ctx.fill();
-        // Clip to circle and draw logo
-        ctx.save();
-        ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2 - 3, 0, Math.PI * 2); ctx.clip();
-        ctx.drawImage(img, 0, 0, display, display);
-        ctx.restore();
-        // White border ring
-        ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2 - 1.5, 0, Math.PI * 2);
-        ctx.strokeStyle = "white"; ctx.lineWidth = 3; ctx.stroke();
-        // Drop shadow effect (outer ring)
-        ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2, 0, Math.PI * 2);
-        ctx.strokeStyle = "rgba(0,0,0,0.25)"; ctx.lineWidth = 1.5; ctx.stroke();
-        resolve(c.toDataURL());
+        resolve(circularDataUrl(corsImg));
       } catch (e) {
         resolve(letterIcon());
       }
     };
-    img.onerror = () => resolve(letterIcon());
-    img.src = logoUrl;
+    corsImg.onerror = () => {
+      // CORS rejected — retry without crossOrigin.
+      // Canvas will be tainted so toDataURL throws; catch it and use the URL directly.
+      const img = new Image();
+      img.onload = () => {
+        try {
+          resolve(circularDataUrl(img));
+        } catch (e) {
+          // Tainted canvas — use the plain URL so the logo still appears (not circular but visible)
+          resolve(logoUrl);
+        }
+      };
+      img.onerror = () => resolve(letterIcon());
+      img.src = logoUrl;
+    };
+    corsImg.src = logoUrl;
   });
 }
 
@@ -225,15 +242,15 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
         }
       });
 
-      // Center on exact-coordinate businesses if any; otherwise use default
-      const withExact = resolved.filter(({ business: b }) =>
-        b.latitude && b.longitude && !isNaN(Number(b.latitude)) && !isNaN(Number(b.longitude))
-      );
-      const reference = withExact.length > 0 ? withExact : resolved;
-      if (reference.length > 0) {
-        const avgLat = reference.reduce((s, { position: p }) => s + p.lat, 0) / reference.length;
-        const avgLng = reference.reduce((s, { position: p }) => s + p.lng, 0) / reference.length;
-        map.setCenter({ lat: avgLat, lng: avgLng });
+      // Fit the map to the displayed markers so all are visible
+      if (resolved.length > 0) {
+        const bounds = new window.google.maps.LatLngBounds();
+        resolved.forEach(({ position: p }) => bounds.extend(p));
+        map.fitBounds(bounds);
+        // Cap zoom for single/tightly-clustered markers to avoid over-zooming
+        window.google.maps.event.addListenerOnce(map, "bounds_changed", () => {
+          if (map.getZoom() > 15) map.setZoom(15);
+        });
       }
     };
 
