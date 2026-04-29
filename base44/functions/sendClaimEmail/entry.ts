@@ -1,5 +1,12 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 
+const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
+
+function generateToken(businessId: string, email: string): string {
+  const payload = `${businessId}:${email}:${Date.now() + TOKEN_TTL_MS}`;
+  return btoa(payload).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -15,55 +22,21 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'businessId is required' }, { status: 400 });
     }
 
-    // Get business
     const businesses = await base44.asServiceRole.entities.Business.filter({ id: businessId });
     if (!businesses || businesses.length === 0) {
       return Response.json({ error: 'Business not found' }, { status: 404 });
     }
     const business = businesses[0];
 
-    // Check if already claimed (has owner_id)
     if (business.owner_id) {
       return Response.json({ error: 'This business has already been claimed' }, { status: 400 });
     }
 
-    // Check for existing pending claim by this user
-    const existingClaims = await base44.asServiceRole.entities.ClaimRequest.filter({
-      business_id: businessId,
-      claimant_email: user.email,
-      status: 'pending'
-    });
-
-    // Invalidate any old pending claims for this business+user
-    for (const old of existingClaims) {
-      await base44.asServiceRole.entities.ClaimRequest.update(old.id, { status: 'expired' });
-    }
-
-    // Generate secure token
-    const tokenBytes = new Uint8Array(32);
-    crypto.getRandomValues(tokenBytes);
-    const token = Array.from(tokenBytes).map(b => b.toString(16).padStart(2, '0')).join('');
-
-    // Expires in 24 hours
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-
-    // Save claim request
-    await base44.asServiceRole.entities.ClaimRequest.create({
-      business_id: businessId,
-      claimant_email: user.email,
-      claimant_name: user.full_name || user.email,
-      token,
-      expires_at: expiresAt,
-      status: 'pending'
-    });
-
-    // Build claim URL
+    const token = generateToken(businessId, user.email);
     const appUrl = req.headers.get('origin') || 'https://lbadirectory.com';
     const claimUrl = `${appUrl}/ClaimBusiness?token=${token}`;
 
-    // Send HTML email
-    const emailHtml = `
-<!DOCTYPE html>
+    const emailHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -75,15 +48,11 @@ Deno.serve(async (req) => {
     <tr>
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1);">
-          
-          <!-- Header -->
           <tr>
             <td style="background:linear-gradient(135deg,#003D5C 0%,#0E8DAA 100%);padding:32px 40px;text-align:center;">
               <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/3a0b2e08d_LBA-directory-logo-color.png" alt="LBA Directory" style="height:50px;width:auto;" />
             </td>
           </tr>
-
-          <!-- Body -->
           <tr>
             <td style="padding:40px 40px 32px;">
               <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#111827;">Claim Your Business</h1>
@@ -94,8 +63,6 @@ Deno.serve(async (req) => {
               <p style="margin:0 0 32px;font-size:15px;color:#374151;line-height:1.6;">
                 Click the button below to verify your ownership and take control of this listing.
               </p>
-
-              <!-- CTA Button -->
               <table cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td align="center">
@@ -105,38 +72,54 @@ Deno.serve(async (req) => {
                   </td>
                 </tr>
               </table>
-
               <p style="margin:32px 0 0;font-size:13px;color:#9ca3af;text-align:center;">
                 This link expires in <strong>24 hours</strong>. If you didn't request this, you can safely ignore this email.
               </p>
             </td>
           </tr>
-
-          <!-- Footer -->
           <tr>
             <td style="background:#f9fafb;padding:24px 40px;text-align:center;border-top:1px solid #e5e7eb;">
               <p style="margin:0 0 4px;font-size:13px;color:#9ca3af;">© ${new Date().getFullYear()} LBA Directory. All rights reserved.</p>
-              <p style="margin:0;font-size:12px;color:#d1d5db;">Powered by LBA Leagues & TIG Solutions</p>
+              <p style="margin:0;font-size:12px;color:#d1d5db;">Powered by LBA Leagues &amp; TIG Solutions</p>
             </td>
           </tr>
-
         </table>
       </td>
     </tr>
   </table>
 </body>
-</html>
-    `.trim();
+</html>`;
 
-    const emailResult = await base44.asServiceRole.integrations.Core.SendEmail({
-      from_name: 'LBA Directory',
-      to: user.email,
-      subject: `Claim Your Business: ${business.business_name}`,
-      body: emailHtml
+    const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
+    const subject = `Claim Your Business: ${business.business_name}`;
+
+    const mimeMessage = [
+      `From: LBA Directory <office@lbadirectory.com>`,
+      `To: ${user.email}`,
+      `Subject: ${subject}`,
+      `MIME-Version: 1.0`,
+      `Content-Type: text/html; charset=UTF-8`,
+      ``,
+      emailHtml,
+    ].join('\r\n');
+
+    const encodedMessage = btoa(unescape(encodeURIComponent(mimeMessage)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    const gmailRes = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ raw: encodedMessage }),
     });
 
-    if (!emailResult) {
-      throw new Error('Failed to send email');
+    if (!gmailRes.ok) {
+      const errText = await gmailRes.text();
+      throw new Error(`Gmail API error: ${gmailRes.status} ${errText}`);
     }
 
     return Response.json({ success: true, message: 'Claim email sent successfully' });

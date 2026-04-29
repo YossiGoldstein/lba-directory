@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { CheckCircle, XCircle, ExternalLink, Sparkles, AlertTriangle } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
@@ -13,6 +14,12 @@ import { toast } from "sonner";
 export default function PendingApprovalsTab({ onUpdate }) {
   const queryClient = useQueryClient();
   const [rejectionReasons, setRejectionReasons] = useState({});
+  const [sendSetupEmails, setSendSetupEmails] = useState({});
+
+  const getSendEmail = (business) =>
+    sendSetupEmails[business.id] !== undefined
+      ? sendSetupEmails[business.id]
+      : !!business.email;
 
   const { data: pendingBusinesses = [], isLoading } = useQuery({
     queryKey: ["pending-businesses"],
@@ -32,13 +39,24 @@ export default function PendingApprovalsTab({ onUpdate }) {
   });
 
   const approveMutation = useMutation({
-    mutationFn: async (businessId) => {
+    mutationFn: async ({ businessId }) => {
       return await base44.entities.Business.update(businessId, { status: "approved" });
     },
-    onSuccess: async (_, businessId) => {
+    onSuccess: async (_, { businessId, sendSetupEmail }) => {
       queryClient.invalidateQueries({ queryKey: ["pending-businesses"] });
       queryClient.invalidateQueries({ queryKey: ["admin-businesses"] });
       toast.success("Business approved successfully!");
+
+      if (sendSetupEmail) {
+        try {
+          await base44.functions.invoke('sendPasswordSetupEmail', { businessId });
+          toast.success("Setup email sent to business owner");
+        } catch (err) {
+          toast.warning("Business approved but setup email failed to send");
+          console.error("Setup email error:", err);
+        }
+      }
+
       if (onUpdate) onUpdate();
     },
     onError: () => {
@@ -145,9 +163,12 @@ export default function PendingApprovalsTab({ onUpdate }) {
     return cat ? cat.name : "Unknown";
   };
 
-  const handleApprove = (businessId) => {
+  const handleApprove = (business) => {
     if (confirm("Are you sure you want to approve this business?")) {
-      approveMutation.mutate(businessId);
+      approveMutation.mutate({
+        businessId: business.id,
+        sendSetupEmail: getSendEmail(business)
+      });
     }
   };
 
@@ -318,15 +339,32 @@ export default function PendingApprovalsTab({ onUpdate }) {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3 pt-4 border-t">
+              <div className="flex flex-wrap gap-3 pt-4 border-t items-center">
                 <Button
-                  onClick={() => handleApprove(business.id)}
+                  onClick={() => handleApprove(business)}
                   className="bg-green-600 hover:bg-green-700 gap-2"
                   disabled={approveMutation.isPending}
                 >
                   <CheckCircle className="w-4 h-4" />
                   Approve
                 </Button>
+                {business.email && (
+                  <div className="flex items-center gap-2 ml-1">
+                    <Checkbox
+                      id={`send-email-${business.id}`}
+                      checked={getSendEmail(business)}
+                      onCheckedChange={(checked) =>
+                        setSendSetupEmails({ ...sendSetupEmails, [business.id]: !!checked })
+                      }
+                    />
+                    <label
+                      htmlFor={`send-email-${business.id}`}
+                      className="text-sm text-gray-600 cursor-pointer select-none"
+                    >
+                      Send setup email to business owner
+                    </label>
+                  </div>
+                )}
                 <Button
                   onClick={() => handleReject(business.id)}
                   variant="destructive"
