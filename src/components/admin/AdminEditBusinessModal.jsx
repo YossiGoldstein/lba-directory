@@ -24,11 +24,43 @@ import { geocodeBusinessAddress, addressChanged } from "@/components/lib/geocode
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
 
+const DEFAULT_HOURS = {
+  sunday:        { open: "09:00", close: "17:00", closed: false },
+  monday:        { open: "09:00", close: "17:00", closed: false },
+  tuesday:       { open: "09:00", close: "17:00", closed: false },
+  wednesday:     { open: "09:00", close: "17:00", closed: false },
+  thursday:      { open: "09:00", close: "17:00", closed: false },
+  friday:        { open: "09:00", close: "14:00", closed: false },
+  saturday:      { open: "", close: "", closed: true },
+  motzei_shabbos: { open: "21:00", close: "23:00", closed: false },
+};
+
+const DAYS = [
+  { key: "sunday",        label: "Sunday" },
+  { key: "monday",        label: "Monday" },
+  { key: "tuesday",       label: "Tuesday" },
+  { key: "wednesday",     label: "Wednesday" },
+  { key: "thursday",      label: "Thursday" },
+  { key: "friday",        label: "Friday" },
+  { key: "saturday",      label: "Saturday (Shabbos)" },
+  { key: "motzei_shabbos", label: "Motzei Shabbos" },
+];
+
+const generateTextFromStructured = (hours) => {
+  if (!hours) return "";
+  return Object.entries(hours).map(([day, times]) => {
+    const label = day.replace("_", " ");
+    const cap = label.charAt(0).toUpperCase() + label.slice(1);
+    return times.closed ? `${cap}: Closed` : `${cap}: ${times.open} - ${times.close}`;
+  }).join("\n");
+};
+
 export default function AdminEditBusinessModal({ business, isOpen, onClose, onSave }) {
   const [formData, setFormData] = useState({});
   const [deals, setDeals] = useState([]);
   const [newDeal, setNewDeal] = useState({ title: "", description: "", badge_text: "", flyer_url: "", sale_link: "", start_date: "", end_date: "" });
   const [isUploadingFlyer, setIsUploadingFlyer] = useState(false);
+  const [hoursMode, setHoursMode] = useState("hours");
   const [isLoading, setIsLoading] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
@@ -55,6 +87,7 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
 
   useEffect(() => {
     if (business) {
+      setHoursMode(business.by_appointment_only ? "appointment" : "hours");
       setFormData({
         business_name: business.business_name || "",
         category_id: business.category_id || "",
@@ -83,6 +116,8 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
         toast_url: business.toast_url || "",
         k1_url: business.k1_url || "",
         opening_hours_text: business.opening_hours_text || "",
+        opening_hours_json: business.opening_hours_json || DEFAULT_HOURS,
+        by_appointment_only: business.by_appointment_only || false,
         logo_url: business.logo_url || "",
         gallery_images: business.gallery_images || [],
         tags: Array.isArray(business.tags) ? business.tags.join(", ") : "",
@@ -97,6 +132,16 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
       setDeals(businessDeals);
     }
   }, [businessDeals]);
+
+  const handleHourChange = (day, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      opening_hours_json: {
+        ...prev.opening_hours_json,
+        [day]: { ...prev.opening_hours_json?.[day], [field]: value },
+      },
+    }));
+  };
 
   const handleSave = async () => {
     if (!formData.business_name?.trim()) {
@@ -117,9 +162,14 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
         .map((t) => t.trim())
         .filter((t) => t.length > 0);
 
+      const hoursFields = hoursMode === "appointment"
+        ? { opening_hours_text: "By Appointment Only", opening_hours_json: null, by_appointment_only: true }
+        : { opening_hours_text: generateTextFromStructured(formData.opening_hours_json), opening_hours_json: formData.opening_hours_json, by_appointment_only: false };
+
       const updateData = {
         ...formData,
         tags: tagsArray,
+        ...hoursFields,
       };
 
       await base44.entities.Business.update(business.id, updateData);
@@ -507,14 +557,55 @@ Format as JSON.`;
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="hours">Opening Hours</Label>
-              <Textarea
-                id="hours"
-                value={formData.opening_hours_text || ""}
-                onChange={(e) => setFormData({ ...formData, opening_hours_text: e.target.value })}
-                rows={4}
-              />
+            <div className="space-y-3">
+              <Label>Opening Hours</Label>
+              <div className="flex items-center gap-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" checked={hoursMode === "hours"} onChange={() => setHoursMode("hours")} className="w-4 h-4" />
+                  <span className="font-medium text-sm">Set Opening Hours</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" checked={hoursMode === "appointment"} onChange={() => setHoursMode("appointment")} className="w-4 h-4" />
+                  <span className="font-medium text-sm">By Appointment Only</span>
+                </label>
+              </div>
+
+              {hoursMode === "hours" && (
+                <div className="space-y-2">
+                  {DAYS.map(({ key, label }) => (
+                    <div key={key} className="flex items-center gap-3 flex-wrap">
+                      <div className="w-36 font-medium text-gray-800 text-sm">{label}</div>
+                      {key === "saturday" ? (
+                        <span className="text-gray-500 italic text-sm">Closed (Shabbos)</span>
+                      ) : (
+                        <>
+                          <label className="flex items-center gap-1 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={formData.opening_hours_json?.[key]?.closed || false}
+                              onChange={e => handleHourChange(key, "closed", e.target.checked)}
+                            />
+                            Closed
+                          </label>
+                          {!formData.opening_hours_json?.[key]?.closed && (
+                            <>
+                              <Input type="time" value={formData.opening_hours_json?.[key]?.open || ""} onChange={e => handleHourChange(key, "open", e.target.value)} className="w-28" />
+                              <span className="text-gray-500 text-sm">to</span>
+                              <Input type="time" value={formData.opening_hours_json?.[key]?.close || ""} onChange={e => handleHourChange(key, "close", e.target.value)} className="w-28" />
+                            </>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {hoursMode === "appointment" && (
+                <div className="p-4 bg-cyan-50 border border-cyan-200 rounded-lg text-center">
+                  <p className="text-gray-700 font-medium text-sm">This business will be marked as "By Appointment Only"</p>
+                </div>
+              )}
             </div>
           </TabsContent>
 
