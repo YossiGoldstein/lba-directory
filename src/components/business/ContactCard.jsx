@@ -13,6 +13,26 @@ const formatPhoneNumber = (phone) => {
   return phone;
 };
 
+function OtherSocialButton({ url }) {
+  const platform = getSocialPlatform(url);
+  const label = platform.name === "Other" ? "Other Social Media" : platform.name;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={label}
+      aria-label={label}
+      className={`w-9 h-9 ${platform.color} text-white rounded-lg flex items-center justify-center transition-colors`}
+    >
+      {platform.path
+        ? <svg className="w-4 h-4" fill="currentColor" viewBox={platform.viewBox}><path d={platform.path}/></svg>
+        : <Globe className="w-4 h-4" />
+      }
+    </a>
+  );
+}
+
 export default function ContactCard({ business }) {
   return (
     <Card>
@@ -174,25 +194,9 @@ export default function ContactCard({ business }) {
                   </svg>
                 </a>
               )}
-              {business.other_social_url && (() => {
-                const platform = getSocialPlatform(business.other_social_url);
-                const label = platform.name === "Other" ? "Other Social Media" : platform.name;
-                return (
-                  <a
-                    href={business.other_social_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={label}
-                    aria-label={label}
-                    className={`w-9 h-9 ${platform.color} text-white rounded-lg flex items-center justify-center transition-colors`}
-                  >
-                    {platform.path
-                      ? <svg className="w-4 h-4" fill="currentColor" viewBox={platform.viewBox}><path d={platform.path}/></svg>
-                      : <Globe className="w-4 h-4" />
-                    }
-                  </a>
-                );
-              })()}
+              {business.other_social_url && (
+                <OtherSocialButton url={business.other_social_url} />
+              )}
             </div>
           </div>
         )}
