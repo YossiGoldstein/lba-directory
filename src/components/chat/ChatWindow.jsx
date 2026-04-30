@@ -1,9 +1,48 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Send, Loader2, Minimize2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+
+// Convert plain-text URLs, phone numbers, and emails to markdown links
+// so ReactMarkdown renders them as clickable elements.
+function linkifyContent(text) {
+  const tokens = [];
+
+  // Protect existing markdown links [text](url) and inline code `...`
+  // from being double-processed by replacing them with null-byte placeholders.
+  let result = text.replace(/(\[([^\]]*)\]\(([^)]*)\)|`[^`]+`)/g, (match) => {
+    const idx = tokens.length;
+    tokens.push(match);
+    return `\x00T${idx}\x00`;
+  });
+
+  // Plain https:// or http:// URLs → markdown link
+  result = result.replace(/https?:\/\/[^\s<>"')\],\x00]+/g, (url) => {
+    const cleaned = url.replace(/[.,;:!?)\]]+$/, "");
+    return `[${cleaned}](${cleaned})`;
+  });
+
+  // Email addresses → mailto link
+  result = result.replace(
+    /\b([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})\b/g,
+    (email) => `[${email}](mailto:${email})`
+  );
+
+  // US phone numbers: (732) 600-1260 / 732-600-1260 / 732.600.1260
+  result = result.replace(
+    /\b(\(?\d{3}\)?[\s.\-]\d{3}[\s.\-]\d{4})\b/g,
+    (match) => {
+      const digits = match.replace(/\D/g, "");
+      return digits.length === 10 ? `[${match}](tel:+1${digits})` : match;
+    }
+  );
+
+  // Restore protected tokens
+  return result.replace(/\x00T(\d+)\x00/g, (_, idx) => tokens[parseInt(idx)]);
+}
 
 export default function ChatWindow({
   onClose,
@@ -136,18 +175,39 @@ export default function ChatWindow({
                 <ReactMarkdown
                   className="text-sm prose prose-sm max-w-none prose-p:text-gray-700 prose-a:text-cyan-600 prose-strong:text-gray-900"
                   components={{
-                    a: ({ children, ...props }) => (
-                      <a {...props} target="_blank" rel="noopener noreferrer" className="underline hover:text-cyan-700">
-                        {children}
-                      </a>
-                    ),
+                    a: ({ href, children }) => {
+                      if (!href) return <span>{children}</span>;
+                      // tel: and mailto: — same window, no rel needed
+                      if (href.startsWith("tel:") || href.startsWith("mailto:")) {
+                        return (
+                          <a href={href} className="text-cyan-600 underline hover:text-cyan-700 font-medium">
+                            {children}
+                          </a>
+                        );
+                      }
+                      // Internal lbadirectory.com links — React Router (no page reload)
+                      if (href.includes("lbadirectory.com") || href.startsWith("/")) {
+                        const path = href.replace(/^https?:\/\/(www\.)?lbadirectory\.com/, "") || "/";
+                        return (
+                          <Link to={path} className="text-cyan-600 underline hover:text-cyan-700 font-medium">
+                            {children}
+                          </Link>
+                        );
+                      }
+                      // External links — new tab
+                      return (
+                        <a href={href} target="_blank" rel="noopener noreferrer" className="text-cyan-600 underline hover:text-cyan-700 font-medium">
+                          {children}
+                        </a>
+                      );
+                    },
                     p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
                     ul: ({ children }) => <ul className="list-disc ml-4 mb-2 space-y-1">{children}</ul>,
                     ol: ({ children }) => <ol className="list-decimal ml-4 mb-2 space-y-1">{children}</ol>,
                     li: ({ children }) => <li className="mb-0.5">{children}</li>,
                   }}
                 >
-                  {message.content}
+                  {linkifyContent(message.content)}
                 </ReactMarkdown>
               )}
             </div>
