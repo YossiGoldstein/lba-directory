@@ -186,9 +186,9 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
 
     const tryInit = (attempt = 0) => {
       if (cancelled) return;
-      if (window.google) {
+      if (window.google?.maps) {
         initMap();
-      } else if (attempt < 30) {
+      } else if (attempt < 50) {
         setTimeout(() => tryInit(attempt + 1), 200);
       }
     };

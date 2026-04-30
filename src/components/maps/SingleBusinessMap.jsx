@@ -79,7 +79,7 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
     let cancelled = false;
 
     const initMap = async () => {
-      if (cancelled || !mapRef.current || !window.google) return;
+      if (cancelled || !mapRef.current || !window.google?.maps) return;
 
       // Resolve position: stored coords → geocode full address → geocode city
       let position = null;
@@ -164,12 +164,14 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
       }
     };
 
-    // Retry until window.google is available (handles async/defer race condition)
+    // Wait for Google Maps to be available
     const tryInit = (attempt = 0) => {
       if (cancelled) return;
-      if (window.google) {
+      if (window.google?.maps) {
         initMap();
-      } else if (attempt < 30) {
+      } else if (window.google?.maps?.importLibrary) {
+        window.google.maps.importLibrary("maps").then(initMap);
+      } else if (attempt < 50) {
         setTimeout(() => tryInit(attempt + 1), 200);
       }
     };
