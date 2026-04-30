@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { fixImageUrl } from "@/components/lib/imageUtils";
+import { loadGoogleMaps } from "@/components/lib/googleMapsLoader";
 
 const DEFAULT_CENTER = { lat: 40.0957, lng: -74.2177 }; // Lakewood, NJ
 const MARKER_SIZE = 56;
@@ -20,7 +21,6 @@ async function geocodeAddress(address) {
   return null;
 }
 
-// Same two-attempt CORS pattern as GoogleMap.jsx
 function buildMarkerIcon(business) {
   const dpr = window.devicePixelRatio || 1;
   const display = MARKER_SIZE;
@@ -71,7 +71,6 @@ function buildMarkerIcon(business) {
       try { resolve(circularDataUrl(corsImg)); } catch (e) { resolve(letterIcon()); }
     };
     corsImg.onerror = () => {
-      // CORS rejected — retry without crossOrigin; canvas may be tainted
       const img = new Image();
       img.onload = () => {
         try { resolve(circularDataUrl(img)); } catch (e) { resolve(logoUrl); }
@@ -92,9 +91,9 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
     let cancelled = false;
 
     const initMap = async () => {
-      if (cancelled || !mapRef.current || !window.google) return;
+      await loadGoogleMaps();
+      if (cancelled || !mapRef.current) return;
 
-      // Resolve position: stored coords → geocode full address → geocode city only
       let position = null;
       if (
         business?.latitude &&
@@ -162,19 +161,7 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
       markerRef.current = new window.google.maps.Marker(markerOptions);
     };
 
-    // Retry until window.google is available (async/defer race condition).
-    // With the simple <script async defer> tag, window.google is undefined until
-    // the script fully executes — so this check is both necessary and sufficient.
-    const tryInit = (attempt = 0) => {
-      if (cancelled) return;
-      if (window.google) {
-        initMap();
-      } else if (attempt < 30) {
-        setTimeout(() => tryInit(attempt + 1), 200);
-      }
-    };
-
-    tryInit();
+    initMap().catch((err) => console.error("[SingleBusinessMap] load error:", err));
 
     return () => {
       cancelled = true;

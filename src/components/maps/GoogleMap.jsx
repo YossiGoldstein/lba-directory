@@ -1,19 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { fixImageUrl } from "@/components/lib/imageUtils";
+import { loadGoogleMaps } from "@/components/lib/googleMapsLoader";
 
 const DEFAULT_CENTER = { lat: 40.0957, lng: -74.2177 }; // Lakewood, NJ
 const MARKER_SIZE = 52; // display px
 
-// Returns a position for every business — no external API calls.
-// Businesses with stored lat/lng use exact coordinates.
-// Others are placed in a golden-angle spiral around Lakewood center so
-// every business is visible. Run the geocodeBusinesses admin function to
-// populate exact coordinates for all businesses.
 function resolvePosition(b, spiralIndex) {
   if (b.latitude && b.longitude && !isNaN(Number(b.latitude)) && !isNaN(Number(b.longitude))) {
     return { lat: Number(b.latitude), lng: Number(b.longitude) };
   }
-  // Golden-angle spiral: even angular distribution, ~8 per ring, ~300 m per ring
   const angle = (spiralIndex * 137.5 * Math.PI) / 180;
   const radius = 0.003 * (Math.floor(spiralIndex / 8) + 1);
   return {
@@ -22,7 +17,6 @@ function resolvePosition(b, spiralIndex) {
   };
 }
 
-// Spread markers at identical stored coordinates so they don't stack
 function jitterDuplicates(resolved) {
   const counts = new Map();
   return resolved.map((item) => {
@@ -42,11 +36,6 @@ function jitterDuplicates(resolved) {
   });
 }
 
-// Build a circular canvas icon (HiDPI-aware).
-// Attempt 1: load with crossOrigin="anonymous" → circular canvas icon (best quality).
-// Attempt 2 (CORS failure): load without crossOrigin → use the URL directly as the icon
-//   so the logo still shows instead of a letter initial.
-// Final fallback: letter initial on a colored circle.
 function buildMarkerIcon(business) {
   const dpr = window.devicePixelRatio || 1;
   const display = MARKER_SIZE;
@@ -91,27 +80,15 @@ function buildMarkerIcon(business) {
   if (!logoUrl) return Promise.resolve(letterIcon());
 
   return new Promise((resolve) => {
-    // Attempt 1: CORS-enabled load so canvas stays clean for toDataURL
     const corsImg = new Image();
     corsImg.crossOrigin = "anonymous";
     corsImg.onload = () => {
-      try {
-        resolve(circularDataUrl(corsImg));
-      } catch (e) {
-        resolve(letterIcon());
-      }
+      try { resolve(circularDataUrl(corsImg)); } catch (e) { resolve(letterIcon()); }
     };
     corsImg.onerror = () => {
-      // CORS rejected — retry without crossOrigin.
-      // Canvas will be tainted so toDataURL throws; catch it and use the URL directly.
       const img = new Image();
       img.onload = () => {
-        try {
-          resolve(circularDataUrl(img));
-        } catch (e) {
-          // Tainted canvas — use the plain URL so the logo still appears (not circular but visible)
-          resolve(logoUrl);
-        }
+        try { resolve(circularDataUrl(img)); } catch (e) { resolve(logoUrl); }
       };
       img.onerror = () => resolve(letterIcon());
       img.src = logoUrl;
@@ -141,7 +118,6 @@ function placeMarker(map, position, business, infoWindow, iconUrl) {
     position,
     title: business.business_name,
   };
-
   if (iconUrl) {
     markerOptions.icon = {
       url: iconUrl,
@@ -166,41 +142,31 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
   const activeEffectRef = useRef(0);
   const [mapReady, setMapReady] = useState(false);
 
-  // Init map once — retry until window.google is available (async/defer race)
   useEffect(() => {
     let cancelled = false;
 
-    const initMap = () => {
-      if (cancelled || !mapRef.current) return;
-      const map = new window.google.maps.Map(mapRef.current, {
-        center: DEFAULT_CENTER,
-        zoom: 13,
-        mapTypeControl: false,
-        streetViewControl: false,
-        fullscreenControl: false,
-      });
-      mapInstanceRef.current = map;
-      infoWindowRef.current = new window.google.maps.InfoWindow();
-      setMapReady(true);
-    };
+    loadGoogleMaps()
+      .then(() => {
+        if (cancelled || !mapRef.current) return;
+        const map = new window.google.maps.Map(mapRef.current, {
+          center: DEFAULT_CENTER,
+          zoom: 13,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: false,
+        });
+        mapInstanceRef.current = map;
+        infoWindowRef.current = new window.google.maps.InfoWindow();
+        setMapReady(true);
+      })
+      .catch((err) => console.error("[GoogleMap] load error:", err));
 
-    const tryInit = (attempt = 0) => {
-      if (cancelled) return;
-      if (window.google) {
-        initMap();
-      } else if (attempt < 30) {
-        setTimeout(() => tryInit(attempt + 1), 200);
-      }
-    };
-
-    tryInit();
     return () => {
       cancelled = true;
       try { infoWindowRef.current?.close(); } catch (e) {}
     };
   }, []);
 
-  // Place/update markers whenever businesses or mapReady changes
   useEffect(() => {
     const map = mapInstanceRef.current;
     const infoWindow = infoWindowRef.current;
@@ -214,8 +180,6 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
     if (!businesses || businesses.length === 0) return;
 
     const run = async () => {
-      // Assign positions synchronously (no external API calls).
-      // spiralIndex counts only the businesses that lack stored coords.
       let spiralIndex = 0;
       let resolved = businesses.map((b) => ({
         business: b,
@@ -224,7 +188,6 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
 
       resolved = jitterDuplicates(resolved);
 
-      // Build canvas icons in parallel (async only for image loading)
       const icons = await Promise.all(
         resolved.map(({ business: b }) => buildMarkerIcon(b).catch(() => null))
       );
@@ -242,12 +205,10 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
         }
       });
 
-      // Fit the map to the displayed markers so all are visible
       if (resolved.length > 0) {
         const bounds = new window.google.maps.LatLngBounds();
         resolved.forEach(({ position: p }) => bounds.extend(p));
         map.fitBounds(bounds);
-        // Cap zoom for single/tightly-clustered markers to avoid over-zooming
         window.google.maps.event.addListenerOnce(map, "bounds_changed", () => {
           if (map.getZoom() > 15) map.setZoom(15);
         });
