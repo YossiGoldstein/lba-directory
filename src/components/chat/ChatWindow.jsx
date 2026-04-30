@@ -31,9 +31,10 @@ function linkifyContent(text) {
     (email) => `[${email}](mailto:${email})`
   );
 
-  // US phone numbers: (732) 600-1260 / 732-600-1260 / 732.600.1260
+  // US phone numbers: 732-600-1260 / (732) 600-1260 / 732.600.1260
+  // Use digit lookarounds instead of \b so (732)... format is matched too.
   result = result.replace(
-    /\b(\(?\d{3}\)?[\s.\-]\d{3}[\s.\-]\d{4})\b/g,
+    /(?<!\d)(\(?\d{3}\)?[\s.\-]\d{3}[\s.\-]\d{4})(?!\d)/g,
     (match) => {
       const digits = match.replace(/\D/g, "");
       return digits.length === 10 ? `[${match}](tel:+1${digits})` : match;
