@@ -157,7 +157,7 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
         });
       } catch (e) {
         // Fallback to standard marker
-        const { Marker, Size, Point } = await window.google.maps.importLibrary("maps");
+        const { Marker } = await window.google.maps.importLibrary("maps");
         const iconUrl = buildFallbackIcon(business);
         markerRef.current = new Marker({
           map,
@@ -165,8 +165,8 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
           title: business?.business_name || "",
           icon: {
             url: iconUrl,
-            scaledSize: new Size(56, 56),
-            anchor: new Point(28, 28),
+            scaledSize: new window.google.maps.Size(56, 56),
+            anchor: new window.google.maps.Point(28, 28),
           },
         });
       }
