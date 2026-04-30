@@ -52,10 +52,11 @@ export default function BusinessesTab({ onUpdate }) {
   };
 
   const filteredBusinesses = businesses.filter(business => {
-    const matchesSearch = 
+    const matchesSearch =
       business.business_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       business.city?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      getCategoryName(business.category_id).toLowerCase().includes(searchQuery.toLowerCase());
+      getCategoryName(business.category_id).toLowerCase().includes(searchQuery.toLowerCase()) ||
+      business.phone?.includes(searchQuery);
     
     const matchesStatus = statusFilter === "all" || business.status === statusFilter;
 
