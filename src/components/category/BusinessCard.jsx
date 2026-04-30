@@ -6,6 +6,7 @@ import BusinessImage from "@/components/lib/BusinessImage";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Phone, CheckCircle, Star } from "lucide-react";
 
+
 const formatPhoneNumber = (phone) => {
   if (!phone) return "";
   const cleaned = phone.replace(/\D/g, "");
@@ -90,9 +91,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
           <div className="absolute top-2 right-2 flex gap-1.5 z-10 pointer-events-none">
             {business.listing_tier === 'premium' && (
               <div className="bg-white/70 backdrop-blur-sm p-1 rounded shadow-md">
-                <svg className="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
-                </svg>
+                <CheckCircle className="w-4 h-4 text-blue-500" />
               </div>
             )}
           </div>
@@ -119,7 +118,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
         {/* Content Section */}
         <div className="pt-8 pb-3 px-4 flex-1">
           {/* Business Name */}
-          <div className="flex items-center gap-1.5 mb-2">
+          <div className="flex items-center gap-1.5 mb-1">
             <h3 className="text-base font-bold text-gray-900 group-hover:text-cyan-600 transition-colors line-clamp-1">
               {business.business_name}
             </h3>
@@ -127,6 +126,10 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
               <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
             )}
           </div>
+
+          {business.is_lba_sponsor && (
+            <Badge className="bg-blue-600 text-white text-[10px] px-1.5 py-0 mb-1.5">LBA Sponsor</Badge>
+          )}
 
           {/* Ratings Row */}
           {business.reviews_count > 0 && (
