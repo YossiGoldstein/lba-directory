@@ -120,7 +120,8 @@ function buildMarkerIcon(business) {
   });
 }
 
-function placeMarker(map, position, business, infoWindow, iconUrl) {
+function placeMarker(map, position, business, infoWindow, iconUrl, mapsLib) {
+  const { Marker, Size, Point } = mapsLib;
   const profileUrl = `/businesslisting/${business.slug || business.id}`;
   const infoContent = `
     <div style="max-width:220px;font-family:Arial,sans-serif;">
@@ -145,12 +146,12 @@ function placeMarker(map, position, business, infoWindow, iconUrl) {
   if (iconUrl) {
     markerOptions.icon = {
       url: iconUrl,
-      scaledSize: new window.google.maps.Size(MARKER_SIZE, MARKER_SIZE),
-      anchor: new window.google.maps.Point(MARKER_SIZE / 2, MARKER_SIZE / 2),
+      scaledSize: new Size(MARKER_SIZE, MARKER_SIZE),
+      anchor: new Point(MARKER_SIZE / 2, MARKER_SIZE / 2),
     };
   }
 
-  const marker = new window.google.maps.Marker(markerOptions);
+  const marker = new Marker(markerOptions);
   marker.addListener("click", () => {
     infoWindow.setContent(infoContent);
     infoWindow.open(map, marker);
@@ -166,13 +167,16 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
   const activeEffectRef = useRef(0);
   const [mapReady, setMapReady] = useState(false);
 
-  // Init map once — retry until window.google is available (async/defer race)
+  // Init map once using the new async Google Maps loader
   useEffect(() => {
     let cancelled = false;
 
-    const initMap = () => {
+    const initMap = async () => {
       if (cancelled || !mapRef.current) return;
-      const map = new window.google.maps.Map(mapRef.current, {
+      // Use importLibrary to ensure the Maps library is fully loaded
+      const { Map, InfoWindow } = await window.google.maps.importLibrary("maps");
+      if (cancelled || !mapRef.current) return;
+      const map = new Map(mapRef.current, {
         center: DEFAULT_CENTER,
         zoom: 13,
         mapTypeControl: false,
@@ -180,15 +184,15 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
         fullscreenControl: false,
       });
       mapInstanceRef.current = map;
-      infoWindowRef.current = new window.google.maps.InfoWindow();
+      infoWindowRef.current = new InfoWindow();
       setMapReady(true);
     };
 
     const tryInit = (attempt = 0) => {
       if (cancelled) return;
-      if (window.google) {
+      if (window.google?.maps?.importLibrary) {
         initMap();
-      } else if (attempt < 30) {
+      } else if (attempt < 50) {
         setTimeout(() => tryInit(attempt + 1), 200);
       }
     };
@@ -214,8 +218,10 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
     if (!businesses || businesses.length === 0) return;
 
     const run = async () => {
+      const mapsLib = await window.google.maps.importLibrary("maps");
+      if (activeEffectRef.current !== effectId) return;
+
       // Assign positions synchronously (no external API calls).
-      // spiralIndex counts only the businesses that lack stored coords.
       let spiralIndex = 0;
       let resolved = businesses.map((b) => ({
         business: b,
@@ -235,7 +241,7 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
 
       resolved.forEach(({ business, position, iconUrl }) => {
         try {
-          const marker = placeMarker(map, position, business, infoWindow, iconUrl);
+          const marker = placeMarker(map, position, business, infoWindow, iconUrl, mapsLib);
           markersRef.current.push(marker);
         } catch (e) {
           console.error("[GoogleMap] marker error:", business.business_name, e);
