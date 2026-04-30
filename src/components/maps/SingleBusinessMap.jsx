@@ -92,13 +92,7 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
     let cancelled = false;
 
     const initMap = async () => {
-      if (cancelled || !mapRef.current) return;
-
-      // Use importLibrary (bootstrap loader pattern) — same as GoogleMap.jsx.
-      // window.google.maps.Map is NOT available until importLibrary("maps") resolves,
-      // even though window.google itself is set immediately by the bootstrap loader.
-      const { Map, Marker, Size, Point } = await window.google.maps.importLibrary("maps");
-      if (cancelled || !mapRef.current) return;
+      if (cancelled || !mapRef.current || !window.google) return;
 
       // Resolve position: stored coords → geocode full address → geocode city only
       let position = null;
@@ -129,7 +123,7 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
       const zoom = position ? (business?.latitude ? 15 : 14) : 12;
 
       if (!mapInstanceRef.current) {
-        mapInstanceRef.current = new Map(mapRef.current, {
+        mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
           center,
           zoom,
           mapTypeControl: false,
@@ -161,21 +155,21 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
       if (iconUrl) {
         markerOptions.icon = {
           url: iconUrl,
-          scaledSize: new Size(MARKER_SIZE, MARKER_SIZE),
-          anchor: new Point(MARKER_SIZE / 2, MARKER_SIZE / 2),
+          scaledSize: new window.google.maps.Size(MARKER_SIZE, MARKER_SIZE),
+          anchor: new window.google.maps.Point(MARKER_SIZE / 2, MARKER_SIZE / 2),
         };
       }
-      markerRef.current = new Marker(markerOptions);
+      markerRef.current = new window.google.maps.Marker(markerOptions);
     };
 
-    // Wait until the bootstrap loader has registered importLibrary.
-    // Do NOT check window.google — it is set immediately but the Maps classes
-    // are not available until importLibrary("maps") resolves.
+    // Retry until window.google is available (async/defer race condition).
+    // With the simple <script async defer> tag, window.google is undefined until
+    // the script fully executes — so this check is both necessary and sufficient.
     const tryInit = (attempt = 0) => {
       if (cancelled) return;
-      if (window.google?.maps?.importLibrary) {
+      if (window.google) {
         initMap();
-      } else if (attempt < 50) {
+      } else if (attempt < 30) {
         setTimeout(() => tryInit(attempt + 1), 200);
       }
     };
