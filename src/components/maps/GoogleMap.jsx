@@ -250,12 +250,11 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
 
       // Fit the map to the displayed markers so all are visible
       if (resolved.length > 0) {
-        const { event } = mapsLib;
         const bounds = new window.google.maps.LatLngBounds();
         resolved.forEach(({ position: p }) => bounds.extend(p));
         map.fitBounds(bounds);
         // Cap zoom for single/tightly-clustered markers to avoid over-zooming
-        event.addListenerOnce(map, "bounds_changed", () => {
+        window.google.maps.event.addListenerOnce(map, "bounds_changed", () => {
           if (map.getZoom() > 15) map.setZoom(15);
         });
       }
