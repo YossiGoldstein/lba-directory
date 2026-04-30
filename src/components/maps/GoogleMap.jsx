@@ -250,8 +250,8 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
 
       // Fit the map to the displayed markers so all are visible
       if (resolved.length > 0) {
-        const { LatLngBounds, event } = mapsLib;
-        const bounds = new LatLngBounds();
+        const { event } = mapsLib;
+        const bounds = new window.google.maps.LatLngBounds();
         resolved.forEach(({ position: p }) => bounds.extend(p));
         map.fitBounds(bounds);
         // Cap zoom for single/tightly-clustered markers to avoid over-zooming
