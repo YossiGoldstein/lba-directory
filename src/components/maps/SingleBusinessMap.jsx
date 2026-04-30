@@ -79,7 +79,11 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
     let cancelled = false;
 
     const initMap = async () => {
-      if (cancelled || !mapRef.current || !window.google?.maps) return;
+      if (cancelled || !mapRef.current) return;
+
+      // Use importLibrary to ensure libraries are fully loaded
+      const { Map } = await window.google.maps.importLibrary("maps");
+      if (cancelled || !mapRef.current) return;
 
       // Resolve position: stored coords → geocode full address → geocode city
       let position = null;
@@ -117,7 +121,7 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
 
       // Reuse existing map instance rather than rebuilding the DOM node
       if (!mapInstanceRef.current) {
-        mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
+        mapInstanceRef.current = new Map(mapRef.current, {
           center,
           zoom,
           mapId: MAP_ID,
@@ -142,35 +146,37 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
 
       const markerDiv = buildMarkerDiv(business);
 
-      if (window.google.maps.marker?.AdvancedMarkerElement) {
-        markerRef.current = new window.google.maps.marker.AdvancedMarkerElement({
+      try {
+        const { AdvancedMarkerElement } = await window.google.maps.importLibrary("marker");
+        if (cancelled) return;
+        markerRef.current = new AdvancedMarkerElement({
           map,
           position,
           content: markerDiv,
           title: business?.business_name || "",
         });
-      } else {
+      } catch (e) {
+        // Fallback to standard marker
+        const { Marker, Size, Point } = await window.google.maps.importLibrary("maps");
         const iconUrl = buildFallbackIcon(business);
-        markerRef.current = new window.google.maps.Marker({
+        markerRef.current = new Marker({
           map,
           position,
           title: business?.business_name || "",
           icon: {
             url: iconUrl,
-            scaledSize: new window.google.maps.Size(56, 56),
-            anchor: new window.google.maps.Point(28, 28),
+            scaledSize: new Size(56, 56),
+            anchor: new Point(28, 28),
           },
         });
       }
     };
 
-    // Wait for Google Maps to be available
+    // Wait for Google Maps loader to be ready
     const tryInit = (attempt = 0) => {
       if (cancelled) return;
-      if (window.google?.maps) {
+      if (window.google?.maps?.importLibrary) {
         initMap();
-      } else if (window.google?.maps?.importLibrary) {
-        window.google.maps.importLibrary("maps").then(initMap);
       } else if (attempt < 50) {
         setTimeout(() => tryInit(attempt + 1), 200);
       }
