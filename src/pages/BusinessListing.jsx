@@ -14,7 +14,8 @@ import {
   Share2,
   AlertCircle,
   MapPin,
-  MessageSquare
+  MessageSquare,
+  CheckCircle
 } from "lucide-react";
 import SingleBusinessMap from "@/components/maps/SingleBusinessMap";
 import ContactCard from "../components/business/ContactCard";
