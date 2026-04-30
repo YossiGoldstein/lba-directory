@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { User, Mail, Lock, Phone, Building2, Eye, EyeOff } from "lucide-react";
 
 export default function BusinessOwnerRegister() {
+  const [authChecked, setAuthChecked] = useState(false);
   const [formData, setFormData] = useState({
     businessName: "",
     email: "",
@@ -20,6 +21,20 @@ export default function BusinessOwnerRegister() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  useEffect(() => {
+    const customerData = localStorage.getItem("lba_customer");
+    if (!customerData) {
+      window.location.href =
+        createPageUrl("SignIn") +
+        "?next=" +
+        encodeURIComponent(createPageUrl("BusinessOwnerRegister"));
+      return;
+    }
+    setAuthChecked(true);
+  }, []);
+
+  if (!authChecked) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
