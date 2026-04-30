@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { fixImageUrl } from "@/components/lib/imageUtils";
 
 const DEFAULT_CENTER = { lat: 40.0957, lng: -74.2177 }; // Lakewood, NJ
-const MAP_ID = "DEMO_MAP_ID";
+const MARKER_SIZE = 56;
 
 async function geocodeAddress(address) {
   try {
@@ -15,59 +15,72 @@ async function geocodeAddress(address) {
       return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
     }
   } catch (e) {
-    // ignore
+    // ignore network errors
   }
   return null;
 }
 
-function buildMarkerDiv(business) {
-  const logoUrl = business?.logo_url ? fixImageUrl(business.logo_url) : null;
-  const initial = (business?.business_name || "?").charAt(0).toUpperCase();
-
-  const div = document.createElement("div");
-  div.style.cssText = [
-    "width:56px;height:56px;border-radius:50%;overflow:hidden;",
-    "border:3px solid white;box-shadow:0 2px 10px rgba(0,0,0,0.4);",
-    "background:white;display:flex;align-items:center;justify-content:center;",
-    "cursor:pointer;",
-  ].join("");
-
-  if (logoUrl) {
-    const img = document.createElement("img");
-    img.src = logoUrl;
-    img.alt = business.business_name || "";
-    img.style.cssText = "width:100%;height:100%;object-fit:cover;";
-    img.onerror = () => {
-      div.innerHTML = `<span style="font-weight:bold;font-size:22px;color:white;">${initial}</span>`;
-      div.style.background = "linear-gradient(135deg,#0891b2,#06b6d4)";
-    };
-    div.appendChild(img);
-  } else {
-    div.style.background = "linear-gradient(135deg,#0891b2,#06b6d4)";
-    div.innerHTML = `<span style="font-weight:bold;font-size:22px;color:white;">${initial}</span>`;
-  }
-
-  return div;
-}
-
-function buildFallbackIcon(business) {
+// Same two-attempt CORS pattern as GoogleMap.jsx
+function buildMarkerIcon(business) {
   const dpr = window.devicePixelRatio || 1;
-  const display = 56;
+  const display = MARKER_SIZE;
   const px = display * dpr;
   const initial = (business?.business_name || "?").charAt(0).toUpperCase();
-  const c = document.createElement("canvas");
-  c.width = px; c.height = px;
-  const ctx = c.getContext("2d");
-  ctx.scale(dpr, dpr);
-  const r = display / 2;
-  ctx.beginPath(); ctx.arc(r, r, r, 0, Math.PI * 2); ctx.fillStyle = "#0891b2"; ctx.fill();
-  ctx.beginPath(); ctx.arc(r, r, r - 2, 0, Math.PI * 2);
-  ctx.strokeStyle = "white"; ctx.lineWidth = 3; ctx.stroke();
-  ctx.fillStyle = "white";
-  ctx.font = `bold ${Math.round(display * 0.4)}px Arial`;
-  ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  ctx.fillText(initial, r, r);
-  return c.toDataURL();
+  const logoUrl = business?.logo_url ? fixImageUrl(business.logo_url) : null;
+
+  function letterIcon() {
+    const c = document.createElement("canvas");
+    c.width = px; c.height = px;
+    const ctx = c.getContext("2d");
+    ctx.scale(dpr, dpr);
+    const r = display / 2;
+    ctx.beginPath(); ctx.arc(r, r, r, 0, Math.PI * 2); ctx.fillStyle = "#0891b2"; ctx.fill();
+    ctx.beginPath(); ctx.arc(r, r, r - 2, 0, Math.PI * 2);
+    ctx.strokeStyle = "white"; ctx.lineWidth = 3; ctx.stroke();
+    ctx.fillStyle = "white";
+    ctx.font = `bold ${Math.round(display * 0.4)}px Arial`;
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(initial, r, r);
+    return c.toDataURL();
+  }
+
+  function circularDataUrl(img) {
+    const c = document.createElement("canvas");
+    c.width = px; c.height = px;
+    const ctx = c.getContext("2d");
+    ctx.scale(dpr, dpr);
+    ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2, 0, Math.PI * 2);
+    ctx.fillStyle = "white"; ctx.fill();
+    ctx.save();
+    ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2 - 3, 0, Math.PI * 2); ctx.clip();
+    ctx.drawImage(img, 0, 0, display, display);
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2 - 1.5, 0, Math.PI * 2);
+    ctx.strokeStyle = "white"; ctx.lineWidth = 3; ctx.stroke();
+    ctx.beginPath(); ctx.arc(display / 2, display / 2, display / 2, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(0,0,0,0.25)"; ctx.lineWidth = 1.5; ctx.stroke();
+    return c.toDataURL();
+  }
+
+  if (!logoUrl) return Promise.resolve(letterIcon());
+
+  return new Promise((resolve) => {
+    const corsImg = new Image();
+    corsImg.crossOrigin = "anonymous";
+    corsImg.onload = () => {
+      try { resolve(circularDataUrl(corsImg)); } catch (e) { resolve(letterIcon()); }
+    };
+    corsImg.onerror = () => {
+      // CORS rejected — retry without crossOrigin; canvas may be tainted
+      const img = new Image();
+      img.onload = () => {
+        try { resolve(circularDataUrl(img)); } catch (e) { resolve(logoUrl); }
+      };
+      img.onerror = () => resolve(letterIcon());
+      img.src = logoUrl;
+    };
+    corsImg.src = logoUrl;
+  });
 }
 
 export default function SingleBusinessMap({ business, height = "320px" }) {
@@ -81,7 +94,7 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
     const initMap = async () => {
       if (cancelled || !mapRef.current || !window.google) return;
 
-      // Resolve position: stored coords → geocode full address → geocode city
+      // Resolve position: stored coords → geocode full address → geocode city only
       let position = null;
       if (
         business?.latitude &&
@@ -96,9 +109,7 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
           business.city,
           business.state || "",
           business.zip_code || "",
-        ]
-          .filter(Boolean)
-          .join(", ");
+        ].filter(Boolean).join(", ");
         position = await geocodeAddress(address);
       } else if (business?.city) {
         position = await geocodeAddress(
@@ -109,18 +120,12 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
       if (cancelled || !mapRef.current) return;
 
       const center = position || DEFAULT_CENTER;
-      const zoom = position
-        ? business?.latitude
-          ? 15  // precise coords
-          : 14  // geocoded
-        : 12;   // fallback city view
+      const zoom = position ? (business?.latitude ? 15 : 14) : 12;
 
-      // Reuse existing map instance rather than rebuilding the DOM node
       if (!mapInstanceRef.current) {
         mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
           center,
           zoom,
-          mapId: MAP_ID,
           mapTypeControl: false,
           streetViewControl: false,
           fullscreenControl: false,
@@ -132,7 +137,6 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
 
       const map = mapInstanceRef.current;
 
-      // Remove previous marker before placing new one
       if (markerRef.current) {
         try { markerRef.current.setMap(null); } catch (e) {}
         markerRef.current = null;
@@ -140,31 +144,25 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
 
       if (!position) return;
 
-      const markerDiv = buildMarkerDiv(business);
+      const iconUrl = await buildMarkerIcon(business).catch(() => null);
+      if (cancelled) return;
 
-      if (window.google.maps.marker?.AdvancedMarkerElement) {
-        markerRef.current = new window.google.maps.marker.AdvancedMarkerElement({
-          map,
-          position,
-          content: markerDiv,
-          title: business?.business_name || "",
-        });
-      } else {
-        const iconUrl = buildFallbackIcon(business);
-        markerRef.current = new window.google.maps.Marker({
-          map,
-          position,
-          title: business?.business_name || "",
-          icon: {
-            url: iconUrl,
-            scaledSize: new window.google.maps.Size(56, 56),
-            anchor: new window.google.maps.Point(28, 28),
-          },
-        });
+      const markerOptions = {
+        map,
+        position,
+        title: business?.business_name || "",
+      };
+      if (iconUrl) {
+        markerOptions.icon = {
+          url: iconUrl,
+          scaledSize: new window.google.maps.Size(MARKER_SIZE, MARKER_SIZE),
+          anchor: new window.google.maps.Point(MARKER_SIZE / 2, MARKER_SIZE / 2),
+        };
       }
+      markerRef.current = new window.google.maps.Marker(markerOptions);
     };
 
-    // Retry until window.google is available (handles async/defer race condition)
+    // Retry until window.google is available (async/defer race condition)
     const tryInit = (attempt = 0) => {
       if (cancelled) return;
       if (window.google) {
