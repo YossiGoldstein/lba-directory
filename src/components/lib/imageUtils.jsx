@@ -17,13 +17,21 @@ export function fixImageUrl(url) {
     return url;
   }
   
-  // Handle Base44 file API URLs - convert to storage URLs
-  // Handles both /files/public/ and /files/mp/public/ formats
-  if (url.includes('/api/apps/') && (url.includes('/files/public/') || url.includes('/files/mp/public/'))) {
-    const match = url.match(/\/files\/(?:mp\/)?public\/([^/]+)\/(.+)$/);
+  // Handle Base44 file API URLs (/files/public/ format) - convert to Supabase storage URLs
+  if (url.includes('/api/apps/') && url.includes('/files/public/')) {
+    const match = url.match(/\/files\/public\/([^/]+)\/(.+)$/);
     if (match) {
       const [, appId, fileName] = match;
       return `https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/${appId}/${fileName}`;
+    }
+  }
+
+  // Handle Base44 file API URLs (/files/mp/public/ format) - convert to media CDN
+  if (url.includes('/api/apps/') && url.includes('/files/mp/public/')) {
+    const match = url.match(/\/api\/apps\/[^/]+\/files\/mp\/public\/([^/]+)\/(.+)$/);
+    if (match) {
+      const [, appId, fileName] = match;
+      return `https://media.base44.com/images/public/${appId}/${fileName}`;
     }
   }
   
