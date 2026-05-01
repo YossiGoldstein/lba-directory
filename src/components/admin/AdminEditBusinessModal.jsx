@@ -21,6 +21,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { X, Upload, Loader2, Image as ImageIcon, Plus, Trash2, Sparkles, Check, ExternalLink } from "lucide-react";
 import { geocodeBusinessAddress, addressChanged } from "@/components/lib/geocodeUtils";
+import CoverPhotoUpload from "@/components/business/CoverPhotoUpload";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
 
@@ -119,6 +120,8 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
         opening_hours_json: business.opening_hours_json || DEFAULT_HOURS,
         by_appointment_only: business.by_appointment_only || false,
         logo_url: business.logo_url || "",
+        cover_photo_url: business.cover_photo_url || "",
+        cover_photo_y_position: business.cover_photo_y_position ?? 50,
         gallery_images: business.gallery_images || [],
         tags: Array.isArray(business.tags) ? business.tags.join(", ") : "",
         status: business.status || "pending",
@@ -753,6 +756,19 @@ Format as JSON.`;
 
           <TabsContent value="gallery" className="space-y-4 mt-4">
             <div className="space-y-4">
+
+              {/* Cover Photo with position control */}
+              <div>
+                <Label className="text-base font-semibold">Cover Photo</Label>
+                <p className="text-sm text-gray-500 mt-1 mb-3">Main banner image shown on the business page and search results</p>
+                <CoverPhotoUpload
+                  value={formData.cover_photo_url || ""}
+                  onChange={(url) => setFormData({ ...formData, cover_photo_url: url })}
+                  yPosition={formData.cover_photo_y_position ?? 50}
+                  onYPositionChange={(y) => setFormData({ ...formData, cover_photo_y_position: y })}
+                />
+              </div>
+
               <div>
                 <Label>Business Logo</Label>
                 <div className="mt-2">
