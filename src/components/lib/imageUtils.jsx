@@ -18,8 +18,9 @@ export function fixImageUrl(url) {
   }
   
   // Handle Base44 file API URLs - convert to storage URLs
-  if (url.includes('/api/apps/') && url.includes('/files/public/')) {
-    const match = url.match(/\/files\/public\/([^/]+)\/(.+)$/);
+  // Handles both /files/public/ and /files/mp/public/ formats
+  if (url.includes('/api/apps/') && (url.includes('/files/public/') || url.includes('/files/mp/public/'))) {
+    const match = url.match(/\/files\/(?:mp\/)?public\/([^/]+)\/(.+)$/);
     if (match) {
       const [, appId, fileName] = match;
       return `https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/${appId}/${fileName}`;
