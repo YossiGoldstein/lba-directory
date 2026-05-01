@@ -469,15 +469,15 @@ export default function BusinessListing() {
                 {business.is_lba_sponsor && (
                   <Badge className="bg-blue-600 text-white">LBA Sponsor</Badge>
                 )}
-                {business.listing_tier === 'premium' && (
-                  <CheckCircle className="w-5 h-5 text-blue-400 flex-shrink-0 self-center" />
-                )}
               </div>
             </div>
 
             {/* Business Name */}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 leading-tight flex items-center gap-2 flex-wrap">
               {business.business_name}
+              {business.listing_tier === 'premium' && (
+                <CheckCircle className="w-6 h-6 text-blue-400 flex-shrink-0" />
+              )}
             </h1>
 
             {/* Address + Phone */}

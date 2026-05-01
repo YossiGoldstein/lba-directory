@@ -4,7 +4,7 @@ import { createPageUrl } from "@/utils";
 import { fixImageUrl } from "@/components/lib/imageUtils";
 import BusinessImage from "@/components/lib/BusinessImage";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Phone, CheckCircle, Star } from "lucide-react";
+import { MapPin, Phone, CheckCircle, Star, Zap } from "lucide-react";
 
 
 const formatPhoneNumber = (phone) => {
@@ -91,7 +91,7 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
           <div className="absolute top-2 right-2 flex gap-1.5 z-10 pointer-events-none">
             {business.listing_tier === 'premium' && (
               <div className="bg-white/70 backdrop-blur-sm p-1 rounded shadow-md">
-                <CheckCircle className="w-4 h-4 text-blue-500" />
+                <Zap className="w-4 h-4 text-yellow-500 fill-yellow-400" />
               </div>
             )}
           </div>
