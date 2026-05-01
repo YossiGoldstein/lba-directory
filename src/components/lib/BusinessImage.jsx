@@ -22,7 +22,7 @@ export default function BusinessImage({ business, className = "w-full h-full obj
       src={getImageSrc()}
       alt={business.business_name}
       className={className}
-      style={style}
+      style={{ ...style, objectPosition: `center ${business.cover_photo_y_position ?? 50}%` }}
       onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER; }}
     />
   );

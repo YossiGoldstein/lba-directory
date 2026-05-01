@@ -24,7 +24,14 @@ export default function SearchResults() {
     setIsSearching(true);
     try {
       const response = await base44.functions.invoke("searchBusinesses", { query: searchQuery });
-      setMatchedBusinesses(response.data?.businesses || []);
+      const results = response.data?.businesses || [];
+      const fullBusinesses = await Promise.all(
+        results.map(async (b) => {
+          const matches = await base44.entities.Business.filter({ id: b.id });
+          return matches[0] || b;
+        })
+      );
+      setMatchedBusinesses(fullBusinesses);
     } catch (error) {
       console.error("Search failed:", error);
       setMatchedBusinesses([]);

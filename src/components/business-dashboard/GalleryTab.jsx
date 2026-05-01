@@ -12,6 +12,7 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
   const [images, setImages] = useState(business.gallery_images || []);
   const [logoUrl, setLogoUrl] = useState(business.logo_url || "");
   const [coverPhotoUrl, setCoverPhotoUrl] = useState(business.cover_photo_url || "");
+  const [coverPhotoYPosition, setCoverPhotoYPosition] = useState(business.cover_photo_y_position ?? 50);
   const [videos, setVideos] = useState(business.videos || []);
   const [isUploading, setIsUploading] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
@@ -62,6 +63,7 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
         gallery_images: images,
         logo_url: logoUrl,
         cover_photo_url: coverPhotoUrl,
+        cover_photo_y_position: coverPhotoYPosition,
         videos: videos,
       });
       toast.success("Gallery saved successfully!");
@@ -124,7 +126,7 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <CoverPhotoUpload value={coverPhotoUrl} onChange={setCoverPhotoUrl} />
+          <CoverPhotoUpload value={coverPhotoUrl} onChange={setCoverPhotoUrl} yPosition={coverPhotoYPosition} onYPositionChange={setCoverPhotoYPosition} />
         </CardContent>
       </Card>
 

@@ -41,6 +41,11 @@
       "type": "string",
       "description": "Cover photo URL (landscape, shown as hero banner and OG image)"
     },
+    "cover_photo_y_position": {
+      "type": "number",
+      "default": 50,
+      "description": "Vertical position of cover photo (0=top, 50=center, 100=bottom)"
+    },
     "gallery_images": {
       "type": "array",
       "items": {

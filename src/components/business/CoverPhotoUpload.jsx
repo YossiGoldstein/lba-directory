@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, X, AlertTriangle, Info } from "lucide-react";
 import { toast } from "sonner";
 
-export default function CoverPhotoUpload({ value, onChange }) {
+export default function CoverPhotoUpload({ value, onChange, yPosition = 50, onYPositionChange }) {
   const [isUploading, setIsUploading] = useState(false);
   const [warning, setWarning] = useState("");
   const [error, setError] = useState("");
@@ -90,18 +90,38 @@ export default function CoverPhotoUpload({ value, onChange }) {
           </label>
         </div>
       ) : (
-        <div className="relative rounded-lg overflow-hidden border-2 border-cyan-400" style={{ aspectRatio: "3/1" }}>
-          <img src={value} alt="Cover photo preview" className="w-full h-full object-cover" />
-          <button
-            type="button"
-            onClick={() => { onChange(""); setWarning(""); setError(""); }}
-            className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center shadow hover:bg-red-600"
-          >
-            <X className="w-4 h-4" />
-          </button>
-          <div className="absolute bottom-0 left-0 right-0 bg-black/40 text-white text-xs px-3 py-1 text-center">
-            Cover Photo Preview
+        <div className="space-y-3">
+          <div className="relative rounded-lg overflow-hidden border-2 border-cyan-400" style={{ aspectRatio: "3/1" }}>
+            <img src={value} alt="Cover photo preview" className="w-full h-full object-cover" style={{ objectPosition: `center ${yPosition}%` }} />
+            <button
+              type="button"
+              onClick={() => { onChange(""); setWarning(""); setError(""); }}
+              className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center shadow hover:bg-red-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <div className="absolute bottom-0 left-0 right-0 bg-black/40 text-white text-xs px-3 py-1 text-center">
+              Cover Photo Preview
+            </div>
           </div>
+          {onYPositionChange && (
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-gray-700">Adjust vertical position</p>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-gray-500 w-8">Top</span>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={yPosition}
+                  onChange={(e) => onYPositionChange(Number(e.target.value))}
+                  className="flex-1"
+                />
+                <span className="text-xs text-gray-500 w-12">Bottom</span>
+              </div>
+              <p className="text-xs text-gray-400 text-center">Center</p>
+            </div>
+          )}
         </div>
       )}
     </div>
