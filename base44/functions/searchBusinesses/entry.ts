@@ -151,6 +151,8 @@ function serializeBusiness(b: any) {
     is_featured: b.is_featured,
     listing_rank: b.listing_rank,
     logo_url: b.logo_url,
+    cover_photo_url: b.cover_photo_url,
+    gallery_images: b.gallery_images,
     delivery_options: getDeliveryOptions(b),
     doordash_url: b.doordash_url,
     uber_eats_url: b.uber_eats_url,
