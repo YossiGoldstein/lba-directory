@@ -17,12 +17,14 @@ export default function BusinessImage({ business, className = "w-full h-full obj
     return PLACEHOLDER;
   };
 
+  const yPos = business.cover_photo_y_position ?? 50;
+
   return (
     <img
       src={getImageSrc()}
       alt={business.business_name}
       className={className}
-      style={{ ...style, objectPosition: `center ${business.cover_photo_y_position ?? 50}%` }}
+      style={{ ...style, objectPosition: `center ${yPos}%` }}
       onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER; }}
     />
   );

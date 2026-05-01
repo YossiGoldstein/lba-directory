@@ -126,7 +126,12 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <CoverPhotoUpload value={coverPhotoUrl} onChange={setCoverPhotoUrl} yPosition={coverPhotoYPosition} onYPositionChange={setCoverPhotoYPosition} />
+          <CoverPhotoUpload
+            value={coverPhotoUrl}
+            onChange={setCoverPhotoUrl}
+            yPosition={coverPhotoYPosition}
+            onYPositionChange={setCoverPhotoYPosition}
+          />
         </CardContent>
       </Card>
 
