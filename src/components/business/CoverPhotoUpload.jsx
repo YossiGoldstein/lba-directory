@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Upload, X, AlertTriangle, Info } from "lucide-react";
 import { toast } from "sonner";
+import { fixImageUrl } from "@/components/lib/imageUtils";
 
 export default function CoverPhotoUpload({ value, onChange, yPosition = 50, onYPositionChange }) {
   const [isUploading, setIsUploading] = useState(false);
@@ -92,7 +93,12 @@ export default function CoverPhotoUpload({ value, onChange, yPosition = 50, onYP
       ) : (
         <div className="space-y-3">
           <div className="relative rounded-lg overflow-hidden border-2 border-cyan-400" style={{ aspectRatio: "3/1" }}>
-            <img src={value} alt="Cover photo preview" className="w-full h-full object-cover" style={{ objectPosition: `center ${yPosition}%` }} />
+            <img
+              src={fixImageUrl(value)}
+              alt="Cover photo preview"
+              className="w-full h-full object-cover"
+              style={{ objectPosition: `center ${yPosition}%` }}
+            />
             <button
               type="button"
               onClick={() => { onChange(""); setWarning(""); setError(""); }}
@@ -104,24 +110,37 @@ export default function CoverPhotoUpload({ value, onChange, yPosition = 50, onYP
               Cover Photo Preview
             </div>
           </div>
+
           {onYPositionChange && (
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-gray-700">Adjust vertical position</p>
-              <div className="flex items-center gap-3">
-                <span className="text-xs text-gray-500 w-8">Top</span>
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={yPosition}
-                  onChange={(e) => onYPositionChange(Number(e.target.value))}
-                  className="flex-1"
-                />
-                <span className="text-xs text-gray-500 w-12">Bottom</span>
+            <div className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 space-y-2">
+              <div className="flex items-center justify-between text-sm font-medium text-gray-700">
+                <span>Adjust vertical position</span>
+                <span className="text-xs text-gray-500">
+                  {yPosition <= 20 ? "Top" : yPosition >= 80 ? "Bottom" : yPosition === 50 ? "Center" : yPosition < 50 ? "Upper" : "Lower"}
+                </span>
               </div>
-              <p className="text-xs text-gray-400 text-center">Center</p>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={yPosition}
+                onChange={(e) => onYPositionChange(Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-cyan-600"
+              />
+              <div className="flex justify-between text-xs text-gray-400">
+                <span>Top</span>
+                <span>Center</span>
+                <span>Bottom</span>
+              </div>
             </div>
           )}
+
+          <div className="text-center">
+            <input type="file" id="cover-photo-replace" accept="image/*" onChange={handleUpload} className="hidden" disabled={isUploading} />
+            <label htmlFor="cover-photo-replace" className="text-sm text-cyan-600 hover:text-cyan-700 cursor-pointer underline">
+              {isUploading ? "Uploading..." : "Replace photo"}
+            </label>
+          </div>
         </div>
       )}
     </div>
