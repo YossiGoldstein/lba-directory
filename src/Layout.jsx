@@ -329,6 +329,17 @@ export default function Layout({ children, currentPageName }) {
             <p className="text-sm text-gray-500">
               Designed for the Lakewood community.
             </p>
+            <p className="text-xs text-gray-600 mt-2">
+              Designed & powered by{" "}
+              <a
+                href="https://aisavvy.us/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-500 hover:text-cyan-400 transition-colors"
+              >
+                AI SAVVY
+              </a>
+            </p>
           </div>
         </div>
       </footer>
