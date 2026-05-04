@@ -277,11 +277,13 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
 
   const handleSetAsCover = (index) => {
     const newGallery = [...formData.gallery_images];
-    const [coverImage] = newGallery.splice(index, 1);
+    const coverImage = newGallery[index];
+    newGallery.splice(index, 1);
     newGallery.unshift(coverImage);
     setFormData({
       ...formData,
       gallery_images: newGallery,
+      cover_photo_url: coverImage,
     });
     toast.success("Cover image updated!");
   };
