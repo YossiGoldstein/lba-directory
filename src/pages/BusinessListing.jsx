@@ -801,7 +801,7 @@ export default function BusinessListing() {
                 <div className="text-5xl mb-4">📧</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">Check Your Email!</h3>
                 <p className="text-gray-600 mb-6">
-                  We sent a claim link to <strong>{customer?.email || user?.email}</strong>.<br />
+                  We sent a claim link to <strong>{customer?.email || (localStorage.getItem("lba_customer") ? JSON.parse(localStorage.getItem("lba_customer")).email : "")}</strong>.<br />
                   Click the link in the email to claim <strong>{business.business_name}</strong>.
                 </p>
                 <p className="text-sm text-gray-400 mb-6">The link expires in 24 hours.</p>
