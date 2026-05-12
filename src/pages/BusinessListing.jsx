@@ -527,15 +527,6 @@ export default function BusinessListing() {
                 {isLoadingUser ? 'Loading...' : isFavorite ? 'Saved' : 'Add to Favorites'}
               </Button>
 
-              {(!business.owner_id || business.owner_id === "lba_directory") && !business.claim_disabled && (
-                <Button
-                  size="sm"
-                  onClick={handleClaimBusiness}
-                  className="flex-1 min-w-[140px] bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:opacity-90 text-white font-semibold text-sm"
-                >
-                  🏢 Claim This Business
-                </Button>
-              )}
 
               {((business.latitude && business.longitude) || business.address_line1) && (
                 <Button
