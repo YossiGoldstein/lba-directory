@@ -358,45 +358,6 @@ export default function BusinessListing() {
   };
 
   const [showReviewForm, setShowReviewForm] = useState(false);
-  const [showClaimModal, setShowClaimModal] = useState(false);
-  const [claimLoading, setClaimLoading] = useState(false);
-  const [claimSent, setClaimSent] = useState(false);
-
-  const handleClaimBusiness = async () => {
-    const customerData = localStorage.getItem("lba_customer");
-    if (!customerData) {
-      window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(window.location.pathname + window.location.search);
-      return;
-    }
-    setShowClaimModal(true);
-  };
-
-  const handleSendClaimEmail = async () => {
-    setClaimLoading(true);
-    try {
-      // Use customer from localStorage (custom auth system)
-      const customerData = localStorage.getItem("lba_customer");
-      const customerInfo = customerData ? JSON.parse(customerData) : null;
-
-      const response = await base44.functions.invoke("sendClaimEmail", {
-        businessId,
-        userId: customerInfo?.id,
-        userEmail: customerInfo?.email,
-        userName: customerInfo?.full_name,
-      });
-      if (response.data?.success) {
-        setClaimSent(true);
-        toast.success("Claim email sent successfully!");
-      } else {
-        toast.error(response.data?.error || "Failed to send claim email.");
-      }
-    } catch (error) {
-      console.error("Claim error:", error);
-      toast.error(error.message || "Failed to send claim email");
-    } finally {
-      setClaimLoading(false);
-    }
-  };
 
   const handleSubmitReview = () => {
     const customerData = localStorage.getItem("lba_customer");
@@ -782,45 +743,6 @@ export default function BusinessListing() {
           />
         </div>
       </div>
-
-      {/* Claim Business Modal */}
-      {showClaimModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
-            {claimSent ? (
-              <>
-                <div className="text-5xl mb-4">📧</div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">Check Your Email!</h3>
-                <p className="text-gray-600 mb-6">
-                  We sent a claim link to <strong>{customer?.email || (localStorage.getItem("lba_customer") ? JSON.parse(localStorage.getItem("lba_customer")).email : "")}</strong>.<br />
-                  Click the link in the email to claim <strong>{business.business_name}</strong>.
-                </p>
-                <p className="text-sm text-gray-400 mb-6">The link expires in 24 hours.</p>
-                <Button onClick={() => { setShowClaimModal(false); setClaimSent(false); }} className="w-full">Close</Button>
-              </>
-            ) : (
-              <>
-                <div className="text-5xl mb-4">🏢</div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">Claim This Business</h3>
-                <p className="text-gray-600 mb-6">
-                  Are you the owner of <strong>{business.business_name}</strong>?<br />
-                  We'll send a verification link to your email.
-                </p>
-                <div className="flex flex-col gap-3">
-                  <Button
-                    onClick={handleSendClaimEmail}
-                    disabled={claimLoading}
-                    className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:opacity-90 text-white w-full font-semibold"
-                  >
-                    {claimLoading ? "Sending..." : "Send Claim Email"}
-                  </Button>
-                  <Button variant="outline" onClick={() => setShowClaimModal(false)} className="w-full">Cancel</Button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Image Lightbox */}
       {selectedImage && (
