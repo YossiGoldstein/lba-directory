@@ -20,15 +20,19 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    const user = await base44.auth.me();
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { businessId } = await req.json();
+    const body = await req.json();
+    const { businessId, userId, userEmail, userName, targetEmail, adminSent } = body;
 
     if (!businessId) {
       return Response.json({ error: 'businessId is required' }, { status: 400 });
+    }
+
+    // Admin sends to targetEmail, regular user sends to their own email
+    const recipientEmail = (adminSent && targetEmail) ? targetEmail : userEmail;
+    const recipientName = userName || 'Business Owner';
+
+    if (!recipientEmail) {
+      return Response.json({ error: 'Email is required' }, { status: 400 });
     }
 
     const businesses = await base44.asServiceRole.entities.Business.filter({ id: businessId });
@@ -37,11 +41,12 @@ Deno.serve(async (req) => {
     }
     const business = businesses[0];
 
-    if (business.owner_id) {
+    // Allow claiming if no owner OR if owner is the placeholder "lba_directory"
+    if (business.owner_id && business.owner_id !== 'lba_directory') {
       return Response.json({ error: 'This business has already been claimed' }, { status: 400 });
     }
 
-    const token = generateToken(businessId, user.email);
+    const token = generateToken(businessId, recipientEmail);
     const appUrl = req.headers.get('origin') || 'https://lbadirectory.com';
     const claimUrl = `${appUrl}/ClaimBusiness?token=${token}`;
 
@@ -65,9 +70,9 @@ Deno.serve(async (req) => {
           <tr>
             <td style="padding:40px 40px 32px;">
               <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#111827;">Claim Your Business</h1>
-              <p style="margin:0 0 24px;font-size:15px;color:#6b7280;">Hi ${user.full_name || 'there'},</p>
+              <p style="margin:0 0 24px;font-size:15px;color:#6b7280;">Hi ${recipientName},</p>
               <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.6;">
-                You requested to claim <strong style="color:#003D5C;">${business.business_name}</strong> on LBA Directory.
+                You have been invited to claim <strong style="color:#003D5C;">${business.business_name}</strong> on LBA Directory.
               </p>
               <p style="margin:0 0 32px;font-size:15px;color:#374151;line-height:1.6;">
                 Click the button below to verify your ownership and take control of this listing.
@@ -105,7 +110,7 @@ Deno.serve(async (req) => {
     const encodedSubject = `=?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`;
     const mimeMessage = [
       `From: LBA Directory <office@lbadirectory.com>`,
-      `To: ${user.email}`,
+      `To: ${recipientEmail}`,
       `Subject: ${encodedSubject}`,
       `MIME-Version: 1.0`,
       `Content-Type: text/html; charset=UTF-8`,

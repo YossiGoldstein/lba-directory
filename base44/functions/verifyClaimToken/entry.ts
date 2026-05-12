@@ -22,15 +22,15 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    const user = await base44.auth.me();
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { token } = await req.json();
+    const body = await req.json();
+    const { token, userId, userEmail } = body;
 
     if (!token) {
       return Response.json({ error: 'Token is required' }, { status: 400 });
+    }
+
+    if (!userEmail) {
+      return Response.json({ error: 'User email is required. Please sign in first.' }, { status: 400 });
     }
 
     const decoded = decodeToken(token);
@@ -44,7 +44,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'This claim link has expired. Please request a new one.' }, { status: 400 });
     }
 
-    if (email !== user.email) {
+    // Verify the token was meant for this user's email
+    if (email.toLowerCase() !== userEmail.toLowerCase()) {
       return Response.json({ error: 'This claim link does not belong to your account.' }, { status: 403 });
     }
 
@@ -54,12 +55,14 @@ Deno.serve(async (req) => {
     }
     const business = businesses[0];
 
-    if (business.owner_id) {
+    // Allow claiming if no owner OR if owner is the placeholder "lba_directory"
+    if (business.owner_id && business.owner_id !== 'lba_directory') {
       return Response.json({ error: 'This business has already been claimed.' }, { status: 400 });
     }
 
+    // Set owner_id to the customer's ID from the custom auth system
     await base44.asServiceRole.entities.Business.update(businessId, {
-      owner_id: user.id
+      owner_id: userId || userEmail
     });
 
     return Response.json({
