@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, ExternalLink, Edit, Eye, Trash2, Plus, Mail } from "lucide-react";
+import { Search, ExternalLink, Edit, Eye, Trash2, Plus, Mail, Building2 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
 import AdminEditBusinessModal from "./AdminEditBusinessModal";
@@ -17,6 +17,9 @@ export default function BusinessesTab({ onUpdate }) {
   const [statusFilter, setStatusFilter] = useState("all");
   const [editingBusiness, setEditingBusiness] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [claimModalBusiness, setClaimModalBusiness] = useState(null);
+  const [claimEmail, setClaimEmail] = useState("");
+  const [claimSending, setClaimSending] = useState(false);
 
   const { data: businesses = [], isLoading, refetch } = useQuery({
     queryKey: ["admin-businesses"],
@@ -122,6 +125,38 @@ export default function BusinessesTab({ onUpdate }) {
   const handleSendPasswordEmail = (business) => {
     if (confirm(`Send password setup email to ${business.business_name} (${business.email})?`)) {
       sendPasswordEmailMutation.mutate(business.id);
+    }
+  };
+
+  const handleOpenClaimModal = (business) => {
+    setClaimModalBusiness(business);
+    setClaimEmail(business.email || "");
+  };
+
+  const handleSendClaimEmail = async () => {
+    if (!claimEmail || !claimEmail.includes("@")) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    setClaimSending(true);
+    try {
+      const response = await base44.functions.invoke("sendClaimEmail", {
+        businessId: claimModalBusiness.id,
+        targetEmail: claimEmail,
+        adminSent: true,
+      });
+      if (response.data?.success) {
+        toast.success(`Claim email sent to ${claimEmail}`);
+        setClaimModalBusiness(null);
+        setClaimEmail("");
+      } else {
+        toast.error(response.data?.error || "Failed to send claim email");
+      }
+    } catch (error) {
+      console.error("Claim email error:", error);
+      toast.error(error.message || "Failed to send claim email");
+    } finally {
+      setClaimSending(false);
     }
   };
 
@@ -251,6 +286,17 @@ export default function BusinessesTab({ onUpdate }) {
                           <Mail className="w-4 h-4" />
                         </Button>
                       )}
+                      {!business.owner_id && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleOpenClaimModal(business)}
+                          className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                          title="Send Claim Business Email"
+                        >
+                          <Building2 className="w-4 h-4" />
+                        </Button>
+                      )}
                       <Button
                         size="sm"
                         variant="ghost"
@@ -285,6 +331,54 @@ export default function BusinessesTab({ onUpdate }) {
       }}
       onSave={handleEditSave}
     />
+
+    {/* Claim Email Modal */}
+    {claimModalBusiness && (
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8">
+          <div className="text-center mb-6">
+            <div className="text-4xl mb-3">🏢</div>
+            <h3 className="text-xl font-bold text-gray-900">Send Claim Email</h3>
+            <p className="text-sm text-gray-500 mt-1">
+              Send a claim link for <strong>{claimModalBusiness.business_name}</strong>
+            </p>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Business Owner's Email
+              </label>
+              <input
+                type="email"
+                value={claimEmail}
+                onChange={(e) => setClaimEmail(e.target.value)}
+                placeholder="owner@example.com"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                The business owner will receive a link to claim this listing.
+              </p>
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button
+                onClick={handleSendClaimEmail}
+                disabled={claimSending}
+                className="flex-1 bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:opacity-90 text-white font-semibold"
+              >
+                {claimSending ? "Sending..." : "Send Claim Email"}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => { setClaimModalBusiness(null); setClaimEmail(""); }}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
   </>
   );
 }
