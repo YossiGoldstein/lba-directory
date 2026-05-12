@@ -277,7 +277,8 @@ Return JSON: { short_version, medium_version, long_version }`,
       const tagsArray = form.tags.split(",").map(t => t.trim()).filter(Boolean);
 
       const businessData = {
-        owner_id: customer.id,
+        // Only set owner_id for non-admin users (admins add on behalf of businesses)
+        owner_id: customer.role === "admin" ? null : customer.id,
         business_name: form.business_name,
         category_id: form.category_id,
         short_description: form.short_description,
