@@ -374,7 +374,16 @@ export default function BusinessListing() {
   const handleSendClaimEmail = async () => {
     setClaimLoading(true);
     try {
-      const response = await base44.functions.invoke("sendClaimEmail", { businessId });
+      // Use customer from localStorage (custom auth system)
+      const customerData = localStorage.getItem("lba_customer");
+      const customerInfo = customerData ? JSON.parse(customerData) : null;
+
+      const response = await base44.functions.invoke("sendClaimEmail", {
+        businessId,
+        userId: customerInfo?.id,
+        userEmail: customerInfo?.email,
+        userName: customerInfo?.full_name,
+      });
       if (response.data?.success) {
         setClaimSent(true);
         toast.success("Claim email sent successfully!");
@@ -792,7 +801,7 @@ export default function BusinessListing() {
                 <div className="text-5xl mb-4">📧</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">Check Your Email!</h3>
                 <p className="text-gray-600 mb-6">
-                  We sent a claim link to <strong>{user?.email}</strong>.<br />
+                  We sent a claim link to <strong>{customer?.email || user?.email}</strong>.<br />
                   Click the link in the email to claim <strong>{business.business_name}</strong>.
                 </p>
                 <p className="text-sm text-gray-400 mb-6">The link expires in 24 hours.</p>

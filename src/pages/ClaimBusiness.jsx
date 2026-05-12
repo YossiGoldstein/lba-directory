@@ -4,6 +4,7 @@ import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, Loader2, Building2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function ClaimBusiness() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -25,15 +26,21 @@ export default function ClaimBusiness() {
   const handleVerify = async () => {
     setStatus("loading");
     try {
-      // Check if user is authenticated
-      const isAuth = await base44.auth.isAuthenticated();
-      if (!isAuth) {
-        // Redirect to login, then back here
-        base44.auth.redirectToLogin(window.location.href);
+      // Check if user is authenticated via custom auth (localStorage)
+      const customerData = localStorage.getItem("lba_customer");
+      if (!customerData) {
+        // Redirect to custom SignIn page, then back here
+        window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(window.location.href);
         return;
       }
 
-      const response = await base44.functions.invoke("verifyClaimToken", { token });
+      const customer = JSON.parse(customerData);
+
+      const response = await base44.functions.invoke("verifyClaimToken", {
+        token,
+        userId: customer.id,
+        userEmail: customer.email,
+      });
       const data = response.data;
 
       if (data.success) {
