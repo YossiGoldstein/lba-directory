@@ -140,7 +140,7 @@ export default function ReviewsReportsTab() {
                           {getBusinessName(review.business_id)}
                         </h4>
                         <div className="flex gap-1">
-                          {renderStars(review.rating)}
+                          {renderStars(review.general_rating || review.rating || 0)}
                         </div>
                       </div>
                       <p className="text-sm text-gray-600">

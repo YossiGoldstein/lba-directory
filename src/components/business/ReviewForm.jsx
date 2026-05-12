@@ -33,9 +33,11 @@ export default function ReviewForm({ businessId, onReviewSubmitted }) {
       
       const customer = JSON.parse(customerData);
       
+      const avgRating = Math.round((generalRating + servicingRating + pricingRating) / 3);
       await base44.entities.Review.create({
         business_id: businessId,
         user_id: customer.id,
+        rating: avgRating,
         general_rating: generalRating,
         servicing_rating: servicingRating,
         pricing_rating: pricingRating,
