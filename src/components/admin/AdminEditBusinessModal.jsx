@@ -126,6 +126,7 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
         tags: Array.isArray(business.tags) ? business.tags.join(", ") : "",
         status: business.status || "pending",
         listing_tier: business.listing_tier || "free",
+        claim_disabled: business.claim_disabled || false,
       });
     }
   }, [business]);
@@ -1106,6 +1107,25 @@ Format as JSON.`;
               </p>
             </div>
 
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <div>
+                <p className="font-medium text-gray-900 text-sm">Disable "Claim This Business"</p>
+                <p className="text-xs text-gray-500 mt-0.5">When enabled, the claim button won't appear on this listing</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, claim_disabled: !formData.claim_disabled })}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  formData.claim_disabled ? "bg-red-500" : "bg-gray-300"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    formData.claim_disabled ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
 
           </TabsContent>
 

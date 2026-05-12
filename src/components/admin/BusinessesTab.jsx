@@ -286,7 +286,7 @@ export default function BusinessesTab({ onUpdate }) {
                           <Mail className="w-4 h-4" />
                         </Button>
                       )}
-                      {!business.owner_id && (
+                      {(!business.owner_id || business.owner_id === "lba_directory") && !business.claim_disabled && (
                         <Button
                           size="sm"
                           variant="ghost"

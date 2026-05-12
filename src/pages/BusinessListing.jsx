@@ -527,7 +527,7 @@ export default function BusinessListing() {
                 {isLoadingUser ? 'Loading...' : isFavorite ? 'Saved' : 'Add to Favorites'}
               </Button>
 
-              {!business.owner_id && (
+              {(!business.owner_id || business.owner_id === "lba_directory") && !business.claim_disabled && (
                 <Button
                   size="sm"
                   onClick={handleClaimBusiness}
