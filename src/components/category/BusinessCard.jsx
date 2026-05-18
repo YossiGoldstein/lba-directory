@@ -70,17 +70,17 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
           {/* Status Badges - Top Left */}
           <div className="absolute top-2 left-2 flex gap-1.5 z-10 pointer-events-none">
             {hasDeals && (
-              <div className="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md">
-                🔥 Sale
+              <div className="bg-sky-400 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md">
+                Sale
               </div>
             )}
             {businessStatus && (
-              <div className={`backdrop-blur-sm text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md ${
-                businessStatus.type === 'open' 
-                  ? 'bg-green-500 text-white' 
+              <div className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md text-white ${
+                businessStatus.type === 'open'
+                  ? 'bg-green-500'
                   : businessStatus.type === 'appointment'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-red-500 text-white'
+                  ? 'bg-blue-900'
+                  : 'bg-red-500'
               }`}>
                 {businessStatus.label}
               </div>
@@ -88,8 +88,13 @@ export default function BusinessCard({ business, categoryName, hasActiveDeals })
           </div>
 
           {/* Tier Badges - Top Right */}
-          <div className="absolute top-2 right-2 flex gap-1.5 z-10 pointer-events-none">
-            {business.listing_tier === 'premium' && (
+          <div className="absolute top-2 right-2 flex gap-1.5 z-10 pointer-events-none items-center">
+            {business.is_lba_sponsor && (
+              <div className="bg-orange-500 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide shadow-md">
+                LBA Sponsor
+              </div>
+            )}
+            {(business.listing_tier === 'pro' || business.listing_tier === 'premium') && (
               <div className="bg-white/70 backdrop-blur-sm p-1 rounded shadow-md">
                 <Zap className="w-4 h-4 text-yellow-500 fill-yellow-400" />
               </div>
