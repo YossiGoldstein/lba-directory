@@ -13,6 +13,11 @@ export default function SearchResults() {
 
   const [isSearching, setIsSearching] = useState(true);
   const [matchedBusinesses, setMatchedBusinesses] = useState([]);
+  const [deals, setDeals] = useState([]);
+
+  useEffect(() => {
+    base44.entities.Deal.list().then(setDeals).catch(() => setDeals([]));
+  }, []);
 
   useEffect(() => {
     if (searchQuery) {
@@ -38,6 +43,16 @@ export default function SearchResults() {
     } finally {
       setIsSearching(false);
     }
+  };
+
+  const hasActiveDeals = (businessId) => {
+    const now = new Date();
+    return deals.some((deal) => {
+      if (deal.business_id !== businessId || !deal.is_active) return false;
+      const start = new Date(deal.start_date);
+      const end = new Date(deal.end_date);
+      return start <= now && end >= now;
+    });
   };
 
   return (
@@ -81,7 +96,7 @@ export default function SearchResults() {
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {matchedBusinesses.map((business) => (
-                        <BusinessCard key={business.id} business={business} />
+                        <BusinessCard key={business.id} business={business} hasActiveDeals={hasActiveDeals(business.id)} />
                       ))}
                     </div>
 

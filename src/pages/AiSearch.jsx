@@ -11,6 +11,11 @@ export default function AiSearch() {
   const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [deals, setDeals] = useState([]);
+
+  useEffect(() => {
+    base44.entities.Deal.list().then(setDeals).catch(() => setDeals([]));
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -21,6 +26,16 @@ export default function AiSearch() {
       runSearch(q);
     }
   }, []);
+
+  const hasActiveDeals = (businessId) => {
+    const now = new Date();
+    return deals.some((deal) => {
+      if (deal.business_id !== businessId || !deal.is_active) return false;
+      const start = new Date(deal.start_date);
+      const end = new Date(deal.end_date);
+      return start <= now && end >= now;
+    });
+  };
 
   const runSearch = async (q) => {
     if (!q?.trim()) return;
@@ -99,7 +114,7 @@ export default function AiSearch() {
             {businesses.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {businesses.map((business) => (
-                  <BusinessCard key={business.id} business={business} />
+                  <BusinessCard key={business.id} business={business} hasActiveDeals={hasActiveDeals(business.id)} />
                 ))}
               </div>
             ) : (
