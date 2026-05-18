@@ -1,5 +1,6 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
+const BASE_URL = 'https://www.lbadirectory.com';
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
 function generateToken(businessId: string, email: string): string {
@@ -14,6 +15,48 @@ function mimeToBase64Url(mimeStr: string): string {
     binary += String.fromCharCode(bytes[i]);
   }
   return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+async function sendGmail(accessToken: string, { to, subject, htmlBody, plainText }: { to: string; subject: string; htmlBody: string; plainText: string }) {
+  const boundary = `boundary_${Date.now()}`;
+
+  const mime = [
+    `To: ${to}`,
+    `Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`,
+    'MIME-Version: 1.0',
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: 8bit',
+    '',
+    plainText,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/html; charset=UTF-8',
+    'Content-Transfer-Encoding: 8bit',
+    '',
+    htmlBody,
+    '',
+    `--${boundary}--`,
+  ].join('\r\n');
+
+  const raw = mimeToBase64Url(mime);
+
+  const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ raw }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Gmail send error: ${err}`);
+  }
+  return res.json();
 }
 
 Deno.serve(async (req) => {
@@ -47,96 +90,80 @@ Deno.serve(async (req) => {
     }
 
     const token = generateToken(businessId, recipientEmail);
-    const appUrl = req.headers.get('origin') || 'https://lbadirectory.com';
-    const claimUrl = `${appUrl}/ClaimBusiness?token=${token}`;
+    const claimUrl = `${BASE_URL}/ClaimBusiness?token=${token}`;
 
-    const emailHtml = `<!DOCTYPE html>
+    const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
+
+    const plainText = [
+      `Claim Your Business: ${business.business_name}`,
+      '',
+      `Hi ${recipientName},`,
+      '',
+      `You have been invited to claim "${business.business_name}" on LBA Directory.`,
+      '',
+      'Click the link below to verify your ownership and take control of this listing:',
+      claimUrl,
+      '',
+      'This link expires in 24 hours.',
+      '',
+      'If you did not request this, you can safely ignore this email.',
+      '',
+      'Best regards,',
+      'The LBA Directory Team',
+      'office@lbadirectory.com | 732-600-1260',
+    ].join('\n');
+
+    const htmlBody = `<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Claim Your Business</title>
-</head>
-<body style="margin:0;padding:0;background-color:#f0f4f8;font-family:Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f0f4f8;padding:40px 20px;">
-    <tr>
-      <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1);">
-          <tr>
-            <td style="background:linear-gradient(135deg,#003D5C 0%,#0E8DAA 100%);padding:32px 40px;text-align:center;">
-              <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/3a0b2e08d_LBA-directory-logo-color.png" alt="LBA Directory" style="height:50px;width:auto;" />
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:40px 40px 32px;">
-              <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#111827;">Claim Your Business</h1>
-              <p style="margin:0 0 24px;font-size:15px;color:#6b7280;">Hi ${recipientName},</p>
-              <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.6;">
-                You have been invited to claim <strong style="color:#003D5C;">${business.business_name}</strong> on LBA Directory.
-              </p>
-              <p style="margin:0 0 32px;font-size:15px;color:#374151;line-height:1.6;">
-                Click the button below to verify your ownership and take control of this listing.
-              </p>
-              <table cellpadding="0" cellspacing="0" width="100%">
-                <tr>
-                  <td align="center">
-                    <a href="${claimUrl}" style="display:inline-block;background:linear-gradient(135deg,#27C666 0%,#1FAF5A 100%);color:#ffffff;text-decoration:none;font-size:16px;font-weight:700;padding:16px 40px;border-radius:8px;letter-spacing:0.5px;">
-                      Claim Your Business
-                    </a>
-                  </td>
-                </tr>
-              </table>
-              <p style="margin:32px 0 0;font-size:13px;color:#9ca3af;text-align:center;">
-                This link expires in <strong>24 hours</strong>. If you didn't request this, you can safely ignore this email.
-              </p>
-            </td>
-          </tr>
-          <tr>
-            <td style="background:#f9fafb;padding:24px 40px;text-align:center;border-top:1px solid #e5e7eb;">
-              <p style="margin:0 0 4px;font-size:13px;color:#9ca3af;">© ${new Date().getFullYear()} LBA Directory. All rights reserved.</p>
-              <p style="margin:0;font-size:12px;color:#d1d5db;">Powered by LBA Leagues &amp; TIG Solutions</p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:32px 0;">
+<tr><td align="center">
+<table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border-radius:8px;border:1px solid #e2e8f0;">
+<tr><td style="background:#0e4f6e;padding:32px 40px;text-align:center;border-radius:8px 8px 0 0;">
+<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/3a0b2e08d_LBA-directory-logo-color.png" alt="LBA Directory" height="48" style="display:block;margin:0 auto 14px;">
+<h1 style="margin:0;color:#ffffff;font-size:22px;">Claim Your Business</h1>
+<p style="margin:6px 0 0;color:#bae6fd;font-size:14px;">Take control of your listing on LBA Directory</p>
+</td></tr>
+<tr><td style="padding:32px 40px;">
+<p style="margin:0 0 16px;color:#374151;font-size:15px;">Hi ${recipientName},</p>
+<p style="margin:0 0 24px;color:#374151;font-size:15px;line-height:1.7;">
+  You have been invited to claim <strong style="color:#0e4f6e;">${business.business_name}</strong> on LBA Directory.<br>
+  Click the button below to verify your ownership and take control of this listing.
+</p>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+<tr><td align="center">
+<a href="${claimUrl}" style="display:inline-block;background:#27C666;color:#ffffff;padding:14px 36px;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;">Claim Your Business</a>
+</td></tr>
+</table>
+<p style="margin:0 0 8px;color:#6b7280;font-size:13px;text-align:center;">This link expires in <strong>24 hours</strong>.</p>
+<p style="margin:0 0 24px;color:#9ca3af;font-size:13px;text-align:center;">If you didn't request this, you can safely ignore this email.</p>
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:0 0 20px;">
+<p style="margin:0 0 4px;font-size:13px;color:#374151;">Questions? Contact us:</p>
+<p style="margin:0 0 4px;font-size:13px;color:#374151;">Email: <a href="mailto:office@lbadirectory.com" style="color:#0891b2;text-decoration:none;">office@lbadirectory.com</a></p>
+<p style="margin:0;font-size:13px;color:#374151;">Phone: <a href="tel:7326001260" style="color:#0891b2;text-decoration:none;">732-600-1260</a></p>
+</td></tr>
+<tr><td style="background:#1e293b;padding:16px 40px;text-align:center;border-radius:0 0 8px 8px;">
+<p style="margin:0;color:#94a3b8;font-size:12px;">LBA Directory &bull; Serving Lakewood, Toms River, Jackson, Brick, Howell and Manchester</p>
+<p style="margin:4px 0 0;font-size:12px;"><a href="${BASE_URL}" style="color:#64748b;text-decoration:none;">www.lbadirectory.com</a></p>
+</td></tr>
+</table>
+</td></tr>
+</table>
 </body>
 </html>`;
 
-    const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
-    const subject = `Claim Your Business: ${business.business_name}`;
-
-    const encodedSubject = `=?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`;
-    const mimeMessage = [
-      `From: LBA Directory <office@lbadirectory.com>`,
-      `To: ${recipientEmail}`,
-      `Subject: ${encodedSubject}`,
-      `MIME-Version: 1.0`,
-      `Content-Type: text/html; charset=UTF-8`,
-      ``,
-      emailHtml,
-    ].join('\r\n');
-
-    const encodedMessage = mimeToBase64Url(mimeMessage);
-
-    const gmailRes = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ raw: encodedMessage }),
+    await sendGmail(accessToken, {
+      to: recipientEmail,
+      subject: `Claim Your Business: ${business.business_name}`,
+      htmlBody,
+      plainText,
     });
 
-    if (!gmailRes.ok) {
-      const errText = await gmailRes.text();
-      throw new Error(`Gmail API error: ${gmailRes.status} ${errText}`);
-    }
-
-    return Response.json({ success: true, message: 'Claim email sent successfully' });
+    return Response.json({ success: true, message: `Claim email sent to ${recipientEmail}` });
 
   } catch (error) {
+    console.error('Error sending claim email:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
