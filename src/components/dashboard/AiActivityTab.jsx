@@ -18,9 +18,8 @@ export default function AiActivityTab({ user }) {
   const { data: aiInteractions = [], isLoading } = useQuery({
     queryKey: ["aiInteractions", user?.id],
     queryFn: async () => {
-      const allInteractions = await base44.entities.AiInteraction.list();
-      return allInteractions
-        .filter(i => i.user_id === user.id)
+      const interactions = await base44.entities.AiInteraction.filter({ user_id: user.id });
+      return interactions
         .sort((a, b) => new Date(b.created_date) - new Date(a.created_date))
         .slice(0, 20); // Last 20 interactions
     },
@@ -31,8 +30,7 @@ export default function AiActivityTab({ user }) {
   const { data: allBusinesses = [] } = useQuery({
     queryKey: ["businesses"],
     queryFn: async () => {
-      const biz = await base44.entities.Business.list();
-      return biz.filter(b => b.status === "approved");
+      return await base44.entities.Business.filter({ status: "approved" });
     },
   });
 

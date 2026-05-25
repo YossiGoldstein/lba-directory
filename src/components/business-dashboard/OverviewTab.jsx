@@ -13,10 +13,8 @@ export default function OverviewTab({ business, deals = [] }) {
   const { data: reviews = [] } = useQuery({
     queryKey: ["businessReviews", business.id],
     queryFn: async () => {
-      const allReviews = await base44.entities.Review.list();
-      return allReviews
-        .filter(r => r.business_id === business.id && r.is_approved)
-        .sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+      const reviews = await base44.entities.Review.filter({ business_id: business.id, is_approved: true });
+      return reviews.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },
   });
 
@@ -33,8 +31,8 @@ export default function OverviewTab({ business, deals = [] }) {
   const { data: favoritesCount = 0 } = useQuery({
     queryKey: ["businessFavorites", business.id],
     queryFn: async () => {
-      const allFavorites = await base44.entities.Favorite.list();
-      return allFavorites.filter(f => f.business_id === business.id).length;
+      const favs = await base44.entities.Favorite.filter({ business_id: business.id });
+      return favs.length;
     },
   });
 

@@ -16,8 +16,7 @@ export default function NotificationsTab({ user }) {
   const { data: notifications = [], isLoading } = useQuery({
     queryKey: ["user-notifications", user.id],
     queryFn: async () => {
-      const allNotifications = await base44.entities.Notification.list();
-      const userNotifications = allNotifications.filter(n => n.customer_id === user.id);
+      const userNotifications = await base44.entities.Notification.filter({ customer_id: user.id });
       return userNotifications.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     }
   });
@@ -25,7 +24,7 @@ export default function NotificationsTab({ user }) {
   const { data: businesses = [] } = useQuery({
     queryKey: ["businesses"],
     queryFn: async () => {
-      return await base44.entities.Business.list();
+      return await base44.entities.Business.filter({ status: "approved" });
     }
   });
 

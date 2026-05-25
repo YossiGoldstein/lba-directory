@@ -14,8 +14,7 @@ export default function FavoritesTab({ user }) {
   const { data: favorites = [], isLoading } = useQuery({
     queryKey: ["favorites", user?.id],
     queryFn: async () => {
-      const allFavorites = await base44.entities.Favorite.list();
-      return allFavorites.filter(f => f.user_id === user.id);
+      return await base44.entities.Favorite.filter({ user_id: user.id });
     },
     enabled: !!user?.id,
   });
@@ -24,8 +23,7 @@ export default function FavoritesTab({ user }) {
   const { data: allBusinesses = [] } = useQuery({
     queryKey: ["businesses"],
     queryFn: async () => {
-      const biz = await base44.entities.Business.list();
-      return biz.filter(b => b.status === "approved");
+      return await base44.entities.Business.filter({ status: "approved" });
     },
   });
 

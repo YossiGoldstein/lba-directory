@@ -18,9 +18,8 @@ export default function RecentSearchesTab({ user }) {
   const { data: searchHistory = [], isLoading } = useQuery({
     queryKey: ["searchHistory", user?.id],
     queryFn: async () => {
-      const allSearches = await base44.entities.SearchHistory.list();
-      return allSearches
-        .filter(s => s.user_id === user.id)
+      const searches = await base44.entities.SearchHistory.filter({ user_id: user.id });
+      return searches
         .sort((a, b) => new Date(b.created_date) - new Date(a.created_date))
         .slice(0, 20); // Last 20 searches
     },
@@ -31,8 +30,7 @@ export default function RecentSearchesTab({ user }) {
   const { data: allBusinesses = [] } = useQuery({
     queryKey: ["businesses"],
     queryFn: async () => {
-      const biz = await base44.entities.Business.list();
-      return biz.filter(b => b.status === "approved");
+      return await base44.entities.Business.filter({ status: "approved" });
     },
   });
 

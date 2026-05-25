@@ -10,10 +10,8 @@ export default function ReviewsTab({ business }) {
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["businessOwnerReviews", business.id],
     queryFn: async () => {
-      const allReviews = await base44.entities.Review.list();
-      return allReviews
-        .filter(r => r.business_id === business.id)
-        .sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+      const reviews = await base44.entities.Review.filter({ business_id: business.id });
+      return reviews.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },
   });
 

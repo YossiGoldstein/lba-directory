@@ -209,8 +209,7 @@ export default function BusinessListing() {
   const { data: allCategories = [] } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const cats = await base44.entities.Category.list();
-      return cats.filter((c) => c.is_active);
+      return await base44.entities.Category.filter({ is_active: true });
     },
   });
 
@@ -225,10 +224,9 @@ export default function BusinessListing() {
   const { data: deals = [] } = useQuery({
     queryKey: ["deals", businessId],
     queryFn: async () => {
-      const allDeals = await base44.entities.Deal.list();
+      const allDeals = await base44.entities.Deal.filter({ business_id: businessId, is_active: true });
       const now = new Date();
       return allDeals.filter((deal) => {
-        if (deal.business_id !== businessId || !deal.is_active) return false;
         const start = new Date(deal.start_date);
         const end = new Date(deal.end_date);
         return start <= now && end >= now;
@@ -243,18 +241,26 @@ export default function BusinessListing() {
   } = useQuery({
     queryKey: ["reviews", businessId],
     queryFn: async () => {
-      const [allReviews, allCustomers] = await Promise.all([
-        base44.entities.Review.list(),
-        base44.entities.Customer.list()
-      ]);
-      
-      return allReviews
-        .filter((r) => r.business_id === businessId && r.is_approved)
-        .map((review) => ({
-          ...review,
-          user: allCustomers.find(c => c.id === review.user_id) || { full_name: "Anonymous" }
-        }))
-        .sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+      const approvedReviews = await base44.entities.Review.filter({ business_id: businessId, is_approved: true });
+      approvedReviews.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+
+      if (approvedReviews.length === 0) return [];
+
+      // Fetch each unique reviewer individually
+      const reviewerIds = [...new Set(approvedReviews.map(r => r.user_id).filter(Boolean))];
+      const customerMap = {};
+      await Promise.all(
+        reviewerIds.map(async (uid) => {
+          try {
+            const found = await base44.entities.Customer.filter({ id: uid });
+            if (found[0]) customerMap[uid] = found[0];
+          } catch {}
+        })
+      );
+      return approvedReviews.map((review) => ({
+        ...review,
+        user: customerMap[review.user_id] || { full_name: "Anonymous" }
+      }));
     },
     enabled: !!businessId,
   });
@@ -262,14 +268,8 @@ export default function BusinessListing() {
   const { data: relatedBusinesses = [] } = useQuery({
     queryKey: ["relatedBusinesses", business?.category_id, businessId],
     queryFn: async () => {
-      const businesses = await base44.entities.Business.list();
-      return businesses
-        .filter((b) => 
-          b.category_id === business.category_id && 
-          b.id !== businessId && 
-          b.status === "approved"
-        )
-        .slice(0, 3);
+      const businesses = await base44.entities.Business.filter({ category_id: business.category_id, status: "approved" });
+      return businesses.filter(b => b.id !== businessId).slice(0, 3);
     },
     enabled: !!business?.category_id && !!businessId,
   });

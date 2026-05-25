@@ -30,10 +30,8 @@ export default function DealsTab({ business }) {
   const { data: deals = [], isLoading } = useQuery({
     queryKey: ["businessDeals", business.id],
     queryFn: async () => {
-      const allDeals = await base44.entities.Deal.list();
-      return allDeals
-        .filter(d => d.business_id === business.id)
-        .sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+      const deals = await base44.entities.Deal.filter({ business_id: business.id });
+      return deals.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },
   });
 

@@ -13,10 +13,8 @@ export default function MyReviewsTab({ user }) {
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["myReviews", user?.id],
     queryFn: async () => {
-      const allReviews = await base44.entities.Review.list();
-      return allReviews
-        .filter(r => r.user_id === user.id)
-        .sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+      const reviews = await base44.entities.Review.filter({ user_id: user.id });
+      return reviews.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },
     enabled: !!user?.id,
   });
@@ -25,8 +23,7 @@ export default function MyReviewsTab({ user }) {
   const { data: allBusinesses = [] } = useQuery({
     queryKey: ["businesses"],
     queryFn: async () => {
-      const biz = await base44.entities.Business.list();
-      return biz.filter(b => b.status === "approved");
+      return await base44.entities.Business.filter({ status: "approved" });
     },
   });
 
