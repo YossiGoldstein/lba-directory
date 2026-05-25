@@ -5,58 +5,7 @@ const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
 function generateToken(businessId: string, email: string): string {
   const payload = `${businessId}:${email}:${Date.now() + TOKEN_TTL_MS}`;
-  return btoa(payload).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-}
-
-function mimeToBase64Url(mimeStr: string): string {
-  const bytes = new TextEncoder().encode(mimeStr);
-  let binary = '';
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
-
-async function sendGmail(accessToken: string, { to, subject, htmlBody, plainText }: { to: string; subject: string; htmlBody: string; plainText: string }) {
-  const boundary = `boundary_${Date.now()}`;
-
-  const mime = [
-    `To: ${to}`,
-    `Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`,
-    'MIME-Version: 1.0',
-    `Content-Type: multipart/alternative; boundary="${boundary}"`,
-    '',
-    `--${boundary}`,
-    'Content-Type: text/plain; charset=UTF-8',
-    'Content-Transfer-Encoding: 8bit',
-    '',
-    plainText,
-    '',
-    `--${boundary}`,
-    'Content-Type: text/html; charset=UTF-8',
-    'Content-Transfer-Encoding: 8bit',
-    '',
-    htmlBody,
-    '',
-    `--${boundary}--`,
-  ].join('\r\n');
-
-  const raw = mimeToBase64Url(mime);
-
-  const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ raw }),
-  });
-
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Gmail send error: ${err}`);
-  }
-  return res.json();
+  return btoa(unescape(encodeURIComponent(payload))).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
 
 Deno.serve(async (req) => {
@@ -70,7 +19,6 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'businessId is required' }, { status: 400 });
     }
 
-    // Admin sends to targetEmail, regular user sends to their own email
     const recipientEmail = (adminSent && targetEmail) ? targetEmail : userEmail;
     const recipientName = userName || 'Business Owner';
 
@@ -84,36 +32,18 @@ Deno.serve(async (req) => {
     }
     const business = businesses[0];
 
-    // Allow claiming if no owner OR if owner is the placeholder "lba_directory"
     if (business.owner_id && business.owner_id !== 'lba_directory') {
       return Response.json({ error: 'This business has already been claimed' }, { status: 400 });
     }
 
     const token = generateToken(businessId, recipientEmail);
     const claimUrl = `${BASE_URL}/ClaimBusiness?token=${token}`;
+    const businessName = (business.business_name || '').replace(/&amp;/g, '&');
 
-    const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
-
-    const plainText = [
-      `Claim Your Business: ${business.business_name}`,
-      '',
-      `Hi ${recipientName},`,
-      '',
-      `You have been invited to claim "${business.business_name}" on LBA Directory.`,
-      '',
-      'Click the link below to verify your ownership and take control of this listing:',
-      claimUrl,
-      '',
-      'This link expires in 24 hours.',
-      '',
-      'If you did not request this, you can safely ignore this email.',
-      '',
-      'Best regards,',
-      'The LBA Directory Team',
-      'office@lbadirectory.com | 732-600-1260',
-    ].join('\n');
-
-    const htmlBody = `<!DOCTYPE html>
+    await base44.asServiceRole.integrations.Core.SendEmail({
+      to: recipientEmail,
+      subject: `Claim Your Business: ${businessName}`,
+      body: `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
 <body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">
@@ -128,7 +58,7 @@ Deno.serve(async (req) => {
 <tr><td style="padding:32px 40px;">
 <p style="margin:0 0 16px;color:#374151;font-size:15px;">Hi ${recipientName},</p>
 <p style="margin:0 0 24px;color:#374151;font-size:15px;line-height:1.7;">
-  You have been invited to claim <strong style="color:#0e4f6e;">${business.business_name}</strong> on LBA Directory.<br>
+  You have been invited to claim <strong style="color:#0e4f6e;">${businessName}</strong> on LBA Directory.<br>
   Click the button below to verify your ownership and take control of this listing.
 </p>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
@@ -140,24 +70,17 @@ Deno.serve(async (req) => {
 <p style="margin:0 0 24px;color:#9ca3af;font-size:13px;text-align:center;">If you didn't request this, you can safely ignore this email.</p>
 <hr style="border:none;border-top:1px solid #e5e7eb;margin:0 0 20px;">
 <p style="margin:0 0 4px;font-size:13px;color:#374151;">Questions? Contact us:</p>
-<p style="margin:0 0 4px;font-size:13px;color:#374151;">Email: <a href="mailto:office@lbadirectory.com" style="color:#0891b2;text-decoration:none;">office@lbadirectory.com</a></p>
-<p style="margin:0;font-size:13px;color:#374151;">Phone: <a href="tel:7326001260" style="color:#0891b2;text-decoration:none;">732-600-1260</a></p>
+<p style="margin:0 0 4px;font-size:13px;color:#374151;">Email: <a href="mailto:office@lbadirectory.com" style="color:#0891b2;">office@lbadirectory.com</a></p>
+<p style="margin:0;font-size:13px;color:#374151;">Phone: <a href="tel:7326001260" style="color:#0891b2;">732-600-1260</a></p>
 </td></tr>
 <tr><td style="background:#1e293b;padding:16px 40px;text-align:center;border-radius:0 0 8px 8px;">
 <p style="margin:0;color:#94a3b8;font-size:12px;">LBA Directory &bull; Serving Lakewood, Toms River, Jackson, Brick, Howell and Manchester</p>
-<p style="margin:4px 0 0;font-size:12px;"><a href="${BASE_URL}" style="color:#64748b;text-decoration:none;">www.lbadirectory.com</a></p>
 </td></tr>
 </table>
 </td></tr>
 </table>
 </body>
-</html>`;
-
-    await sendGmail(accessToken, {
-      to: recipientEmail,
-      subject: `Claim Your Business: ${business.business_name}`,
-      htmlBody,
-      plainText,
+</html>`
     });
 
     return Response.json({ success: true, message: `Claim email sent to ${recipientEmail}` });
