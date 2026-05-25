@@ -133,10 +133,10 @@ export default function BusinessListing() {
       try {
         const customerData = localStorage.getItem("lba_customer");
         if (customerData) {
-          setCustomer(JSON.parse(customerData));
+          const parsed = JSON.parse(customerData);
+          setCustomer(parsed);
+          setUser(parsed);
         }
-        const userData = await base44.auth.me();
-        setUser(userData);
       } catch (error) {
         setUser(null);
       } finally {

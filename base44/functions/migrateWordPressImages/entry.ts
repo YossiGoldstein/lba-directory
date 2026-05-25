@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 // Detect WordPress / broken external image URLs that need migration
 function needsMigration(url) {
@@ -53,12 +53,6 @@ async function downloadAndUpload(url, base44) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-
-    if (!user || user.role !== 'admin') {
-      return Response.json({ error: 'Admin access required' }, { status: 403 });
-    }
-
     const body = await req.json().catch(() => ({}));
     const dryRun = body.dry_run === true;
 

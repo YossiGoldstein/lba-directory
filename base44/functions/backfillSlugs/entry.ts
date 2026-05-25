@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 function generateSlug(name) {
   return name
@@ -13,10 +13,6 @@ function generateSlug(name) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    if (user?.role !== "admin") {
-      return Response.json({ error: "Forbidden" }, { status: 403 });
-    }
 
     const allBusinesses = await base44.asServiceRole.entities.Business.list();
     const usedSlugs = new Map(); // slug -> business.id

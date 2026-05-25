@@ -29,7 +29,7 @@ export default function ReviewsReportsTab() {
   const { data: users = [] } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      return await base44.entities.User.list();
+      return await base44.entities.Customer.list();
     }
   });
 

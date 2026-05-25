@@ -36,13 +36,6 @@ export default function BusinessesTab({ onUpdate }) {
     }
   });
 
-  const { data: users = [] } = useQuery({
-    queryKey: ["users"],
-    queryFn: async () => {
-      return await base44.entities.User.list();
-    }
-  });
-
   const getCategoryName = (categoryId) => {
     const cat = categories.find(c => c.id === categoryId);
     return cat ? cat.name : "Unknown";

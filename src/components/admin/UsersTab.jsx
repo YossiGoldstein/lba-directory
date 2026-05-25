@@ -20,7 +20,7 @@ export default function UsersTab() {
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
-      const userList = await base44.entities.User.list();
+      const userList = await base44.entities.Customer.list();
       return userList.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     }
   });
