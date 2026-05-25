@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
 </html>`
     });
 
-    return Response.json({ success: true, message: `Claim email sent to ${recipientEmail}` });
+    return Response.json({ success: true, message: `Claim email sent to ${recipientEmail}`, business: businessName });
 
   } catch (error) {
     console.error('Error sending claim email:', error);
