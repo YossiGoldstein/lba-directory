@@ -110,8 +110,8 @@ export default function BusinessListing() {
     queryFn: async () => {
       if (legacyId) {
         // Legacy ?id= param — fetch by id then redirect to slug URL
-        const businesses = await base44.entities.Business.list();
-        const found = businesses.find((b) => b.id === legacyId);
+        const results = await base44.entities.Business.filter({ id: legacyId });
+        const found = results[0];
         if (found?.slug) {
           navigate(`/businesslisting/${found.slug}`, { replace: true });
           return found;

@@ -402,7 +402,7 @@ export default function BusinessDashboard() {
                       className="w-full"
                       size="sm"
                     >
-                      <Link to={createPageUrl("BusinessListing") + `?id=${business.id}`}>
+                      <Link to={`/businesslisting/${business.slug || business.id}`}>
                         <Eye className="w-4 h-4 mr-2" />
                         View Public Page
                       </Link>

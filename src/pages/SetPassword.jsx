@@ -97,8 +97,8 @@ export default function SetPassword() {
             setLoading(false);
             return;
           }
-          const customers = await base44.entities.Customer.list();
-          const customer = customers.find(c => c.email === emailParam);
+          const customerResults = await base44.entities.Customer.filter({ email: emailParam });
+          const customer = customerResults[0];
           if (customer) {
             setAccountInfo({ name: customer.full_name, email: customer.email, hasPassword: !!customer.password_hash, type: "customer" });
             setLoading(false);

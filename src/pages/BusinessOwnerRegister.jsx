@@ -53,9 +53,9 @@ export default function BusinessOwnerRegister() {
 
     try {
       // Check if email already exists
-      const customers = await base44.entities.Customer.list();
-      
-      if (customers.some(c => c.email === formData.email)) {
+      const existingCustomers = await base44.entities.Customer.filter({ email: formData.email });
+
+      if (existingCustomers.length > 0) {
         toast.error("This email is already registered");
         setLoading(false);
         return;

@@ -106,8 +106,8 @@ export default function SignIn() {
       }
 
       // Legacy fallback: business owner registered via old flow (Business entity as login)
-      const businesses = await base44.entities.Business.list();
-      const legacyOwner = businesses.find(b => b.email === formData.email && b.password_hash);
+      const businesses = await base44.entities.Business.filter({ email: formData.email });
+      const legacyOwner = businesses.find(b => b.password_hash);
 
       if (legacyOwner) {
         const passwordHash = btoa(formData.password);

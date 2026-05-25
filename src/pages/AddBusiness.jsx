@@ -341,11 +341,12 @@ Return JSON: { short_version, medium_version, long_version }`,
         .replace(/^-|-$/g, "");
 
       // Ensure slug uniqueness
-      const existingBusinesses = await base44.entities.Business.list();
       let slug = rawSlug;
       let counter = 2;
-      while (existingBusinesses.some(b => b.slug === slug)) {
+      let slugExists = await base44.entities.Business.filter({ slug });
+      while (slugExists.length > 0) {
         slug = `${rawSlug}-${counter++}`;
+        slugExists = await base44.entities.Business.filter({ slug });
       }
       businessData.slug = slug;
 

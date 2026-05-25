@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 Deno.serve(async (req) => {
     try {
@@ -11,39 +11,41 @@ Deno.serve(async (req) => {
         }
 
         // Get deal details
-        const deals = await base44.asServiceRole.entities.Deal.list();
-        const deal = deals.find(d => d.id === deal_id);
-        
+        const deals = await base44.asServiceRole.entities.Deal.filter({ id: deal_id });
+        const deal = deals[0];
+
         if (!deal) {
             return Response.json({ error: 'Deal not found' }, { status: 404 });
         }
 
         // Get business details
-        const businesses = await base44.asServiceRole.entities.Business.list();
-        const business = businesses.find(b => b.id === deal.business_id);
-        
+        const businesses = await base44.asServiceRole.entities.Business.filter({ id: deal.business_id });
+        const business = businesses[0];
+
         if (!business) {
             return Response.json({ error: 'Business not found' }, { status: 404 });
         }
 
         // Get all favorites for this business
-        const favorites = await base44.asServiceRole.entities.Favorite.list();
-        const businessFavorites = favorites.filter(f => f.business_id === deal.business_id);
+        const businessFavorites = await base44.asServiceRole.entities.Favorite.filter({ business_id: deal.business_id });
 
         if (businessFavorites.length === 0) {
-            return Response.json({ 
+            return Response.json({
                 message: 'No customers have favorited this business',
-                notified: 0 
+                notified: 0
             });
         }
 
-        // Get all customers
-        const customers = await base44.asServiceRole.entities.Customer.list();
+        // Get customers who favorited this business
+        const customerIds = businessFavorites.map(f => f.user_id).filter(Boolean);
+        const customers = customerIds.length > 0
+            ? await base44.asServiceRole.entities.Customer.filter({ id: { $in: customerIds } })
+            : [];
         
         let notifiedCount = 0;
         const notificationTitle = `New Deal at ${business.business_name}!`;
         const notificationMessage = `${business.business_name} has a new deal: ${deal.title}`;
-        const businessUrl = `https://${req.headers.get('host')}/BusinessListing?id=${business.id}`;
+        const businessUrl = `https://lbadirectory.com/businesslisting/${business.slug || business.id}`;
 
         // Create notifications and send emails
         for (const favorite of businessFavorites) {
