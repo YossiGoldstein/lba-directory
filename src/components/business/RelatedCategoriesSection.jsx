@@ -12,18 +12,18 @@ export default function RelatedCategoriesSection({ business, category, allCatego
   const [suggestedBusinesses, setSuggestedBusinesses] = useState([]);
   const [allBusinesses, setAllBusinesses] = useState([]);
 
-  // Load all businesses once
-  React.useEffect(() => {
-    const loadBusinesses = async () => {
-      try {
-        const bizList = await base44.entities.Business.list();
-        setAllBusinesses(bizList.filter(b => b.status === "approved"));
-      } catch (error) {
-        console.error("Failed to load businesses:", error);
-      }
-    };
-    loadBusinesses();
-  }, []);
+  // Lazy-load businesses only when needed (on first category click)
+  const ensureBusinessesLoaded = async () => {
+    if (allBusinesses.length > 0) return allBusinesses;
+    try {
+      const bizList = await base44.entities.Business.filter({ status: "approved" });
+      setAllBusinesses(bizList);
+      return bizList;
+    } catch (error) {
+      console.error("Failed to load businesses:", error);
+      return [];
+    }
+  };
 
   // Map of category slugs to related category slugs
   const relatedCategoriesMap = {
@@ -67,11 +67,11 @@ export default function RelatedCategoriesSection({ business, category, allCatego
     })
     .slice(0, 4); // Limit to 4
 
-  const extractBusinessesFromResponse = (responseText) => {
+  const extractBusinessesFromResponse = (responseText, bizList) => {
     const businesses = [];
     const responseLines = responseText.toLowerCase();
 
-    allBusinesses.forEach(biz => {
+    (bizList || allBusinesses).forEach(biz => {
       if (biz.id === business.id) return; // Don't include current business
       const businessName = (biz.business_name || "").toLowerCase();
       if (businessName && responseLines.includes(businessName)) {
@@ -87,6 +87,7 @@ export default function RelatedCategoriesSection({ business, category, allCatego
     setSelectedCategory(clickedCategory);
     setAiResponse("");
     setSuggestedBusinesses([]);
+    const loadedBusinesses = await ensureBusinessesLoaded();
 
     try {
       const conv = await base44.agents.createConversation({
@@ -115,7 +116,7 @@ Show businesses in this category that may be relevant, based on the user's inter
           
           if (lastMessage && lastMessage.role === "assistant") {
             setAiResponse(lastMessage.content);
-            const extractedBusinesses = extractBusinessesFromResponse(lastMessage.content);
+            const extractedBusinesses = extractBusinessesFromResponse(lastMessage.content, loadedBusinesses);
             setSuggestedBusinesses(extractedBusinesses);
             setIsLoading(false);
           }

@@ -40,31 +40,28 @@ export default function UserDashboard() {
             role: customer.role || "user"
           };
         } else {
-          userData = await base44.auth.me();
+          // No local session — redirect to sign in
+          window.location.href = createPageUrl("SignIn");
+          return;
         }
 
         setUser(userData);
 
-        const [favorites, reviews, searches, notifications, allBusinesses] = await Promise.all([
-          base44.entities.Favorite.list(),
-          base44.entities.Review.list(),
-          base44.entities.SearchHistory.list(),
-          base44.entities.Notification.list(),
-          base44.entities.Business.list(),
+        const [favorites, reviews, searches, notifications, userBusinesses] = await Promise.all([
+          base44.entities.Favorite.filter({ user_id: userData.id }),
+          base44.entities.Review.filter({ user_id: userData.id }),
+          base44.entities.SearchHistory.filter({ user_id: userData.id }),
+          base44.entities.Notification.filter({ customer_id: userData.id }),
+          base44.entities.Business.filter({ owner_id: userData.id }),
         ]);
 
-        const userBusinesses = allBusinesses.filter(b =>
-          b.owner_id === userData.id ||
-          b.email === userData.email ||
-          b.created_by === userData.email
-        );
         setMyBusinesses(userBusinesses);
 
         setStats({
-          favorites: favorites.filter(f => f.user_id === userData.id).length,
-          reviews: reviews.filter(r => r.user_id === userData.id).length,
-          searches: searches.filter(s => s.user_id === userData.id).length,
-          notifications: notifications.filter(n => n.customer_id === userData.id && !n.is_read).length,
+          favorites: favorites.length,
+          reviews: reviews.length,
+          searches: searches.length,
+          notifications: notifications.filter(n => !n.is_read).length,
         });
 
         setIsLoading(false);
@@ -78,16 +75,16 @@ export default function UserDashboard() {
   const refreshStats = async () => {
     if (!user) return;
     const [favorites, reviews, searches, notifications] = await Promise.all([
-      base44.entities.Favorite.list(),
-      base44.entities.Review.list(),
-      base44.entities.SearchHistory.list(),
-      base44.entities.Notification.list(),
+      base44.entities.Favorite.filter({ user_id: user.id }),
+      base44.entities.Review.filter({ user_id: user.id }),
+      base44.entities.SearchHistory.filter({ user_id: user.id }),
+      base44.entities.Notification.filter({ customer_id: user.id }),
     ]);
     setStats({
-      favorites: favorites.filter(f => f.user_id === user.id).length,
-      reviews: reviews.filter(r => r.user_id === user.id).length,
-      searches: searches.filter(s => s.user_id === user.id).length,
-      notifications: notifications.filter(n => n.customer_id === user.id && !n.is_read).length,
+      favorites: favorites.length,
+      reviews: reviews.length,
+      searches: searches.length,
+      notifications: notifications.filter(n => !n.is_read).length,
     });
   };
 

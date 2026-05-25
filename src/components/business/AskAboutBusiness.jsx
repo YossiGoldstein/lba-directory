@@ -14,24 +14,24 @@ export default function AskAboutBusiness({ business, category, activeDeals }) {
   const [conversation, setConversation] = useState(null);
   const [allBusinesses, setAllBusinesses] = useState([]);
 
-  // Load all businesses once for extraction
-  React.useEffect(() => {
-    const loadBusinesses = async () => {
-      try {
-        const bizList = await base44.entities.Business.list();
-        setAllBusinesses(bizList.filter(b => b.status === "approved"));
-      } catch (error) {
-        console.error("Failed to load businesses:", error);
-      }
-    };
-    loadBusinesses();
-  }, []);
+  // Lazy-load businesses only when a question is asked
+  const ensureBusinessesLoaded = async () => {
+    if (allBusinesses.length > 0) return allBusinesses;
+    try {
+      const bizList = await base44.entities.Business.filter({ status: "approved" });
+      setAllBusinesses(bizList);
+      return bizList;
+    } catch (error) {
+      console.error("Failed to load businesses:", error);
+      return [];
+    }
+  };
 
-  const extractBusinessesFromResponse = (responseText) => {
+  const extractBusinessesFromResponse = (responseText, bizList) => {
     const businesses = [];
     const responseLines = responseText.toLowerCase();
 
-    allBusinesses.forEach(biz => {
+    (bizList || allBusinesses).forEach(biz => {
       if (biz.id === business.id) return; // Don't include current business
       const businessName = (biz.business_name || "").toLowerCase();
       if (businessName && responseLines.includes(businessName)) {
@@ -48,6 +48,7 @@ export default function AskAboutBusiness({ business, category, activeDeals }) {
     setIsAsking(true);
     setAiResponse("");
     setRelatedBusinesses([]);
+    const loadedBusinesses = await ensureBusinessesLoaded();
 
     try {
       // Build business context
@@ -101,7 +102,7 @@ This question comes directly from the Business Page UI.`;
           
           if (lastMessage && lastMessage.role === "assistant") {
             setAiResponse(lastMessage.content);
-            const extractedBusinesses = extractBusinessesFromResponse(lastMessage.content);
+            const extractedBusinesses = extractBusinessesFromResponse(lastMessage.content, loadedBusinesses);
             setRelatedBusinesses(extractedBusinesses);
             setIsAsking(false);
           }
