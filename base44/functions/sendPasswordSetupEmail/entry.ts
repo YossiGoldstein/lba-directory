@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 // Token TTL: 48 hours in milliseconds
 const TOKEN_TTL_MS = 48 * 60 * 60 * 1000;
@@ -27,7 +27,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Business ID is required' }, { status: 400 });
     }
 
-    const business = await base44.asServiceRole.entities.Business.get(businessId);
+    const businesses = await base44.asServiceRole.entities.Business.filter({ id: businessId });
+    const business = businesses[0];
 
     if (!business) {
       return Response.json({ error: 'Business not found' }, { status: 404 });
