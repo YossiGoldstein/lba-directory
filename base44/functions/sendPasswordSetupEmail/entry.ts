@@ -27,8 +27,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Business ID is required' }, { status: 400 });
     }
 
-    const businesses = await base44.asServiceRole.entities.Business.list();
-    const business = businesses.find(b => b.id === businessId);
+    const businesses = await base44.asServiceRole.entities.Business.filter({ id: businessId });
+    const business = businesses[0];
 
     if (!business) {
       return Response.json({ error: 'Business not found' }, { status: 404 });
@@ -126,18 +126,31 @@ Deno.serve(async (req) => {
     // Send via Gmail connector (supports external email addresses)
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
     const subject = `Claim Your Business Listing - ${business.business_name}`;
-    const fromName = 'LBA Directory';
-    const fromEmail = 'office@lbadirectory.com';
 
     const encodedSubject = `=?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`;
+    const boundary = `boundary_${Date.now()}`;
+
+    const plainText = `Hi,\n\nYour business "${business.business_name}" has been approved and is now listed on LBA Directory.\n\nClick the link below to set your password and claim your listing:\n${claimUrl}\n\nThis link is valid for 48 hours.\n\nQuestions? Contact us at office@lbadirectory.com or call 732-600-1260\n\nLBA Directory Team`;
+
     const mimeMessage = [
-      `From: ${fromName} <${fromEmail}>`,
       `To: ${business.email}`,
       `Subject: ${encodedSubject}`,
       `MIME-Version: 1.0`,
+      `Content-Type: multipart/alternative; boundary="${boundary}"`,
+      ``,
+      `--${boundary}`,
+      `Content-Type: text/plain; charset=UTF-8`,
+      `Content-Transfer-Encoding: 8bit`,
+      ``,
+      plainText,
+      ``,
+      `--${boundary}`,
       `Content-Type: text/html; charset=UTF-8`,
+      `Content-Transfer-Encoding: 8bit`,
       ``,
       htmlBody,
+      ``,
+      `--${boundary}--`,
     ].join('\r\n');
 
     const encodedMessage = mimeToBase64Url(mimeMessage);
