@@ -11,6 +11,51 @@ function generateToken(businessId: string, email: string): string {
   }
 }
 
+function mimeToBase64Url(mimeStr: string): string {
+  const bytes = new TextEncoder().encode(mimeStr);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+async function sendGmail(accessToken: string, { to, subject, htmlBody }: { to: string; subject: string; htmlBody: string }) {
+  const boundary = `boundary_${Date.now()}`;
+
+  const mime = [
+    `To: ${to}`,
+    `Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`,
+    'MIME-Version: 1.0',
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/html; charset=UTF-8',
+    'Content-Transfer-Encoding: 8bit',
+    '',
+    htmlBody,
+    '',
+    `--${boundary}--`,
+  ].join('\r\n');
+
+  const raw = mimeToBase64Url(mime);
+
+  const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ raw }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Gmail send error: ${err}`);
+  }
+  return res.json();
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -48,14 +93,23 @@ Deno.serve(async (req) => {
       return Response.json({ error: `Token error: ${e.message}` }, { status: 500 });
     }
 
-    // Step 3: Send email
-    const businessName = (business.business_name || 'Your Business').replace(/&amp;/g, '&');
-    
+    // Step 3: Get Gmail access token
+    let accessToken: string;
     try {
-      await base44.asServiceRole.integrations.Core.SendEmail({
+      const conn = await base44.asServiceRole.connectors.getConnection('gmail');
+      accessToken = conn.accessToken;
+    } catch(e) {
+      return Response.json({ error: `Gmail connection failed: ${e.message}` }, { status: 500 });
+    }
+
+    // Step 4: Send email
+    const businessName = (business.business_name || 'Your Business').replace(/&amp;/g, '&');
+
+    try {
+      await sendGmail(accessToken, {
         to: business.email.trim(),
         subject: `Your Business Listing is Live - ${businessName}`,
-        body: `<!DOCTYPE html>
+        htmlBody: `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
 <body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">

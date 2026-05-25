@@ -8,6 +8,51 @@ function generateToken(businessId: string, email: string): string {
   return btoa(unescape(encodeURIComponent(payload))).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
 
+function mimeToBase64Url(mimeStr: string): string {
+  const bytes = new TextEncoder().encode(mimeStr);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+async function sendGmail(accessToken: string, { to, subject, htmlBody }: { to: string; subject: string; htmlBody: string }) {
+  const boundary = `boundary_${Date.now()}`;
+
+  const mime = [
+    `To: ${to}`,
+    `Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`,
+    'MIME-Version: 1.0',
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/html; charset=UTF-8',
+    'Content-Transfer-Encoding: 8bit',
+    '',
+    htmlBody,
+    '',
+    `--${boundary}--`,
+  ].join('\r\n');
+
+  const raw = mimeToBase64Url(mime);
+
+  const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ raw }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Gmail send error: ${err}`);
+  }
+  return res.json();
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -40,10 +85,9 @@ Deno.serve(async (req) => {
     const claimUrl = `${BASE_URL}/ClaimBusiness?token=${token}`;
     const businessName = (business.business_name || '').replace(/&amp;/g, '&');
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to: recipientEmail,
-      subject: `Claim Your Business: ${businessName}`,
-      body: `<!DOCTYPE html>
+    const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
+
+    const htmlBody = `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
 <body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">
@@ -80,7 +124,12 @@ Deno.serve(async (req) => {
 </td></tr>
 </table>
 </body>
-</html>`
+</html>`;
+
+    await sendGmail(accessToken, {
+      to: recipientEmail,
+      subject: `Claim Your Business: ${businessName}`,
+      htmlBody,
     });
 
     return Response.json({ success: true, message: `Claim email sent to ${recipientEmail}`, business: businessName });
