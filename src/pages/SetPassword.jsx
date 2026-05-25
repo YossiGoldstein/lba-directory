@@ -67,8 +67,8 @@ export default function SetPassword() {
 
           setEmail(tokenEmail);
 
-          const businesses = await base44.entities.Business.list();
-          const business = businesses.find(b => b.id === bid);
+          const businesses = await base44.entities.Business.filter({ id: bid });
+          const business = businesses[0];
 
           if (!business) {
             toast.error("Business not found.");
@@ -90,8 +90,8 @@ export default function SetPassword() {
         // --- Legacy email-only flow ---
         if (emailParam) {
           setEmail(emailParam);
-          const businesses = await base44.entities.Business.list();
-          const business = businesses.find(b => b.email === emailParam);
+          const businesses = await base44.entities.Business.filter({ email: emailParam });
+          const business = businesses[0];
           if (business) {
             setAccountInfo({ name: business.business_name, email: business.email, hasPassword: !!business.password_hash, type: "business", businessId: business.id });
             setLoading(false);
