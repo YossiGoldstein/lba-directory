@@ -3,37 +3,59 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 const TOKEN_TTL_MS = 48 * 60 * 60 * 1000;
 
 function generateToken(businessId: string, email: string): string {
-  const payload = `${businessId}:${email}:${Date.now() + TOKEN_TTL_MS}`;
-  return btoa(payload).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  try {
+    const payload = `${businessId}:${email}:${Date.now() + TOKEN_TTL_MS}`;
+    return btoa(unescape(encodeURIComponent(payload))).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  } catch(e) {
+    throw new Error(`Token generation failed: ${e.message}`);
+  }
 }
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { businessId } = await req.json();
+    const body = await req.json();
+    const { businessId } = body;
 
     if (!businessId) {
       return Response.json({ error: 'Business ID is required' }, { status: 400 });
     }
 
-    const businesses = await base44.asServiceRole.entities.Business.filter({ id: businessId });
-    const business = businesses[0];
+    // Step 1: Find business
+    let business;
+    try {
+      const businesses = await base44.asServiceRole.entities.Business.filter({ id: businessId });
+      business = businesses[0];
+    } catch(e) {
+      return Response.json({ error: `DB lookup failed: ${e.message}` }, { status: 500 });
+    }
 
     if (!business) {
       return Response.json({ error: 'Business not found' }, { status: 404 });
     }
 
-    if (!business.email) {
+    if (!business.email || !business.email.trim()) {
       return Response.json({ error: 'Business has no email address' }, { status: 400 });
     }
 
-    const token = generateToken(businessId, business.email);
-    const claimUrl = `https://lbadirectory.com/SetPassword?token=${token}&bid=${businessId}`;
+    // Step 2: Generate token
+    let token: string;
+    let claimUrl: string;
+    try {
+      token = generateToken(businessId, business.email.trim());
+      claimUrl = `https://lbadirectory.com/SetPassword?token=${token}&bid=${businessId}`;
+    } catch(e) {
+      return Response.json({ error: `Token error: ${e.message}` }, { status: 500 });
+    }
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to: business.email,
-      subject: `Your Business is Live - ${business.business_name}`,
-      body: `<!DOCTYPE html>
+    // Step 3: Send email
+    const businessName = (business.business_name || 'Your Business').replace(/&amp;/g, '&');
+    
+    try {
+      await base44.asServiceRole.integrations.Core.SendEmail({
+        to: business.email.trim(),
+        subject: `Your Business Listing is Live - ${businessName}`,
+        body: `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
 <body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif;">
@@ -46,7 +68,7 @@ Deno.serve(async (req) => {
 </td></tr>
 <tr><td style="padding:32px 40px;">
 <p style="color:#374151;font-size:15px;">Hi,</p>
-<p style="color:#374151;font-size:15px;line-height:1.7;">Congratulations! <strong style="color:#0e4f6e;">${business.business_name}</strong> has been approved and is now listed on LBA Directory.</p>
+<p style="color:#374151;font-size:15px;line-height:1.7;">Congratulations! <strong style="color:#0e4f6e;">${businessName}</strong> has been approved and is now listed on LBA Directory.</p>
 <p style="color:#374151;font-size:15px;">Click the button below to set your password and manage your listing:</p>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0;">
 <tr><td align="center">
@@ -65,12 +87,14 @@ Deno.serve(async (req) => {
 </table>
 </body>
 </html>`
-    });
+      });
+    } catch(e) {
+      return Response.json({ error: `Email send failed: ${e.message}` }, { status: 500 });
+    }
 
-    return Response.json({ success: true, message: `Email sent to ${business.email}`, business: business.business_name });
+    return Response.json({ success: true, message: `Email sent to ${business.email}`, business: businessName });
 
   } catch (error) {
-    console.error('Error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: `Unexpected error: ${error.message}` }, { status: 500 });
   }
 });
