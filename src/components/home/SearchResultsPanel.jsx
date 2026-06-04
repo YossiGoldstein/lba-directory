@@ -76,7 +76,8 @@ export default function SearchResultsPanel({
                   {businesses.map((business) => (
                     <BusinessResultCard 
                       key={business.id} 
-                      business={business} 
+                      business={business}
+                      // TODO: has_deals not in schema
                       hasActiveDeals={business.has_deals || false}
                     />
                   ))}

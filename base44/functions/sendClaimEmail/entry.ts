@@ -107,7 +107,7 @@ Deno.serve(async (req) => {
 </p>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
 <tr><td align="center">
-<a href="${claimUrl}" style="display:inline-block;background:#27C666;color:#ffffff;padding:14px 36px;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;">Claim Your Business</a>
+<a href="${claimUrl}" style="display:inline-block;background:#27C666;color:#ffffff;padding:14px 36px;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;">Claim My Business</a>
 </td></tr>
 </table>
 <p style="margin:0 0 8px;color:#6b7280;font-size:13px;text-align:center;">This link expires in <strong>24 hours</strong>.</p>

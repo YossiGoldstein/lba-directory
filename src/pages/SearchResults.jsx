@@ -30,6 +30,7 @@ export default function SearchResults() {
     try {
       const response = await base44.functions.invoke("searchBusinesses", { query: searchQuery });
       const results = response.data?.businesses || [];
+      // TODO: batch fetch — N+1, SDK array-filter support unconfirmed
       const fullBusinesses = await Promise.all(
         results.map(async (b) => {
           const matches = await base44.entities.Business.filter({ id: b.id });
@@ -109,7 +110,7 @@ export default function SearchResults() {
                         e.preventDefault();
                         const input = e.target.querySelector('input');
                         if (input?.value?.trim()) {
-                          window.location.href = createPageUrl(`SearchResults?query=${encodeURIComponent(input.value.trim())}`);
+                          window.location.href = `${createPageUrl("SearchResults")}?query=${encodeURIComponent(input.value.trim())}`;
                         }
                       }} className="flex gap-3">
                         <div className="flex-1 relative">

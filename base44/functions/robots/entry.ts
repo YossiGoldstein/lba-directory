@@ -7,7 +7,7 @@ Disallow: /admin
 Disallow: /dashboard
 Disallow: /account
 
-Sitemap: https://lakewoodlba.com/sitemap.xml`;
+Sitemap: https://lbadirectory.com/sitemap.xml`;
 
   return new Response(robotsTxt, {
     status: 200,

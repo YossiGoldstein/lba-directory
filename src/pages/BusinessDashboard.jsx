@@ -58,13 +58,17 @@ export default function BusinessDashboard() {
     queryKey: ["my-businesses", user?.email],
     queryFn: async () => {
       if (!user?.email) return [];
-      const allBusinesses = await base44.entities.Business.list();
-      // Match by owner_id (new flow), email (legacy flow), or created_by
-      return allBusinesses.filter(b => 
-        b.owner_id === user.id || 
-        b.email === user.email || 
-        b.created_by === user.email
-      );
+      // Server-side filter by owner: combine matches across owner_id, email,
+      // and created_by (legacy flows) without listing every business.
+      const [byOwnerId, byEmail, byCreatedBy] = await Promise.all([
+        user.id ? base44.entities.Business.filter({ owner_id: user.id }) : Promise.resolve([]),
+        base44.entities.Business.filter({ email: user.email }),
+        base44.entities.Business.filter({ created_by: user.email }),
+      ]);
+      // Deduplicate by id (a business may match more than one predicate).
+      const byId = new Map();
+      [...byOwnerId, ...byEmail, ...byCreatedBy].forEach(b => byId.set(b.id, b));
+      return Array.from(byId.values());
     },
     enabled: !!user?.email,
   });

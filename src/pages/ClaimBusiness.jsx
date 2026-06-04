@@ -89,7 +89,7 @@ export default function ClaimBusiness() {
               </p>
               <div className="flex flex-col gap-3">
                 <Button asChild className="bg-gradient-to-r from-[#27C666] to-[#1FAF5A] hover:opacity-90 text-white w-full">
-                  <Link to={createPageUrl("BusinessDashboard") + (businessId ? `?id=${businessId}` : "")}>
+                  <Link to={`${createPageUrl("BusinessDashboard")}${businessId ? `?edit=${businessId}` : ""}`}>
                     <Building2 className="w-4 h-4 mr-2" />
                     Go to Business Dashboard
                   </Link>

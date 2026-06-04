@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
-import Anthropic from 'npm:@anthropic-ai/sdk';
+import Anthropic from 'npm:@anthropic-ai/sdk@0.65.0';
 
 const anthropic = new Anthropic({
   apiKey: Deno.env.get("ANTHROPIC_API_KEY"),
@@ -100,16 +100,26 @@ function isCurrentlyOpen(b: any, nowNY: Date): boolean {
   const currentMins = nowNY.getHours() * 60 + nowNY.getMinutes();
   const [openH, openM] = hours.open.split(':').map(Number);
   const [closeH, closeM] = hours.close.split(':').map(Number);
-  return currentMins >= openH * 60 + openM && currentMins <= closeH * 60 + closeM;
+  const openMins = openH * 60 + openM;
+  const closeMins = closeH * 60 + closeM;
+  if (closeMins < openMins) {
+    // Overnight hours (close past midnight) — open if before close OR after open
+    return currentMins >= openMins || currentMins <= closeMins;
+  }
+  return currentMins >= openMins && currentMins <= closeMins;
 }
 
 async function getApprovedBusinesses(base44: any) {
   const now = Date.now();
   if (cachedBusinesses && now < cacheExpiry) return cachedBusinesses;
   const all = await base44.asServiceRole.entities.Business.list();
-  cachedBusinesses = all.filter((b: any) => b.status === 'approved');
-  cacheExpiry = now + CACHE_TTL_MS;
-  return cachedBusinesses;
+  const approved = all.filter((b: any) => b.status === 'approved');
+  // Don't cache an empty result — avoids serving stale/empty data on a transient fetch miss
+  if (approved.length > 0) {
+    cachedBusinesses = approved;
+    cacheExpiry = now + CACHE_TTL_MS;
+  }
+  return approved;
 }
 
 function getDeliveryOptions(b: any): string[] {
@@ -230,7 +240,8 @@ ${JSON.stringify(minimalList)}`;
       messages: [{ role: 'user', content: prompt }],
     });
 
-    const rawText = response.content[0].text.trim();
+    const text = response.content?.[0]?.type === "text" ? response.content[0].text : "";
+    const rawText = text.trim();
 
     // Extract JSON array robustly
     const start = rawText.indexOf('[');

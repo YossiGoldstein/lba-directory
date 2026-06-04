@@ -49,10 +49,10 @@ export default function RelatedBusinesses({ businesses, categoryName }) {
                   )}
 
                   {/* Rating */}
-                  {business.average_rating > 0 && (
+                  {business.general_rating > 0 && (
                     <div className="flex items-center gap-1 text-sm text-gray-600">
                       <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                      <span>{business.average_rating.toFixed(1)}</span>
+                      <span>{business.general_rating.toFixed(1)}</span>
                       {business.reviews_count > 0 && (
                         <span className="text-gray-500">({business.reviews_count})</span>
                       )}

@@ -11,8 +11,8 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
 
     // Check if this is a business owner
-    const businesses = await base44.asServiceRole.entities.Business.list();
-    const business = businesses.find(b => b.email === email);
+    const businesses = await base44.asServiceRole.entities.Business.filter({ email });
+    const business = businesses[0];
 
     if (business) {
       return Response.json({
@@ -28,8 +28,8 @@ Deno.serve(async (req) => {
     }
 
     // Check if this is a regular customer
-    const customers = await base44.asServiceRole.entities.Customer.list();
-    const customer = customers.find(c => c.email === email);
+    const customers = await base44.asServiceRole.entities.Customer.filter({ email });
+    const customer = customers[0];
 
     if (customer) {
       return Response.json({

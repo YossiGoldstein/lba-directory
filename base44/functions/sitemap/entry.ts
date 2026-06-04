@@ -16,42 +16,42 @@ Deno.serve(async (req) => {
 
   <!-- Static Pages -->
   <url>
-    <loc>https://lakewoodlba.com/</loc>
+    <loc>https://lbadirectory.com/</loc>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://lakewoodlba.com/about</loc>
+    <loc>https://lbadirectory.com/about</loc>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://lakewoodlba.com/contact</loc>
+    <loc>https://lbadirectory.com/contact</loc>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://lakewoodlba.com/faq</loc>
+    <loc>https://lbadirectory.com/faq</loc>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://lakewoodlba.com/business-join</loc>
+    <loc>https://lbadirectory.com/business-join</loc>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://lakewoodlba.com/for-shoppers</loc>
+    <loc>https://lbadirectory.com/for-shoppers</loc>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://lakewoodlba.com/terms</loc>
+    <loc>https://lbadirectory.com/terms</loc>
     <priority>0.5</priority>
   </url>
 
   <url>
-    <loc>https://lakewoodlba.com/privacy</loc>
+    <loc>https://lbadirectory.com/privacy</loc>
     <priority>0.5</priority>
   </url>
 
@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
       if (category.slug) {
         xml += `
   <url>
-    <loc>https://lakewoodlba.com/category/${category.slug}</loc>
+    <loc>https://lbadirectory.com/category/${category.slug}</loc>
     <priority>0.7</priority>
   </url>`;
       }
@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
         
         xml += `
   <url>
-    <loc>https://lakewoodlba.com/business/${business.slug}</loc>
+    <loc>https://lbadirectory.com/business/${business.slug}</loc>
     <lastmod>${lastmod}</lastmod>
     <priority>0.8</priority>
   </url>`;

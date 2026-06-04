@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CheckCircle } from "lucide-react";
+import { toast } from "sonner";
 
 const SERVICES = [
   { id: "logo", label: "Logo Design" },
@@ -55,13 +56,17 @@ export default function ServiceInquiry() {
       (id) => SERVICES.find((s) => s.id === id)?.label
     );
 
-    await base44.functions.invoke("submitServiceInquiry", {
-      ...form,
-      services: serviceLabels,
-    });
-
-    setIsLoading(false);
-    setSubmitted(true);
+    try {
+      await base44.functions.invoke("submitServiceInquiry", {
+        ...form,
+        services: serviceLabels,
+      });
+      setSubmitted(true);
+    } catch (err) {
+      toast.error("Something went wrong submitting your inquiry. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (submitted) {

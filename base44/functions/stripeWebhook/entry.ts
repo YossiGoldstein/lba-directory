@@ -26,36 +26,55 @@ Deno.serve(async (req) => {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object;
-        
-        // Extract metadata
-        const userId = session.metadata.user_id;
-        const listingTier = session.metadata.listing_tier;
-        const businessData = JSON.parse(session.metadata.business_data);
 
-        // Get subscription details
-        const subscription = await stripe.subscriptions.retrieve(session.subscription);
-        const customerId = session.customer;
+        // The business record was created up-front by createCheckoutSession;
+        // metadata carries only its id. Guard against missing data so a malformed
+        // event doesn't throw (which would make Stripe retry forever).
+        const businessId = session.metadata?.business_id;
+        const listingTier = session.metadata?.listing_tier;
+        if (!businessId) {
+          console.warn('checkout.session.completed without business_id metadata; skipping');
+          break;
+        }
 
-        // Create business record
-        const business = await base44.asServiceRole.entities.Business.create({
-          ...businessData,
-          owner_id: userId,
-          listing_tier: listingTier,
-          listing_rank: listingTier === 'premium' ? 10 : listingTier === 'pro' ? 5 : 1,
+        const existing = await base44.asServiceRole.entities.Business.filter({ id: businessId });
+        const business = existing[0];
+        if (!business) {
+          console.warn(`Business ${businessId} not found for completed checkout; skipping`);
+          break;
+        }
+
+        // Idempotency: Stripe redelivers events. If already marked paid, do nothing.
+        if (business.payment_status === 'paid') {
+          console.log('Business already marked paid, skipping duplicate event:', businessId);
+          break;
+        }
+
+        const subscriptionId = session.subscription
+          ? (await stripe.subscriptions.retrieve(session.subscription)).id
+          : null;
+
+        await base44.asServiceRole.entities.Business.update(businessId, {
           payment_status: 'paid',
-          stripe_customer_id: customerId,
-          stripe_subscription_id: subscription.id,
-          status: 'pending'
+          stripe_customer_id: session.customer || business.stripe_customer_id || null,
+          stripe_subscription_id: subscriptionId,
+          listing_rank: listingTier === 'premium' ? 10 : listingTier === 'pro' ? 5 : 1,
         });
 
-        // Send confirmation email
-        await base44.asServiceRole.integrations.Core.SendEmail({
-          to: session.customer_email,
-          subject: 'Payment Received - Business Listing Pending Approval',
-          body: `Hello,\n\nThank you for your payment! Your ${listingTier} business listing "${businessData.business_name}" has been received and is pending admin approval.\n\nYou will receive another email once your listing is approved and live on the site.\n\nBest regards,\nLBA Directory Team`
-        });
+        // Send confirmation email. customer_email is usually null on subscription
+        // checkouts; the populated field is customer_details.email.
+        const toEmail = session.customer_details?.email || session.customer_email;
+        if (toEmail) {
+          await base44.asServiceRole.integrations.Core.SendEmail({
+            to: toEmail,
+            subject: 'Payment Received - Business Listing Pending Approval',
+            body: `Hello,\n\nThank you for your payment! Your ${listingTier} business listing "${business.business_name}" has been received and is pending admin approval.\n\nYou will receive another email once your listing is approved and live on the site.\n\nBest regards,\nLBA Directory Team`
+          });
+        } else {
+          console.warn('No email available for confirmation on session', session.id);
+        }
 
-        console.log('Business created:', business.id);
+        console.log('Business marked paid:', businessId);
         break;
       }
 

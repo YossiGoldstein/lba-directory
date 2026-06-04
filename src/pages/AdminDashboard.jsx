@@ -49,6 +49,7 @@ export default function AdminDashboard() {
           const customer = JSON.parse(customerData);
           
           // Check if admin
+          // SECURITY: client-side gate only — backend must independently authorize every admin action/entity write.
           if (customer.role === "admin") {
             setUser(customer);
             await loadStats();

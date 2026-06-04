@@ -30,8 +30,7 @@ export default function CategoryListing() {
   const { data: allBusinesses = [], isLoading: businessesLoading } = useQuery({
     queryKey: ["businesses"],
     queryFn: async () => {
-      const biz = await base44.entities.Business.list();
-      return biz.filter((b) => b.status === "approved");
+      return await base44.entities.Business.filter({ status: "approved" });
     },
   });
 

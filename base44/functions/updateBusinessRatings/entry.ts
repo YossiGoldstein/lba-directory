@@ -10,10 +10,10 @@ Deno.serve(async (req) => {
         }
 
         // Get all approved reviews for this business
-        const reviews = await base44.asServiceRole.entities.Review.list();
-        const businessReviews = reviews.filter(r => 
-            r.business_id === businessId && r.is_approved
-        );
+        const businessReviews = await base44.asServiceRole.entities.Review.filter({
+            business_id: businessId,
+            is_approved: true
+        });
 
         if (businessReviews.length === 0) {
             // No reviews - set everything to 0

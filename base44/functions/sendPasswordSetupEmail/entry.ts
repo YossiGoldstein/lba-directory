@@ -126,7 +126,7 @@ Deno.serve(async (req) => {
 <p style="color:#374151;font-size:15px;">Click the button below to set your password and manage your listing:</p>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0;">
 <tr><td align="center">
-<a href="${claimUrl}" style="display:inline-block;background:#27C666;color:#ffffff;padding:14px 36px;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;">Claim My Business</a>
+<a href="${claimUrl}" style="display:inline-block;background:#27C666;color:#ffffff;padding:14px 36px;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;">Set My Password</a>
 </td></tr>
 </table>
 <p style="color:#6b7280;font-size:13px;text-align:center;">This link expires in <strong>48 hours</strong>.</p>

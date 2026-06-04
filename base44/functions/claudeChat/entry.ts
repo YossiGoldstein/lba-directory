@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
-import Anthropic from 'npm:@anthropic-ai/sdk';
+import Anthropic from 'npm:@anthropic-ai/sdk@0.65.0';
 
 const anthropic = new Anthropic({
   apiKey: Deno.env.get("ANTHROPIC_API_KEY"),
@@ -206,8 +206,9 @@ ${businessCatalog}
       messages,
     });
 
+    const text = response.content?.[0]?.type === "text" ? response.content[0].text : "";
     return Response.json({
-      content: response.content[0].text,
+      content: text,
       usage: response.usage,
     });
   } catch (error) {

@@ -2,7 +2,9 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 const DEFAULT_IMAGE = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png";
 const SITE_NAME = "LBA Directory";
-const BASE_URL = "https://www.lbadirectory.com";
+const BASE_URL = "https://lbadirectory.com";
+
+const escapeHtml = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 
 async function resolveFinalUrl(url) {
   try {
@@ -83,14 +85,16 @@ function businessHtml(business, ogImage) {
   const rawDesc = business.short_description || business.long_description || `Find ${business.business_name} on LBA Directory`;
   const description = rawDesc.length > 160 ? rawDesc.slice(0, 157) + "..." : rawDesc;
   const targetUrl = `${BASE_URL}/BusinessListing?id=${business.id}`;
+  const safeTitle = escapeHtml(title);
+  const safeDescription = escapeHtml(description);
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>${title}</title>
-  <meta property="og:title" content="${title}">
-  <meta property="og:description" content="${description}">
+  <title>${safeTitle}</title>
+  <meta property="og:title" content="${safeTitle}">
+  <meta property="og:description" content="${safeDescription}">
   <meta property="og:image" content="${ogImage}">
   <meta property="og:image:secure_url" content="${ogImage}">
   <meta property="og:image:type" content="image/jpeg">
@@ -100,8 +104,8 @@ function businessHtml(business, ogImage) {
   <meta property="og:type" content="business.business">
   <meta property="og:site_name" content="${SITE_NAME}">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="${title}">
-  <meta name="twitter:description" content="${description}">
+  <meta name="twitter:title" content="${safeTitle}">
+  <meta name="twitter:description" content="${safeDescription}">
   <meta name="twitter:image" content="${ogImage}">
   <meta http-equiv="refresh" content="0; url=${targetUrl}">
 </head>
@@ -125,16 +129,17 @@ Deno.serve(async (req) => {
 
   try {
     const base44 = createClientFromRequest(req);
-    const allBusinesses = await base44.asServiceRole.entities.Business.list();
 
     let business = null;
 
     if (slugParam) {
-      business = allBusinesses.find(b => b.slug === slugParam && b.status === "approved");
+      const matches = await base44.asServiceRole.entities.Business.filter({ slug: slugParam, status: "approved" });
+      business = matches[0] || null;
     }
 
     if (!business && idParam) {
-      business = allBusinesses.find(b => b.id === idParam && b.status === "approved");
+      const matches = await base44.asServiceRole.entities.Business.filter({ id: idParam, status: "approved" });
+      business = matches[0] || null;
     }
 
     if (!business) {
@@ -146,6 +151,7 @@ Deno.serve(async (req) => {
 
     // If business has no slug, backfill it
     if (!business.slug) {
+      const allBusinesses = await base44.asServiceRole.entities.Business.list();
       const baseSlug = generateSlug(business.business_name);
       let slug = baseSlug;
       let counter = 2;

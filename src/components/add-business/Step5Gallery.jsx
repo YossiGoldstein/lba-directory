@@ -10,7 +10,7 @@ export default function Step5Gallery({ data, onChange }) {
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
   
   const logo = data.logo_url || "";
-  const cover = data.cover_image_url || "";
+  const cover = data.cover_photo_url || "";
   const gallery = data.gallery_images || [];
   const isPaid = data.listing_tier === "pro" || data.listing_tier === "premium";
   const maxGalleryImages = isPaid ? 999 : 3;
@@ -47,7 +47,7 @@ export default function Step5Gallery({ data, onChange }) {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       onChange({
         ...data,
-        cover_image_url: file_url,
+        cover_photo_url: file_url,
       });
       toast.success("Cover image uploaded successfully!");
     } catch (error) {
@@ -102,7 +102,7 @@ export default function Step5Gallery({ data, onChange }) {
   const handleRemoveCover = () => {
     onChange({
       ...data,
-      cover_image_url: "",
+      cover_photo_url: "",
     });
   };
 

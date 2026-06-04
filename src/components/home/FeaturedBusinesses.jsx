@@ -103,7 +103,7 @@ export default function FeaturedBusinesses({ businesses, categories }) {
                         <div className="flex items-center gap-1">
                           <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                           <span className="font-semibold text-gray-900">
-                            {business.average_rating.toFixed(1)}
+                            {(business.general_rating || 0).toFixed(1)}
                           </span>
                         </div>
                         <span className="text-sm text-gray-500">

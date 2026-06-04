@@ -82,7 +82,7 @@ export default function BusinessResultCard({ business, hasActiveDeals }) {
           <div className="flex-1">
             <div className="flex items-center gap-1.5">
               <h4 className="font-semibold text-gray-900 mb-1">
-                {business.business_name || business.name}
+                {business.business_name}
               </h4>
               {business.listing_tier === 'premium' && (
                 <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
@@ -112,10 +112,10 @@ export default function BusinessResultCard({ business, hasActiveDeals }) {
         )}
 
         {/* Rating */}
-        {business.average_rating > 0 && (
+        {business.general_rating > 0 && (
           <div className="flex items-center gap-1 text-xs text-gray-600 mb-3">
             <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-            <span>{business.average_rating.toFixed(1)}</span>
+            <span>{business.general_rating.toFixed(1)}</span>
             {business.reviews_count > 0 && (
               <span className="text-gray-500">({business.reviews_count})</span>
             )}
@@ -130,6 +130,7 @@ export default function BusinessResultCard({ business, hasActiveDeals }) {
         )}
 
         {/* Active Deals */}
+        {/* TODO: has_deals not in schema */}
         {business.has_deals && (
           <div className="mb-3">
             <Badge className="bg-green-600 text-white text-xs">

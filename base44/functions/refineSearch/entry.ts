@@ -1,4 +1,4 @@
-import Anthropic from 'npm:@anthropic-ai/sdk';
+import Anthropic from 'npm:@anthropic-ai/sdk@0.65.0';
 
 const anthropic = new Anthropic({
   apiKey: Deno.env.get("ANTHROPIC_API_KEY"),
@@ -64,7 +64,8 @@ Rules:
       }],
     });
 
-    const rawText = response.content[0].text.trim();
+    const text = response.content?.[0]?.type === "text" ? response.content[0].text : "";
+    const rawText = text.trim();
     const start = rawText.indexOf('{');
     const end = rawText.lastIndexOf('}');
     const parsed = JSON.parse(rawText.slice(start, end + 1));

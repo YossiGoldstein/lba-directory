@@ -313,6 +313,11 @@
         "type": "string"
       },
       "description": "AI-generated tags"
+    },
+    "claim_disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, hides the Claim Business action for this listing (admin-controlled)"
     }
   },
   "required": [

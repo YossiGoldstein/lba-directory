@@ -126,6 +126,7 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
         tags: Array.isArray(business.tags) ? business.tags.join(", ") : "",
         status: business.status || "pending",
         listing_tier: business.listing_tier || "free",
+        // NOTE: claim_disabled is not yet in the Business schema — value is dropped on write until the schema field is added
         claim_disabled: business.claim_disabled || false,
       });
     }
@@ -176,6 +177,7 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
         ...hoursFields,
       };
 
+      // NOTE: claim_disabled is not yet in the Business schema — value is dropped on write until the schema field is added
       await base44.entities.Business.update(business.id, updateData);
 
       // Re-geocode silently when address fields changed

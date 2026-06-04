@@ -291,7 +291,7 @@ export default function BusinessListing() {
 
   const getShareUrl = () => {
     const slug = business.slug || business.id;
-    return `https://www.lbadirectory.com/functions/businessOgProxy?slug=${slug}`;
+    return `https://lbadirectory.com/functions/businessOgProxy?slug=${slug}`;
   };
 
   const handleShare = async () => {

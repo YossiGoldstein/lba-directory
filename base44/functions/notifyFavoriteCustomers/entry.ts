@@ -1,5 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
+const escapeHtml = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
@@ -53,8 +55,8 @@ Deno.serve(async (req) => {
             
             if (!customer || !customer.is_active) continue;
 
-            // Create notification
-            await base44.asServiceRole.entities.Notification.create({
+            // Create notification (email_sent stays false until the email actually sends)
+            const notification = await base44.asServiceRole.entities.Notification.create({
                 customer_id: customer.id,
                 business_id: business.id,
                 deal_id: deal.id,
@@ -62,7 +64,7 @@ Deno.serve(async (req) => {
                 title: notificationTitle,
                 message: notificationMessage,
                 is_read: false,
-                email_sent: true
+                email_sent: false
             });
 
             // Send email
@@ -86,14 +88,14 @@ Deno.serve(async (req) => {
             <h1>New Deal Alert!</h1>
         </div>
         <div class="content">
-            <p>Hello <strong>${customer.full_name}</strong>,</p>
-            
-            <p>Great news! <strong>${business.business_name}</strong>, one of your favorite businesses, has a new deal:</p>
-            
+            <p>Hello <strong>${escapeHtml(customer.full_name)}</strong>,</p>
+
+            <p>Great news! <strong>${escapeHtml(business.business_name)}</strong>, one of your favorite businesses, has a new deal:</p>
+
             <div class="deal-box">
-                <h2 style="color: #f59e0b; margin-top: 0;">${deal.title}</h2>
-                ${deal.description ? `<p>${deal.description}</p>` : ''}
-                ${deal.badge_text ? `<p><strong>Special:</strong> ${deal.badge_text}</p>` : ''}
+                <h2 style="color: #f59e0b; margin-top: 0;">${escapeHtml(deal.title)}</h2>
+                ${deal.description ? `<p>${escapeHtml(deal.description)}</p>` : ''}
+                ${deal.badge_text ? `<p><strong>Special:</strong> ${escapeHtml(deal.badge_text)}</p>` : ''}
                 <p style="color: #6b7280; font-size: 14px;">
                     Valid until: ${new Date(deal.end_date).toLocaleDateString()}
                 </p>
@@ -104,7 +106,7 @@ Deno.serve(async (req) => {
             </p>
             
             <p style="color: #6b7280; font-size: 14px;">
-                You're receiving this email because ${business.business_name} is in your favorites. 
+                You're receiving this email because ${escapeHtml(business.business_name)} is in your favorites.
                 You can manage your favorites in your dashboard.
             </p>
         </div>
@@ -123,9 +125,12 @@ Deno.serve(async (req) => {
                     body: emailBody,
                     from_name: "LBA Directory"
                 });
+                // Email sent successfully — mark the notification accordingly
+                await base44.asServiceRole.entities.Notification.update(notification.id, { email_sent: true });
                 notifiedCount++;
             } catch (emailError) {
                 console.error(`Failed to send email to ${customer.email}:`, emailError);
+                // Leave email_sent: false on send failure
             }
         }
 

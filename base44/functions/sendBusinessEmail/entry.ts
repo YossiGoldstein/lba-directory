@@ -1,5 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
+const escapeHtml = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+
 function mimeToBase64Url(mimeStr) {
   const bytes = new TextEncoder().encode(mimeStr);
   let binary = '';
@@ -82,18 +84,18 @@ Deno.serve(async (req) => {
     let body = setting.body_template || '';
 
     const replacements = {
-      '[Name]': biz.business_name || 'Business Owner',
-      '[BusinessName]': biz.business_name || '',
-      '[RejectionReason]': data?.rejectionReason || '',
-      '[Stars]': data?.stars || '',
-      '[ReviewText]': data?.reviewText || '',
-      '[DealTitle]': data?.dealTitle || '',
-      '[StartDate]': data?.startDate || '',
-      '[EndDate]': data?.endDate || '',
-      '[ReportType]': data?.reportType || '',
-      '[ReportMessage]': data?.reportMessage || '',
-      '[TopSearches]': data?.topSearches || '',
-      '[AISuggestions]': data?.aiSuggestions || ''
+      '[Name]': escapeHtml(biz.business_name || 'Business Owner'),
+      '[BusinessName]': escapeHtml(biz.business_name || ''),
+      '[RejectionReason]': escapeHtml(data?.rejectionReason || ''),
+      '[Stars]': escapeHtml(data?.stars || ''),
+      '[ReviewText]': escapeHtml(data?.reviewText || ''),
+      '[DealTitle]': escapeHtml(data?.dealTitle || ''),
+      '[StartDate]': escapeHtml(data?.startDate || ''),
+      '[EndDate]': escapeHtml(data?.endDate || ''),
+      '[ReportType]': escapeHtml(data?.reportType || ''),
+      '[ReportMessage]': escapeHtml(data?.reportMessage || ''),
+      '[TopSearches]': escapeHtml(data?.topSearches || ''),
+      '[AISuggestions]': escapeHtml(data?.aiSuggestions || '')
     };
 
     for (const [key, value] of Object.entries(replacements)) {
@@ -110,7 +112,7 @@ Deno.serve(async (req) => {
 <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border-radius:8px;border:1px solid #e2e8f0;">
 <tr><td style="background:#0e4f6e;padding:28px 40px;text-align:center;border-radius:8px 8px 0 0;">
 <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69160f6f331f1b03b4ecdf77/a009f9c3e_image0.png" alt="LBA Directory" height="36" style="display:block;margin:0 auto 12px;">
-<h1 style="margin:0;color:#ffffff;font-size:20px;">${subject}</h1>
+<h1 style="margin:0;color:#ffffff;font-size:20px;">${escapeHtml(subject)}</h1>
 </td></tr>
 <tr><td style="padding:32px 40px;">
 <div style="color:#374151;font-size:15px;line-height:1.7;">${body.replace(/\n/g, '<br>')}</div>
