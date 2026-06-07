@@ -180,11 +180,13 @@ export default function GoogleMap({ businesses = [], height = "450px" }) {
     if (!businesses || businesses.length === 0) return;
 
     const run = async () => {
-      let spiralIndex = 0;
-      let resolved = businesses.map((b) => ({
-        business: b,
-        position: resolvePosition(b, b.latitude && b.longitude ? 0 : spiralIndex++),
-      }));
+      // Only plot businesses with real stored coordinates. Listings without an
+      // address (no coords) are NOT placed on the map — no fake spiral pins.
+      let resolved = businesses
+        .filter((b) => b.latitude && b.longitude && !isNaN(Number(b.latitude)) && !isNaN(Number(b.longitude)))
+        .map((b) => ({ business: b, position: resolvePosition(b, 0) }));
+
+      if (resolved.length === 0) return;
 
       resolved = jitterDuplicates(resolved);
 

@@ -34,6 +34,8 @@ These 5 findings are interdependent and touch live user/admin access + existing 
   - ACTION (Yossi): enable **Geocoding API** for key `AIzaSyDfr...FDc8` in Google Cloud Console → APIs & Services → Library → "Geocoding API" → Enable. Then messy addresses resolve via Google.
   - Optional follow-up: backfill stored `latitude/longitude` server-side once Geocoding API is on (the `geocodeBusinesses` function also uses brittle Nominatim — switch it to the Google Geocoding REST API + run once) so coords are permanent and no client geocoding is needed.
 
+- [x] **Site-wide coordinate backfill** (production data, via Base44 MCP) — scanned all 248 businesses missing lat/lng. 13 had a real street address and were geocoded + saved directly to the records (park-ave-appliance + 12 more). Remaining: **233 have no street address** (only city "Lakewood") — cannot be precisely placed; needs street addresses added (data-entry, owner/admin task), not a geocoding fix. **2 real Lakewood addresses Nominatim can't resolve** (Handypro Solutions — 44 Genesee Place; Crash To Class — 39 Chambers Bridge Rd) — need manual coords or the Google Geocoding API. 1 junk record skipped ("test business").
+
 
 - [x] **Approval email button text** — "Your Listing is Live!" email button said **"Claim My Business"**, confusing people since it actually sets their password. Changed to **"Set My Password"**.
   - File: `base44/functions/sendPasswordSetupEmail/entry.ts:129`

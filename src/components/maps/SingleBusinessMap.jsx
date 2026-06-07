@@ -130,7 +130,7 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
         !isNaN(Number(business.longitude))
       ) {
         position = { lat: Number(business.latitude), lng: Number(business.longitude) };
-      } else if (business?.address_line1 && business?.city) {
+      } else if (business?.address_line1 && business.address_line1.trim()) {
         const address = [
           business.address_line1,
           business.city,
@@ -138,11 +138,9 @@ export default function SingleBusinessMap({ business, height = "320px" }) {
           business.zip_code || "",
         ].filter(Boolean).join(", ");
         position = await geocodeAddress(address);
-      } else if (business?.city) {
-        position = await geocodeAddress(
-          `${business.city}${business.state ? ", " + business.state : ", NJ"}`
-        );
       }
+      // No city-only fallback: a listing with only a city (e.g. "Lakewood")
+      // and no street address gets no pin.
 
       if (cancelled || !mapRef.current) return;
 
