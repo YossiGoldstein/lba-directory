@@ -5,11 +5,12 @@ import { loadGoogleMaps } from "@/components/lib/googleMapsLoader";
 const DEFAULT_CENTER = { lat: 40.0957, lng: -74.2177 }; // Lakewood, NJ
 const MARKER_SIZE = 56;
 
-// Geocode via the Google Maps JS Geocoder (already loaded for the map). Google is
-// far more tolerant of abbreviations/spacing than Nominatim, which failed on real
-// stored addresses like "1750 Cedarbridge Ave" (one word, abbreviated) — leaving
-// listings without a map pin. loadGoogleMaps() is awaited before this is called.
-function geocodeAddress(address) {
+// Geocode with the Google Maps JS Geocoder first (tolerant of abbreviations/
+// spacing — e.g. it resolves "1750 Cedarbridge Ave" which Nominatim cannot),
+// falling back to Nominatim. NOTE: the Google Geocoder only works once the
+// "Geocoding API" is enabled on the Maps key in Google Cloud Console — until
+// then it returns REQUEST_DENIED and we use the Nominatim fallback.
+function geocodeGoogle(address) {
   return new Promise((resolve) => {
     try {
       if (!window.google?.maps?.Geocoder) return resolve(null);
@@ -26,6 +27,26 @@ function geocodeAddress(address) {
       resolve(null);
     }
   });
+}
+
+async function geocodeNominatim(address) {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
+      { headers: { "User-Agent": "LBADirectory/1.0 (lbadirectory.com)" } }
+    );
+    const data = await res.json();
+    if (Array.isArray(data) && data.length > 0) {
+      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+    }
+  } catch (e) {
+    // ignore network errors
+  }
+  return null;
+}
+
+async function geocodeAddress(address) {
+  return (await geocodeGoogle(address)) || (await geocodeNominatim(address));
 }
 
 function buildMarkerIcon(business) {
