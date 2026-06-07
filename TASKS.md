@@ -29,6 +29,10 @@ These 5 findings are interdependent and touch live user/admin access + existing 
 
 ## Done
 
+- [x] **Map doesn't show location for some listings** (e.g. park-ave-appliance) — ROOT CAUSE: those businesses have `latitude/longitude = null` (bulk-imported with `owner_id: "lba_directory"`, skipped the geocode-on-create step). The map then falls back to geocoding the address, but it used **Nominatim**, which fails on real stored formats like "1750 Cedarbridge Ave" (verified: Nominatim returns nothing for that exact string, but resolves "Cedar Bridge Avenue" variants). FIX: `SingleBusinessMap.jsx` now geocodes via the **Google Maps JS Geocoder** (already loaded for the map; tolerant of abbreviations) instead of Nominatim — fixes the live pin for all coord-less listings. Build passes.
+  - Optional follow-up: backfill `latitude/longitude` server-side (the `geocodeBusinesses` function also uses brittle Nominatim — switch it to Google Geocoding API + run once) so coords are stored permanently. Needs Google Geocoding API enabled on the key + a confirmed production run.
+
+
 - [x] **Approval email button text** — "Your Listing is Live!" email button said **"Claim My Business"**, confusing people since it actually sets their password. Changed to **"Set My Password"**.
   - File: `base44/functions/sendPasswordSetupEmail/entry.ts:129`
   - Note: the *separate* claim email (`sendClaimEmail`, "Take control of your listing") is a different email — don't confuse them.

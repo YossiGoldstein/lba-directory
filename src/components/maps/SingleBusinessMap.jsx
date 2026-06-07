@@ -5,20 +5,27 @@ import { loadGoogleMaps } from "@/components/lib/googleMapsLoader";
 const DEFAULT_CENTER = { lat: 40.0957, lng: -74.2177 }; // Lakewood, NJ
 const MARKER_SIZE = 56;
 
-async function geocodeAddress(address) {
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
-      { headers: { "User-Agent": "LBADirectory/1.0 (lbadirectory.com)" } }
-    );
-    const data = await res.json();
-    if (Array.isArray(data) && data.length > 0) {
-      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+// Geocode via the Google Maps JS Geocoder (already loaded for the map). Google is
+// far more tolerant of abbreviations/spacing than Nominatim, which failed on real
+// stored addresses like "1750 Cedarbridge Ave" (one word, abbreviated) — leaving
+// listings without a map pin. loadGoogleMaps() is awaited before this is called.
+function geocodeAddress(address) {
+  return new Promise((resolve) => {
+    try {
+      if (!window.google?.maps?.Geocoder) return resolve(null);
+      const geocoder = new window.google.maps.Geocoder();
+      geocoder.geocode({ address }, (results, status) => {
+        if (status === "OK" && results && results[0]) {
+          const loc = results[0].geometry.location;
+          resolve({ lat: loc.lat(), lng: loc.lng() });
+        } else {
+          resolve(null);
+        }
+      });
+    } catch (e) {
+      resolve(null);
     }
-  } catch (e) {
-    // ignore network errors
-  }
-  return null;
+  });
 }
 
 function buildMarkerIcon(business) {
