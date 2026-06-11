@@ -13,11 +13,13 @@ Deno.serve(async (req) => {
     }
 
     const base44 = createClientFromRequest(req);
-    const passwordHash = btoa(password);
+    const normalizedEmail = String(email).toLowerCase().trim();
+    // UTF-8-safe hash, same encoding as registerCustomer
+    const passwordHash = btoa(unescape(encodeURIComponent(password)));
 
     // Check if this is a business owner
-    const businesses = await base44.asServiceRole.entities.Business.list();
-    const business = businesses.find(b => b.email === email);
+    const businesses = await base44.asServiceRole.entities.Business.filter({ email: normalizedEmail });
+    const business = businesses[0];
 
     if (business) {
       await base44.asServiceRole.entities.Business.update(business.id, {
@@ -32,8 +34,8 @@ Deno.serve(async (req) => {
     }
 
     // Check if this is a regular customer
-    const customers = await base44.asServiceRole.entities.Customer.list();
-    const customer = customers.find(c => c.email === email);
+    const customers = await base44.asServiceRole.entities.Customer.filter({ email: normalizedEmail });
+    const customer = customers[0];
 
     if (customer) {
       await base44.asServiceRole.entities.Customer.update(customer.id, {

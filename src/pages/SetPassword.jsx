@@ -89,15 +89,16 @@ export default function SetPassword() {
 
         // --- Legacy email-only flow ---
         if (emailParam) {
-          setEmail(emailParam);
-          const businesses = await base44.entities.Business.filter({ email: emailParam });
+          const normalizedParam = emailParam.toLowerCase().trim();
+          setEmail(normalizedParam);
+          const businesses = await base44.entities.Business.filter({ email: normalizedParam });
           const business = businesses[0];
           if (business) {
             setAccountInfo({ name: business.business_name, email: business.email, hasPassword: !!business.password_hash, type: "business", businessId: business.id });
             setLoading(false);
             return;
           }
-          const customerResults = await base44.entities.Customer.filter({ email: emailParam });
+          const customerResults = await base44.entities.Customer.filter({ email: normalizedParam });
           const customer = customerResults[0];
           if (customer) {
             setAccountInfo({ name: customer.full_name, email: customer.email, hasPassword: !!customer.password_hash, type: "customer" });

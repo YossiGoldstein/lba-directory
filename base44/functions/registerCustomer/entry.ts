@@ -68,7 +68,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
     }
 
-    const existing = await base44.asServiceRole.entities.Customer.filter({ email });
+    // Normalize email: phone keyboards auto-capitalize and autocomplete adds spaces
+    const normalizedEmail = String(email).toLowerCase().trim();
+
+    const existing = await base44.asServiceRole.entities.Customer.filter({ email: normalizedEmail });
     if (existing && existing.length > 0) {
       return Response.json({ error: 'Email already registered' }, { status: 409 });
     }
@@ -76,7 +79,7 @@ Deno.serve(async (req) => {
     const passwordHash = btoa(unescape(encodeURIComponent(password)));
     const customer = await base44.asServiceRole.entities.Customer.create({
       full_name: fullName,
-      email,
+      email: normalizedEmail,
       phone: phone || '',
       password_hash: passwordHash,
       is_active: true

@@ -52,8 +52,11 @@ export default function BusinessOwnerRegister() {
     setLoading(true);
 
     try {
+      // Normalize email: phone keyboards auto-capitalize and autocomplete adds spaces
+      const email = formData.email.toLowerCase().trim();
+
       // Check if email already exists
-      const existingCustomers = await base44.entities.Customer.filter({ email: formData.email });
+      const existingCustomers = await base44.entities.Customer.filter({ email });
 
       if (existingCustomers.length > 0) {
         toast.error("This email is already registered");
@@ -61,13 +64,13 @@ export default function BusinessOwnerRegister() {
         return;
       }
 
-      // Hash password
-      const passwordHash = btoa(formData.password);
+      // Hash password (UTF-8-safe, same encoding as registerCustomer)
+      const passwordHash = btoa(unescape(encodeURIComponent(formData.password)));
 
       // Create customer account (owner_id will link to businesses)
       const newCustomer = await base44.entities.Customer.create({
         full_name: formData.businessName,
-        email: formData.email,
+        email,
         phone: formData.phone || "",
         password_hash: passwordHash,
         is_active: true

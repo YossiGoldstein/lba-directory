@@ -2,7 +2,9 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 Deno.serve(async (req) => {
   try {
-    const { email } = await req.json();
+    const { email: rawEmail } = await req.json();
+    // Normalize email: phone keyboards auto-capitalize and autocomplete adds spaces
+    const email = String(rawEmail || '').toLowerCase().trim();
 
     if (!email) {
       return Response.json({ error: 'Email is required' }, { status: 400 });

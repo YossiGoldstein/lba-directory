@@ -75,14 +75,22 @@ export default function SignIn() {
         console.error("Admin check error:", adminError);
       }
 
+      // Normalize email: phone keyboards auto-capitalize and autocomplete adds spaces
+      const email = formData.email.toLowerCase().trim();
+      // Accept both stored hash encodings: UTF-8-safe (registerCustomer) and legacy plain btoa
+      const utf8Btoa = (s) => btoa(unescape(encodeURIComponent(s)));
+      const hashMatches = (stored) => {
+        if (!stored) return false;
+        if (stored === utf8Btoa(formData.password)) return true;
+        try { return stored === btoa(formData.password); } catch { return false; }
+      };
+
       // Check Customer entity
-      const customers = await base44.entities.Customer.filter({ email: formData.email });
+      const customers = await base44.entities.Customer.filter({ email });
       const customer = customers[0];
 
       if (customer) {
-        const passwordHash = btoa(formData.password);
-        
-        if (customer.password_hash !== passwordHash) {
+        if (!hashMatches(customer.password_hash)) {
           toast.error("Email or password is incorrect");
           setLoading(false);
           return;
@@ -106,13 +114,11 @@ export default function SignIn() {
       }
 
       // Legacy fallback: business owner registered via old flow (Business entity as login)
-      const businesses = await base44.entities.Business.filter({ email: formData.email });
+      const businesses = await base44.entities.Business.filter({ email });
       const legacyOwner = businesses.find(b => b.password_hash);
 
       if (legacyOwner) {
-        const passwordHash = btoa(formData.password);
-        
-        if (legacyOwner.password_hash !== passwordHash) {
+        if (!hashMatches(legacyOwner.password_hash)) {
           toast.error("Email or password is incorrect");
           setLoading(false);
           return;
