@@ -319,9 +319,23 @@ Return JSON: { short_version, medium_version, long_version }`,
           setIsSubmitting(false);
           return;
         }
+        // Geocode before checkout — the paid path never returns to this page,
+        // so coords must ride along now or the listing gets no map pin.
+        try {
+          const coords = await geocodeBusinessAddress(businessData);
+          if (coords) {
+            businessData.latitude = coords.lat;
+            businessData.longitude = coords.lng;
+          }
+        } catch {}
         const response = await base44.functions.invoke('createCheckoutSession', {
           listing_tier: form.listing_tier,
-          business_data: businessData
+          business_data: businessData,
+          // createCheckoutSession requires caller identity
+          customerId: customer.role === "admin" ? null : customer.id,
+          customerEmail: (customer.role === "admin" ? form.email : customer.email) || customer.email || form.email,
+          // Wizard deals ride along; the server creates them with the pending business
+          deals
         });
         if (response.data?.url) {
           window.location.href = response.data.url;

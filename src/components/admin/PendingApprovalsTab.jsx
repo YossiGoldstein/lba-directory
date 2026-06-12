@@ -225,6 +225,13 @@ export default function PendingApprovalsTab({ onUpdate }) {
                     <Badge className="bg-cyan-600">{getCategoryName(business.category_id)}</Badge>
                     <Badge variant="outline">{business.city || "No city"}</Badge>
                     <Badge className="bg-orange-500">Pending Review</Badge>
+                    {/* Paid-tier listings start unpaid until the Stripe webhook confirms —
+                        don't approve an unpaid premium/pro submission (abandoned checkout) */}
+                    {business.payment_status && business.payment_status !== "paid" && (
+                      <Badge className="bg-red-600">
+                        {business.payment_status === "failed" ? "PAYMENT FAILED" : "NOT PAID"}
+                      </Badge>
+                    )}
                   </div>
                   <p className="text-sm text-gray-600">
                     📧 {business.email || business.created_by} • Submitted: {new Date(business.created_date).toLocaleDateString()}

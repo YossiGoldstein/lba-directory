@@ -239,7 +239,14 @@ export default function BusinessesTab({ onUpdate }) {
                     {business.city || "N/A"}
                   </td>
                   <td className="py-3 px-4">
-                    {getStatusBadge(business.status)}
+                    <div className="flex flex-wrap gap-1">
+                      {getStatusBadge(business.status)}
+                      {business.payment_status && business.payment_status !== "paid" && (
+                        <Badge className="bg-red-600">
+                          {business.payment_status === "failed" ? "PAYMENT FAILED" : "NOT PAID"}
+                        </Badge>
+                      )}
+                    </div>
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-600">
                     {new Date(business.created_date).toLocaleDateString()}

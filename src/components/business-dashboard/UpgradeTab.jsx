@@ -21,9 +21,13 @@ export default function UpgradeTab({ business }) {
 
     setLoading(planId);
     try {
+      // createCheckoutSession requires caller identity
+      const customer = JSON.parse(localStorage.getItem("lba_customer") || "null");
       const response = await base44.functions.invoke("createCheckoutSession", {
         listing_tier: planId,
-        business_data: { business_id: business.id }
+        business_data: { business_id: business.id },
+        customerId: customer?.id || business.owner_id || null,
+        customerEmail: customer?.email || business.email || null
       });
       if (response.data?.url) {
         window.location.href = response.data.url;

@@ -44,37 +44,87 @@ Deno.serve(async (req) => {
           break;
         }
 
-        // Idempotency: Stripe redelivers events. If already marked paid, do nothing.
-        if (business.payment_status === 'paid') {
+        const mode = session.metadata?.mode || 'new';
+        const subscriptionId = session.subscription
+          ? (await stripe.subscriptions.retrieve(session.subscription)).id
+          : null;
+
+        // Idempotency: Stripe redelivers events. Skip if THIS session's
+        // subscription was already recorded. (Can't use payment_status alone:
+        // an upgrade targets a business that is already 'paid'.)
+        if (subscriptionId && business.stripe_subscription_id === subscriptionId) {
+          console.log('Session already processed, skipping duplicate event:', businessId);
+          break;
+        }
+        if (mode !== 'upgrade' && business.payment_status === 'paid') {
           console.log('Business already marked paid, skipping duplicate event:', businessId);
           break;
         }
 
-        const subscriptionId = session.subscription
-          ? (await stripe.subscriptions.retrieve(session.subscription)).id
-          : null;
+        const oldSubscriptionId = business.stripe_subscription_id;
 
         await base44.asServiceRole.entities.Business.update(businessId, {
           payment_status: 'paid',
           stripe_customer_id: session.customer || business.stripe_customer_id || null,
           stripe_subscription_id: subscriptionId,
+          listing_tier: listingTier || business.listing_tier,
           listing_rank: listingTier === 'premium' ? 10 : listingTier === 'pro' ? 5 : 1,
         });
 
-        // Send confirmation email. customer_email is usually null on subscription
-        // checkouts; the populated field is customer_details.email.
-        const toEmail = session.customer_details?.email || session.customer_email;
-        if (toEmail) {
-          await base44.asServiceRole.integrations.Core.SendEmail({
-            to: toEmail,
-            subject: 'Payment Received - Business Listing Pending Approval',
-            body: `Hello,\n\nThank you for your payment! Your ${listingTier} business listing "${business.business_name}" has been received and is pending admin approval.\n\nYou will receive another email once your listing is approved and live on the site.\n\nBest regards,\nLBA Directory Team`
-          });
-        } else {
-          console.warn('No email available for confirmation on session', session.id);
+        // An upgrade creates a NEW subscription; cancel the old one so the
+        // customer isn't billed for both plans.
+        if (oldSubscriptionId && subscriptionId && oldSubscriptionId !== subscriptionId) {
+          try {
+            await stripe.subscriptions.cancel(oldSubscriptionId);
+            console.log('Cancelled superseded subscription:', oldSubscriptionId);
+          } catch (cancelError) {
+            console.error('Failed to cancel old subscription', oldSubscriptionId, cancelError);
+          }
+        }
+
+        // Confirmation email is best-effort: a send failure must not 400 the
+        // event (the idempotency guard would block the retry's email anyway).
+        try {
+          const toEmail = session.customer_details?.email || session.customer_email;
+          if (toEmail) {
+            const emailBody = mode === 'upgrade'
+              ? `Hello,\n\nThank you for your payment! Your listing "${business.business_name}" has been upgraded to the ${listingTier} plan.\n\nBest regards,\nLBA Directory Team`
+              : `Hello,\n\nThank you for your payment! Your ${listingTier} business listing "${business.business_name}" has been received and is pending admin approval.\n\nYou will receive another email once your listing is approved and live on the site.\n\nBest regards,\nLBA Directory Team`;
+            await base44.asServiceRole.integrations.Core.SendEmail({
+              to: toEmail,
+              subject: mode === 'upgrade'
+                ? 'Payment Received - Listing Upgraded'
+                : 'Payment Received - Business Listing Pending Approval',
+              body: emailBody
+            });
+          } else {
+            console.warn('No email available for confirmation on session', session.id);
+          }
+        } catch (emailError) {
+          console.error('Confirmation email failed (non-fatal):', emailError);
         }
 
         console.log('Business marked paid:', businessId);
+        break;
+      }
+
+      case 'checkout.session.expired': {
+        // Buyer abandoned checkout (Stripe fires this ~24h later). Delete the
+        // pre-created pending business so orphans don't accumulate and squat
+        // the canonical slug. Upgrades created nothing, so nothing to clean.
+        const session = event.data.object;
+        const businessId = session.metadata?.business_id;
+        const mode = session.metadata?.mode || 'new';
+        if (!businessId || mode === 'upgrade') break;
+
+        const existing = await base44.asServiceRole.entities.Business.filter({ id: businessId });
+        const business = existing[0];
+        if (business && business.payment_status === 'unpaid' && business.status === 'pending') {
+          const orphanDeals = await base44.asServiceRole.entities.Deal.filter({ business_id: businessId });
+          await Promise.all(orphanDeals.map(d => base44.asServiceRole.entities.Deal.delete(d.id)));
+          await base44.asServiceRole.entities.Business.delete(businessId);
+          console.log('Deleted abandoned-checkout business:', businessId);
+        }
         break;
       }
 

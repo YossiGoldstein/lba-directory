@@ -29,6 +29,15 @@ These 5 findings are interdependent and touch live user/admin access + existing 
 
 ## Done
 
+- [x] **PAYMENTS FIX (Round-2 PAY-1..10)** — paid checkout was entirely broken (401: callers never sent `customerId`/`customerEmail`). Coordinated fix across 7 files:
+  - `createCheckoutSession`: tier alias (`lba-sponsor`→pro, PAY-3); explicit **upgrade mode** keyed on `business_data.business_id` (no junk duplicate, PAY-2); preserves caller `owner_id` (PAY-5); creates wizard `deals` server-side (PAY-6); `listing_rank: 1` until paid (PAY-7); rollback of business+deals if Stripe session-create fails (PAY-8); cancel URL fixed to `/AddBusiness` (PAY-4); email lowercased on create.
+  - `stripeWebhook`: upgrade-aware idempotency; writes `listing_tier`+`listing_rank` on payment; cancels superseded subscription on upgrade (no double-billing); `checkout.session.expired` handler deletes abandoned pending businesses + their deals (PAY-8); confirmation email is best-effort try/catch (PAY-10) with upgrade-specific copy.
+  - NEW `verifyCheckoutSession` function + `Success.jsx` rewrite: real Stripe verification instead of fake 2s spinner (PAY-9); distinct paid/upgraded/processing/unknown states.
+  - `AddBusiness.jsx`: sends identity + `deals`, geocodes BEFORE redirect (paid listings get map pins, PAY-6/M2).
+  - `UpgradeTab.jsx`: sends identity from session.
+  - Admin visibility (PAY-7): red **NOT PAID / PAYMENT FAILED** badge in `PendingApprovalsTab` + `BusinessesTab`.
+  - ⚠️ NEEDS LIVE TEST: full Stripe checkout (test card or real+refund) + verify the `checkout.session.expired` webhook event type is enabled in the Stripe dashboard webhook config.
+
 - [x] **"Can't log in after creating an account"** (client report — CONFIRMED) — ROOT CAUSE: login matched email **case-sensitively**, and phone keyboards auto-capitalize the first letter (and autocomplete adds trailing spaces). Production evidence: 8/64 Customer emails + 18 Business emails stored with uppercase letters. Secondary: registration (registerCustomer) and login (SignIn) used **different password-hash encodings** (UTF-8-safe vs plain btoa) — breaks any non-ASCII password.
   - CODE FIX (lowercase+trim email everywhere; login accepts both hash encodings; all writes now UTF-8-safe): `SignIn.jsx`, `BusinessOwnerRegister.jsx`, `SetPassword.jsx`, `registerCustomer`, `updatePassword` (also switched to `.filter()`), `getPasswordResetInfo`, `sendPasswordResetEmail`.
   - DATA FIX (production, via MCP): normalized 8 Customer + 18 Business emails to lowercase.
