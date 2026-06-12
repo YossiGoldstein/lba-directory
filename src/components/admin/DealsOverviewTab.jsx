@@ -1,4 +1,5 @@
 import React from "react";
+import { dealStart, dealEnd, parseLocalDate } from "@/lib/dealDates";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,7 +45,7 @@ export default function DealsOverviewTab() {
   };
 
   const isExpiringSoon = (endDate) => {
-    const end = new Date(endDate);
+    const end = dealEnd({ end_date: endDate });
     const now = new Date();
     const daysUntilExpiry = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
     return daysUntilExpiry <= 7 && daysUntilExpiry > 0;
@@ -53,8 +54,8 @@ export default function DealsOverviewTab() {
   const isActive = (deal) => {
     if (!deal.is_active) return false;
     const now = new Date();
-    const start = new Date(deal.start_date);
-    const end = new Date(deal.end_date);
+    const start = dealStart(deal);
+    const end = dealEnd(deal);
     return start <= now && end >= now;
   };
 
@@ -118,10 +119,10 @@ export default function DealsOverviewTab() {
                     )}
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-600">
-                    {new Date(deal.start_date).toLocaleDateString()}
+                    {parseLocalDate(deal.start_date)?.toLocaleDateString()}
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-600">
-                    {new Date(deal.end_date).toLocaleDateString()}
+                    {parseLocalDate(deal.end_date)?.toLocaleDateString()}
                     {isExpiringSoon(deal.end_date) && (
                       <div className="flex items-center gap-1 text-xs text-orange-600 mt-1">
                         <Calendar className="w-3 h-3" />

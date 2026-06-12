@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { parseLocalDate } from "@/lib/dealDates";
 import { Button } from "@/components/ui/button";
 import { Tag, ArrowRight, Calendar, Building2 } from "lucide-react";
 import { format } from "date-fns";
@@ -72,7 +73,7 @@ export default function LatestDeals({ deals, businesses }) {
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
                     <Calendar className="w-4 h-4 flex-shrink-0" />
                     <span>
-                      Valid until {format(new Date(deal.end_date), "MMM d, yyyy")}
+                      Valid until {format(parseLocalDate(deal.end_date), "MMM d, yyyy")}
                     </span>
                   </div>
 

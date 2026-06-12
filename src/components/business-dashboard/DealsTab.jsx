@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { TrendingUp, Plus, Edit, Trash2, ToggleLeft, ToggleRight, Upload, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { dealStart, dealEnd, parseLocalDate } from "@/lib/dealDates";
 
 export default function DealsTab({ business }) {
   const [showForm, setShowForm] = useState(false);
@@ -48,19 +49,18 @@ export default function DealsTab({ business }) {
       toast.success("Deal created successfully!");
       
       // Send email if deal starts today
-      const startDate = new Date(newDeal.start_date);
+      const startDate = dealStart(newDeal);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      startDate.setHours(0, 0, 0, 0);
-      
-      if (startDate.getTime() === today.getTime() && newDeal.is_active) {
+
+      if (startDate && startDate.getTime() === today.getTime() && newDeal.is_active) {
         try {
           await base44.functions.invoke('sendBusinessEmail', {
             type: 'deal_started',
             businessId: business.id,
             data: {
               dealTitle: newDeal.title,
-              startDate: format(new Date(newDeal.start_date), 'MMM d, yyyy')
+              startDate: format(parseLocalDate(newDeal.start_date), 'MMM d, yyyy')
             }
           });
         } catch (error) {
@@ -138,8 +138,8 @@ export default function DealsTab({ business }) {
       badge_text: deal.badge_text || "",
       flyer_url: deal.flyer_url || "",
       sale_link: deal.sale_link || "",
-      start_date: deal.start_date ? format(new Date(deal.start_date), "yyyy-MM-dd") : "",
-      end_date: deal.end_date ? format(new Date(deal.end_date), "yyyy-MM-dd") : "",
+      start_date: deal.start_date ? format(parseLocalDate(deal.start_date), "yyyy-MM-dd") : "",
+      end_date: deal.end_date ? format(parseLocalDate(deal.end_date), "yyyy-MM-dd") : "",
       is_active: deal.is_active !== false,
     });
     setShowForm(true);
@@ -340,9 +340,9 @@ export default function DealsTab({ business }) {
             <div className="space-y-3">
               {deals.map(deal => {
                 const now = new Date();
-                const isActive = deal.is_active && 
-                  new Date(deal.start_date) <= now && 
-                  new Date(deal.end_date) >= now;
+                const isActive = deal.is_active &&
+                  dealStart(deal) <= now &&
+                  dealEnd(deal) >= now;
 
                 return (
                   <div
@@ -372,7 +372,7 @@ export default function DealsTab({ business }) {
                           <p className="text-sm text-gray-600 mb-2">{deal.description}</p>
                         )}
                         <p className="text-xs text-gray-500">
-                          {format(new Date(deal.start_date), "MMM d, yyyy")} - {format(new Date(deal.end_date), "MMM d, yyyy")}
+                          {format(parseLocalDate(deal.start_date), "MMM d, yyyy")} - {format(parseLocalDate(deal.end_date), "MMM d, yyyy")}
                         </p>
                         <div className="flex items-center gap-3 mt-2">
                           {deal.flyer_url && (

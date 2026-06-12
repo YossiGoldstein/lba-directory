@@ -2,13 +2,12 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 const TOKEN_TTL_MS = 48 * 60 * 60 * 1000;
 
-function generateToken(businessId: string, email: string): string {
-  try {
-    const payload = `${businessId}:${email}:${Date.now() + TOKEN_TTL_MS}`;
-    return btoa(unescape(encodeURIComponent(payload))).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-  } catch(e) {
-    throw new Error(`Token generation failed: ${e.message}`);
-  }
+// Single-use, unguessable token stored on the business record; updatePassword
+// verifies it server-side. Replaces the old reversible/forgeable btoa token.
+function newResetToken(): string {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 function mimeToBase64Url(mimeStr: string): string {
@@ -83,12 +82,16 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Business has no email address' }, { status: 400 });
     }
 
-    // Step 2: Generate token
-    let token: string;
+    // Step 2: Generate + store single-use token
     let claimUrl: string;
     try {
-      token = generateToken(businessId, business.email.trim());
-      claimUrl = `https://lbadirectory.com/SetPassword?token=${token}&bid=${businessId}`;
+      const token = newResetToken();
+      await base44.asServiceRole.entities.Business.update(businessId, {
+        reset_token: token,
+        reset_token_expiry: Date.now() + TOKEN_TTL_MS,
+      });
+      const emailParam = encodeURIComponent(business.email.trim().toLowerCase());
+      claimUrl = `https://lbadirectory.com/SetPassword?token=${token}&bid=${businessId}&email=${emailParam}`;
     } catch(e) {
       return Response.json({ error: `Token error: ${e.message}` }, { status: 500 });
     }

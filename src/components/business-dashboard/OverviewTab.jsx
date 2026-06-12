@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { dealStart, dealEnd, parseLocalDate } from "@/lib/dealDates";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,8 +23,8 @@ export default function OverviewTab({ business, deals = [] }) {
   const activeDeals = deals.filter(deal => {
     if (!deal.is_active) return false;
     const now = new Date();
-    const start = new Date(deal.start_date);
-    const end = new Date(deal.end_date);
+    const start = dealStart(deal);
+    const end = dealEnd(deal);
     return start <= now && end >= now;
   });
 
@@ -265,7 +266,7 @@ export default function OverviewTab({ business, deals = [] }) {
                         <p className="text-xs sm:text-sm text-gray-600 mt-1">{deal.description}</p>
                       )}
                       <p className="text-xs text-gray-500 mt-2">
-                        Valid until {format(new Date(deal.end_date), "MMM d, yyyy")}
+                        Valid until {format(parseLocalDate(deal.end_date), "MMM d, yyyy")}
                       </p>
                     </div>
                     {deal.badge_text && (

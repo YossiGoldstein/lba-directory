@@ -13,12 +13,26 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const appUrl = "https://lbadirectory.com";
 
+    // Single-use, unguessable token stored on the account; updatePassword
+    // verifies it. Possession of the email alone can no longer set a password.
+    const newResetToken = () => {
+      const bytes = new Uint8Array(32);
+      crypto.getRandomValues(bytes);
+      return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+    };
+    const TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
+
     // Check Customer entity first (use filter instead of list)
     const customers = await base44.asServiceRole.entities.Customer.filter({ email });
     const customer = customers[0];
 
     if (customer) {
-      const resetUrl = `${appUrl}/SetPassword?email=${encodeURIComponent(email)}&t=${Date.now()}`;
+      const token = newResetToken();
+      await base44.asServiceRole.entities.Customer.update(customer.id, {
+        reset_token: token,
+        reset_token_expiry: Date.now() + TOKEN_TTL_MS,
+      });
+      const resetUrl = `${appUrl}/SetPassword?email=${encodeURIComponent(email)}&token=${token}`;
       await base44.asServiceRole.integrations.Core.SendEmail({
         to: email,
         subject: "Reset Your LBA Directory Password",
@@ -48,7 +62,12 @@ Deno.serve(async (req) => {
     const business = businesses[0];
 
     if (business) {
-      const resetUrl = `${appUrl}/SetPassword?email=${encodeURIComponent(email)}&t=${Date.now()}`;
+      const token = newResetToken();
+      await base44.asServiceRole.entities.Business.update(business.id, {
+        reset_token: token,
+        reset_token_expiry: Date.now() + TOKEN_TTL_MS,
+      });
+      const resetUrl = `${appUrl}/SetPassword?email=${encodeURIComponent(email)}&token=${token}`;
       await base44.asServiceRole.integrations.Core.SendEmail({
         to: email,
         subject: "Reset Your LBA Directory Password",

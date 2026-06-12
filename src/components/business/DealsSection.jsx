@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tag, Calendar, ExternalLink } from "lucide-react";
+import { parseLocalDate } from "@/lib/dealDates";
 import { format } from "date-fns";
 
 export default function DealsSection({ deals }) {
@@ -48,7 +49,7 @@ export default function DealsSection({ deals }) {
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Calendar className="w-4 h-4" />
-                  <span>Valid until {format(new Date(deal.end_date), "MMM d, yyyy")}</span>
+                  <span>Valid until {format(parseLocalDate(deal.end_date), "MMM d, yyyy")}</span>
                 </div>
 
                 {deal.sale_link && (

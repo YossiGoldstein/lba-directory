@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { dealStart, dealEnd } from "@/lib/dealDates";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -80,8 +81,8 @@ export default function AdminDashboard() {
       const now = new Date();
       const activeDealsCount = deals.filter(deal => {
         if (!deal.is_active) return false;
-        const start = new Date(deal.start_date);
-        const end = new Date(deal.end_date);
+        const start = dealStart(deal);
+        const end = dealEnd(deal);
         return start <= now && end >= now;
       }).length;
 

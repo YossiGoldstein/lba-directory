@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { dealStart, dealEnd } from "@/lib/dealDates";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
@@ -31,8 +32,8 @@ export default function AiSearch() {
     const now = new Date();
     return deals.some((deal) => {
       if (deal.business_id !== businessId || !deal.is_active) return false;
-      const start = new Date(deal.start_date);
-      const end = new Date(deal.end_date);
+      const start = dealStart(deal);
+      const end = dealEnd(deal);
       return start <= now && end >= now;
     });
   };

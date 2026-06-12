@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { parseLocalDate } from "@/lib/dealDates";
 import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
@@ -1048,7 +1049,7 @@ Format as JSON.`;
                       </div>
                       {deal.description && <p className="text-sm text-gray-600 mb-2">{deal.description}</p>}
                       <p className="text-xs text-gray-500">
-                        {new Date(deal.start_date).toLocaleDateString()} - {new Date(deal.end_date).toLocaleDateString()}
+                        {parseLocalDate(deal.start_date)?.toLocaleDateString()} - {parseLocalDate(deal.end_date)?.toLocaleDateString()}
                       </p>
                       <div className="flex items-center gap-3 mt-2">
                         {deal.flyer_url && (

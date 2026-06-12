@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { dealStart, dealEnd } from "@/lib/dealDates";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { fixImageUrl } from "@/components/lib/imageUtils";
@@ -227,8 +228,8 @@ export default function BusinessListing() {
       const allDeals = await base44.entities.Deal.filter({ business_id: businessId, is_active: true });
       const now = new Date();
       return allDeals.filter((deal) => {
-        const start = new Date(deal.start_date);
-        const end = new Date(deal.end_date);
+        const start = dealStart(deal);
+        const end = dealEnd(deal);
         return start <= now && end >= now;
       });
     },

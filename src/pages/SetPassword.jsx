@@ -11,6 +11,7 @@ import { Lock, Eye, EyeOff, CheckCircle } from "lucide-react";
 
 export default function SetPassword() {
   const [email, setEmail] = useState("");
+  const [token, setToken] = useState("");
   const [accountInfo, setAccountInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -25,69 +26,33 @@ export default function SetPassword() {
   useEffect(() => {
     const loadAccountInfo = async () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get("token");
+      const urlToken = urlParams.get("token");
       const bid = urlParams.get("bid");
-      // Legacy support: email param
       const emailParam = urlParams.get("email");
 
+      // The password is now gated by a server-stored single-use token; without
+      // one, the link is invalid (account info shown here is for display only —
+      // updatePassword re-verifies the token server-side).
+      if (!urlToken) {
+        toast.error("This link is invalid or has expired. Please request a new password reset.");
+        setLoading(false);
+        return;
+      }
+      setToken(urlToken);
+
       try {
-        // --- Token-based flow ---
-        if (token && bid) {
-          let decoded;
-          try {
-            decoded = atob(token.replace(/-/g, '+').replace(/_/g, '/'));
-          } catch {
-            toast.error("Invalid or malformed claim link.");
-            setLoading(false);
-            return;
-          }
-
-          const parts = decoded.split(':');
-          if (parts.length < 3) {
-            toast.error("Invalid claim link.");
-            setLoading(false);
-            return;
-          }
-
-          const tokenExpiry = parseInt(parts[2], 10);
-          if (Date.now() > tokenExpiry) {
-            toast.error("This claim link has expired. Please request a new one from admin.");
-            setLoading(false);
-            return;
-          }
-
-          const tokenBusinessId = parts[0];
-          const tokenEmail = parts[1];
-
-          if (tokenBusinessId !== bid) {
-            toast.error("Invalid claim link.");
-            setLoading(false);
-            return;
-          }
-
-          setEmail(tokenEmail);
-
+        // Load account for display — by business id if present, else by email.
+        if (bid) {
           const businesses = await base44.entities.Business.filter({ id: bid });
           const business = businesses[0];
-
-          if (!business) {
-            toast.error("Business not found.");
+          if (business) {
+            setEmail((business.email || emailParam || "").toLowerCase().trim());
+            setAccountInfo({ name: business.business_name, email: business.email, hasPassword: !!business.password_hash, type: "business", businessId: business.id });
             setLoading(false);
             return;
           }
-
-          setAccountInfo({
-            name: business.business_name,
-            email: business.email,
-            hasPassword: !!business.password_hash,
-            type: "business",
-            businessId: business.id
-          });
-          setLoading(false);
-          return;
         }
 
-        // --- Legacy email-only flow ---
         if (emailParam) {
           const normalizedParam = emailParam.toLowerCase().trim();
           setEmail(normalizedParam);
@@ -105,12 +70,9 @@ export default function SetPassword() {
             setLoading(false);
             return;
           }
-          toast.error("Account not found");
-          setLoading(false);
-          return;
         }
 
-        toast.error("Invalid link");
+        toast.error("Account not found");
         setLoading(false);
       } catch (error) {
         console.error("Failed to load account info:", error);
@@ -140,7 +102,8 @@ export default function SetPassword() {
     try {
       const response = await base44.functions.invoke('updatePassword', {
         email: email,
-        password: formData.password
+        password: formData.password,
+        token: token
       });
 
       if (response.data.success) {
