@@ -47,7 +47,7 @@ export default function SetPassword() {
           const business = businesses[0];
           if (business) {
             setEmail((business.email || emailParam || "").toLowerCase().trim());
-            setAccountInfo({ name: business.business_name, email: business.email, hasPassword: !!business.password_hash, type: "business", businessId: business.id });
+            setAccountInfo({ name: business.business_name, email: business.email, hasPassword: !!business.password_hash, type: "business", accountId: business.id });
             setLoading(false);
             return;
           }
@@ -59,14 +59,14 @@ export default function SetPassword() {
           const businesses = await base44.entities.Business.filter({ email: normalizedParam });
           const business = businesses[0];
           if (business) {
-            setAccountInfo({ name: business.business_name, email: business.email, hasPassword: !!business.password_hash, type: "business", businessId: business.id });
+            setAccountInfo({ name: business.business_name, email: business.email, hasPassword: !!business.password_hash, type: "business", accountId: business.id });
             setLoading(false);
             return;
           }
           const customerResults = await base44.entities.Customer.filter({ email: normalizedParam });
           const customer = customerResults[0];
           if (customer) {
-            setAccountInfo({ name: customer.full_name, email: customer.email, hasPassword: !!customer.password_hash, type: "customer" });
+            setAccountInfo({ name: customer.full_name, email: customer.email, hasPassword: !!customer.password_hash, type: "customer", accountId: customer.id });
             setLoading(false);
             return;
           }
@@ -103,7 +103,9 @@ export default function SetPassword() {
       const response = await base44.functions.invoke('updatePassword', {
         email: email,
         password: formData.password,
-        token: token
+        token: token,
+        accountId: accountInfo?.accountId,
+        accountType: accountInfo?.type
       });
 
       if (response.data.success) {

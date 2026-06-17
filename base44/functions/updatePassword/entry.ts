@@ -4,12 +4,16 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 // prove the caller controls the email. It requires a single-use `token` that
 // was generated server-side and stored on the account by sendPasswordResetEmail
 // / sendPasswordSetupEmail. Possession of the email string is NOT sufficient.
+//
+// Lookup is by accountId+accountType when provided (the setup/claim link carries
+// the business id) — this is robust against email-casing mismatches. It falls
+// back to an email lookup for the forgot-password flow.
 Deno.serve(async (req) => {
   try {
-    const { email, password, token } = await req.json();
+    const { email, password, token, accountId, accountType } = await req.json();
 
-    if (!email || !password) {
-      return Response.json({ error: 'Email and password are required' }, { status: 400 });
+    if (!password) {
+      return Response.json({ error: 'Password is required' }, { status: 400 });
     }
     if (!token) {
       return Response.json({ error: 'A valid reset link is required. Please use the link from your email.' }, { status: 400 });
@@ -19,7 +23,6 @@ Deno.serve(async (req) => {
     }
 
     const base44 = createClientFromRequest(req);
-    const normalizedEmail = String(email).toLowerCase().trim();
     // UTF-8-safe hash, same encoding as registerCustomer
     const passwordHash = btoa(unescape(encodeURIComponent(password)));
 
@@ -35,30 +38,43 @@ Deno.serve(async (req) => {
         { status: 403 }
       );
 
-    // Business owner?
-    const businesses = await base44.asServiceRole.entities.Business.filter({ email: normalizedEmail });
-    const business = businesses[0];
-    if (business) {
-      if (!tokenValid(business)) return invalidTokenResponse();
-      await base44.asServiceRole.entities.Business.update(business.id, {
+    const applyTo = async (entityName, account, type) => {
+      await base44.asServiceRole.entities[entityName].update(account.id, {
         password_hash: passwordHash,
         reset_token: null,        // single-use: consume the token
         reset_token_expiry: null,
       });
-      return Response.json({ success: true, message: 'Password updated successfully', type: 'business' });
+      return Response.json({ success: true, message: 'Password updated successfully', type });
+    };
+
+    // ── Preferred: id-based lookup (link carried the business/customer id) ──
+    if (accountId && accountType) {
+      const entityName = accountType === 'customer' ? 'Customer' : 'Business';
+      const matches = await base44.asServiceRole.entities[entityName].filter({ id: accountId });
+      const account = matches[0];
+      if (!account) return Response.json({ success: false, error: 'Account not found' }, { status: 404 });
+      if (!tokenValid(account)) return invalidTokenResponse();
+      return await applyTo(entityName, account, accountType);
     }
 
-    // Regular customer?
+    // ── Fallback: email lookup (forgot-password flow) ──
+    const normalizedEmail = String(email || '').toLowerCase().trim();
+    if (!normalizedEmail) {
+      return Response.json({ error: 'Email is required' }, { status: 400 });
+    }
+
+    const businesses = await base44.asServiceRole.entities.Business.filter({ email: normalizedEmail });
+    const business = businesses[0];
+    if (business) {
+      if (!tokenValid(business)) return invalidTokenResponse();
+      return await applyTo('Business', business, 'business');
+    }
+
     const customers = await base44.asServiceRole.entities.Customer.filter({ email: normalizedEmail });
     const customer = customers[0];
     if (customer) {
       if (!tokenValid(customer)) return invalidTokenResponse();
-      await base44.asServiceRole.entities.Customer.update(customer.id, {
-        password_hash: passwordHash,
-        reset_token: null,
-        reset_token_expiry: null,
-      });
-      return Response.json({ success: true, message: 'Password updated successfully', type: 'customer' });
+      return await applyTo('Customer', customer, 'customer');
     }
 
     return Response.json({ success: false, error: 'Email not found' }, { status: 404 });

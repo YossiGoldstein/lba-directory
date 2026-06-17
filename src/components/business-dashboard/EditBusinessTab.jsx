@@ -80,6 +80,8 @@ export default function EditBusinessTab({ business, onUpdate }) {
 
       const updateData = {
         ...formData,
+        // Normalize email so the password / login lookups (which match lowercase) work
+        email: (formData.email || "").toLowerCase().trim(),
         tags: tagsArray,
       };
 
