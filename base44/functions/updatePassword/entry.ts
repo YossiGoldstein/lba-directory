@@ -32,10 +32,13 @@ Deno.serve(async (req) => {
       typeof account.reset_token_expiry === 'number' &&
       Date.now() < account.reset_token_expiry;
 
+    // Return user-facing failures as HTTP 200 with success:false so the SDK's
+    // invoke() doesn't throw — the page can then show the SPECIFIC reason
+    // instead of a generic "Failed to set password" catch-all.
     const invalidTokenResponse = () =>
       Response.json(
         { success: false, error: 'This reset link is invalid or has expired. Please request a new one.' },
-        { status: 403 }
+        { status: 200 }
       );
 
     const applyTo = async (entityName, account, type) => {
@@ -52,7 +55,7 @@ Deno.serve(async (req) => {
       const entityName = accountType === 'customer' ? 'Customer' : 'Business';
       const matches = await base44.asServiceRole.entities[entityName].filter({ id: accountId });
       const account = matches[0];
-      if (!account) return Response.json({ success: false, error: 'Account not found' }, { status: 404 });
+      if (!account) return Response.json({ success: false, error: 'Account not found' }, { status: 200 });
       if (!tokenValid(account)) return invalidTokenResponse();
       return await applyTo(entityName, account, accountType);
     }
@@ -77,7 +80,7 @@ Deno.serve(async (req) => {
       return await applyTo('Customer', customer, 'customer');
     }
 
-    return Response.json({ success: false, error: 'Email not found' }, { status: 404 });
+    return Response.json({ success: false, error: 'Email not found' }, { status: 200 });
 
   } catch (error) {
     console.error("Error updating password:", error);
