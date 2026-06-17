@@ -29,6 +29,13 @@ These 5 findings are interdependent and touch live user/admin access + existing 
 
 ## Done
 
+- [x] **"Failed to set password" from setup emails (client report — killing signups)** — ROOT CAUSE: admin-created listings saved the email verbatim with capital letters (e.g. `Mordymilgraum@gmail.com` for "The Pizano"), but `updatePassword` matched lowercase → never found the record → set-password failed. This is FUN-7 hitting production. FIX:
+  - `updatePassword` now looks up by `accountId`+`accountType` (the setup/claim link carries the business id) — email casing no longer matters; email lookup is only the fallback for forgot-password.
+  - `SetPassword.jsx` passes `accountId`/`accountType` through.
+  - Business email normalized (lowercase+trim) on ALL write paths: `AddBusiness.jsx`, `AdminEditBusinessModal.jsx`, `EditBusinessTab.jsx` — can't recur.
+  - DATA: normalized the one remaining capital-email business (The Pizano).
+  - ⚠️ ACTION (Yossi): affected people's OLD setup links are dead (old token format, no stored token). **Re-send the "Set Password" email** from the Businesses tab (per-business button) — fresh links store a token and work. NOTE: the admin *bulk* "Send Password Setup Emails" button is still broken (FUN-5 — calls a non-existent plural function); use the per-business button.
+
 - [x] **SECURITY SEC-1 (set-any-password hole closed)** — `updatePassword` now REQUIRES a single-use `token` and verifies it against a server-stored `reset_token`+`reset_token_expiry` on the account (random 32-byte hex, cleared on use). `/SetPassword?email=...` alone no longer works; direct calls to the function without a valid token are rejected (403). `sendPasswordResetEmail` (1h TTL) and `sendPasswordSetupEmail` (48h TTL) generate+store the token and put it in the link; `SetPassword.jsx` passes it through. Forgeable btoa token in the setup email replaced by the stored random token. (`reset_token`/`reset_token_expiry` persist as undeclared fields — Base44 keeps them.)
   - ⚠️ In-flight reset/setup links sent BEFORE deploy won't have a stored token and will show "request a new one" — users just re-request. Note: this does NOT fix SEC-2 (forgeable CLAIM token) or the unauthenticated mass-mutation functions (SEC-4) — those remain in the staged block.
 
