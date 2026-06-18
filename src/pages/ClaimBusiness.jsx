@@ -9,6 +9,7 @@ import { toast } from "sonner";
 export default function ClaimBusiness() {
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get("token");
+  const bid = urlParams.get("bid");
 
   const [status, setStatus] = useState("loading"); // loading | success | error | no_token
   const [message, setMessage] = useState("");
@@ -38,6 +39,7 @@ export default function ClaimBusiness() {
 
       const response = await base44.functions.invoke("verifyClaimToken", {
         token,
+        bid,
         userId: customer.id,
         userEmail: customer.email,
       });

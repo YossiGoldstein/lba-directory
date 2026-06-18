@@ -1,13 +1,17 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-const BASE_URL = 'https://www.lbadirectory.com';
+const BASE_URL = 'https://lbadirectory.com';
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
 const escapeHtml = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 
-function generateToken(businessId: string, email: string): string {
-  const payload = `${businessId}:${email}:${Date.now() + TOKEN_TTL_MS}`;
-  return btoa(unescape(encodeURIComponent(payload))).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+// Single-use, unguessable token stored on the business record (the old btoa
+// `businessId:email:expiry` token was reversible AND forgeable, letting anyone
+// claim any unclaimed business). verifyClaimToken checks it server-side.
+function newClaimToken(): string {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 function mimeToBase64Url(mimeStr: string): string {
@@ -83,8 +87,13 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'This business has already been claimed' }, { status: 400 });
     }
 
-    const token = generateToken(businessId, recipientEmail);
-    const claimUrl = `${BASE_URL}/ClaimBusiness?token=${token}`;
+    const token = newClaimToken();
+    await base44.asServiceRole.entities.Business.update(businessId, {
+      claim_token: token,
+      claim_token_expiry: Date.now() + TOKEN_TTL_MS,
+      claim_email: String(recipientEmail).toLowerCase().trim(),
+    });
+    const claimUrl = `${BASE_URL}/ClaimBusiness?token=${token}&bid=${businessId}`;
     const businessName = (business.business_name || '').replace(/&amp;/g, '&');
 
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');

@@ -1,6 +1,10 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 Deno.serve(async (req) => {
+    const __ADMIN_SECRET = Deno.env.get("ADMIN_TASK_SECRET");
+    if (!__ADMIN_SECRET || req.headers.get("x-admin-secret") !== __ADMIN_SECRET) {
+      return Response.json({ error: "This migration endpoint is disabled. Set the ADMIN_TASK_SECRET env var and pass it as the 'x-admin-secret' request header to run it." }, { status: 403 });
+    }
   try {
     const base44 = createClientFromRequest(req);
 
