@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -61,23 +62,40 @@ export default function Contact() {
 
     setIsSubmitting(true);
 
-    // Simulate form submission (Base44's standard form handling)
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-      
-      // Reset form
-      setFormData({
-        fullName: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
+    try {
+      const response = await base44.functions.invoke("submitContactMessage", {
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message,
       });
 
-      // Scroll to success message
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 1000);
+      if (response.data?.success) {
+        setIsSubmitted(true);
+
+        // Reset form
+        setFormData({
+          fullName: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+        });
+
+        // Scroll to success message
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        toast.error(
+          response.data?.error || "Failed to send your message. Please try again."
+        );
+      }
+    } catch (error) {
+      console.error("Contact form submission error:", error);
+      toast.error("Failed to send your message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleOpenChat = () => {

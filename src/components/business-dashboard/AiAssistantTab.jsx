@@ -167,12 +167,19 @@ Business Owner's Question:
 
       setTimeout(() => {
         unsubscribe();
+        setIsAsking((wasAsking) => {
+          if (wasAsking) {
+            toast.error("The assistant took too long, please try again.");
+          }
+          return false;
+        });
       }, 30000);
 
     } catch (error) {
       console.error("AI request failed:", error);
       setIsAsking(false);
       setAiResponse("Sorry, I encountered an error. Please try again.");
+      toast.error("The assistant ran into an error, please try again.");
     }
   };
 

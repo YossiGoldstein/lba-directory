@@ -14,19 +14,23 @@ export default function BusinessResultCard({ business, hasActiveDeals }) {
     if (!business.opening_hours_json) return null;
     
     const now = new Date();
+    const nyTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
     const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const currentDay = dayNames[now.getDay()];
+    const currentDay = dayNames[nyTime.getDay()];
     const hours = business.opening_hours_json[currentDay];
-    
+
     if (!hours || hours.closed) return false;
-    
-    const currentTime = now.getHours() * 60 + now.getMinutes();
-    const [openHour, openMin] = hours.open.split(':').map(Number);
-    const [closeHour, closeMin] = hours.close.split(':').map(Number);
+
+    const currentTime = nyTime.getHours() * 60 + nyTime.getMinutes();
+    const [openHour, openMin] = (hours.open || '00:00').split(':').map(Number);
+    const [closeHour, closeMin] = (hours.close || '00:00').split(':').map(Number);
     const openTime = openHour * 60 + openMin;
     const closeTime = closeHour * 60 + closeMin;
-    
-    return currentTime >= openTime && currentTime <= closeTime;
+
+    // Overnight hours (e.g. 18:00–02:00): close < open means it spans midnight.
+    return closeTime < openTime
+      ? (currentTime >= openTime || currentTime <= closeTime)
+      : (currentTime >= openTime && currentTime <= closeTime);
   };
 
   const isOpen = isBusinessOpen();
@@ -88,9 +92,8 @@ export default function BusinessResultCard({ business, hasActiveDeals }) {
                 <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
               )}
             </div>
-            {business.category && (
-              <p className="text-sm text-cyan-600">{business.category}</p>
-            )}
+            {/* Category name is not available here (only category_id, and no
+                category list is passed in), so the category line is omitted. */}
           </div>
           {business.is_lba_sponsor && (
             <Badge className="bg-blue-600 text-white text-xs">Sponsor</Badge>
@@ -104,10 +107,10 @@ export default function BusinessResultCard({ business, hasActiveDeals }) {
         )}
 
         {/* Location */}
-        {(business.city || business.address) && (
+        {(business.address_line1 || business.city) && (
           <div className="flex items-center gap-1 text-xs text-gray-500 mb-2">
             <MapPin className="w-3 h-3" />
-            <span>{business.city || business.address}</span>
+            <span>{[business.address_line1, business.city].filter(Boolean).join(', ')}</span>
           </div>
         )}
 

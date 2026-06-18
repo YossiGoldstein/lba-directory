@@ -109,19 +109,24 @@ export default function BusinessListing() {
   const { data: business, isLoading: businessLoading } = useQuery({
     queryKey: ["business", slug, legacyId],
     queryFn: async () => {
+      // Only approved listings are publicly viewable. Pending, rejected, and
+      // not-yet-paid (Stripe pre-created) listings must render as Not Found.
+      const isApproved = (b) => b && b.status === "approved";
+
       if (legacyId) {
         // Legacy ?id= param — fetch by id then redirect to slug URL
         const results = await base44.entities.Business.filter({ id: legacyId });
         const found = results[0];
-        if (found?.slug) {
+        if (!isApproved(found)) return null;
+        if (found.slug) {
           navigate(`/businesslisting/${found.slug}`, { replace: true });
-          return found;
         }
-        return found || null;
+        return found;
       }
       // Normal slug-based lookup
       const results = await base44.entities.Business.filter({ slug: slug });
-      return results[0] || null;
+      const found = results[0];
+      return isApproved(found) ? found : null;
     },
     enabled: !!(slug || legacyId),
   });

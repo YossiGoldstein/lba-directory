@@ -72,7 +72,7 @@ export default function ForgotPassword() {
 
               <div className="text-sm text-gray-600 space-y-2">
                 <p>📧 Please check your email and click the reset link to set a new password.</p>
-                <p>⏰ The link will expire in 24 hours.</p>
+                <p>⏰ The link will expire in 1 hour.</p>
                 <p>📬 Don't see the email? Check your spam folder.</p>
               </div>
 

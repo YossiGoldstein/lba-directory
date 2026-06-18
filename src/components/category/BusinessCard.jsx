@@ -36,7 +36,10 @@ const computeBusinessStatus = (business) => {
   const openTime = openHour * 60 + openMin;
   const closeTime = closeHour * 60 + closeMin;
 
-  const isOpen = currentTime >= openTime && currentTime <= closeTime;
+  // Overnight hours (e.g. 18:00–02:00): close < open means it spans midnight.
+  const isOpen = closeTime < openTime
+    ? (currentTime >= openTime || currentTime <= closeTime)
+    : (currentTime >= openTime && currentTime <= closeTime);
   return { type: isOpen ? 'open' : 'closed', label: isOpen ? 'Open Now' : 'Closed' };
 };
 

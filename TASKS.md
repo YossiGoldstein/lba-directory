@@ -29,6 +29,15 @@ These 5 findings are interdependent and touch live user/admin access + existing 
 
 ## Done
 
+- [x] **Comprehensive pre-publish fix pass (Round 2 remainder + Round 3 new finds)** — build + lint green. Fixed:
+  - Admin: free-text opening hours no longer destroyed on save (FUN-2); previous business's deals no longer leak in edit modal (FUN-13); UsersTab now edits the entity it lists + UTF-8-safe hash + error handling (FUN-3); ratings recompute after review approve/hide (FUN-6); approval emails route by password_hash (setup vs marketing) in both approval paths (FUN-10).
+  - Dashboard: hours/gallery saves now refresh (prop-name fix FUN-4); AI "Apply" writes the correct short/long field + gets category/deals context + spinner can't hang (FUN-12); phone validation accepts `+`/`.` (FUN-14).
+  - Public/cards: overnight "Open Now" fixed on category + chat cards w/ NY timezone + crash guard (FUN-8); pending/rejected/unpaid listings no longer publicly viewable (FUN-9); AskAboutBusiness uses general_rating + no spinner hang; chat card category/address field mismatch fixed.
+  - Auth/security: SignIn open-redirect blocked + password_hash/reset_token stripped from localStorage (SEC-6/7); updatePassword returns user-facing failures as 200 so the real reason shows.
+  - Emails: escapeHtml added to all 6 remaining send* templates + OG image URL escaped in b/businessOgProxy (FUN-11).
+  - NEW (Round 3): Contact form now actually sends (new `submitContactMessage` fn) — was silently discarding every message (N1); ForShoppers/BusinessJoin/Welcome switched from unused Base44-native auth to the app's localStorage `/SignIn` flow (N2); searchBusinesses no longer 500s on malformed model JSON → degrades to keyword results (N3); notifyFavoriteCustomers deal date off-by-one fixed (N4); RecentSearchesTab spinner can't hang (N5); chat card field mismatch (N6); RegistrationSuccess no longer promises an email that isn't sent + ForgotPassword "1 hour" copy (N7).
+  - STILL REQUIRES YOSSI (not code): collect emails for the 204 emailless businesses; fix 2 duplicate-email pairs; resend setup emails; Stripe dashboard → enable `checkout.session.expired`; Base44 entity-permission lockdown for the deep security block (SEC-2/3/4) and claim-token signing.
+
 - [x] **Bulk "Send Password Setup Emails" fixed (FUN-5)** — created the missing `sendPasswordSetupEmails` (plural) function the admin button was calling. It emails every approved business with a valid address and no password, storing a single-use token per business; returns sent/failed/skipped counts. Admin UI now also shows how many were skipped for having no email.
 - [x] **Email data audit ([EMAIL_AUDIT.md](EMAIL_AUDIT.md))** — KEY FINDING: of 301 approved businesses without a password, only **97 have a usable email**; **204 have NO email on file** — that's the dominant reason most aren't creating accounts (not a code bug — missing import data). 2 duplicate emails found (AI With Yossi ↔ G-VANS share `j6468204202@`; J2 Pizza North ↔ South share `lakewoodj2@`) — fix so the right owner claims the right listing. Plus likely-typo domains flagged (e.g. `repair@spilmans.con`).
 

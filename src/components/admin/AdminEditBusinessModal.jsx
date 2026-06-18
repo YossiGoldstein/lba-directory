@@ -63,6 +63,12 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
   const [newDeal, setNewDeal] = useState({ title: "", description: "", badge_text: "", flyer_url: "", sale_link: "", start_date: "", end_date: "" });
   const [isUploadingFlyer, setIsUploadingFlyer] = useState(false);
   const [hoursMode, setHoursMode] = useState("hours");
+  // Track whether the business had structured hours when the modal opened, and
+  // whether the admin actually touched the hours UI. This prevents a save that
+  // only changes status/tier from overwriting real free-text hours with hours
+  // generated from the placeholder DEFAULT_HOURS.
+  const [hadStructuredHours, setHadStructuredHours] = useState(false);
+  const [hoursEdited, setHoursEdited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isUploadingGallery, setIsUploadingGallery] = useState(false);
@@ -90,6 +96,11 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
   useEffect(() => {
     if (business) {
       setHoursMode(business.by_appointment_only ? "appointment" : "hours");
+      const businessHasStructuredHours =
+        !!business.opening_hours_json &&
+        Object.keys(business.opening_hours_json).length > 0;
+      setHadStructuredHours(businessHasStructuredHours);
+      setHoursEdited(false);
       setFormData({
         business_name: business.business_name || "",
         category_id: business.category_id || "",
@@ -134,12 +145,13 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
   }, [business]);
 
   useEffect(() => {
-    if (businessDeals.length > 0) {
-      setDeals(businessDeals);
-    }
+    // Always reset so a previous business's deals don't leak into a business
+    // that has none (the modal is a single persistent instance).
+    setDeals(businessDeals || []);
   }, [businessDeals]);
 
   const handleHourChange = (day, field, value) => {
+    setHoursEdited(true);
     setFormData(prev => ({
       ...prev,
       opening_hours_json: {
@@ -168,12 +180,28 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
         .map((t) => t.trim())
         .filter((t) => t.length > 0);
 
-      const hoursFields = hoursMode === "appointment"
-        ? { opening_hours_text: "By Appointment Only", opening_hours_json: null, by_appointment_only: true }
-        : { opening_hours_text: generateTextFromStructured(formData.opening_hours_json), opening_hours_json: formData.opening_hours_json, by_appointment_only: false };
+      // Only write hours fields when the business already had structured hours
+      // OR the admin actually edited the hours in this session. Otherwise the
+      // business stored hours as free TEXT only and formData.opening_hours_json
+      // is just the placeholder DEFAULT_HOURS — writing it would destroy the
+      // real opening_hours_text. In the preserve case we omit the hours fields
+      // entirely so the existing values on the record are left untouched.
+      let hoursFields;
+      if (hadStructuredHours || hoursEdited) {
+        hoursFields = hoursMode === "appointment"
+          ? { opening_hours_text: "By Appointment Only", opening_hours_json: null, by_appointment_only: true }
+          : { opening_hours_text: generateTextFromStructured(formData.opening_hours_json), opening_hours_json: formData.opening_hours_json, by_appointment_only: false };
+      } else {
+        hoursFields = {};
+      }
+
+      // Build the update from formData but drop the hours-related keys so the
+      // preserve case (hoursFields === {}) doesn't re-send the placeholder json
+      // or the stale text through the formData spread.
+      const { opening_hours_text, opening_hours_json, by_appointment_only, ...restFormData } = formData;
 
       const updateData = {
-        ...formData,
+        ...restFormData,
         // Normalize email so the password / login lookups (which match lowercase) work
         email: (formData.email || "").toLowerCase().trim(),
         tags: tagsArray,
@@ -198,10 +226,17 @@ export default function AdminEditBusinessModal({ business, isOpen, onClose, onSa
 
       toast.success("Business updated successfully!");
 
-      // Send approval email if status changed to approved
+      // Send approval email if status changed to approved.
+      // If the business is unclaimed (no password_hash), send the password-setup
+      // email so a fresh owner can set a password and log in. If it already has
+      // a password_hash it's claimed, so send the marketing approval email instead.
       if (formData.status === 'approved' && business.status !== 'approved') {
         try {
-          await base44.functions.invoke('sendApprovalEmail', { business_id: business.id });
+          if (!business.password_hash) {
+            await base44.functions.invoke('sendPasswordSetupEmail', { businessId: business.id });
+          } else {
+            await base44.functions.invoke('sendApprovalEmail', { business_id: business.id });
+          }
         } catch (err) {
           console.error('Failed to send approval email:', err);
         }
@@ -572,11 +607,11 @@ Format as JSON.`;
               <Label>Opening Hours</Label>
               <div className="flex items-center gap-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" checked={hoursMode === "hours"} onChange={() => setHoursMode("hours")} className="w-4 h-4" />
+                  <input type="radio" checked={hoursMode === "hours"} onChange={() => { setHoursMode("hours"); setHoursEdited(true); }} className="w-4 h-4" />
                   <span className="font-medium text-sm">Set Opening Hours</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" checked={hoursMode === "appointment"} onChange={() => setHoursMode("appointment")} className="w-4 h-4" />
+                  <input type="radio" checked={hoursMode === "appointment"} onChange={() => { setHoursMode("appointment"); setHoursEdited(true); }} className="w-4 h-4" />
                   <span className="font-medium text-sm">By Appointment Only</span>
                 </label>
               </div>

@@ -34,6 +34,8 @@ export default function ReviewForm({ businessId, onReviewSubmitted }) {
       const customer = JSON.parse(customerData);
       
       const avgRating = Math.round((generalRating + servicingRating + pricingRating) / 3);
+      // Do NOT set is_approved here — new reviews must stay unapproved until an
+      // admin moderates them. Only is_approved:true reviews are shown publicly.
       await base44.entities.Review.create({
         business_id: businessId,
         user_id: customer.id,

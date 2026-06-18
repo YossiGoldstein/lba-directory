@@ -46,9 +46,9 @@ export default function RegistrationSuccess() {
                 <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4 flex items-start gap-3">
                   <Mail className="w-5 h-5 text-cyan-600 mt-0.5 flex-shrink-0" />
                   <div className="text-left">
-                    <p className="text-sm font-medium text-cyan-900">Check your email</p>
+                    <p className="text-sm font-medium text-cyan-900">Your account is ready</p>
                     <p className="text-sm text-cyan-700">
-                      We've sent a welcome email to <strong>{email}</strong> with your login details and a link to your dashboard.
+                      You can now sign in with <strong>{email}</strong> and the password you chose to access your dashboard.
                     </p>
                   </div>
                 </div>

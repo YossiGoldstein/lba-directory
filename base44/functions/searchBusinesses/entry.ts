@@ -247,8 +247,32 @@ ${JSON.stringify(minimalList)}`;
     const start = rawText.indexOf('[');
     const end = rawText.lastIndexOf(']');
     let rankedIds: string[] = [];
+    let aiRankFailed = false;
     if (start !== -1 && end !== -1) {
-      rankedIds = JSON.parse(rawText.slice(start, end + 1));
+      try {
+        rankedIds = JSON.parse(rawText.slice(start, end + 1));
+      } catch (parseError) {
+        // Model output was truncated or wrapped in stray prose — degrade gracefully
+        // rather than throwing a 500. Fall back to the pre-AI candidate pool below.
+        console.warn('Failed to parse AI ranking JSON, falling back to candidate pool:', parseError);
+        aiRankFailed = true;
+      }
+    }
+
+    // If AI re-ranking failed, return the pre-AI keyword/time-filtered candidates
+    // (VIP/featured still bubbled up) instead of an empty "no results" response.
+    if (aiRankFailed) {
+      const fallback = [...candidatePool].sort((a: any, b: any) => {
+        if (a.is_vip !== b.is_vip) return (b.is_vip ? 1 : 0) - (a.is_vip ? 1 : 0);
+        if (a.is_featured !== b.is_featured) return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0);
+        return 0;
+      });
+      return Response.json({
+        query,
+        cleanedQuery: effectiveQuery,
+        wantsOpenNow,
+        businesses: fallback.map(serializeBusiness),
+      });
     }
 
     // Build map for fast lookup

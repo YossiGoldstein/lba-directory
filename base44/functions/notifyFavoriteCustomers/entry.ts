@@ -2,6 +2,11 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 const escapeHtml = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 
+// Parse a date for display without treating a date-only "YYYY-MM-DD" string as
+// UTC midnight (which renders the previous day in US timezones). Returns null on
+// missing/invalid input.
+function parseLocalDate(value){ if(!value) return null; const s=String(value); if(s.includes('T')){const d=new Date(s); return isNaN(d.getTime())?null:d;} const m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return new Date(Number(m[1]),Number(m[2])-1,Number(m[3])); const d=new Date(s); return isNaN(d.getTime())?null:d; }
+
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
@@ -97,7 +102,7 @@ Deno.serve(async (req) => {
                 ${deal.description ? `<p>${escapeHtml(deal.description)}</p>` : ''}
                 ${deal.badge_text ? `<p><strong>Special:</strong> ${escapeHtml(deal.badge_text)}</p>` : ''}
                 <p style="color: #6b7280; font-size: 14px;">
-                    Valid until: ${new Date(deal.end_date).toLocaleDateString()}
+                    ${(() => { const d = parseLocalDate(deal.end_date); return d ? `Valid until: ${d.toLocaleDateString()}` : ''; })()}
                 </p>
             </div>
             

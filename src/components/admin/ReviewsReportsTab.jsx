@@ -68,10 +68,25 @@ export default function ReviewsReportsTab() {
   };
 
   const handleToggleApproval = (review) => {
-    updateReviewMutation.mutate({
-      reviewId: review.id,
-      data: { is_approved: !review.is_approved }
-    });
+    updateReviewMutation.mutate(
+      {
+        reviewId: review.id,
+        data: { is_approved: !review.is_approved }
+      },
+      {
+        onSuccess: async () => {
+          // Recompute the business's rating/reviews_count so stars don't drift
+          // stale after a review is shown or hidden.
+          if (review.business_id) {
+            try {
+              await base44.functions.invoke('updateBusinessRatings', { businessId: review.business_id });
+            } catch (err) {
+              console.error('Failed to recompute business ratings:', err);
+            }
+          }
+        }
+      }
+    );
   };
 
   const handleToggleFlag = (review) => {

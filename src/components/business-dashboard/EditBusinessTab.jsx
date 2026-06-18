@@ -67,7 +67,7 @@ export default function EditBusinessTab({ business, onUpdate }) {
         return;
       }
 
-      if (formData.phone && !/^[\d\s\-\(\)]+$/.test(formData.phone)) {
+      if (formData.phone && !/^[\d\s\-\(\)\+\.]+$/.test(formData.phone)) {
         toast.error("Please enter a valid US phone number");
         setIsSaving(false);
         return;

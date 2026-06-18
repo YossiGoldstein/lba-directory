@@ -7,6 +7,7 @@ import { Search, Clock, Sparkles, RefreshCw } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import BusinessResultCard from "../chat/BusinessResultCard";
 import ReactMarkdown from "react-markdown";
+import { toast } from "sonner";
 
 export default function RecentSearchesTab({ user }) {
   const [activeSearch, setActiveSearch] = useState(null);
@@ -86,12 +87,19 @@ export default function RecentSearchesTab({ user }) {
 
       setTimeout(() => {
         unsubscribe();
+        setIsSearching((prev) => {
+          if (prev) {
+            toast("That took too long, please try again.");
+          }
+          return false;
+        });
       }, 30000);
 
     } catch (error) {
       console.error("Search failed:", error);
       setIsSearching(false);
       setAiResponse("Sorry, I encountered an error. Please try again.");
+      toast("Something went wrong, please try again.");
     }
   };
 

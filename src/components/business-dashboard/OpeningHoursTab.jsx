@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Clock } from "lucide-react";
 import { toast } from "sonner";
 
-export default function OpeningHoursTab({ business, onBusinessUpdate }) {
+export default function OpeningHoursTab({ business, onUpdate }) {
   const [useStructured, setUseStructured] = useState(
     !business.opening_hours_text || business.opening_hours_json
   );
@@ -65,8 +65,8 @@ export default function OpeningHoursTab({ business, onBusinessUpdate }) {
       await base44.entities.Business.update(business.id, updateData);
 
       toast.success("Opening hours updated successfully!");
-      if (onBusinessUpdate) {
-        onBusinessUpdate();
+      if (onUpdate) {
+        onUpdate();
       }
     } catch (error) {
       console.error("Failed to update hours:", error);

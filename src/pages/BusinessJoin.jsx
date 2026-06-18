@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { 
   Eye, Search, Users, TrendingUp, BarChart3, 
@@ -9,9 +8,15 @@ import {
 } from "lucide-react";
 
 export default function BusinessJoin() {
-  const handleGetStarted = async () => {
-    const isAuth = await base44.auth.isAuthenticated();
-    if (isAuth) {
+  const handleGetStarted = () => {
+    let isLoggedIn = false;
+    try {
+      const customer = JSON.parse(localStorage.getItem("lba_customer"));
+      isLoggedIn = !!(customer && customer.id);
+    } catch (e) {
+      isLoggedIn = false;
+    }
+    if (isLoggedIn) {
       window.location.href = createPageUrl("AddBusiness");
     } else {
       window.location.href = createPageUrl("SignIn") + "?next=" + encodeURIComponent(createPageUrl("AddBusiness"));

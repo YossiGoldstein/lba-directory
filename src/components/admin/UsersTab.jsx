@@ -41,7 +41,8 @@ export default function UsersTab() {
 
   const updateRoleMutation = useMutation({
     mutationFn: async ({ userId, newRole }) => {
-      return await base44.entities.User.update(userId, { role: newRole });
+      // This tab lists Customer records, so role updates must target Customer too.
+      return await base44.entities.Customer.update(userId, { role: newRole });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
@@ -96,10 +97,20 @@ export default function UsersTab() {
       toast.error("Password must be at least 6 characters");
       return;
     }
-    await base44.entities.User.update(passwordModal.userId, { password_hash: btoa(newPassword) });
-    toast.success(`Password set for ${passwordModal.userName}`);
-    setPasswordModal(null);
-    setNewPassword("");
+    try {
+      // This tab lists Customer records, so the password must be written to Customer.
+      // Use the UTF-8-safe btoa form so non-Latin1 input doesn't throw.
+      await base44.entities.Customer.update(passwordModal.userId, {
+        password_hash: btoa(unescape(encodeURIComponent(newPassword))),
+      });
+      toast.success(`Password set for ${passwordModal.userName}`);
+    } catch (err) {
+      console.error("Failed to set password:", err);
+      toast.error("Failed to set password");
+    } finally {
+      setPasswordModal(null);
+      setNewPassword("");
+    }
   };
 
   if (isLoading) {

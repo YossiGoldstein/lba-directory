@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Heart, Building2, ArrowRight } from "lucide-react";
@@ -12,16 +11,19 @@ export default function Welcome() {
 
   useEffect(() => {
     // Check if user is already logged in
-    const checkAuth = async () => {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) {
-        // If already logged in, redirect to next URL or home
-        const urlParams = new URLSearchParams(window.location.search);
-        const next = urlParams.get("next") || createPageUrl("Home");
-        navigate(next);
-      }
-    };
-    checkAuth();
+    let isLoggedIn = false;
+    try {
+      const customer = JSON.parse(localStorage.getItem("lba_customer"));
+      isLoggedIn = !!(customer && customer.id);
+    } catch (e) {
+      isLoggedIn = false;
+    }
+    if (isLoggedIn) {
+      // If already logged in, redirect to next URL or home
+      const urlParams = new URLSearchParams(window.location.search);
+      const next = urlParams.get("next") || createPageUrl("Home");
+      navigate(next);
+    }
 
     // Get next URL and set message
     const urlParams = new URLSearchParams(window.location.search);
@@ -36,11 +38,13 @@ export default function Welcome() {
   }, [navigate]);
 
   const handleSignIn = () => {
-    base44.auth.redirectToLogin(nextUrl || createPageUrl("Home"));
+    const target = createPageUrl("SignIn");
+    navigate(nextUrl ? target + "?next=" + encodeURIComponent(nextUrl) : target);
   };
 
   const handleSignUp = () => {
-    base44.auth.redirectToLogin(nextUrl || createPageUrl("Home"));
+    const target = createPageUrl("UserRegister");
+    navigate(nextUrl ? target + "?next=" + encodeURIComponent(nextUrl) : target);
   };
 
   return (

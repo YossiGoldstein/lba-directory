@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import CoverPhotoUpload from "@/components/business/CoverPhotoUpload";
 import VideoManager from "@/components/business/VideoManager";
 
-export default function GalleryTab({ business, onBusinessUpdate }) {
+export default function GalleryTab({ business, onUpdate }) {
   const [images, setImages] = useState(business.gallery_images || []);
   const [logoUrl, setLogoUrl] = useState(business.logo_url || "");
   const [coverPhotoUrl, setCoverPhotoUrl] = useState(business.cover_photo_url || "");
@@ -67,7 +67,7 @@ export default function GalleryTab({ business, onBusinessUpdate }) {
         videos: videos,
       });
       toast.success("Gallery saved successfully!");
-      if (onBusinessUpdate) onBusinessUpdate();
+      if (onUpdate) onUpdate();
     } catch (error) {
       toast.error("Failed to save gallery");
     } finally {

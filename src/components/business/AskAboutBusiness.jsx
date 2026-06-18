@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sparkles, Send, Loader2, MapPin, Clock, Tag as TagIcon, TrendingUp, MessageCircle } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { toast } from "sonner";
 import BusinessResultCard from "../chat/BusinessResultCard";
 
 export default function AskAboutBusiness({ business, category, activeDeals }) {
@@ -67,7 +68,7 @@ Business Context:
 - Opening Hours: ${business.opening_hours_text || 'Contact for hours'}
 - Active Deals: 
 ${dealsText}
-- Rating: ${business.average_rating || 0} stars (${business.reviews_count || 0} reviews)
+- Rating: ${business.general_rating || 0} stars (${business.reviews_count || 0} reviews)
 - Coordinates: ${business.latitude || 'N/A'}, ${business.longitude || 'N/A'}
 - Business ID: ${business.id}
 
@@ -111,12 +112,20 @@ This question comes directly from the Business Page UI.`;
 
       setTimeout(() => {
         unsubscribe();
+        // If the assistant never responded, re-enable the input so it doesn't hang.
+        setIsAsking((stillAsking) => {
+          if (stillAsking) {
+            toast.error("The assistant is taking too long to respond. Please try again.");
+          }
+          return false;
+        });
       }, 30000);
 
     } catch (error) {
       console.error("Ask failed:", error);
       setIsAsking(false);
       setAiResponse("Sorry, I encountered an error while processing your question. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     }
   };
 

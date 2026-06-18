@@ -3,6 +3,8 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 const BASE_URL = 'https://www.lbadirectory.com';
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
+const escapeHtml = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+
 function generateToken(businessId: string, email: string): string {
   const payload = `${businessId}:${email}:${Date.now() + TOKEN_TTL_MS}`;
   return btoa(unescape(encodeURIComponent(payload))).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
@@ -100,9 +102,9 @@ Deno.serve(async (req) => {
 <p style="margin:6px 0 0;color:#bae6fd;font-size:14px;">Take control of your listing on LBA Directory</p>
 </td></tr>
 <tr><td style="padding:32px 40px;">
-<p style="margin:0 0 16px;color:#374151;font-size:15px;">Hi ${recipientName},</p>
+<p style="margin:0 0 16px;color:#374151;font-size:15px;">Hi ${escapeHtml(recipientName)},</p>
 <p style="margin:0 0 24px;color:#374151;font-size:15px;line-height:1.7;">
-  You have been invited to claim <strong style="color:#0e4f6e;">${businessName}</strong> on LBA Directory.<br>
+  You have been invited to claim <strong style="color:#0e4f6e;">${escapeHtml(businessName)}</strong> on LBA Directory.<br>
   Click the button below to verify your ownership and take control of this listing.
 </p>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">

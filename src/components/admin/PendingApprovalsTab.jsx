@@ -42,18 +42,25 @@ export default function PendingApprovalsTab({ onUpdate }) {
     mutationFn: async ({ businessId }) => {
       return await base44.entities.Business.update(businessId, { status: "approved" });
     },
-    onSuccess: async (_, { businessId, sendSetupEmail }) => {
+    onSuccess: async (_, { businessId, sendSetupEmail, hasPassword }) => {
       queryClient.invalidateQueries({ queryKey: ["pending-businesses"] });
       queryClient.invalidateQueries({ queryKey: ["admin-businesses"] });
       toast.success("Business approved successfully!");
 
       if (sendSetupEmail) {
         try {
-          await base44.functions.invoke('sendPasswordSetupEmail', { businessId });
-          toast.success("Setup email sent to business owner");
+          if (!hasPassword) {
+            // Unclaimed business: send the password-setup email so the owner can log in.
+            await base44.functions.invoke('sendPasswordSetupEmail', { businessId });
+            toast.success("Setup email sent to business owner");
+          } else {
+            // Already claimed (has a password): send the marketing approval email only.
+            await base44.functions.invoke('sendApprovalEmail', { business_id: businessId });
+            toast.success("Approval email sent to business owner");
+          }
         } catch (err) {
-          toast.warning("Business approved but setup email failed to send");
-          console.error("Setup email error:", err);
+          toast.warning("Business approved but email failed to send");
+          console.error("Approval email error:", err);
         }
       }
 
@@ -167,7 +174,8 @@ export default function PendingApprovalsTab({ onUpdate }) {
     if (confirm("Are you sure you want to approve this business?")) {
       approveMutation.mutate({
         businessId: business.id,
-        sendSetupEmail: getSendEmail(business)
+        sendSetupEmail: getSendEmail(business),
+        hasPassword: !!business.password_hash
       });
     }
   };

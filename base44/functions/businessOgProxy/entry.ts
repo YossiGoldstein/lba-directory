@@ -95,8 +95,8 @@ function businessHtml(business, ogImage) {
   <title>${safeTitle}</title>
   <meta property="og:title" content="${safeTitle}">
   <meta property="og:description" content="${safeDescription}">
-  <meta property="og:image" content="${ogImage}">
-  <meta property="og:image:secure_url" content="${ogImage}">
+  <meta property="og:image" content="${escapeHtml(ogImage)}">
+  <meta property="og:image:secure_url" content="${escapeHtml(ogImage)}">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -106,7 +106,7 @@ function businessHtml(business, ogImage) {
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${safeTitle}">
   <meta name="twitter:description" content="${safeDescription}">
-  <meta name="twitter:image" content="${ogImage}">
+  <meta name="twitter:image" content="${escapeHtml(ogImage)}">
   <meta http-equiv="refresh" content="0; url=${targetUrl}">
 </head>
 <body>

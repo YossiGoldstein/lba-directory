@@ -2,6 +2,8 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 const TOKEN_TTL_MS = 48 * 60 * 60 * 1000;
 
+const escapeHtml = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+
 // Single-use, unguessable token stored on the business record; updatePassword
 // verifies it server-side. Replaces the old reversible/forgeable btoa token.
 function newResetToken(): string {
@@ -125,7 +127,7 @@ Deno.serve(async (req) => {
 </td></tr>
 <tr><td style="padding:32px 40px;">
 <p style="color:#374151;font-size:15px;">Hi,</p>
-<p style="color:#374151;font-size:15px;line-height:1.7;">Congratulations! <strong style="color:#0e4f6e;">${businessName}</strong> has been approved and is now listed on LBA Directory.</p>
+<p style="color:#374151;font-size:15px;line-height:1.7;">Congratulations! <strong style="color:#0e4f6e;">${escapeHtml(businessName)}</strong> has been approved and is now listed on LBA Directory.</p>
 <p style="color:#374151;font-size:15px;">Click the button below to set your password and manage your listing:</p>
 <table width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0;">
 <tr><td align="center">

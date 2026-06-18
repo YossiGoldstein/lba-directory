@@ -113,13 +113,18 @@ export default function BusinessDashboard() {
     { id: "upgrade", label: "Upgrade", icon: Building2 },
   ];
 
-  const handleApplyToDescription = async (newDescription) => {
+  const handleApplyToDescription = async (newDescription, type = "long") => {
+    const field = type === "short" ? "short_description" : "long_description";
     await base44.entities.Business.update(selectedBusiness.id, {
-      long_description: newDescription,
+      [field]: newDescription,
     });
     refetchBusinesses();
     setActiveTab("edit");
-    toast.success("Description updated successfully!");
+    toast.success(
+      type === "short"
+        ? "Short description updated successfully!"
+        : "Description updated successfully!"
+    );
   };
 
   const handleApplyToTags = async (newTags) => {
@@ -288,6 +293,8 @@ export default function BusinessDashboard() {
             {activeTab === "ai" && (
               <AiAssistantTab
                 business={selectedBusiness}
+                category={category}
+                deals={deals}
                 onApplyToDescription={handleApplyToDescription}
                 onApplyToTags={handleApplyToTags}
               />

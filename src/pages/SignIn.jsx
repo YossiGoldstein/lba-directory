@@ -10,6 +10,15 @@ import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
+// Only allow same-origin relative redirect targets. Anything else (absolute
+// URLs, protocol-relative "//evil.com", missing/blank) falls back to the default.
+const safeNext = (next, fallback) => {
+  if (!next || typeof next !== "string") return fallback;
+  // Must be a single leading slash and not "//" (protocol-relative open redirect).
+  if (!next.startsWith("/") || next.startsWith("//")) return fallback;
+  return next;
+};
+
 export default function SignIn() {
   const [formData, setFormData] = useState({
     email: "",
@@ -24,13 +33,9 @@ export default function SignIn() {
       const customerData = localStorage.getItem("lba_customer");
       if (customerData) {
         const customer = JSON.parse(customerData);
-        const nextUrl = new URLSearchParams(window.location.search).get("next");
-        if (nextUrl) {
-          window.location.href = nextUrl;
-        } else {
-          const dashboardUrl = customer.role === "admin" ? "AdminDashboard" : "UserDashboard";
-          window.location.href = createPageUrl(dashboardUrl);
-        }
+        const rawNext = new URLSearchParams(window.location.search).get("next");
+        const dashboardUrl = customer.role === "admin" ? "AdminDashboard" : "UserDashboard";
+        window.location.href = safeNext(rawNext, createPageUrl(dashboardUrl));
       }
     };
     checkAuth();
@@ -65,7 +70,7 @@ export default function SignIn() {
 
           toast.success("Welcome Admin!");
           
-          const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("AdminDashboard");
+          const nextUrl = safeNext(new URLSearchParams(window.location.search).get("next"), createPageUrl("AdminDashboard"));
           setTimeout(() => {
             window.location.href = nextUrl;
           }, 1000);
@@ -102,13 +107,15 @@ export default function SignIn() {
           return;
         }
 
+        // Strip sensitive fields before persisting to localStorage.
+        const { password_hash, reset_token, reset_token_expiry, ...safeCustomer } = customer;
         localStorage.setItem("lba_customer", JSON.stringify({
-          ...customer,
+          ...safeCustomer,
           role: "user"
         }));
 
         toast.success("Welcome back!");
-        const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("UserDashboard");
+        const nextUrl = safeNext(new URLSearchParams(window.location.search).get("next"), createPageUrl("UserDashboard"));
         setTimeout(() => { window.location.href = nextUrl; }, 1000);
         return;
       }
@@ -133,7 +140,7 @@ export default function SignIn() {
         }));
 
         toast.success("Welcome back!");
-        const nextUrl = new URLSearchParams(window.location.search).get("next") || createPageUrl("UserDashboard");
+        const nextUrl = safeNext(new URLSearchParams(window.location.search).get("next"), createPageUrl("UserDashboard"));
         setTimeout(() => { window.location.href = nextUrl; }, 1000);
         return;
       }

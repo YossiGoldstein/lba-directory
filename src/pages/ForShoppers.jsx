@@ -1,5 +1,5 @@
 import React from "react";
-import { base44 } from "@/api/base44Client";
+import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
@@ -15,7 +15,7 @@ import {
 
 export default function ForShoppers() {
   const handleSignup = () => {
-    base44.auth.redirectToLogin("/");
+    window.location.href = createPageUrl("UserRegister");
   };
 
   const benefits = [

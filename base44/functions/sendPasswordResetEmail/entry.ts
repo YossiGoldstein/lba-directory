@@ -1,5 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
+const escapeHtml = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+
 Deno.serve(async (req) => {
   try {
     const { email: rawEmail } = await req.json();
@@ -39,7 +41,7 @@ Deno.serve(async (req) => {
         body: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #0891b2;">Reset Your Password</h2>
-            <p>Hello ${customer.full_name}!</p>
+            <p>Hello ${escapeHtml(customer.full_name)}!</p>
             <p>We received a request to reset your password for your LBA Directory account.</p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="${resetUrl}" 
@@ -74,7 +76,7 @@ Deno.serve(async (req) => {
         body: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #0891b2;">Reset Your Password</h2>
-            <p>Hello ${business.business_name}!</p>
+            <p>Hello ${escapeHtml(business.business_name)}!</p>
             <p>We received a request to reset your password for your LBA Directory business account.</p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="${resetUrl}" 

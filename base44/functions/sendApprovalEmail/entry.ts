@@ -2,6 +2,8 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 const BASE_URL = 'https://www.lbadirectory.com';
 
+const escapeHtml = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+
 // Encode the full MIME string to base64url for Gmail API
 function mimeToBase64Url(mimeStr) {
   const bytes = new TextEncoder().encode(mimeStr);
@@ -137,14 +139,14 @@ Deno.serve(async (req) => {
 </td></tr>
 <tr><td style="padding:32px 40px;">
 <p style="margin:0 0 16px;color:#374151;font-size:15px;">Dear Business Owner,</p>
-<p style="margin:0 0 24px;color:#374151;font-size:15px;line-height:1.7;">We are pleased to inform you that your business listing for <strong style="color:#0e4f6e;">${business.business_name}</strong> has been <strong>approved</strong> and is now live and visible to thousands of local customers.</p>
+<p style="margin:0 0 24px;color:#374151;font-size:15px;line-height:1.7;">We are pleased to inform you that your business listing for <strong style="color:#0e4f6e;">${escapeHtml(business.business_name)}</strong> has been <strong>approved</strong> and is now live and visible to thousands of local customers.</p>
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;margin-bottom:24px;">
 <tr><td style="padding:18px 22px;">
 <p style="margin:0 0 10px;color:#0e4f6e;font-size:12px;font-weight:bold;text-transform:uppercase;">Listing Details</p>
 <table cellpadding="5">
-<tr><td style="color:#6b7280;font-size:14px;">Business:</td><td style="color:#111827;font-size:14px;font-weight:bold;">${business.business_name}</td></tr>
-${business.phone ? `<tr><td style="color:#6b7280;font-size:14px;">Phone:</td><td style="color:#111827;font-size:14px;">${business.phone}</td></tr>` : ''}
-${business.email ? `<tr><td style="color:#6b7280;font-size:14px;">Email:</td><td style="color:#111827;font-size:14px;">${business.email}</td></tr>` : ''}
+<tr><td style="color:#6b7280;font-size:14px;">Business:</td><td style="color:#111827;font-size:14px;font-weight:bold;">${escapeHtml(business.business_name)}</td></tr>
+${business.phone ? `<tr><td style="color:#6b7280;font-size:14px;">Phone:</td><td style="color:#111827;font-size:14px;">${escapeHtml(business.phone)}</td></tr>` : ''}
+${business.email ? `<tr><td style="color:#6b7280;font-size:14px;">Email:</td><td style="color:#111827;font-size:14px;">${escapeHtml(business.email)}</td></tr>` : ''}
 <tr><td style="color:#6b7280;font-size:14px;">Status:</td><td><span style="background:#dcfce7;color:#15803d;padding:2px 10px;border-radius:20px;font-size:13px;font-weight:bold;">Approved</span></td></tr>
 </table>
 </td></tr>
