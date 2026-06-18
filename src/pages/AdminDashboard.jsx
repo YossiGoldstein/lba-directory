@@ -385,6 +385,12 @@ function PasswordSetupTab() {
                 </div>
               </div>
 
+              {result.skippedNoEmail > 0 && (
+                <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded p-2 mb-4">
+                  {result.skippedNoEmail} approved businesses have no email on file and were skipped — they can't receive a setup email until an address is added.
+                </p>
+              )}
+
               {result.results && result.results.length > 0 && (
                 <div className="max-h-96 overflow-y-auto">
                   <h4 className="font-semibold text-gray-900 mb-2">Email Status:</h4>

@@ -29,6 +29,9 @@ These 5 findings are interdependent and touch live user/admin access + existing 
 
 ## Done
 
+- [x] **Bulk "Send Password Setup Emails" fixed (FUN-5)** — created the missing `sendPasswordSetupEmails` (plural) function the admin button was calling. It emails every approved business with a valid address and no password, storing a single-use token per business; returns sent/failed/skipped counts. Admin UI now also shows how many were skipped for having no email.
+- [x] **Email data audit ([EMAIL_AUDIT.md](EMAIL_AUDIT.md))** — KEY FINDING: of 301 approved businesses without a password, only **97 have a usable email**; **204 have NO email on file** — that's the dominant reason most aren't creating accounts (not a code bug — missing import data). 2 duplicate emails found (AI With Yossi ↔ G-VANS share `j6468204202@`; J2 Pizza North ↔ South share `lakewoodj2@`) — fix so the right owner claims the right listing. Plus likely-typo domains flagged (e.g. `repair@spilmans.con`).
+
 - [x] **"Failed to set password" from setup emails (client report — killing signups)** — ROOT CAUSE: admin-created listings saved the email verbatim with capital letters (e.g. `Mordymilgraum@gmail.com` for "The Pizano"), but `updatePassword` matched lowercase → never found the record → set-password failed. This is FUN-7 hitting production. FIX:
   - `updatePassword` now looks up by `accountId`+`accountType` (the setup/claim link carries the business id) — email casing no longer matters; email lookup is only the fallback for forgot-password.
   - `SetPassword.jsx` passes `accountId`/`accountType` through.
