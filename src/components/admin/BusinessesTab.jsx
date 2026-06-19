@@ -286,7 +286,7 @@ export default function BusinessesTab({ onUpdate }) {
                           <Mail className="w-4 h-4" />
                         </Button>
                       )}
-                      {/* NOTE: claim_disabled is not yet in the Business schema — value is dropped on write until the schema field is added */}
+                      {/* NOTE: claim_disabled is defined in the Business schema (Business.jsonc) and persists */}
                       {(!business.owner_id || business.owner_id === "lba_directory") && !business.claim_disabled && (
                         <Button
                           size="sm"

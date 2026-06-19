@@ -87,8 +87,9 @@ export default function BusinessOwnerRegister() {
 
       // Send welcome email
       try {
+        const esc = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
         await base44.integrations.Core.SendEmail({
-          to: formData.email,
+          to: email,
           subject: "Welcome to LBA Directory - Business Owner Account",
           body: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -98,8 +99,8 @@ export default function BusinessOwnerRegister() {
               
               <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
                 <h3 style="margin-top: 0;">Your Account Details:</h3>
-                <p><strong>Business Name:</strong> ${formData.businessName}</p>
-                <p><strong>Email:</strong> ${formData.email}</p>
+                <p><strong>Business Name:</strong> ${esc(formData.businessName)}</p>
+                <p><strong>Email:</strong> ${esc(email)}</p>
               </div>
               
               <p><strong>Next Steps:</strong></p>

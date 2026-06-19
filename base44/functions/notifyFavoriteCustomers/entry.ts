@@ -58,7 +58,8 @@ Deno.serve(async (req) => {
         for (const favorite of businessFavorites) {
             const customer = customers.find(c => c.id === favorite.user_id);
             
-            if (!customer || !customer.is_active) continue;
+            // Treat a missing is_active as active (only skip explicitly-deactivated customers)
+            if (!customer || customer.is_active === false) continue;
 
             // Create notification (email_sent stays false until the email actually sends)
             const notification = await base44.asServiceRole.entities.Notification.create({

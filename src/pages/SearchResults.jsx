@@ -12,7 +12,9 @@ export default function SearchResults() {
   const urlParams = new URLSearchParams(window.location.search);
   const searchQuery = urlParams.get("query") || "";
 
-  const [isSearching, setIsSearching] = useState(true);
+  // Only show the spinner when there's actually a query to search for —
+  // otherwise /searchresults with no query spun forever.
+  const [isSearching, setIsSearching] = useState(!!searchQuery);
   const [matchedBusinesses, setMatchedBusinesses] = useState([]);
   const [deals, setDeals] = useState([]);
 

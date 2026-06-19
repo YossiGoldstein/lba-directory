@@ -72,7 +72,8 @@ export default function CustomersTab() {
     }
     setSavingPassword(true);
     try {
-      const passwordHash = btoa(newPassword);
+      // UTF-8-safe hash, consistent with registerCustomer/updatePassword (plain btoa throws on non-Latin1)
+      const passwordHash = btoa(unescape(encodeURIComponent(newPassword)));
       await base44.entities.Customer.update(passwordModal.customer.id, { password_hash: passwordHash });
       toast.success("Password updated successfully");
       setPasswordModal(null);

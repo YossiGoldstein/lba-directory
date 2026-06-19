@@ -126,7 +126,7 @@ export default function MyReviewsTab({ user }) {
                 )}
 
                 {/* Body */}
-                <p className="text-gray-700 whitespace-pre-line">{review.body}</p>
+                {review.body && <p className="text-gray-700 whitespace-pre-line">{review.body}</p>}
 
                 {/* Visit Date */}
                 {review.visit_date && (

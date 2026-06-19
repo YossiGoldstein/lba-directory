@@ -50,6 +50,7 @@ export default function ChatWindow({
   isMinimized,
   onToggleMinimize,
   isMobile,
+  pageContext,
 }) {
   const [messages, setMessages] = useState([]);
   const [chatHistory, setChatHistory] = useState([]);
@@ -73,6 +74,7 @@ export default function ChatWindow({
     try {
       const response = await base44.functions.invoke("platformHelp", {
         messages: newHistory,
+        pageContext,
       });
       const reply = response.data?.content || "Sorry, I couldn't process that. Please try again.";
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
