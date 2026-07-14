@@ -1,0 +1,31 @@
+{
+  "name": "SearchHistory",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User who performed the search"
+    },
+    "query": {
+      "type": "string",
+      "description": "Search query text"
+    },
+    "results_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of results found"
+    },
+    "page_context": {
+      "type": "string",
+      "description": "Where the search was performed (home, category, business)"
+    },
+    "category_slug": {
+      "type": "string",
+      "description": "Category slug if searched from category page"
+    }
+  },
+  "required": [
+    "user_id",
+    "query"
+  ]
+}

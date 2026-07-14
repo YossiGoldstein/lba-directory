@@ -1,0 +1,41 @@
+{
+  "name": "EmailSettings",
+  "type": "object",
+  "properties": {
+    "notification_type": {
+      "type": "string",
+      "enum": [
+        "business_approved",
+        "business_rejected",
+        "new_review",
+        "deal_expiring_soon",
+        "deal_started",
+        "business_info_updated",
+        "weekly_insights",
+        "issue_reported"
+      ],
+      "description": "Type of email notification"
+    },
+    "is_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Is this notification enabled"
+    },
+    "from_email": {
+      "type": "string",
+      "default": "office@lbadirectory.com",
+      "description": "From email address"
+    },
+    "subject_template": {
+      "type": "string",
+      "description": "Email subject template"
+    },
+    "body_template": {
+      "type": "string",
+      "description": "Email body template with placeholders"
+    }
+  },
+  "required": [
+    "notification_type"
+  ]
+}

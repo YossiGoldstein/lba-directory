@@ -1,0 +1,22 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "user"
+      ],
+      "default": "user",
+      "description": "User role"
+    },
+    "password_hash": {
+      "type": "string",
+      "description": "Hashed password for admin login"
+    }
+  },
+  "required": [
+    "password_hash"
+  ]
+}

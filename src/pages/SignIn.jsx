@@ -108,14 +108,18 @@ export default function SignIn() {
         }
 
         // Strip sensitive fields before persisting to localStorage.
+        // Honor the role set by an admin in the Users tab (Customer entity) —
+        // default to "user" when unset. Do not hardcode "user" or admins fail.
         const { password_hash, reset_token, reset_token_expiry, ...safeCustomer } = customer;
+        const customerRole = customer.role === "admin" ? "admin" : "user";
         localStorage.setItem("lba_customer", JSON.stringify({
           ...safeCustomer,
-          role: "user"
+          role: customerRole
         }));
 
         toast.success("Welcome back!");
-        const nextUrl = safeNext(new URLSearchParams(window.location.search).get("next"), createPageUrl("UserDashboard"));
+        const fallbackDashboard = customerRole === "admin" ? "AdminDashboard" : "UserDashboard";
+        const nextUrl = safeNext(new URLSearchParams(window.location.search).get("next"), createPageUrl(fallbackDashboard));
         setTimeout(() => { window.location.href = nextUrl; }, 1000);
         return;
       }

@@ -1,0 +1,43 @@
+{
+  "name": "ClaimRequest",
+  "type": "object",
+  "properties": {
+    "business_id": {
+      "type": "string",
+      "description": "Business being claimed"
+    },
+    "claimant_email": {
+      "type": "string",
+      "description": "Email of person claiming the business"
+    },
+    "claimant_name": {
+      "type": "string",
+      "description": "Full name of person claiming"
+    },
+    "token": {
+      "type": "string",
+      "description": "Secure unique claim token"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Token expiration time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "used",
+        "expired"
+      ],
+      "default": "pending",
+      "description": "Claim request status"
+    }
+  },
+  "required": [
+    "business_id",
+    "claimant_email",
+    "token",
+    "expires_at"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "Customer",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string",
+      "description": "Customer full name"
+    },
+    "email": {
+      "type": "string",
+      "description": "Customer email address"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Customer phone number"
+    },
+    "password_hash": {
+      "type": "string",
+      "description": "Hashed password"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Is account active"
+    }
+  },
+  "required": [
+    "full_name",
+    "email",
+    "password_hash"
+  ]
+}

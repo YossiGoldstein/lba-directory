@@ -1,0 +1,46 @@
+{
+  "name": "ServiceInquiry",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string",
+      "description": "Contact full name"
+    },
+    "business_name": {
+      "type": "string",
+      "description": "Business name"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address"
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Selected services"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "contacted",
+        "closed"
+      ],
+      "default": "new",
+      "description": "Inquiry status"
+    }
+  },
+  "required": [
+    "full_name",
+    "business_name",
+    "phone",
+    "email",
+    "services"
+  ]
+}

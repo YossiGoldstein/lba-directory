@@ -1,0 +1,18 @@
+{
+  "name": "Favorite",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User who favorited"
+    },
+    "business_id": {
+      "type": "string",
+      "description": "Business that was favorited"
+    }
+  },
+  "required": [
+    "user_id",
+    "business_id"
+  ]
+}

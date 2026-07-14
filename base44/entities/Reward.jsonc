@@ -1,0 +1,53 @@
+{
+  "name": "Reward",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Reward/giveaway title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Full description"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Giveaway start date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Giveaway end date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "active",
+        "completed",
+        "cancelled"
+      ],
+      "default": "scheduled",
+      "description": "Giveaway status"
+    },
+    "number_of_winners": {
+      "type": "number",
+      "default": 1,
+      "description": "Number of winners"
+    },
+    "reward_type": {
+      "type": "string",
+      "description": "Type of reward (e.g. gift_card, coupon, credit)"
+    },
+    "value_description": {
+      "type": "string",
+      "description": "Reward value description"
+    }
+  },
+  "required": [
+    "title",
+    "start_date",
+    "end_date"
+  ]
+}
