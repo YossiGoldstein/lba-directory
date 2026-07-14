@@ -22,6 +22,15 @@
       "type": "boolean",
       "default": true,
       "description": "Is account active"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "user",
+        "admin"
+      ],
+      "default": "user",
+      "description": "Account role (user or admin)"
     }
   },
   "required": [
